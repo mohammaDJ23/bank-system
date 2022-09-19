@@ -1,0 +1,13 @@
+POST http://localhost:3001/auth/signup
+Content-Type: application/json
+
+{
+  "firstName": "mohammad",
+  "lastName": "nowresideh",
+  "email": "mohammad.nowresideh1997@gmail.com",
+  "password": "123!@#Ss",
+  "phone": "+989174163042"
+}
+
+###
+
