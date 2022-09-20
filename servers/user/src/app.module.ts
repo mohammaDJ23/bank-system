@@ -4,6 +4,7 @@ import { ClientsModule, Transport } from '@nestjs/microservices';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { User } from './entities/user.entity';
 
 @Module({
   imports: [
@@ -26,13 +27,14 @@ import { AppService } from './app.service';
         type: 'postgres',
         host: process.env.DATABASE_HOST,
         port: +process.env.DATABASE_PORT,
-        username: process.env.DATABASE_NAME,
+        username: process.env.DATABASE_USERNAME,
         password: process.env.DATABASE_PASSWORD,
         database: process.env.DATABASE_NAME,
-        entities: [],
+        entities: [User],
         synchronize: true,
       }),
     }),
+    TypeOrmModule.forFeature([User]),
     ConfigModule.forRoot({
       envFilePath: `.env.${process.env.NODE_ENV}`,
       isGlobal: true,
