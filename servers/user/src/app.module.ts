@@ -5,6 +5,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { User } from './entities/user.entity';
+import { CustomNamingStrategy } from './strategies/naming.strategy';
 
 @Module({
   imports: [
@@ -30,6 +31,7 @@ import { User } from './entities/user.entity';
         username: process.env.DATABASE_USERNAME,
         password: process.env.DATABASE_PASSWORD,
         database: process.env.DATABASE_NAME,
+        namingStrategy: new CustomNamingStrategy(),
         entities: [User],
         synchronize: true,
       }),
