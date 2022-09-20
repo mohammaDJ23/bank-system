@@ -12,4 +12,3 @@ export class AppController {
     return this.appService.createUser(payload);
   }
 }
-``;
