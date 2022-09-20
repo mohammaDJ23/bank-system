@@ -4,6 +4,7 @@ import { Repository } from 'typeorm';
 import { CreateUserDto } from './dtos/create-user.dto';
 import { User } from './entities/user.entity';
 import { hash } from 'bcrypt';
+import { RpcException } from '@nestjs/microservices';
 
 @Injectable()
 export class AppService {
@@ -17,7 +18,7 @@ export class AppService {
     });
 
     if (user) {
-      throw new ConflictException('The user already exist.');
+      throw new RpcException(new ConflictException('The user already exist.'));
     }
 
     const hashedPassword = await hash(payload.password, 10);
