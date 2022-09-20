@@ -16,7 +16,7 @@ import { AppService } from './app.service';
           queueOptions: {
             durable: true,
           },
-          noAck: false,
+          noAck: true,
         },
       },
     ]),
