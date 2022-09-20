@@ -14,7 +14,7 @@ export class AppService {
     @Inject('AUTH_SERVICE') private readonly clientProxy: ClientProxy,
   ) {}
 
-  async signup(body: SignupDto): Promise<UserDto | void> {
+  async signup(body: SignupDto): Promise<UserDto> {
     return this.clientProxy
       .send('user_creation', body)
       .toPromise()

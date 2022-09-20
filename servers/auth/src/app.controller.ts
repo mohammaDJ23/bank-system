@@ -10,7 +10,7 @@ export class AppController {
 
   @Post('signup')
   @Serializer(UserDto)
-  signup(@Body() body: SignupDto): Promise<UserDto | void> {
+  signup(@Body() body: SignupDto): Promise<UserDto> {
     return this.appService.signup(body);
   }
 }
