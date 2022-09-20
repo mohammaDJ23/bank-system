@@ -1,8 +1,10 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, ConflictException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CreateUserDto } from './dtos/create-user.dto';
 import { User } from './entities/user.entity';
+import { hash } from 'bcrypt';
+import { RpcException } from '@nestjs/microservices';
 
 @Injectable()
 export class AppService {
@@ -10,8 +12,25 @@ export class AppService {
     @InjectRepository(User) private readonly userRepository: Repository<User>,
   ) {}
 
-  createUser(payload: CreateUserDto): Promise<CreateUserDto> {
-    console.log(payload);
-    return new Promise((resolve) => resolve(payload));
+  async createUser(payload: CreateUserDto): Promise<CreateUserDto> {
+    const user = await this.userRepository.findOne({
+      where: { email: payload.email },
+    });
+
+    if (user) {
+      throw new RpcException(new ConflictException('The user already exist.'));
+    }
+
+    const hashedPassword = await hash(payload.password, 10);
+
+    const createdUser = this.userRepository.create({
+      firstName: payload.firstName,
+      lastName: payload.lastName,
+      email: payload.email,
+      password: hashedPassword,
+      phone: payload.phone,
+    });
+
+    return this.userRepository.save(createdUser);
   }
 }
