@@ -11,7 +11,6 @@ export class AppService {
   ) {}
 
   createUser(payload: CreateUserDto): Promise<CreateUserDto> {
-    console.log(payload);
     return new Promise((resolve) => resolve(payload));
   }
 }
