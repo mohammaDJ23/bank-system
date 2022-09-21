@@ -22,7 +22,7 @@ export class AllExceptionsFilter implements ExceptionFilter {
       : HttpStatus.INTERNAL_SERVER_ERROR;
 
     const message = isHttpException
-      ? exception.message
+      ? this.getMessage(exception)
       : MESSAGES.UNKNOWN_EXCEPTION_MESSAGE;
 
     const timestamp = new Date().toISOString();
@@ -30,5 +30,13 @@ export class AllExceptionsFilter implements ExceptionFilter {
     const responseBody = { statusCode, message, timestamp, path };
 
     httpAdapter.reply(ctx.getResponse(), responseBody, statusCode);
+  }
+
+  getMessage(exception: HttpException) {
+    const response = exception.getResponse();
+
+    return response instanceof Object
+      ? (response as HttpException).message
+      : response;
   }
 }
