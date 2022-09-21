@@ -32,7 +32,7 @@ export class AllExceptionsFilter implements ExceptionFilter {
     httpAdapter.reply(ctx.getResponse(), responseBody, statusCode);
   }
 
-  getMessage(exception: HttpException) {
+  private getMessage(exception: HttpException) {
     const response = exception.getResponse();
 
     return response instanceof Object
