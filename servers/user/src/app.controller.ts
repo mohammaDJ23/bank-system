@@ -4,6 +4,7 @@ import { Serializer } from './interceptors/serialize.interceptor';
 import { AppService } from './app.service';
 import { CreateUserDto } from './dtos/create-user.dto';
 import { UserDto } from './dtos/user-dto';
+import { ValidateUserDto } from './dtos/validate-user.dto';
 
 @Controller()
 export class AppController {
@@ -13,5 +14,11 @@ export class AppController {
   @Serializer(UserDto)
   createUser(@Payload() payload: CreateUserDto): Promise<UserDto> {
     return this.appService.createUser(payload);
+  }
+
+  @MessagePattern('validate_user')
+  @Serializer(UserDto)
+  validateUser(@Payload() payload: ValidateUserDto): Promise<UserDto> {
+    return this.appService.validateUser(payload);
   }
 }
