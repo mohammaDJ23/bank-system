@@ -35,11 +35,22 @@ export class AppService {
       });
   }
 
-  async validateUser(email: string, password: string): Promise<UserDto> {
+  async login(body: LoginDto): Promise<TokenDto> {
     return this.clientProxy
-      .send('validate_user', { email, password })
+      .send('validate_user', body)
       .toPromise()
-      .then((value: UserDto) => value)
+      .then((value: UserDto) => {
+        const userInfo = {
+          id: value.id,
+          email: value.email,
+          firstName: value.firstName,
+          lastName: value.lastName,
+        };
+
+        const accessToken = this.jwtService.sign(userInfo);
+        const expiration = process.env.JWT_EXPIRATION;
+        return { accessToken, expiration };
+      })
       .catch((err) => {
         switch (err.status) {
           case 404:
@@ -49,11 +60,5 @@ export class AppService {
             throw new BadRequestException();
         }
       });
-  }
-
-  login(user: LoginDto): TokenDto {
-    const accessToken = this.jwtService.sign(user);
-    const expiration = process.env.JWT_EXPIRATION;
-    return { accessToken, expiration };
   }
 }
