@@ -20,7 +20,9 @@ async function bootstrap() {
     },
   });
 
-  app.useGlobalPipes(new ValidationPipe());
+  app.useGlobalPipes(
+    new ValidationPipe({ whitelist: true, validateCustomDecorators: true }),
+  );
 
   // becuase of some error about rabbitmq i have been forced to remove it:
   // await app.startAllMicroservices();
