@@ -1,10 +1,16 @@
-import { Injectable, ConflictException } from '@nestjs/common';
+import {
+  Injectable,
+  ConflictException,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CreateUserDto } from './dtos/create-user.dto';
 import { User } from './entities/user.entity';
-import { hash } from 'bcrypt';
+import { compare, hash } from 'bcrypt';
 import { RpcException } from '@nestjs/microservices';
+import { UserDto } from './dtos/user-dto';
+import { ValidateUserDto } from './dtos/validate-user.dto';
 
 @Injectable()
 export class AppService {
@@ -12,7 +18,7 @@ export class AppService {
     @InjectRepository(User) private readonly userRepository: Repository<User>,
   ) {}
 
-  async createUser(payload: CreateUserDto): Promise<CreateUserDto> {
+  async createUser(payload: CreateUserDto): Promise<UserDto> {
     const user = await this.userRepository.findOne({
       where: { email: payload.email },
     });
@@ -32,5 +38,23 @@ export class AppService {
     });
 
     return this.userRepository.save(createdUser);
+  }
+
+  async validateUser(payload: ValidateUserDto): Promise<UserDto> {
+    const user = await this.userRepository.findOne({
+      where: { email: payload.email },
+    });
+
+    if (!user)
+      throw new RpcException(
+        new NotFoundException('Could not found the email.'),
+      );
+
+    const isPasswordsEqual = await compare(payload.password, user.password);
+
+    if (!isPasswordsEqual)
+      throw new RpcException(new NotFoundException(`The password is wrong.`));
+
+    return user;
   }
 }
