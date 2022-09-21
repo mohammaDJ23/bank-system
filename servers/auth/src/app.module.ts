@@ -6,7 +6,6 @@ import { ClientsModule, Transport } from '@nestjs/microservices';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AllExceptionsFilter } from './filters/catch.filter';
-import { LocalStrategy } from './strategies/local.strategy';
 import { JwtModule } from '@nestjs/jwt';
 
 @Module({
@@ -38,7 +37,6 @@ import { JwtModule } from '@nestjs/jwt';
   controllers: [AppController],
   providers: [
     AppService,
-    LocalStrategy,
     { provide: APP_FILTER, useClass: AllExceptionsFilter },
   ],
 })

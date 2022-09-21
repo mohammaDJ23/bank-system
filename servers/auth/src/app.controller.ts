@@ -1,11 +1,9 @@
-import { Body, Controller, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Post } from '@nestjs/common';
 import { AppService } from './app.service';
-import { User } from './decorators/user.decorator';
 import { LoginDto } from './dtos/login.dto';
 import { SignupDto } from './dtos/signup.dto';
 import { TokenDto } from './dtos/token.dto';
 import { UserDto } from './dtos/user.dto';
-import { LocalAuthGuard } from './guards/local.guard';
 import { Serializer } from './interceptors/serialize.interceptor';
 
 @Controller('auth')
@@ -19,9 +17,8 @@ export class AppController {
   }
 
   @Post('login')
-  @UseGuards(LocalAuthGuard)
   @Serializer(TokenDto)
-  login(@User() user: LoginDto): TokenDto {
-    return this.appService.login(user);
+  login(@Body() body: LoginDto): Promise<TokenDto> {
+    return this.appService.login(body);
   }
 }
