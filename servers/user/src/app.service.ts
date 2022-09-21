@@ -5,6 +5,7 @@ import { CreateUserDto } from './dtos/create-user.dto';
 import { User } from './entities/user.entity';
 import { hash } from 'bcrypt';
 import { RpcException } from '@nestjs/microservices';
+import { UserDto } from './dtos/user-dto';
 
 @Injectable()
 export class AppService {
@@ -12,7 +13,7 @@ export class AppService {
     @InjectRepository(User) private readonly userRepository: Repository<User>,
   ) {}
 
-  async createUser(payload: CreateUserDto): Promise<CreateUserDto> {
+  async createUser(payload: CreateUserDto): Promise<UserDto> {
     const user = await this.userRepository.findOne({
       where: { email: payload.email },
     });

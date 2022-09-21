@@ -11,7 +11,7 @@ export class AppController {
 
   @MessagePattern('user_creation')
   @Serializer(UserDto)
-  createUser(@Payload() payload: CreateUserDto): Promise<CreateUserDto> {
+  createUser(@Payload() payload: CreateUserDto): Promise<UserDto> {
     return this.appService.createUser(payload);
   }
 }
