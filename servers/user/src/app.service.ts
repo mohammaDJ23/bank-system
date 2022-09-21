@@ -55,6 +55,6 @@ export class AppService {
     if (!isPasswordsEqual)
       throw new RpcException(new NotFoundException(`The password is wrong.`));
 
-    return user;
+    return Object.assign(user, { password: payload.password });
   }
 }
