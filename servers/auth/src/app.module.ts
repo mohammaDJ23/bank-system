@@ -7,6 +7,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AllExceptionsFilter } from './filters/catch.filter';
 import { JwtModule } from '@nestjs/jwt';
+import { JwtStrategy } from './strategies/jwt.strategy';
 
 @Module({
   imports: [
@@ -37,6 +38,7 @@ import { JwtModule } from '@nestjs/jwt';
   controllers: [AppController],
   providers: [
     AppService,
+    JwtStrategy,
     { provide: APP_FILTER, useClass: AllExceptionsFilter },
   ],
 })

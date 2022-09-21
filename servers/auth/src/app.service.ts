@@ -11,6 +11,7 @@ import { LoginDto } from './dtos/login.dto';
 import { SignupDto } from './dtos/signup.dto';
 import { TokenDto } from './dtos/token.dto';
 import { UserDto } from './dtos/user.dto';
+import { User } from './types/user';
 
 @Injectable()
 export class AppService {
@@ -18,6 +19,10 @@ export class AppService {
     @Inject('AUTH_SERVICE') private readonly clientProxy: ClientProxy,
     private readonly jwtService: JwtService,
   ) {}
+
+  getHello(currentUser: User): string {
+    return `hello ${currentUser.firstName} ${currentUser.lastName}`;
+  }
 
   async signup(body: SignupDto): Promise<UserDto> {
     return this.clientProxy
@@ -51,6 +56,22 @@ export class AppService {
         const expiration = process.env.JWT_EXPIRATION;
         return { accessToken, expiration };
       })
+      .catch((err) => {
+        switch (err.status) {
+          case 404:
+            throw new NotFoundException(err.message);
+
+          default:
+            throw new BadRequestException();
+        }
+      });
+  }
+
+  async findById(id: number): Promise<UserDto> {
+    return this.clientProxy
+      .send('find_by_id', id)
+      .toPromise()
+      .then((value: UserDto) => value)
       .catch((err) => {
         switch (err.status) {
           case 404:
