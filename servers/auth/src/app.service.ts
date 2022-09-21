@@ -1,7 +1,7 @@
 import {
   BadRequestException,
   ConflictException,
-  UnauthorizedException,
+  NotFoundException,
   Inject,
   Injectable,
 } from '@nestjs/common';
@@ -42,8 +42,8 @@ export class AppService {
       .then((value: UserDto) => value)
       .catch((err) => {
         switch (err.status) {
-          case 401:
-            throw new UnauthorizedException();
+          case 404:
+            throw new NotFoundException(err.message);
 
           default:
             throw new BadRequestException();
