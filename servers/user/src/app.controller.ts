@@ -2,6 +2,7 @@ import { Controller } from '@nestjs/common';
 import { MessagePattern, Payload } from '@nestjs/microservices';
 import { AppService } from './app.service';
 import { CreateUserDto } from './dtos/create-user.dto';
+import { ResetPasswordDto } from './dtos/reset-password.dto';
 import { UserDto } from './dtos/user-dto';
 import { ValidateUserDto } from './dtos/validate-user.dto';
 
@@ -27,5 +28,10 @@ export class AppController {
   @MessagePattern('find_by_email')
   findByEmail(@Payload() email: string): Promise<UserDto> {
     return this.appService.findByEmail(email);
+  }
+
+  @MessagePattern('reset_password')
+  resetPassword(@Payload() payload: ResetPasswordDto): Promise<UserDto> {
+    return this.appService.resetPassword(payload);
   }
 }

@@ -11,6 +11,7 @@ import { compare, hash } from 'bcrypt';
 import { RpcException } from '@nestjs/microservices';
 import { UserDto } from './dtos/user-dto';
 import { ValidateUserDto } from './dtos/validate-user.dto';
+import { ResetPasswordDto } from './dtos/reset-password.dto';
 
 @Injectable()
 export class AppService {
@@ -60,5 +61,18 @@ export class AppService {
 
   findByEmail(email: string): Promise<UserDto> {
     return this.userRepository.findOne({ where: { email } });
+  }
+
+  async resetPassword(payload: ResetPasswordDto): Promise<UserDto> {
+    const user = await this.findById(payload.userId);
+
+    if (!user)
+      throw new RpcException(
+        new NotFoundException('Cound not found the user.'),
+      );
+
+    user.password = payload.password;
+
+    return this.userRepository.save(user);
   }
 }
