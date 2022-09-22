@@ -19,6 +19,7 @@ Content-Type: application/json
   "password": "123!@#Ss"
 }
 
-
-
 ###
+
+GET http://localhost:3001/auth
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJtb2hhbW1hZC5ub3dyZXNpZGVoMTk5N0BnbWFpbC5jb20iLCJmaXJzdE5hbWUiOiJtb2hhbW1hZCIsImxhc3ROYW1lIjoibm93cmVzaWRlaCIsImlhdCI6MTY2Mzc4NDA4NCwiZXhwIjoxNjYzNzg3Njg0fQ.cM3c0oP9uFhgANPhH5U9asN-vbpM0KkoX5caUZ5jqZE
