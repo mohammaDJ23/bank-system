@@ -23,4 +23,9 @@ export class AppController {
   findById(@Payload() id: number): Promise<UserDto> {
     return this.appService.findById(id);
   }
+
+  @MessagePattern('find_by_email')
+  findByEmail(@Payload() email: string): Promise<UserDto> {
+    return this.appService.findByEmail(email);
+  }
 }
