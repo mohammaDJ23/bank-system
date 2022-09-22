@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { ClientProxy } from '@nestjs/microservices';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -79,6 +79,10 @@ export class AppService {
         .send('find_by_email', body.email)
         .toPromise();
 
+      if (!user) {
+        throw new NotFoundException('Could not found the user.');
+      }
+
       const randomString = randomBytes(32).toString('hex');
       const token = await hash(randomString, 10);
       const expiration = process.env.RESET_PASSWORD_EXPIRATION;
@@ -94,6 +98,8 @@ export class AppService {
         message:
           'Further information has been sent to your email, please check there.',
       };
-    } catch (error) {}
+    } catch (error) {
+      throw error;
+    }
   }
 }

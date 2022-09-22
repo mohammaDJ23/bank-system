@@ -1,8 +1,8 @@
-import { Entity, Column, PrimaryColumn } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()
 export class ResetPassword {
-  @PrimaryColumn()
+  @PrimaryGeneratedColumn()
   id: number;
 
   @Column()
@@ -12,5 +12,5 @@ export class ResetPassword {
   token: string;
 
   @Column()
-  expiration: Date;
+  expiration: string;
 }
