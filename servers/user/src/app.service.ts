@@ -72,7 +72,6 @@ export class AppService {
       );
 
     user.password = payload.password;
-
     return this.userRepository.save(user);
   }
 }
