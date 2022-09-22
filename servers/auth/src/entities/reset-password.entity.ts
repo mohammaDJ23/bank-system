@@ -6,7 +6,7 @@ export class ResetPassword {
   id: number;
 
   @Column()
-  email: string;
+  userId: number;
 
   @Column()
   token: string;

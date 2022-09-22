@@ -23,3 +23,12 @@ Content-Type: application/json
 
 GET http://localhost:3001/auth
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJtb2hhbW1hZC5ub3dyZXNpZGVoMTk5N0BnbWFpbC5jb20iLCJmaXJzdE5hbWUiOiJtb2hhbW1hZCIsImxhc3ROYW1lIjoibm93cmVzaWRlaCIsImlhdCI6MTY2MzgxNDUwNCwiZXhwIjoxNjYzODE4MTA0fQ.0tKQws2J4rKNnE8JWj_NjyR_O0_BDaZBcsh3FSmDKdA
+
+###
+
+POST http://localhost:3001/auth/forgot-password
+Content-Type: application/json
+
+{
+  "email": "mohammad.nowresideh1997@gmail.com"
+}
