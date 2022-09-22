@@ -1,13 +1,9 @@
-import {
-  BadRequestException,
-  ConflictException,
-  NotFoundException,
-  Inject,
-  Injectable,
-} from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { ClientProxy } from '@nestjs/microservices';
 import { LoginDto } from './dtos/login.dto';
+import { MessageDto } from './dtos/message.dto';
+import { ResetPasswordDto } from './dtos/reset-password.dto';
 import { SignupDto } from './dtos/signup.dto';
 import { TokenDto } from './dtos/token.dto';
 import { UserDto } from './dtos/user.dto';
@@ -68,5 +64,9 @@ export class AppService {
     } catch (error) {
       excpetion(error);
     }
+  }
+
+  async resetPassword(body: ResetPasswordDto): Promise<MessageDto> {
+    return Promise.resolve({ message: 'done!' });
   }
 }
