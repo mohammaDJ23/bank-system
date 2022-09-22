@@ -21,13 +21,13 @@ export class AppController {
 
   @Post('signup')
   @Serializer(UserDto)
-  signup(@Body() body: SignupDto): Promise<UserDto | void> {
+  signup(@Body() body: SignupDto): Promise<UserDto> {
     return this.appService.signup(body);
   }
 
   @Post('login')
   @Serializer(TokenDto)
-  login(@Body() body: LoginDto): Promise<TokenDto | void> {
+  login(@Body() body: LoginDto): Promise<TokenDto> {
     return this.appService.login(body);
   }
 }

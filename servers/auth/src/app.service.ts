@@ -21,48 +21,52 @@ export class AppService {
     private readonly jwtService: JwtService,
   ) {}
 
-  private getUser(user: UserDto) {
-    return user;
-  }
-
-  private generateToken(value: UserDto): TokenDto {
-    const userInfo = {
-      id: value.id,
-      email: value.email,
-      firstName: value.firstName,
-      lastName: value.lastName,
-    };
-
-    const accessToken = this.jwtService.sign(userInfo);
-    const expiration = process.env.JWT_EXPIRATION;
-    return { accessToken, expiration };
-  }
-
   getHello(currentUser: User): string {
     return `hello ${currentUser.firstName} ${currentUser.lastName}`;
   }
 
-  async signup(body: SignupDto): Promise<UserDto | void> {
-    return this.clientProxy
-      .send('user_creation', body)
-      .toPromise()
-      .then(this.getUser)
-      .catch(excpetion);
+  async signup(body: SignupDto): Promise<UserDto> {
+    try {
+      const user: UserDto = await this.clientProxy
+        .send('user_creation', body)
+        .toPromise();
+
+      return user;
+    } catch (error) {
+      excpetion(error);
+    }
   }
 
-  async login(body: LoginDto): Promise<TokenDto | void> {
-    return this.clientProxy
-      .send('validate_user', body)
-      .toPromise()
-      .then(this.generateToken)
-      .catch(excpetion);
+  async login(body: LoginDto): Promise<TokenDto> {
+    try {
+      const user: UserDto = await this.clientProxy
+        .send('validate_user', body)
+        .toPromise();
+
+      const userInfo = {
+        id: user.id,
+        email: user.email,
+        firstName: user.firstName,
+        lastName: user.lastName,
+      };
+
+      const accessToken = this.jwtService.sign(userInfo);
+      const expiration = process.env.JWT_EXPIRATION;
+      return { accessToken, expiration };
+    } catch (error) {
+      excpetion(error);
+    }
   }
 
-  async findById(id: number): Promise<UserDto | void> {
-    return this.clientProxy
-      .send('find_by_id', id)
-      .toPromise()
-      .then(this.getUser)
-      .catch(excpetion);
+  async findById(id: number): Promise<UserDto> {
+    try {
+      const user: UserDto = await this.clientProxy
+        .send('find_by_id', id)
+        .toPromise();
+
+      return user;
+    } catch (error) {
+      excpetion(error);
+    }
   }
 }
