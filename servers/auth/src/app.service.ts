@@ -2,6 +2,7 @@ import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { ClientProxy } from '@nestjs/microservices';
 import { InjectRepository } from '@nestjs/typeorm';
+import { MailerService } from '@nestjs-modules/mailer';
 import { Repository } from 'typeorm';
 import { hash } from 'bcrypt';
 import { randomBytes } from 'crypto';
@@ -22,6 +23,7 @@ export class AppService {
     @InjectRepository(ResetPassword)
     private readonly resetPasswordRepository: Repository<ResetPassword>,
     private readonly jwtService: JwtService,
+    private readonly mailerService: MailerService,
   ) {}
 
   getHello(currentUser: User): string {
@@ -83,16 +85,26 @@ export class AppService {
         throw new NotFoundException('Could not found the user.');
       }
 
-      const randomString = randomBytes(32).toString('hex');
-      const token = await hash(randomString, 10);
-      const expiration = process.env.RESET_PASSWORD_EXPIRATION;
-      const userId = user.id;
-      const resetPasswordInfo = { token, expiration, userId };
-
-      const resetPassword =
-        this.resetPasswordRepository.create(resetPasswordInfo);
+      const randomString = randomBytes(32).toString('hex'),
+        token = await hash(randomString, 10),
+        { id: userId, email: userEmail, firstName, lastName } = user,
+        expiration = process.env.RESET_PASSWORD_EXPIRATION,
+        resetPasswordInfo = { token, expiration, userId },
+        resetPassword = this.resetPasswordRepository.create(resetPasswordInfo),
+        mailerOptions = {
+          from: process.env.MAILER_USER,
+          to: userEmail,
+          subject: 'Reset password link',
+          template: './reset-password',
+          context: {
+            firstName,
+            lastName,
+            link: `${process.env.CLIENT_URL}/reset-password?token=${token}`,
+          },
+        };
 
       await this.resetPasswordRepository.save(resetPassword);
+      await this.mailerService.sendMail(mailerOptions);
 
       return {
         message:

@@ -11,6 +11,9 @@ import { JwtStrategy } from './strategies/jwt.strategy';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { CustomNamingStrategy } from './strategies/naming.strategy';
 import { ResetPassword } from './entities/reset-password.entity';
+import { join } from 'path';
+import { MailerModule } from '@nestjs-modules/mailer';
+import { EjsAdapter } from '@nestjs-modules/mailer/dist/adapters/ejs.adapter';
 
 @Module({
   imports: [
@@ -50,6 +53,23 @@ import { ResetPassword } from './entities/reset-password.entity';
     JwtModule.register({
       secret: process.env.JWT_SECRET,
       signOptions: { expiresIn: process.env.JWT_EXPIRATION },
+    }),
+    MailerModule.forRoot({
+      transport: {
+        service: process.env.MAILER_SERVICE,
+        auth: {
+          user: process.env.MAILER_USER,
+          pass: process.env.MAILER_PASSWORD,
+        },
+      },
+      defaults: {},
+      template: {
+        dir: join(__dirname, 'templates'),
+        adapter: new EjsAdapter(),
+        options: {
+          strict: true,
+        },
+      },
     }),
   ],
   controllers: [AppController],
