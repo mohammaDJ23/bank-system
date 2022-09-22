@@ -18,4 +18,9 @@ export class AppController {
   validateUser(@Payload() payload: ValidateUserDto): Promise<UserDto> {
     return this.appService.validateUser(payload);
   }
+
+  @MessagePattern('find_by_id')
+  findById(@Payload() id: number): Promise<UserDto> {
+    return this.appService.findById(id);
+  }
 }
