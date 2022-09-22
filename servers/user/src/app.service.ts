@@ -19,9 +19,7 @@ export class AppService {
   ) {}
 
   async createUser(payload: CreateUserDto): Promise<UserDto> {
-    const user = await this.userRepository.findOne({
-      where: { email: payload.email },
-    });
+    const user = await this.findByEmail(payload.email);
 
     if (user) {
       throw new RpcException(new ConflictException('The user already exist.'));
@@ -41,9 +39,7 @@ export class AppService {
   }
 
   async validateUser(payload: ValidateUserDto): Promise<UserDto> {
-    const user = await this.userRepository.findOne({
-      where: { email: payload.email },
-    });
+    const user = await this.findByEmail(payload.email);
 
     if (!user)
       throw new RpcException(
@@ -60,5 +56,9 @@ export class AppService {
 
   findById(id: number): Promise<UserDto> {
     return this.userRepository.findOne({ where: { id } });
+  }
+
+  findByEmail(email: string): Promise<UserDto> {
+    return this.userRepository.findOne({ where: { email } });
   }
 }
