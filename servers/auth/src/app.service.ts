@@ -148,7 +148,7 @@ export class AppService {
 
       return { message: 'Your password has been changed.' };
     } catch (error) {
-      console.log(error);
+      throw error;
     }
   }
 }
