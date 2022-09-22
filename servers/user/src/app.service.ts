@@ -57,4 +57,8 @@ export class AppService {
 
     return Object.assign(user, { password: payload.password });
   }
+
+  findById(id: number): Promise<UserDto> {
+    return this.userRepository.findOne({ where: { id } });
+  }
 }
