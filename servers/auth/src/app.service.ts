@@ -1,4 +1,9 @@
-import { Inject, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  Inject,
+  Injectable,
+  NotFoundException,
+  BadRequestException,
+} from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { ClientProxy } from '@nestjs/microservices';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -15,6 +20,7 @@ import { UserDto } from './dtos/user.dto';
 import { ResetPassword } from './entities/reset-password.entity';
 import { excpetion } from './libs/exception';
 import { User } from './types/user';
+import { ResetPasswordDto } from './dtos/reset-password.dto';
 
 @Injectable()
 export class AppService {
@@ -88,7 +94,7 @@ export class AppService {
       const randomString = randomBytes(32).toString('hex'),
         token = await hash(randomString, 10),
         { id: userId, email: userEmail, firstName, lastName } = user,
-        expiration = process.env.RESET_PASSWORD_EXPIRATION,
+        expiration = +process.env.RESET_PASSWORD_EXPIRATION,
         resetPasswordInfo = { token, expiration, userId },
         resetPassword = this.resetPasswordRepository.create(resetPasswordInfo),
         mailerOptions = {
@@ -112,6 +118,37 @@ export class AppService {
       };
     } catch (error) {
       throw error;
+    }
+  }
+
+  async resetPassword(body: ResetPasswordDto): Promise<MessageDto> {
+    try {
+      const actualPassword = body.password.toString().toLowerCase(),
+        confirmedPassword = body.confirmedPassword.toString().toLowerCase();
+
+      if (actualPassword !== confirmedPassword)
+        throw new BadRequestException('The passwords are not equal.');
+
+      const resetPassword = await this.resetPasswordRepository.findOne({
+        where: { token: body.token },
+      });
+
+      if (!resetPassword)
+        throw new NotFoundException('Provided invalid token.');
+
+      const isTokenExpired =
+        new Date() > new Date(new Date().getTime() + resetPassword.expiration);
+
+      if (isTokenExpired)
+        throw new BadRequestException('The token used has been expired.');
+
+      await this.clientProxy
+        .send('reset_password', resetPassword.userId)
+        .toPromise();
+
+      return { message: 'Your password has been changed.' };
+    } catch (error) {
+      console.log(error);
     }
   }
 }

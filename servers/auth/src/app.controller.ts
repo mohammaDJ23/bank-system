@@ -10,6 +10,7 @@ import { UserDto } from './dtos/user.dto';
 import { JwtAuthGuard } from './guards/jwt-guard';
 import { Serializer } from './interceptors/serialize.interceptor';
 import { User } from './types/user';
+import { ResetPasswordDto } from './dtos/reset-password.dto';
 
 @Controller('auth')
 export class AppController {
@@ -34,7 +35,14 @@ export class AppController {
   }
 
   @Post('forgot-password')
+  @Serializer(MessageDto)
   forgotPassword(@Body() body: ForgotPasswordDto): Promise<MessageDto> {
     return this.appService.forgotPassword(body);
+  }
+
+  @Post('reset-password')
+  @Serializer(MessageDto)
+  resetPassword(@Body() body: ResetPasswordDto): Promise<MessageDto> {
+    return this.appService.resetPassword(body);
   }
 }

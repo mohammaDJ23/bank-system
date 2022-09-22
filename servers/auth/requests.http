@@ -32,3 +32,14 @@ Content-Type: application/json
 {
   "email": "mohammad.nowresideh1997@gmail.com"
 }
+
+###
+
+POST http://localhost:3001/auth/reset-password
+Content-Type: application/json
+
+{
+  "password": "123!@#Ss",
+  "confirmedPassword": "123!@#Ss",
+  "token": "$2b$10$QFyVGmURKe95cya2HwCdg.mLkHthh/nKq2CQkguloeSfNLDnWIvtK"
+}
