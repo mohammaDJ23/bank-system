@@ -143,7 +143,10 @@ export class AppService {
         throw new BadRequestException('The token used has been expired.');
 
       await this.clientProxy
-        .send('reset_password', resetPassword.userId)
+        .send('reset_password', {
+          userId: resetPassword.userId,
+          password: body.password,
+        })
         .toPromise();
 
       return { message: 'Your password has been changed.' };

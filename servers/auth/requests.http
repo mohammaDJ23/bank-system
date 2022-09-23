@@ -39,7 +39,7 @@ POST http://localhost:3001/auth/reset-password
 Content-Type: application/json
 
 {
-  "password": "123!@#Ss",
-  "confirmedPassword": "123!@#Ss",
-  "token": "$2b$10$QFyVGmURKe95cya2HwCdg.mLkHthh/nKq2CQkguloeSfNLDnWIvtK"
+  "password": "123!@#Sss",
+  "confirmedPassword": "123!@#Sss",
+  "token": "$2b$10$951irb5cM6jPUdkAoVdWq.2BELmDL6Jq7DuNvTWmgp7AbkuQZvPFO"
 }
