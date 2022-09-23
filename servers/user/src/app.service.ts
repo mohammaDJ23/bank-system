@@ -20,23 +20,14 @@ export class AppService {
   ) {}
 
   async createUser(payload: CreateUserDto): Promise<UserDto> {
-    const user = await this.findByEmail(payload.email);
+    let user = await this.findByEmail(payload.email);
 
-    if (user) {
+    if (user)
       throw new RpcException(new ConflictException('The user already exist.'));
-    }
 
-    const hashedPassword = await hash(payload.password, 10);
-
-    const createdUser = this.userRepository.create({
-      firstName: payload.firstName,
-      lastName: payload.lastName,
-      email: payload.email,
-      password: hashedPassword,
-      phone: payload.phone,
-    });
-
-    return this.userRepository.save(createdUser);
+    payload.password = await hash(payload.password, 10);
+    user = this.userRepository.create(payload);
+    return this.userRepository.save(user);
   }
 
   async validateUser(payload: ValidateUserDto): Promise<UserDto> {
@@ -71,8 +62,7 @@ export class AppService {
         new NotFoundException('Cound not found the user.'),
       );
 
-    const hashedPassword = await hash(payload.password, 10);
-    user.password = hashedPassword;
+    user.password = await hash(payload.password, 10);
     return this.userRepository.save(user);
   }
 }
