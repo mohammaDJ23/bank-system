@@ -8,9 +8,9 @@ export class ResetPassword {
   @Column()
   userId: number;
 
-  @Column()
+  @Column({ unique: true })
   token: string;
 
   @Column()
-  expiration: string;
+  expiration: number;
 }
