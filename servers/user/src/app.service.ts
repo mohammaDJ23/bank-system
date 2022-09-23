@@ -71,7 +71,8 @@ export class AppService {
         new NotFoundException('Cound not found the user.'),
       );
 
-    user.password = payload.password;
+    const hashedPassword = await hash(payload.password, 10);
+    user.password = hashedPassword;
     return this.userRepository.save(user);
   }
 }
