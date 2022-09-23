@@ -41,5 +41,5 @@ Content-Type: application/json
 {
   "password": "123!@#Sss",
   "confirmedPassword": "123!@#Sss",
-  "token": "$2b$10$951irb5cM6jPUdkAoVdWq.2BELmDL6Jq7DuNvTWmgp7AbkuQZvPFO"
+  "token": "$2b$10$yR4YGGhy4QWaULNX7p.0ye8OdHKv/SuBdaRB10heE9u3OPL/wPWIy"
 }
