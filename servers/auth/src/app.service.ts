@@ -62,7 +62,7 @@ export class AppService {
       };
 
       const accessToken = this.jwtService.sign(userInfo);
-      const expiration = process.env.JWT_EXPIRATION;
+      const expiration = +process.env.JWT_EXPIRATION;
       return { accessToken, expiration };
     } catch (error) {
       excpetion(error);
@@ -94,7 +94,9 @@ export class AppService {
       const randomString = randomBytes(32).toString('hex'),
         token = await hash(randomString, 10),
         { id: userId, email: userEmail, firstName, lastName } = user,
-        expiration = +process.env.RESET_PASSWORD_EXPIRATION,
+        expiration = new Date(
+          new Date().getTime() + +process.env.RESET_PASSWORD_EXPIRATION,
+        ),
         resetPasswordInfo = { token, expiration, userId },
         resetPassword = this.resetPasswordRepository.create(resetPasswordInfo),
         mailerOptions = {
@@ -136,8 +138,7 @@ export class AppService {
       if (!resetPassword)
         throw new NotFoundException('Provided invalid token.');
 
-      const isTokenExpired =
-        new Date() > new Date(new Date().getTime() + resetPassword.expiration);
+      const isTokenExpired = new Date() > new Date(resetPassword.expiration);
 
       if (isTokenExpired)
         throw new BadRequestException('The token used has been expired.');
@@ -148,6 +149,8 @@ export class AppService {
           password: body.password,
         })
         .toPromise();
+
+      await this.resetPasswordRepository.remove(resetPassword);
 
       return { message: 'Your password has been changed.' };
     } catch (error) {

@@ -12,5 +12,5 @@ export class ResetPassword {
   token: string;
 
   @Column()
-  expiration: number;
+  expiration: Date;
 }
