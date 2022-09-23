@@ -35,6 +35,9 @@ export class AllExceptionsFilter implements ExceptionFilter {
   }
 
   private getExceptionInfo(exception: any) {
+    if (process.env.NODE_ENV === 'development')
+      console.log(exception, exception.constructor.name);
+
     let isHttpException = exception instanceof HttpException,
       isRpcException =
         exception instanceof Object && Reflect.has(exception, 'response'),
