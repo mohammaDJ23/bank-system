@@ -9,7 +9,7 @@ import { ClientProxy } from '@nestjs/microservices';
 import { InjectRepository } from '@nestjs/typeorm';
 import { MailerService } from '@nestjs-modules/mailer';
 import { Repository } from 'typeorm';
-import { hash } from 'bcrypt';
+import { hash, compare } from 'bcrypt';
 import { randomBytes } from 'crypto';
 import { LoginDto } from './dtos/login.dto';
 import { MessageDto } from './dtos/message.dto';
@@ -36,13 +36,18 @@ export class AppService {
   }
 
   async signup(body: SignupDto): Promise<UserDto> {
-    return this.clientProxy.send('user_creation', body).toPromise();
+    return this.clientProxy.send('create_user', body).toPromise();
   }
 
   async login(body: LoginDto): Promise<TokenDto> {
     const user: UserDto = await this.clientProxy
-      .send('validate_user', body)
+      .send('find_user_by_email', body.email)
       .toPromise();
+
+    const isPasswordsEqual = await compare(body.password, user.password);
+
+    if (!isPasswordsEqual)
+      throw new NotFoundException(`The password is wrong.`);
 
     const userInfo = {
       id: user.id,
@@ -57,12 +62,12 @@ export class AppService {
   }
 
   async findById(id: number): Promise<UserDto> {
-    return this.clientProxy.send('find_by_id', id).toPromise();
+    return this.clientProxy.send('find_user_by_id', id).toPromise();
   }
 
   async forgotPassword(body: ForgotPasswordDto): Promise<MessageDto> {
     const user: UserDto = await this.clientProxy
-      .send('find_by_email', body.email)
+      .send('find_user_by_email', body.email)
       .toPromise();
 
     if (!user) throw new NotFoundException('Could not found the user.');
@@ -114,13 +119,12 @@ export class AppService {
     if (isTokenExpired)
       throw new BadRequestException('The token used has been expired.');
 
-    await this.clientProxy
-      .send('reset_password', {
-        userId: resetPassword.userId,
-        password: body.password,
-      })
+    const user = await this.clientProxy
+      .send<UserDto>('find_user_by_id', resetPassword.userId)
       .toPromise();
 
+    user.password = await hash(body.password, 10);
+    await this.clientProxy.send('update_user', user).toPromise();
     await this.resetPasswordRepository.remove(resetPassword);
     return { message: 'Your password has been changed.' };
   }

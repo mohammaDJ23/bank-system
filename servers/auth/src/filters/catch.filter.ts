@@ -38,6 +38,7 @@ export class AllExceptionsFilter implements ExceptionFilter {
     let isHttpException = exception instanceof HttpException,
       isRpcException =
         exception instanceof Object && Reflect.has(exception, 'response'),
+      isStringException = typeof exception === 'string',
       message = MESSAGES.UNKNOWN_EXCEPTION_MESSAGE,
       statusCode = HttpStatus.INTERNAL_SERVER_ERROR;
 
@@ -53,6 +54,11 @@ export class AllExceptionsFilter implements ExceptionFilter {
         const response: Exception = exception.response;
         message = this.getMessage(response);
         statusCode = this.getStatusCode(response);
+        break;
+      }
+
+      case isStringException: {
+        message = exception;
         break;
       }
     }
