@@ -128,4 +128,14 @@ export class AppService {
     await this.resetPasswordRepository.remove(resetPassword);
     return { message: 'Your password has been changed.' };
   }
+
+  async removeResetPasswordTokens() {
+    try {
+      await this.resetPasswordRepository
+        .createQueryBuilder('reset_password')
+        .delete()
+        .where('reset_password.expiration < :now', { now: new Date() })
+        .execute();
+    } catch (error) {}
+  }
 }

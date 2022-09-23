@@ -11,6 +11,7 @@ import { JwtAuthGuard } from './guards/jwt-guard';
 import { Serializer } from './interceptors/serialize.interceptor';
 import { User } from './types/user';
 import { ResetPasswordDto } from './dtos/reset-password.dto';
+import { Cron, CronExpression } from '@nestjs/schedule';
 
 @Controller('auth')
 export class AppController {
@@ -44,5 +45,10 @@ export class AppController {
   @Serializer(MessageDto)
   resetPassword(@Body() body: ResetPasswordDto): Promise<MessageDto> {
     return this.appService.resetPassword(body);
+  }
+
+  @Cron(CronExpression.EVERY_5_HOURS)
+  removeResetPasswordTokens() {
+    this.appService.removeResetPasswordTokens();
   }
 }
