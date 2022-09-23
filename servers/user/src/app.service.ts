@@ -55,7 +55,7 @@ export class AppService {
     return this.userRepository.remove(user);
   }
 
-  async get(id: number): Promise<UserDto> {
+  async findById(id: number): Promise<UserDto> {
     const user = await this.userRepository.findOneBy({ id });
 
     if (!user)
@@ -66,7 +66,18 @@ export class AppService {
     return user;
   }
 
-  async getAll(payload: GetAllDto): Promise<[UserDto[], number]> {
+  async findByEmail(email: string): Promise<UserDto> {
+    const user = await this.userRepository.findOneBy({ email });
+
+    if (!user)
+      throw new RpcException(
+        new NotFoundException('Could not found the user.'),
+      );
+
+    return user;
+  }
+
+  async findAll(payload: GetAllDto): Promise<[UserDto[], number]> {
     return this.userRepository.findAndCount({
       take: payload.take,
       skip: payload.skip,
