@@ -1,18 +1,9 @@
-import {
-  ConflictException,
-  NotFoundException,
-  BadRequestException,
-} from '@nestjs/common';
+import { RpcException } from '@nestjs/microservices';
 
 export function excpetion(error: any) {
-  switch (error.statusCode) {
-    case 409:
-      throw new ConflictException(error.message);
-
-    case 404:
-      throw new NotFoundException(error.message);
-
-    default:
-      throw new BadRequestException(error.message || error);
+  if (error instanceof Object && error.response) {
+    throw new RpcException(error);
   }
+
+  throw error;
 }
