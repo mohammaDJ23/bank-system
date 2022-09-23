@@ -62,7 +62,7 @@ export class AppService {
       };
 
       const accessToken = this.jwtService.sign(userInfo);
-      const expiration = process.env.JWT_EXPIRATION;
+      const expiration = +process.env.JWT_EXPIRATION;
       return { accessToken, expiration };
     } catch (error) {
       excpetion(error);

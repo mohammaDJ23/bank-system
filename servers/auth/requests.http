@@ -16,13 +16,13 @@ Content-Type: application/json
 
 {
   "email": "mohammad.nowresideh1997@gmail.com",
-  "password": "123!@#Ss"
+  "password": "123!@#Sss"
 }
 
 ###
 
 GET http://localhost:3001/auth
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJtb2hhbW1hZC5ub3dyZXNpZGVoMTk5N0BnbWFpbC5jb20iLCJmaXJzdE5hbWUiOiJtb2hhbW1hZCIsImxhc3ROYW1lIjoibm93cmVzaWRlaCIsImlhdCI6MTY2MzgxNDUwNCwiZXhwIjoxNjYzODE4MTA0fQ.0tKQws2J4rKNnE8JWj_NjyR_O0_BDaZBcsh3FSmDKdA
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJtb2hhbW1hZC5ub3dyZXNpZGVoMTk5N0BnbWFpbC5jb20iLCJmaXJzdE5hbWUiOiJtb2hhbW1hZCIsImxhc3ROYW1lIjoibm93cmVzaWRlaCIsImlhdCI6MTY2MzkyNzg4NiwiZXhwIjoxNjYzOTI3OTQ2fQ.NUe4Ott2Lajypbjw0Nc0ve5DL9tkDUsfMT0vKJbvT1s
 
 ###
 
@@ -41,5 +41,5 @@ Content-Type: application/json
 {
   "password": "123!@#Sss",
   "confirmedPassword": "123!@#Sss",
-  "token": "$2b$10$yR4YGGhy4QWaULNX7p.0ye8OdHKv/SuBdaRB10heE9u3OPL/wPWIy"
+  "token": "$2b$10$X9z/kMOBWOrLCnrGcd9Iw.LI7jVDM4bRna8pMDhzgAjGXV1jdLW9K"
 }

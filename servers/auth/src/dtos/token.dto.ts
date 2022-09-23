@@ -5,5 +5,5 @@ export class TokenDto {
   accessToken: string;
 
   @Expose()
-  expiration: string;
+  expiration: number;
 }
