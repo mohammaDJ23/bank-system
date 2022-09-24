@@ -2,36 +2,36 @@ import { Controller } from '@nestjs/common';
 import { MessagePattern, Payload } from '@nestjs/microservices';
 import { AppService } from './app.service';
 import { CreateUserDto } from './dtos/create-user.dto';
-import { ResetPasswordDto } from './dtos/reset-password.dto';
+import { GetAllDto } from './dtos/get-all.dto';
+import { UpdateUserDto } from './dtos/update-user.dto';
 import { UserDto } from './dtos/user-dto';
-import { ValidateUserDto } from './dtos/validate-user.dto';
 
 @Controller()
 export class AppController {
   constructor(private readonly appService: AppService) {}
 
-  @MessagePattern('user_creation')
-  createUser(@Payload() payload: CreateUserDto): Promise<UserDto> {
-    return this.appService.createUser(payload);
+  @MessagePattern('create_user')
+  create(@Payload() payload: CreateUserDto): Promise<UserDto> {
+    return this.appService.create(payload);
   }
 
-  @MessagePattern('validate_user')
-  validateUser(@Payload() payload: ValidateUserDto): Promise<UserDto> {
-    return this.appService.validateUser(payload);
+  @MessagePattern('update_user')
+  update(@Payload() Payload: UpdateUserDto): Promise<UserDto> {
+    return this.appService.update(Payload);
   }
 
-  @MessagePattern('find_by_id')
-  findById(@Payload() id: number): Promise<UserDto> {
-    return this.appService.findById(id);
+  @MessagePattern('remove_user')
+  remove(@Payload() id: number): Promise<UserDto> {
+    return this.appService.remove(id);
   }
 
-  @MessagePattern('find_by_email')
-  findByEmail(@Payload() email: string): Promise<UserDto> {
-    return this.appService.findByEmail(email);
+  @MessagePattern('get_user')
+  get(@Payload() id: number): Promise<UserDto> {
+    return this.appService.get(id);
   }
 
-  @MessagePattern('reset_password')
-  resetPassword(@Payload() payload: ResetPasswordDto): Promise<UserDto> {
-    return this.appService.resetPassword(payload);
+  @MessagePattern('get_users')
+  getAll(@Payload() payload: GetAllDto): Promise<[UserDto[], number]> {
+    return this.appService.getAll(payload);
   }
 }
