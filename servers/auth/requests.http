@@ -16,7 +16,7 @@ Content-Type: application/json
 
 {
   "email": "mohammad.nowresideh1997@gmail.com",
-  "password": "123!@#Sss"
+  "password": "123!@#Ss"
 }
 
 ###
@@ -42,4 +42,13 @@ Content-Type: application/json
   "password": "123!@#Sss",
   "confirmedPassword": "123!@#Sss",
   "token": "$2b$10$cmg8pc1IeFS9rPFpKpPbDu.xwMJD8KuRasksVh2LqNBCkTGScg1n2"
+}
+
+###
+
+POST http://localhost:3001/auth/delete-account
+Content-Type: application/json
+
+{
+  "id": 3
 }
