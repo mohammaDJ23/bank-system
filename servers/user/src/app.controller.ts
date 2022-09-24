@@ -1,4 +1,4 @@
-import { Controller } from '@nestjs/common';
+import { Controller, Get } from '@nestjs/common';
 import { MessagePattern, Payload } from '@nestjs/microservices';
 import { AppService } from './app.service';
 import { CreateUserDto } from './dtos/create-user.dto';
@@ -6,9 +6,14 @@ import { GetAllDto } from './dtos/get-all.dto';
 import { UpdateUserDto } from './dtos/update-user.dto';
 import { UserDto } from './dtos/user-dto';
 
-@Controller()
+@Controller('user')
 export class AppController {
   constructor(private readonly appService: AppService) {}
+
+  @Get()
+  whoAmI(): string {
+    return this.appService.whoAmI();
+  }
 
   @MessagePattern('create_user')
   create(@Payload() payload: CreateUserDto): Promise<UserDto> {
