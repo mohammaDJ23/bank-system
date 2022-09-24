@@ -50,5 +50,5 @@ POST http://localhost:3001/auth/delete-account
 Content-Type: application/json
 
 {
-  "id": 2
+  "id": 3
 }

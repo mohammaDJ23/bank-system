@@ -11,14 +11,14 @@
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "nest start",
     "start:dev": "env-cmd -f .env.development nest start --watch",
-    "start:debug": "env-cmd -f .env.production nest start --debug --watch",
+    "start:debug": "env-cmd -f .env.development nest start --debug --watch",
     "start:prod": "NODE_ENV=production node dist/main",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
-    "test": "jest",
-    "test:watch": "jest --watch",
-    "test:cov": "jest --coverage",
-    "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
-    "test:e2e": "env-cmd -f .env.development jest --config ./test/jest-e2e.json"
+    "test": "env-cmd -f .env.development jest",
+    "test:watch": "env-cmd -f .env.development jest --watch",
+    "test:cov": "env-cmd -f .env.development jest --coverage",
+    "test:debug": "env-cmd -f .env.development node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
+    "test:e2e": "env-cmd -f .env.development jest --config ./test/jest-e2e.json --maxWorkers=1"
   },
   "dependencies": {
     "@nestjs-modules/mailer": "^1.8.1",
