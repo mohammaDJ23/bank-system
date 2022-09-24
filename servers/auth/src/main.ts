@@ -1,7 +1,6 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { Transport, MicroserviceOptions } from '@nestjs/microservices';
-import { ValidationPipe } from '@nestjs/common';
 
 require('dotenv').config();
 
@@ -19,10 +18,6 @@ async function bootstrap() {
       noAck: false,
     },
   });
-
-  app.useGlobalPipes(
-    new ValidationPipe({ whitelist: true, validateCustomDecorators: true }),
-  );
 
   // becuase of some error about rabbitmq i have been forced to remove it:
   // await app.startAllMicroservices();

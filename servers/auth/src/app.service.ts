@@ -18,7 +18,6 @@ import { SignupDto } from './dtos/signup.dto';
 import { TokenDto } from './dtos/token.dto';
 import { UserDto } from './dtos/user.dto';
 import { ResetPassword } from './entities/reset-password.entity';
-import { User } from './types/user';
 import { ResetPasswordDto } from './dtos/reset-password.dto';
 
 @Injectable()
@@ -30,10 +29,6 @@ export class AppService {
     private readonly jwtService: JwtService,
     private readonly mailerService: MailerService,
   ) {}
-
-  getHello(currentUser: User): string {
-    return `hello ${currentUser.firstName} ${currentUser.lastName}`;
-  }
 
   async signup(body: SignupDto): Promise<UserDto> {
     return this.clientProxy.send('create_user', body).toPromise();
@@ -127,5 +122,15 @@ export class AppService {
     await this.clientProxy.send('update_user', user).toPromise();
     await this.resetPasswordRepository.remove(resetPassword);
     return { message: 'Your password has been changed.' };
+  }
+
+  async removeResetPasswordTokens() {
+    try {
+      await this.resetPasswordRepository
+        .createQueryBuilder('reset_password')
+        .delete()
+        .where('reset_password.expiration < :now', { now: new Date() })
+        .execute();
+    } catch (error) {}
   }
 }
