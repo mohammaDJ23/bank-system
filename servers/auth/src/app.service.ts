@@ -32,12 +32,14 @@ export class AppService {
   ) {}
 
   async signup(body: SignupDto): Promise<UserDto> {
-    return this.clientProxy.send('create_user', body).toPromise();
+    return this.clientProxy
+      .send<UserDto, SignupDto>('create_user', body)
+      .toPromise();
   }
 
   async login(body: LoginDto): Promise<TokenDto> {
-    const user: UserDto = await this.clientProxy
-      .send('find_user_by_email', body.email)
+    const user = await this.clientProxy
+      .send<UserDto, string>('find_user_by_email', body.email)
       .toPromise();
 
     const isPasswordsEqual = await compare(body.password, user.password);
@@ -58,12 +60,14 @@ export class AppService {
   }
 
   async findById(id: number): Promise<UserDto> {
-    return this.clientProxy.send('find_user_by_id', id).toPromise();
+    return this.clientProxy
+      .send<UserDto, number>('find_user_by_id', id)
+      .toPromise();
   }
 
   async forgotPassword(body: ForgotPasswordDto): Promise<MessageDto> {
-    const user: UserDto = await this.clientProxy
-      .send('find_user_by_email', body.email)
+    const user = await this.clientProxy
+      .send<UserDto, string>('find_user_by_email', body.email)
       .toPromise();
 
     if (!user) throw new NotFoundException('Could not found the user.');
@@ -116,11 +120,15 @@ export class AppService {
       throw new BadRequestException('The token used has been expired.');
 
     const user = await this.clientProxy
-      .send<UserDto>('find_user_by_id', resetPassword.userId)
+      .send<UserDto, number>('find_user_by_id', resetPassword.userId)
       .toPromise();
 
     user.password = await hash(body.password, 10);
-    await this.clientProxy.send('update_user', user).toPromise();
+
+    await this.clientProxy
+      .send<UserDto, UserDto>('update_user', user)
+      .toPromise();
+
     await this.resetPasswordRepository.remove(resetPassword);
     return { message: 'Your password has been changed.' };
   }
@@ -136,6 +144,8 @@ export class AppService {
   }
 
   deleteAccount(body: DeleteAccountDto): Promise<UserDto> {
-    return this.clientProxy.send('remove_user', body.id).toPromise();
+    return this.clientProxy
+      .send<UserDto, number>('remove_user', body.id)
+      .toPromise();
   }
 }
