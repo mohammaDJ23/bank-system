@@ -4,6 +4,7 @@ import * as request from 'supertest';
 import { AppModule } from './../src/app.module';
 import { UserDto } from 'src/dtos/user.dto';
 import { TokenDto } from 'src/dtos/token.dto';
+import { MessageDto } from 'src/dtos/message.dto';
 
 require('dotenv').config();
 
@@ -69,5 +70,27 @@ describe('Authentication system', () => {
         const body: TokenDto = res.body;
         expect(body.accessToken).toBeDefined();
       });
+  });
+
+  it('forgot password => /auth/forgot-password (POST)', () => {
+    return request(app.getHttpServer())
+      .post('/auth/forgot-password')
+      .send({ email: newUser.email })
+      .expect(201)
+      .then((res) => {
+        const body: MessageDto = res.body;
+        expect(body.message).toBeDefined();
+      });
+  });
+
+  it('reset password => /auth/reset-password (POST)', () => {
+    return request(app.getHttpServer())
+      .post('/auth/reset-password')
+      .send({
+        password: newUser.password,
+        confirmedPassword: newUser.password,
+        token: '$2b$10$cmg8pc1IeFS9rPFpKpPbDu.xwMJD8KuRasksVh2LqNBCkTGScg1n2',
+      })
+      .expect(404);
   });
 });
