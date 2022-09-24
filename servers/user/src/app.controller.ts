@@ -25,13 +25,18 @@ export class AppController {
     return this.appService.remove(id);
   }
 
-  @MessagePattern('get_user')
-  get(@Payload() id: number): Promise<UserDto> {
-    return this.appService.get(id);
+  @MessagePattern('find_user_by_id')
+  findById(@Payload() id: number): Promise<UserDto> {
+    return this.appService.findById(id);
   }
 
-  @MessagePattern('get_users')
-  getAll(@Payload() payload: GetAllDto): Promise<[UserDto[], number]> {
-    return this.appService.getAll(payload);
+  @MessagePattern('find_user_by_email')
+  findByEmail(@Payload() email: string): Promise<UserDto> {
+    return this.appService.findByEmail(email);
+  }
+
+  @MessagePattern('find_users')
+  findAll(@Payload() payload: GetAllDto): Promise<[UserDto[], number]> {
+    return this.appService.findAll(payload);
   }
 }
