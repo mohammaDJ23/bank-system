@@ -9,6 +9,7 @@ import { UserDto } from './dtos/user.dto';
 import { Serializer } from './interceptors/serialize.interceptor';
 import { ResetPasswordDto } from './dtos/reset-password.dto';
 import { Cron, CronExpression } from '@nestjs/schedule';
+import { DeleteAccountDto } from './dtos/delete-account.dto';
 
 @Controller('auth')
 export class AppController {
@@ -24,6 +25,12 @@ export class AppController {
   @Serializer(TokenDto)
   login(@Body() body: LoginDto): Promise<TokenDto> {
     return this.appService.login(body);
+  }
+
+  @Post('delete-account')
+  @Serializer(UserDto)
+  deleteAcount(@Body() body: DeleteAccountDto): Promise<UserDto> {
+    return this.appService.deleteAccount(body);
   }
 
   @Post('forgot-password')

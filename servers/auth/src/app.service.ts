@@ -19,6 +19,7 @@ import { TokenDto } from './dtos/token.dto';
 import { UserDto } from './dtos/user.dto';
 import { ResetPassword } from './entities/reset-password.entity';
 import { ResetPasswordDto } from './dtos/reset-password.dto';
+import { DeleteAccountDto } from './dtos/delete-account.dto';
 
 @Injectable()
 export class AppService {
@@ -132,5 +133,9 @@ export class AppService {
         .where('reset_password.expiration < :now', { now: new Date() })
         .execute();
     } catch (error) {}
+  }
+
+  deleteAccount(body: DeleteAccountDto): Promise<UserDto> {
+    return this.clientProxy.send('remove_user', body.id).toPromise();
   }
 }
