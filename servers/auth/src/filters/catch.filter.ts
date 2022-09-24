@@ -7,36 +7,56 @@ import {
 } from '@nestjs/common';
 import { HttpAdapterHost } from '@nestjs/core';
 import { MESSAGES } from '@nestjs/core/constants';
+import { Exception } from 'src/types/exception';
 
 @Catch()
 export class AllExceptionsFilter implements ExceptionFilter {
   constructor(private readonly httpAdapterHost: HttpAdapterHost) {}
 
   catch(exception: unknown, host: ArgumentsHost): void {
-    const { httpAdapter } = this.httpAdapterHost;
-    const ctx = host.switchToHttp();
-    const isHttpException = exception instanceof HttpException;
-
-    const statusCode = isHttpException
-      ? exception.getStatus()
-      : HttpStatus.INTERNAL_SERVER_ERROR;
-
-    const message = isHttpException
-      ? this.getMessage(exception)
-      : MESSAGES.UNKNOWN_EXCEPTION_MESSAGE;
-
-    const timestamp = new Date().toISOString();
-    const path = httpAdapter.getRequestUrl(ctx.getRequest());
-    const responseBody = { statusCode, message, timestamp, path };
+    const { httpAdapter } = this.httpAdapterHost,
+      ctx = host.switchToHttp(),
+      { statusCode, message } = this.getExceptionInfo(exception),
+      timestamp = new Date().toISOString(),
+      path = httpAdapter.getRequestUrl(ctx.getRequest()),
+      responseBody = { statusCode, message, timestamp, path };
 
     httpAdapter.reply(ctx.getResponse(), responseBody, statusCode);
   }
 
-  private getMessage(exception: HttpException) {
-    const response = exception.getResponse();
+  private getMessage(exception: Exception) {
+    return exception instanceof Object ? exception.message : exception;
+  }
 
-    return response instanceof Object
-      ? (response as HttpException).message
-      : response;
+  private getStatusCode(exception: Exception) {
+    return exception instanceof Object
+      ? exception.statusCode
+      : HttpStatus.INTERNAL_SERVER_ERROR;
+  }
+
+  private getExceptionInfo(exception: any) {
+    let isHttpException = exception instanceof HttpException,
+      isRpcException =
+        exception instanceof Object && Reflect.has(exception, 'response'),
+      message = MESSAGES.UNKNOWN_EXCEPTION_MESSAGE,
+      statusCode = HttpStatus.INTERNAL_SERVER_ERROR;
+
+    switch (true) {
+      case isHttpException: {
+        const response: Exception = exception.getResponse();
+        message = this.getMessage(response);
+        statusCode = this.getStatusCode(response);
+        break;
+      }
+
+      case isRpcException: {
+        const response: Exception = exception.response;
+        message = this.getMessage(response);
+        statusCode = this.getStatusCode(response);
+        break;
+      }
+    }
+
+    return { message, statusCode };
   }
 }
