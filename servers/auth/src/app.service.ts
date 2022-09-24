@@ -31,6 +31,10 @@ export class AppService {
     private readonly mailerService: MailerService,
   ) {}
 
+  whoAmI(): string {
+    return 'hello!';
+  }
+
   async signup(body: SignupDto): Promise<UserDto> {
     return this.clientProxy
       .send<UserDto, SignupDto>('create_user', body)
