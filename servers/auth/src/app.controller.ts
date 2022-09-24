@@ -1,4 +1,4 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, Post, Delete } from '@nestjs/common';
 import { AppService } from './app.service';
 import { LoginDto } from './dtos/login.dto';
 import { MessageDto } from './dtos/message.dto';
@@ -27,7 +27,7 @@ export class AppController {
     return this.appService.login(body);
   }
 
-  @Post('delete-account')
+  @Delete('delete-account')
   @Serializer(UserDto)
   deleteAcount(@Body() body: DeleteAccountDto): Promise<UserDto> {
     return this.appService.deleteAccount(body);
