@@ -19,6 +19,10 @@ export class AppService {
     @InjectRepository(User) private readonly userRepository: Repository<User>,
   ) {}
 
+  whoAmI(): string {
+    return 'hello!';
+  }
+
   async create(payload: CreateUserDto): Promise<UserDto> {
     let user = await this.userRepository.findOneBy({ email: payload.email });
 
