@@ -18,7 +18,7 @@ describe('Authentication system', () => {
     await app.init();
   });
 
-  it('signup test => /auth/signup (POST)', () => {
+  describe('signup', () => {
     const newUser = {
       firstName: 'mohammad',
       lastName: 'nowresideh',
@@ -27,17 +27,19 @@ describe('Authentication system', () => {
       phone: '+989174163042',
     };
 
-    return request(app.getHttpServer())
-      .post('/auth/signup')
-      .send(newUser)
-      .expect(201)
-      .then((res) => {
-        const body: UserDto = res.body;
-        expect(body.firstName).toEqual(newUser.firstName);
-        expect(body.lastName).toEqual(newUser.lastName);
-        expect(body.email).toEqual(newUser.email);
-        expect(body.phone).toEqual(newUser.phone);
-        expect(body.password).toBeUndefined();
-      });
+    it('create a new user => /auth/signup (POST)', () => {
+      return request(app.getHttpServer())
+        .post('/auth/signup')
+        .send(newUser)
+        .expect(201)
+        .then((res) => {
+          const body: UserDto = res.body;
+          expect(body.firstName).toEqual(newUser.firstName);
+          expect(body.lastName).toEqual(newUser.lastName);
+          expect(body.email).toEqual(newUser.email);
+          expect(body.phone).toEqual(newUser.phone);
+          expect(body.password).toBeUndefined();
+        });
+    });
   });
 });
