@@ -15,16 +15,17 @@ import { join } from 'path';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { EjsAdapter } from '@nestjs-modules/mailer/dist/adapters/ejs.adapter';
 import { ScheduleModule } from '@nestjs/schedule';
+import { RabbitMqQueue, RabbitMqServices } from './types/rabbitmq';
 
 @Module({
   imports: [
     ClientsModule.register([
       {
-        name: 'AUTH_SERVICE',
+        name: RabbitMqServices.AUTH,
         transport: Transport.RMQ,
         options: {
           urls: [process.env.RABBITMQ_URL],
-          queue: process.env.RABBITMQ_USER_QUEUE,
+          queue: RabbitMqQueue.USER,
           queueOptions: {
             durable: true,
           },

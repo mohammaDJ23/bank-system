@@ -1,6 +1,7 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { Transport, MicroserviceOptions } from '@nestjs/microservices';
+import { RabbitMqQueue } from './types/rabbitmq';
 
 require('dotenv').config();
 
@@ -11,7 +12,7 @@ async function bootstrap() {
     transport: Transport.RMQ,
     options: {
       urls: [process.env.RABBITMQ_URL],
-      queue: process.env.RABBITMQ_AUTH_QUEUE,
+      queue: RabbitMqQueue.AUTH,
       queueOptions: {
         durable: true,
       },
