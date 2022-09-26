@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
-import { ClientsModule, Transport } from '@nestjs/microservices';
+import { ClientsModule } from '@nestjs/microservices';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
@@ -9,20 +9,7 @@ import { CustomNamingStrategy } from './strategies/naming.strategy';
 
 @Module({
   imports: [
-    ClientsModule.register([
-      {
-        name: 'USER_SERVICE',
-        transport: Transport.RMQ,
-        options: {
-          urls: [process.env.RABBITMQ_URL],
-          queue: process.env.RABBITMQ_QUEUE,
-          queueOptions: {
-            durable: true,
-          },
-          noAck: true,
-        },
-      },
-    ]),
+    ClientsModule.register([]),
     TypeOrmModule.forRootAsync({
       useFactory: () => ({
         type: 'postgres',
