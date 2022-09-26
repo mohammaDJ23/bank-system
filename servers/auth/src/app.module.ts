@@ -24,7 +24,7 @@ import { ScheduleModule } from '@nestjs/schedule';
         transport: Transport.RMQ,
         options: {
           urls: [process.env.RABBITMQ_URL],
-          queue: process.env.RABBITMQ_QUEUE,
+          queue: process.env.RABBITMQ_USER_QUEUE,
           queueOptions: {
             durable: true,
           },
