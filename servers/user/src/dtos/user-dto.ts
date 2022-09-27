@@ -13,7 +13,7 @@ export class UserDto {
   @Expose()
   email: string;
 
-  @Expose()
+  @Exclude()
   password: string;
 
   @Expose()

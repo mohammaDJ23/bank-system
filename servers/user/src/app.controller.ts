@@ -1,10 +1,12 @@
-import { Controller, Get } from '@nestjs/common';
+import { Controller, Get, Delete, Body } from '@nestjs/common';
 import { MessagePattern, Payload } from '@nestjs/microservices';
 import { AppService } from './app.service';
 import { CreateUserDto } from './dtos/create-user.dto';
 import { GetAllDto } from './dtos/get-all.dto';
 import { UpdateUserDto } from './dtos/update-user.dto';
 import { UserDto } from './dtos/user-dto';
+import { Serializer } from './interceptors/serialize.interceptor';
+import { DeleteAccountDto } from './dtos/delete-account.dto';
 
 @Controller('user')
 export class AppController {
@@ -15,6 +17,12 @@ export class AppController {
     return this.appService.whoAmI();
   }
 
+  @Delete('delete-account')
+  @Serializer(UserDto)
+  remove(@Body() body: DeleteAccountDto): Promise<UserDto> {
+    return this.appService.remove(body);
+  }
+
   @MessagePattern('create_user')
   create(@Payload() payload: CreateUserDto): Promise<UserDto> {
     return this.appService.create(payload);
@@ -23,11 +31,6 @@ export class AppController {
   @MessagePattern('update_user')
   update(@Payload() Payload: UpdateUserDto): Promise<UserDto> {
     return this.appService.update(Payload);
-  }
-
-  @MessagePattern('remove_user')
-  remove(@Payload() id: number): Promise<UserDto> {
-    return this.appService.remove(id);
   }
 
   @MessagePattern('find_user_by_id')
