@@ -35,7 +35,7 @@ export class AppService {
     return this.userRepository.save(user);
   }
 
-  async update(payload: UpdateUserDto): Promise<UserDto> {
+  async update(payload: Partial<UpdateUserDto>): Promise<UserDto> {
     let user = await this.userRepository.findOneBy({ id: payload.id });
 
     if (!user)
@@ -43,7 +43,7 @@ export class AppService {
         new NotFoundException('Could not found the user.'),
       );
 
-    user = this.userRepository.create(payload);
+    user = this.userRepository.create(Object.assign(user, payload));
     return this.userRepository.save(user);
   }
 
