@@ -1,7 +1,6 @@
 import { Controller } from '@nestjs/common';
 import { MessagePattern, Payload } from '@nestjs/microservices';
 import { AppService } from './app.service';
-import { CreateUserDto } from './dtos/create-user.dto';
 import { GetAllDto } from './dtos/get-all.dto';
 import { UpdateUserDto } from './dtos/update-user.dto';
 import { UserDto } from './dtos/user-dto';
@@ -9,11 +8,6 @@ import { UserDto } from './dtos/user-dto';
 @Controller()
 export class MessagePatternController {
   constructor(private readonly appService: AppService) {}
-
-  @MessagePattern('create_user')
-  create(@Payload() payload: CreateUserDto): Promise<UserDto> {
-    return this.appService.create(payload);
-  }
 
   @MessagePattern('update_user')
   update(@Payload() Payload: UpdateUserDto): Promise<UserDto> {

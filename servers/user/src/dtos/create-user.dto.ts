@@ -1,4 +1,5 @@
-import { IsString, Matches, Length } from 'class-validator';
+import { IsString, Matches, Length, IsEnum } from 'class-validator';
+import { Roles } from 'src/types/user';
 
 export class CreateUserDto {
   @IsString()
@@ -27,4 +28,7 @@ export class CreateUserDto {
     message: 'Invalid phone number',
   })
   phone: string;
+
+  @IsEnum(Roles)
+  role: string;
 }

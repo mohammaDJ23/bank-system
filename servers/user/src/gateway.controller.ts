@@ -16,6 +16,7 @@ import { UserDto } from './dtos/user-dto';
 import { Serializer } from './interceptors/serialize.interceptor';
 import { DeleteAccountDto } from './dtos/delete-account.dto';
 import { JwtAuthGuard } from './guards/jwt-guard';
+import { AdminGuard } from './guards/admin.guard';
 
 @Controller('user')
 export class GatewayController {
@@ -27,14 +28,14 @@ export class GatewayController {
   }
 
   @Delete('delete-account')
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, AdminGuard)
   @Serializer(UserDto)
   remove(@Body() body: DeleteAccountDto): Promise<UserDto> {
     return this.appService.remove(body);
   }
 
   @Post('create-user')
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, AdminGuard)
   @Serializer(UserDto)
   create(@Body() body: CreateUserDto): Promise<UserDto> {
     return this.appService.create(body);
