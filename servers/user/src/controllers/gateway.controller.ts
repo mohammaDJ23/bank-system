@@ -6,7 +6,7 @@ import {
   Put,
   Body,
   UseGuards,
-  Query,
+  Param,
 } from '@nestjs/common';
 import { AppService } from '../app.service';
 import { CreateUserDto } from '../dtos/create-user.dto';
@@ -50,7 +50,7 @@ export class GatewayController {
   @Post(':id')
   @UseGuards(JwtAuthGuard)
   @Serializer(UserDto)
-  findById(@Query('id') id: string): Promise<UserDto> {
+  findById(@Param('id') id: string): Promise<UserDto> {
     return this.appService.findById(+id);
   }
 
