@@ -14,7 +14,6 @@ import { randomBytes } from 'crypto';
 import { LoginDto } from './dtos/login.dto';
 import { MessageDto } from './dtos/message.dto';
 import { ForgotPasswordDto } from './dtos/forgot-password.dto';
-import { SignupDto } from './dtos/signup.dto';
 import { TokenDto } from './dtos/token.dto';
 import { UserDto } from './dtos/user.dto';
 import { ResetPassword } from './entities/reset-password.entity';
@@ -33,12 +32,6 @@ export class AppService {
 
   whoAmI(): string {
     return 'hello!';
-  }
-
-  async signup(body: SignupDto): Promise<UserDto> {
-    return this.clientProxy
-      .send<UserDto, SignupDto>('create_user', body)
-      .toPromise();
   }
 
   async login(body: LoginDto): Promise<TokenDto> {

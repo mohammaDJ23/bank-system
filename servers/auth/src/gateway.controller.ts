@@ -3,9 +3,7 @@ import { AppService } from './app.service';
 import { LoginDto } from './dtos/login.dto';
 import { MessageDto } from './dtos/message.dto';
 import { ForgotPasswordDto } from './dtos/forgot-password.dto';
-import { SignupDto } from './dtos/signup.dto';
 import { TokenDto } from './dtos/token.dto';
-import { UserDto } from './dtos/user.dto';
 import { Serializer } from './interceptors/serialize.interceptor';
 import { ResetPasswordDto } from './dtos/reset-password.dto';
 
@@ -16,12 +14,6 @@ export class GatewayController {
   @Get()
   whoAmI(): string {
     return this.appService.whoAmI();
-  }
-
-  @Post('signup')
-  @Serializer(UserDto)
-  signup(@Body() body: SignupDto): Promise<UserDto> {
-    return this.appService.signup(body);
   }
 
   @Post('login')
