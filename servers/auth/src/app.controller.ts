@@ -1,4 +1,4 @@
-import { Body, Controller, Post, Delete, UseGuards } from '@nestjs/common';
+import { Body, Controller, Post, Delete, UseGuards, Get } from '@nestjs/common';
 import { AppService } from './app.service';
 import { LoginDto } from './dtos/login.dto';
 import { MessageDto } from './dtos/message.dto';
@@ -15,6 +15,11 @@ import { JwtAuthGuard } from './guards/jwt-guard';
 @Controller('auth')
 export class AppController {
   constructor(private readonly appService: AppService) {}
+
+  @Get()
+  whoAmI(): string {
+    return this.appService.whoAmI();
+  }
 
   @Post('signup')
   @Serializer(UserDto)
