@@ -11,6 +11,8 @@ import { APP_FILTER, APP_PIPE } from '@nestjs/core';
 import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
 import { JwtStrategy } from './strategies/jwt.strategy';
+import { GatewayController } from './controllers/gateway.controller';
+import { MessagePatternController } from './controllers/message-patterns.controller';
 
 @Module({
   imports: [
@@ -39,7 +41,7 @@ import { JwtStrategy } from './strategies/jwt.strategy';
       signOptions: { expiresIn: process.env.JWT_EXPIRATION },
     }),
   ],
-  controllers: [AppController],
+  controllers: [AppController, GatewayController, MessagePatternController],
   providers: [
     AppService,
     JwtStrategy,
