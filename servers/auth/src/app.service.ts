@@ -14,12 +14,12 @@ import { randomBytes } from 'crypto';
 import { LoginDto } from './dtos/login.dto';
 import { MessageDto } from './dtos/message.dto';
 import { ForgotPasswordDto } from './dtos/forgot-password.dto';
-import { SignupDto } from './dtos/signup.dto';
 import { TokenDto } from './dtos/token.dto';
 import { UserDto } from './dtos/user.dto';
 import { ResetPassword } from './entities/reset-password.entity';
 import { ResetPasswordDto } from './dtos/reset-password.dto';
 import { RabbitMqServices } from './types/rabbitmq';
+import { Roles } from './types/user';
 
 @Injectable()
 export class AppService {
@@ -35,17 +35,7 @@ export class AppService {
     return 'hello!';
   }
 
-  async signup(body: SignupDto): Promise<UserDto> {
-    return this.clientProxy
-      .send<UserDto, SignupDto>('create_user', body)
-      .toPromise();
-  }
-
-  async login(body: LoginDto): Promise<TokenDto> {
-    const user = await this.clientProxy
-      .send<UserDto, string>('find_user_by_email', body.email)
-      .toPromise();
-
+  private async getToken(body: LoginDto, user: UserDto): Promise<TokenDto> {
     const isPasswordsEqual = await compare(body.password, user.password);
 
     if (!isPasswordsEqual)
@@ -56,11 +46,31 @@ export class AppService {
       email: user.email,
       firstName: user.firstName,
       lastName: user.lastName,
+      role: user.role,
+      expiration: +process.env.JWT_EXPIRATION,
     };
 
     const accessToken = this.jwtService.sign(userInfo);
-    const expiration = +process.env.JWT_EXPIRATION;
-    return { accessToken, expiration };
+    return { accessToken };
+  }
+
+  async login(body: LoginDto): Promise<TokenDto> {
+    const user = await this.clientProxy
+      .send<UserDto, string>('find_user_by_email', body.email)
+      .toPromise();
+
+    return this.getToken(body, user);
+  }
+
+  async adminLogin(body: LoginDto): Promise<TokenDto> {
+    const user = await this.clientProxy
+      .send<UserDto, string>('find_user_by_email', body.email)
+      .toPromise();
+
+    if (user.role.toLowerCase() !== Roles.ADMIN.toLowerCase())
+      throw new BadRequestException('You are not the admin.');
+
+    return this.getToken(body, user);
   }
 
   async findById(id: number): Promise<UserDto> {
