@@ -5,7 +5,7 @@ import { APP_FILTER, APP_PIPE } from '@nestjs/core';
 import { ClientsModule, Transport } from '@nestjs/microservices';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { AllExceptionsFilter } from './filters/catch.filter';
+import { AllExceptionFilter } from './filters/catch.filter';
 import { JwtModule } from '@nestjs/jwt';
 import { JwtStrategy } from './strategies/jwt.strategy';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -81,7 +81,7 @@ import { ClientProxyServie } from './services/client-proxy.service';
     AppService,
     JwtStrategy,
     ClientProxyServie,
-    { provide: APP_FILTER, useClass: AllExceptionsFilter },
+    { provide: APP_FILTER, useClass: AllExceptionFilter },
     {
       provide: APP_PIPE,
       useValue: new ValidationPipe({
