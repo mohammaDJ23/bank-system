@@ -6,6 +6,7 @@ import {
   Put,
   Body,
   UseGuards,
+  Query,
 } from '@nestjs/common';
 import { MessagePattern, Payload } from '@nestjs/microservices';
 import { AppService } from './app.service';
@@ -45,6 +46,13 @@ export class AppController {
   @Serializer(UserDto)
   updateUser(@Body() body: UpdateUserDto): Promise<UserDto> {
     return this.appService.update(body);
+  }
+
+  @Put(':id')
+  @UseGuards(JwtAuthGuard)
+  @Serializer(UserDto)
+  findUser(@Query('id') id: string): Promise<UserDto> {
+    return this.appService.findById(+id);
   }
 
   @MessagePattern('create_user')
