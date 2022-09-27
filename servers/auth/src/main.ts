@@ -1,6 +1,7 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { Transport, MicroserviceOptions } from '@nestjs/microservices';
+import { RabbitMqQueue } from './types/rabbitmq';
 
 require('dotenv').config();
 
@@ -11,7 +12,7 @@ async function bootstrap() {
     transport: Transport.RMQ,
     options: {
       urls: [process.env.RABBITMQ_URL],
-      queue: process.env.RABBITMQ_QUEUE,
+      queue: RabbitMqQueue.AUTH,
       queueOptions: {
         durable: true,
       },
@@ -19,8 +20,7 @@ async function bootstrap() {
     },
   });
 
-  // becuase of some error about rabbitmq i have been forced to remove it:
-  // await app.startAllMicroservices();
+  await app.startAllMicroservices();
   await app.listen(3001);
 }
 bootstrap();
