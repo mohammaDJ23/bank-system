@@ -1,4 +1,4 @@
-import { Body, Controller, Post, Delete, UseGuards, Get } from '@nestjs/common';
+import { Body, Controller, Post, Get } from '@nestjs/common';
 import { AppService } from './app.service';
 import { LoginDto } from './dtos/login.dto';
 import { MessageDto } from './dtos/message.dto';
@@ -9,8 +9,6 @@ import { UserDto } from './dtos/user.dto';
 import { Serializer } from './interceptors/serialize.interceptor';
 import { ResetPasswordDto } from './dtos/reset-password.dto';
 import { Cron, CronExpression } from '@nestjs/schedule';
-import { DeleteAccountDto } from './dtos/delete-account.dto';
-import { JwtAuthGuard } from './guards/jwt-guard';
 
 @Controller('auth')
 export class AppController {
@@ -31,13 +29,6 @@ export class AppController {
   @Serializer(TokenDto)
   login(@Body() body: LoginDto): Promise<TokenDto> {
     return this.appService.login(body);
-  }
-
-  @Delete('delete-account')
-  @UseGuards(JwtAuthGuard)
-  @Serializer(UserDto)
-  deleteAcount(@Body() body: DeleteAccountDto): Promise<UserDto> {
-    return this.appService.deleteAccount(body);
   }
 
   @Post('forgot-password')
