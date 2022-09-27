@@ -8,14 +8,14 @@ import {
   UseGuards,
   Param,
 } from '@nestjs/common';
-import { AppService } from '../app.service';
-import { CreateUserDto } from '../dtos/create-user.dto';
-import { GetAllDto } from '../dtos/get-all.dto';
-import { UpdateUserDto } from '../dtos/update-user.dto';
-import { UserDto } from '../dtos/user-dto';
-import { Serializer } from '../interceptors/serialize.interceptor';
-import { DeleteAccountDto } from '../dtos/delete-account.dto';
-import { JwtAuthGuard } from '../guards/jwt-guard';
+import { AppService } from './app.service';
+import { CreateUserDto } from './dtos/create-user.dto';
+import { GetAllDto } from './dtos/get-all.dto';
+import { UpdateUserDto } from './dtos/update-user.dto';
+import { UserDto } from './dtos/user-dto';
+import { Serializer } from './interceptors/serialize.interceptor';
+import { DeleteAccountDto } from './dtos/delete-account.dto';
+import { JwtAuthGuard } from './guards/jwt-guard';
 
 @Controller('user')
 export class GatewayController {
