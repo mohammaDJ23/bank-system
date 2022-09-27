@@ -19,11 +19,12 @@ import { TokenDto } from './dtos/token.dto';
 import { UserDto } from './dtos/user.dto';
 import { ResetPassword } from './entities/reset-password.entity';
 import { ResetPasswordDto } from './dtos/reset-password.dto';
+import { RabbitMqServices } from './types/rabbitmq';
 
 @Injectable()
 export class AppService {
   constructor(
-    @Inject('AUTH_SERVICE') private readonly clientProxy: ClientProxy,
+    @Inject(RabbitMqServices.AUTH) private readonly clientProxy: ClientProxy,
     @InjectRepository(ResetPassword)
     private readonly resetPasswordRepository: Repository<ResetPassword>,
     private readonly jwtService: JwtService,
