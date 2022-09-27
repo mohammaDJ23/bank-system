@@ -32,6 +32,13 @@ export class AppController {
     return this.appService.create(body);
   }
 
+  @Post('update-user')
+  @UseGuards(JwtAuthGuard)
+  @Serializer(UserDto)
+  updateUser(@Body() body: UpdateUserDto): Promise<UserDto> {
+    return this.appService.update(body);
+  }
+
   @MessagePattern('create_user')
   create(@Payload() payload: CreateUserDto): Promise<UserDto> {
     return this.appService.create(payload);
