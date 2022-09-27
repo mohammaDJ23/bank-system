@@ -1,9 +1,11 @@
 import {
+  Inject,
   Injectable,
   NotFoundException,
   BadRequestException,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
+import { ClientProxy } from '@nestjs/microservices';
 import { InjectRepository } from '@nestjs/typeorm';
 import { MailerService } from '@nestjs-modules/mailer';
 import { Repository } from 'typeorm';
@@ -17,16 +19,16 @@ import { TokenDto } from './dtos/token.dto';
 import { UserDto } from './dtos/user.dto';
 import { ResetPassword } from './entities/reset-password.entity';
 import { ResetPasswordDto } from './dtos/reset-password.dto';
-import { ClientProxyServie } from './services/client-proxy.service';
+import { RabbitMqServices } from './types/rabbitmq';
 
 @Injectable()
 export class AppService {
   constructor(
+    @Inject(RabbitMqServices.AUTH) private readonly clientProxy: ClientProxy,
     @InjectRepository(ResetPassword)
     private readonly resetPasswordRepository: Repository<ResetPassword>,
     private readonly jwtService: JwtService,
     private readonly mailerService: MailerService,
-    private readonly clientProxyService: ClientProxyServie,
   ) {}
 
   whoAmI(): string {
@@ -34,17 +36,15 @@ export class AppService {
   }
 
   async signup(body: SignupDto): Promise<UserDto> {
-    return this.clientProxyService.send<UserDto, SignupDto>(
-      'create_user',
-      body,
-    );
+    return this.clientProxy
+      .send<UserDto, SignupDto>('create_user', body)
+      .toPromise();
   }
 
   async login(body: LoginDto): Promise<TokenDto> {
-    const user = await this.clientProxyService.send<UserDto, string>(
-      'find_user_by_email',
-      body.email,
-    );
+    const user = await this.clientProxy
+      .send<UserDto, string>('find_user_by_email', body.email)
+      .toPromise();
 
     const isPasswordsEqual = await compare(body.password, user.password);
 
@@ -64,14 +64,15 @@ export class AppService {
   }
 
   async findById(id: number): Promise<UserDto> {
-    return this.clientProxyService.send<UserDto, number>('find_user_by_id', id);
+    return this.clientProxy
+      .send<UserDto, number>('find_user_by_id', id)
+      .toPromise();
   }
 
   async forgotPassword(body: ForgotPasswordDto): Promise<MessageDto> {
-    const user = await this.clientProxyService.send<UserDto, string>(
-      'find_user_by_email',
-      body.email,
-    );
+    const user = await this.clientProxy
+      .send<UserDto, string>('find_user_by_email', body.email)
+      .toPromise();
 
     if (!user) throw new NotFoundException('Could not found the user.');
 
@@ -122,13 +123,16 @@ export class AppService {
     if (isTokenExpired)
       throw new BadRequestException('The token used has been expired.');
 
-    const user = await this.clientProxyService.send<UserDto, number>(
-      'find_user_by_id',
-      resetPassword.userId,
-    );
+    const user = await this.clientProxy
+      .send<UserDto, number>('find_user_by_id', resetPassword.userId)
+      .toPromise();
 
     user.password = await hash(body.password, 10);
-    await this.clientProxyService.send<UserDto, UserDto>('update_user', user);
+
+    await this.clientProxy
+      .send<UserDto, UserDto>('update_user', user)
+      .toPromise();
+
     await this.resetPasswordRepository.remove(resetPassword);
     return { message: 'Your password has been changed.' };
   }
