@@ -49,12 +49,7 @@ export class AppService {
 
   async remove(body: DeleteAccountDto) {
     const user = await this.userRepository.findOneBy({ id: body.id });
-
-    if (!user)
-      throw new RpcException(
-        new NotFoundException('Could not found the user.'),
-      );
-
+    if (!user) throw new NotFoundException('Could not found the user.');
     return this.userRepository.remove(user);
   }
 
