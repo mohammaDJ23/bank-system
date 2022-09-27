@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Module, ValidationPipe } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { ClientsModule } from '@nestjs/microservices';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -7,7 +7,7 @@ import { AppService } from './app.service';
 import { User } from './entities/user.entity';
 import { CustomNamingStrategy } from './strategies/naming.strategy';
 import { AllExceptionFilter } from './filters/catch.filter';
-import { APP_FILTER } from '@nestjs/core';
+import { APP_FILTER, APP_PIPE } from '@nestjs/core';
 import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
 import { JwtStrategy } from './strategies/jwt.strategy';
@@ -44,6 +44,13 @@ import { JwtStrategy } from './strategies/jwt.strategy';
     AppService,
     JwtStrategy,
     { provide: APP_FILTER, useClass: AllExceptionFilter },
+    {
+      provide: APP_PIPE,
+      useValue: new ValidationPipe({
+        whitelist: true,
+        validateCustomDecorators: true,
+      }),
+    },
   ],
 })
 export class AppModule {}

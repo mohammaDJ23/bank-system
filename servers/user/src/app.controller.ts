@@ -30,7 +30,7 @@ export class AppController {
   @Delete('delete-account')
   @UseGuards(JwtAuthGuard)
   @Serializer(UserDto)
-  remove(@Body() body: DeleteAccountDto): Promise<UserDto> {
+  removeUser(@Body() body: DeleteAccountDto): Promise<UserDto> {
     return this.appService.remove(body);
   }
 
@@ -48,10 +48,10 @@ export class AppController {
     return this.appService.update(body);
   }
 
-  @Put(':id')
+  @Post(':id')
   @UseGuards(JwtAuthGuard)
   @Serializer(UserDto)
-  findUser(@Query('id') id: string): Promise<UserDto> {
+  findUserById(@Query('id') id: string): Promise<UserDto> {
     return this.appService.findById(+id);
   }
 
