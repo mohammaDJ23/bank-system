@@ -6,7 +6,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { User } from './entities/user.entity';
 import { CustomNamingStrategy } from './strategies/naming.strategy';
-import { HttpExceptionFilter } from './filters/http-exception.filter';
+import { AllExceptionFilter } from './filters/catch.filter';
 import { APP_FILTER } from '@nestjs/core';
 
 @Module({
@@ -34,7 +34,7 @@ import { APP_FILTER } from '@nestjs/core';
   controllers: [AppController],
   providers: [
     AppService,
-    { provide: APP_FILTER, useClass: HttpExceptionFilter },
+    { provide: APP_FILTER, useClass: AllExceptionFilter },
   ],
 })
 export class AppModule {}
