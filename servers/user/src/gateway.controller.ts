@@ -15,7 +15,7 @@ import { UpdateUserDto } from './dtos/update-user.dto';
 import { UserDto } from './dtos/user-dto';
 import { Serializer } from './interceptors/serialize.interceptor';
 import { DeleteAccountDto } from './dtos/delete-account.dto';
-import { JwtAuthGuard } from './guards/jwt-guard';
+import { JwtAuthGuard } from './guards/jwt.guard';
 import { AdminGuard } from './guards/admin.guard';
 
 @Controller('user')
