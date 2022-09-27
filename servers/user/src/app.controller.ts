@@ -1,4 +1,4 @@
-import { Controller, Get, Delete, Body } from '@nestjs/common';
+import { Controller, Get, Delete, Body, UseGuards } from '@nestjs/common';
 import { MessagePattern, Payload } from '@nestjs/microservices';
 import { AppService } from './app.service';
 import { CreateUserDto } from './dtos/create-user.dto';
@@ -7,6 +7,7 @@ import { UpdateUserDto } from './dtos/update-user.dto';
 import { UserDto } from './dtos/user-dto';
 import { Serializer } from './interceptors/serialize.interceptor';
 import { DeleteAccountDto } from './dtos/delete-account.dto';
+import { JwtAuthGuard } from './guards/jwt-guard';
 
 @Controller('user')
 export class AppController {
@@ -18,6 +19,7 @@ export class AppController {
   }
 
   @Delete('delete-account')
+  @UseGuards(JwtAuthGuard)
   @Serializer(UserDto)
   remove(@Body() body: DeleteAccountDto): Promise<UserDto> {
     return this.appService.remove(body);

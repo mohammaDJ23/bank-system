@@ -8,6 +8,9 @@ import { User } from './entities/user.entity';
 import { CustomNamingStrategy } from './strategies/naming.strategy';
 import { AllExceptionFilter } from './filters/catch.filter';
 import { APP_FILTER } from '@nestjs/core';
+import { PassportModule } from '@nestjs/passport';
+import { JwtModule } from '@nestjs/jwt';
+import { JwtStrategy } from './strategies/jwt.strategy';
 
 @Module({
   imports: [
@@ -30,10 +33,16 @@ import { APP_FILTER } from '@nestjs/core';
       envFilePath: `.env.${process.env.NODE_ENV}`,
       isGlobal: true,
     }),
+    PassportModule,
+    JwtModule.register({
+      secret: process.env.JWT_SECRET,
+      signOptions: { expiresIn: process.env.JWT_EXPIRATION },
+    }),
   ],
   controllers: [AppController],
   providers: [
     AppService,
+    JwtStrategy,
     { provide: APP_FILTER, useClass: AllExceptionFilter },
   ],
 })
