@@ -1,4 +1,4 @@
-import { Controller, Get, Delete, Body, UseGuards } from '@nestjs/common';
+import { Controller, Get, Delete, Post, Body, UseGuards } from '@nestjs/common';
 import { MessagePattern, Payload } from '@nestjs/microservices';
 import { AppService } from './app.service';
 import { CreateUserDto } from './dtos/create-user.dto';
@@ -23,6 +23,13 @@ export class AppController {
   @Serializer(UserDto)
   remove(@Body() body: DeleteAccountDto): Promise<UserDto> {
     return this.appService.remove(body);
+  }
+
+  @Post('create-user')
+  @UseGuards(JwtAuthGuard)
+  @Serializer(UserDto)
+  createUser(@Body() body: CreateUserDto): Promise<UserDto> {
+    return this.appService.create(body);
   }
 
   @MessagePattern('create_user')
