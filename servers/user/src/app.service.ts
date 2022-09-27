@@ -12,6 +12,7 @@ import { RpcException } from '@nestjs/microservices';
 import { UserDto } from './dtos/user-dto';
 import { UpdateUserDto } from './dtos/update-user.dto';
 import { GetAllDto } from './dtos/get-all.dto';
+import { DeleteAccountDto } from './dtos/delete-account.dto';
 
 @Injectable()
 export class AppService {
@@ -46,8 +47,8 @@ export class AppService {
     return this.userRepository.save(user);
   }
 
-  async remove(id: number) {
-    const user = await this.userRepository.findOneBy({ id });
+  async remove(body: DeleteAccountDto) {
+    const user = await this.userRepository.findOneBy({ id: body.id });
 
     if (!user)
       throw new RpcException(
