@@ -1,4 +1,13 @@
-import { Controller, Get, Delete, Body, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Delete,
+  Post,
+  Put,
+  Body,
+  UseGuards,
+  Query,
+} from '@nestjs/common';
 import { MessagePattern, Payload } from '@nestjs/microservices';
 import { AppService } from './app.service';
 import { CreateUserDto } from './dtos/create-user.dto';
@@ -23,6 +32,34 @@ export class AppController {
   @Serializer(UserDto)
   remove(@Body() body: DeleteAccountDto): Promise<UserDto> {
     return this.appService.remove(body);
+  }
+
+  @Post('create-user')
+  @UseGuards(JwtAuthGuard)
+  @Serializer(UserDto)
+  createUser(@Body() body: CreateUserDto): Promise<UserDto> {
+    return this.appService.create(body);
+  }
+
+  @Put('update-user')
+  @UseGuards(JwtAuthGuard)
+  @Serializer(UserDto)
+  updateUser(@Body() body: UpdateUserDto): Promise<UserDto> {
+    return this.appService.update(body);
+  }
+
+  @Put(':id')
+  @UseGuards(JwtAuthGuard)
+  @Serializer(UserDto)
+  findUser(@Query('id') id: string): Promise<UserDto> {
+    return this.appService.findById(+id);
+  }
+
+  @Post('users')
+  @UseGuards(JwtAuthGuard)
+  @Serializer(UserDto)
+  findAllUsers(@Body() body: GetAllDto): Promise<[UserDto[], number]> {
+    return this.appService.findAll(body);
   }
 
   @MessagePattern('create_user')
