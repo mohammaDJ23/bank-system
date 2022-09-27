@@ -58,6 +58,9 @@ export class AllExceptionFilter implements ExceptionFilter {
     // sql database errors
     const isQueryFailedException = exception instanceof QueryFailedError;
 
+    // syntax error
+    const isTypeError = exception instanceof TypeError;
+
     // errors from messagePatterns
     const isObjectException =
       exception instanceof Object && Reflect.has(exception, 'response');
@@ -91,6 +94,7 @@ export class AllExceptionFilter implements ExceptionFilter {
         break;
       }
 
+      case isTypeError:
       case isQueryFailedException: {
         message = exception.message;
         break;

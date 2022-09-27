@@ -4,3 +4,8 @@ export interface CurrentUser {
   firstName: string;
   lastName: string;
 }
+
+export enum Roles {
+  ADMIN = 'admin',
+  USER = 'user',
+}

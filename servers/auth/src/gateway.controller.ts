@@ -22,6 +22,12 @@ export class GatewayController {
     return this.appService.login(body);
   }
 
+  @Post('login/admin')
+  @Serializer(TokenDto)
+  adminLogin(@Body() body: LoginDto): Promise<TokenDto> {
+    return this.appService.adminLogin(body);
+  }
+
   @Post('forgot-password')
   @Serializer(MessageDto)
   forgotPassword(@Body() body: ForgotPasswordDto): Promise<MessageDto> {
