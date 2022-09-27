@@ -16,6 +16,8 @@ import { MailerModule } from '@nestjs-modules/mailer';
 import { EjsAdapter } from '@nestjs-modules/mailer/dist/adapters/ejs.adapter';
 import { ScheduleModule } from '@nestjs/schedule';
 import { RabbitMqQueue, RabbitMqServices } from './types/rabbitmq';
+import { CronJobsController } from './cron-jobs.controller';
+import { GatewayController } from './gateway.controller';
 
 @Module({
   imports: [
@@ -75,7 +77,7 @@ import { RabbitMqQueue, RabbitMqServices } from './types/rabbitmq';
     }),
     ScheduleModule.forRoot(),
   ],
-  controllers: [AppController],
+  controllers: [AppController, CronJobsController, GatewayController],
   providers: [
     AppService,
     JwtStrategy,
