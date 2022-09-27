@@ -1,4 +1,12 @@
-import { Controller, Get, Delete, Post, Body, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Delete,
+  Post,
+  Put,
+  Body,
+  UseGuards,
+} from '@nestjs/common';
 import { MessagePattern, Payload } from '@nestjs/microservices';
 import { AppService } from './app.service';
 import { CreateUserDto } from './dtos/create-user.dto';
@@ -32,7 +40,7 @@ export class AppController {
     return this.appService.create(body);
   }
 
-  @Post('update-user')
+  @Put('update-user')
   @UseGuards(JwtAuthGuard)
   @Serializer(UserDto)
   updateUser(@Body() body: UpdateUserDto): Promise<UserDto> {
