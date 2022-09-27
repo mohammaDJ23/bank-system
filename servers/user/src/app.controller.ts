@@ -55,6 +55,13 @@ export class AppController {
     return this.appService.findById(+id);
   }
 
+  @Post('users')
+  @UseGuards(JwtAuthGuard)
+  @Serializer(UserDto)
+  findAllUsers(@Body() body: GetAllDto): Promise<[UserDto[], number]> {
+    return this.appService.findAll(body);
+  }
+
   @MessagePattern('create_user')
   create(@Payload() payload: CreateUserDto): Promise<UserDto> {
     return this.appService.create(payload);
