@@ -11,8 +11,8 @@ import { APP_FILTER, APP_PIPE } from '@nestjs/core';
 import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
 import { JwtStrategy } from './strategies/jwt.strategy';
-import { GatewayController } from './controllers/gateway.controller';
-import { MessagePatternController } from './controllers/message-patterns.controller';
+import { GatewayController } from './gateway.controller';
+import { MessagePatternController } from './message-patterns.controller';
 
 @Module({
   imports: [
