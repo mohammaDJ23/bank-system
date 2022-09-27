@@ -16,6 +16,7 @@ import { MailerModule } from '@nestjs-modules/mailer';
 import { EjsAdapter } from '@nestjs-modules/mailer/dist/adapters/ejs.adapter';
 import { ScheduleModule } from '@nestjs/schedule';
 import { RabbitMqQueue, RabbitMqServices } from './types/rabbitmq';
+import { ClientProxyServie } from './services/client-proxy.service';
 
 @Module({
   imports: [
@@ -79,6 +80,7 @@ import { RabbitMqQueue, RabbitMqServices } from './types/rabbitmq';
   providers: [
     AppService,
     JwtStrategy,
+    ClientProxyServie,
     { provide: APP_FILTER, useClass: AllExceptionsFilter },
     {
       provide: APP_PIPE,
