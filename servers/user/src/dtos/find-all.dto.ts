@@ -1,6 +1,6 @@
 import { IsNumber } from 'class-validator';
 
-export class GetAllDto {
+export class FindAllDto {
   @IsNumber()
   skip: number;
 

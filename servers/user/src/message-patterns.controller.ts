@@ -1,7 +1,6 @@
 import { Controller } from '@nestjs/common';
 import { MessagePattern, Payload } from '@nestjs/microservices';
 import { AppService } from './app.service';
-import { GetAllDto } from './dtos/get-all.dto';
 import { UpdateUserDto } from './dtos/update-user.dto';
 import { UserDto } from './dtos/user-dto';
 
@@ -22,10 +21,5 @@ export class MessagePatternController {
   @MessagePattern('find_user_by_email')
   findByEmail(@Payload() email: string): Promise<UserDto> {
     return this.appService.findByEmail(email);
-  }
-
-  @MessagePattern('find_users')
-  findAll(@Payload() payload: GetAllDto): Promise<[UserDto[], number]> {
-    return this.appService.findAll(payload);
   }
 }

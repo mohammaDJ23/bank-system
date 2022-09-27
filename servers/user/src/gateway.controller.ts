@@ -10,7 +10,7 @@ import {
 } from '@nestjs/common';
 import { AppService } from './app.service';
 import { CreateUserDto } from './dtos/create-user.dto';
-import { GetAllDto } from './dtos/get-all.dto';
+import { FindAllDto } from './dtos/find-all.dto';
 import { UserDto } from './dtos/user-dto';
 import { Serializer } from './interceptors/serialize.interceptor';
 import { DeleteAccountDto } from './dtos/delete-account.dto';
@@ -64,9 +64,9 @@ export class GatewayController {
   }
 
   @Post('users')
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, AdminGuard)
   @Serializer(UserDto)
-  findAll(@Body() body: GetAllDto): Promise<[UserDto[], number]> {
+  findAll(@Body() body: FindAllDto): Promise<[UserDto[], number]> {
     return this.appService.findAll(body);
   }
 }

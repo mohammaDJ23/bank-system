@@ -11,7 +11,7 @@ import { hash } from 'bcrypt';
 import { RpcException } from '@nestjs/microservices';
 import { UserDto } from './dtos/user-dto';
 import { UpdateUserDto } from './dtos/update-user.dto';
-import { GetAllDto } from './dtos/get-all.dto';
+import { FindAllDto } from './dtos/find-all.dto';
 import { DeleteAccountDto } from './dtos/delete-account.dto';
 
 @Injectable()
@@ -75,7 +75,7 @@ export class AppService {
     return user;
   }
 
-  async findAll(payload: GetAllDto): Promise<[UserDto[], number]> {
+  async findAll(payload: FindAllDto): Promise<[UserDto[], number]> {
     return this.userRepository.findAndCount({
       take: payload.take,
       skip: payload.skip,
