@@ -1,7 +1,10 @@
-import { IsString, Matches, Length, IsEnum } from 'class-validator';
+import { IsString, Matches, Length, IsNumber, IsEnum } from 'class-validator';
 import { Roles } from 'src/types/user';
 
-export class CreateUserDto {
+export class UpdateUserByAdminDto {
+  @IsNumber()
+  id: number;
+
   @IsString()
   @Length(3, 45)
   firstName: string;
@@ -17,12 +20,6 @@ export class CreateUserDto {
     },
   )
   email: string;
-
-  @Matches(/^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{6,45}$/, {
-    message: 'The password should be strong',
-  })
-  @Length(6, 45)
-  password: string;
 
   @Matches(/^(\+\d{1,2}\s?)?1?\-?\.?\s?\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4}$/, {
     message: 'Invalid phone number',

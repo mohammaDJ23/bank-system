@@ -10,12 +10,14 @@ import {
 } from '@nestjs/common';
 import { AppService } from './app.service';
 import { CreateUserDto } from './dtos/create-user.dto';
-import { GetAllDto } from './dtos/get-all.dto';
-import { UpdateUserDto } from './dtos/update-user.dto';
+import { FindAllDto } from './dtos/find-all.dto';
 import { UserDto } from './dtos/user-dto';
 import { Serializer } from './interceptors/serialize.interceptor';
 import { DeleteAccountDto } from './dtos/delete-account.dto';
-import { JwtAuthGuard } from './guards/jwt-guard';
+import { JwtAuthGuard } from './guards/jwt.guard';
+import { AdminGuard } from './guards/admin.guard';
+import { UpdateUserByUserDto } from './dtos/update-user-by-user.dto';
+import { UpdateUserByAdminDto } from './dtos/update-user-by-admin.dto';
 
 @Controller('user')
 export class GatewayController {
@@ -27,14 +29,14 @@ export class GatewayController {
   }
 
   @Delete('delete-account')
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, AdminGuard)
   @Serializer(UserDto)
   remove(@Body() body: DeleteAccountDto): Promise<UserDto> {
     return this.appService.remove(body);
   }
 
   @Post('create-user')
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, AdminGuard)
   @Serializer(UserDto)
   create(@Body() body: CreateUserDto): Promise<UserDto> {
     return this.appService.create(body);
@@ -43,7 +45,14 @@ export class GatewayController {
   @Put('update-user')
   @UseGuards(JwtAuthGuard)
   @Serializer(UserDto)
-  update(@Body() body: UpdateUserDto): Promise<UserDto> {
+  updateByUser(@Body() body: UpdateUserByUserDto): Promise<UserDto> {
+    return this.appService.update(body);
+  }
+
+  @Put('update-user/admin')
+  @UseGuards(JwtAuthGuard, AdminGuard)
+  @Serializer(UserDto)
+  updateByAdmin(@Body() body: UpdateUserByAdminDto): Promise<UserDto> {
     return this.appService.update(body);
   }
 
@@ -55,9 +64,9 @@ export class GatewayController {
   }
 
   @Post('users')
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, AdminGuard)
   @Serializer(UserDto)
-  findAll(@Body() body: GetAllDto): Promise<[UserDto[], number]> {
+  findAll(@Body() body: FindAllDto): Promise<[UserDto[], number]> {
     return this.appService.findAll(body);
   }
 }

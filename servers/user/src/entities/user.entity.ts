@@ -1,3 +1,4 @@
+import { Roles } from 'src/types/user';
 import {
   Entity,
   Column,
@@ -25,6 +26,13 @@ export class User {
 
   @Column()
   phone: string;
+
+  @Column({
+    type: 'enum',
+    enum: Roles,
+    default: Roles.USER,
+  })
+  role: string;
 
   @CreateDateColumn()
   createdAt: Date;

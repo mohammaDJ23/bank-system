@@ -20,6 +20,9 @@ export class UserDto {
   phone: string;
 
   @Expose()
+  role: string;
+
+  @Expose()
   createdAt: Date;
 
   @Expose()
