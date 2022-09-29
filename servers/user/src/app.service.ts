@@ -2,26 +2,35 @@ import {
   Injectable,
   ConflictException,
   NotFoundException,
+  OnApplicationShutdown,
+  Inject,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CreateUserDto } from './dtos/create-user.dto';
 import { User } from './entities/user.entity';
 import { hash } from 'bcrypt';
-import { RpcException } from '@nestjs/microservices';
+import { ClientProxy, RpcException } from '@nestjs/microservices';
 import { UserDto } from './dtos/user-dto';
 import { UpdateUserDto } from './dtos/update-user.dto';
 import { FindAllDto } from './dtos/find-all.dto';
 import { DeleteAccountDto } from './dtos/delete-account.dto';
+import { RabbitMqServices } from './types/rabbitmq';
 
 @Injectable()
-export class AppService {
+export class AppService implements OnApplicationShutdown {
   constructor(
     @InjectRepository(User) private readonly userRepository: Repository<User>,
+    @Inject(RabbitMqServices.USER) private readonly clientProxy: ClientProxy,
   ) {}
 
   whoAmI(): string {
     return 'hello!';
+  }
+
+  async onApplicationShutdown(signal?: string): Promise<void> {
+    const data = { name: 'user', date: new Date() };
+    await this.clientProxy.emit('downed_server', data).toPromise();
   }
 
   async create(payload: CreateUserDto): Promise<UserDto> {

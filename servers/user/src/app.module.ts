@@ -1,6 +1,6 @@
 import { Module, ValidationPipe } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
-import { ClientsModule } from '@nestjs/microservices';
+import { ClientsModule, Transport } from '@nestjs/microservices';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
@@ -13,10 +13,24 @@ import { JwtModule } from '@nestjs/jwt';
 import { JwtStrategy } from './strategies/jwt.strategy';
 import { GatewayController } from './gateway.controller';
 import { MessagePatternController } from './message-patterns.controller';
+import { RabbitMqQueue, RabbitMqServices } from './types/rabbitmq';
 
 @Module({
   imports: [
-    ClientsModule.register([]),
+    ClientsModule.register([
+      {
+        name: RabbitMqServices.USER,
+        transport: Transport.RMQ,
+        options: {
+          urls: [process.env.RABBITMQ_URL],
+          queue: RabbitMqQueue.REQUEST_STOR,
+          queueOptions: {
+            durable: true,
+          },
+          noAck: false,
+        },
+      },
+    ]),
     TypeOrmModule.forRootAsync({
       useFactory: () => ({
         type: 'postgres',
