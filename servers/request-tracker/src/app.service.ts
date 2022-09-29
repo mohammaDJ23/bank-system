@@ -11,7 +11,8 @@ export class AppService {
     private readonly downedServerRepository: Repository<DownedServer>,
   ) {}
 
-  downdServer(payload: DowndServerDto): Promise<void> {
-    return new Promise((resolve) => resolve());
+  async downdServer(payload: DowndServerDto): Promise<void> {
+    payload = this.downedServerRepository.create(payload);
+    await this.downedServerRepository.save(payload);
   }
 }

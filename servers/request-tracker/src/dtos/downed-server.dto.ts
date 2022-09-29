@@ -5,5 +5,5 @@ export class DowndServerDto {
   name: string;
 
   @IsDate()
-  date: Date;
+  deadTime: Date;
 }
