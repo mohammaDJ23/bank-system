@@ -23,7 +23,7 @@ import { RabbitMqQueue, RabbitMqServices } from './types/rabbitmq';
         transport: Transport.RMQ,
         options: {
           urls: [process.env.RABBITMQ_URL],
-          queue: RabbitMqQueue.REQUEST_STOR,
+          queue: RabbitMqQueue.REQUEST_TRACKER,
           queueOptions: {
             durable: true,
           },
