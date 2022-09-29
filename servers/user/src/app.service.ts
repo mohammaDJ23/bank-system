@@ -29,7 +29,7 @@ export class AppService implements OnApplicationShutdown {
   }
 
   async onApplicationShutdown(signal?: string): Promise<void> {
-    const data = { name: 'user', date: new Date() };
+    const data = { name: 'user', deadTime: new Date() };
     await this.clientProxy.emit('downed_server', data).toPromise();
   }
 
