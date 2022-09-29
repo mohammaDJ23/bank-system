@@ -9,4 +9,7 @@ export class ServerDto {
 
   @Expose()
   deadTime: Date;
+
+  @Expose()
+  livedTime: Date;
 }

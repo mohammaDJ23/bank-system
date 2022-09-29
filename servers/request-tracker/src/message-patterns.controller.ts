@@ -2,6 +2,8 @@ import { Controller } from '@nestjs/common';
 import { Ctx, EventPattern, Payload, RmqContext } from '@nestjs/microservices';
 import { AppService } from './app.service';
 import { DowndServerDto } from './dtos/downed-server.dto';
+import { LivedServerDto } from './dtos/lived-server.dto';
+import { SaveRequestedDataDto } from './dtos/save-requested-data.dto';
 
 @Controller()
 export class MessagePatternsController {
@@ -13,5 +15,21 @@ export class MessagePatternsController {
     @Ctx() context: RmqContext,
   ): Promise<void> {
     return this.appService.downdServer(payload, context);
+  }
+
+  @EventPattern('lived_server')
+  livedServer(
+    @Payload() payload: LivedServerDto,
+    @Ctx() context: RmqContext,
+  ): Promise<void> {
+    return this.appService.livedServer(payload, context);
+  }
+
+  @EventPattern('save_requested_data')
+  saveRequestedData(
+    @Payload() payload: SaveRequestedDataDto,
+    @Ctx() context: RmqContext,
+  ): Promise<void> {
+    return this.appService.saveRequestedData(payload, context);
   }
 }
