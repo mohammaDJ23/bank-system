@@ -1,9 +1,11 @@
 import { Injectable } from '@nestjs/common';
-import { Ctx, RmqContext } from '@nestjs/microservices';
+import { RmqContext } from '@nestjs/microservices';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { DowndServerDto } from './dtos/downed-server.dto';
 import { LivedServerDto } from './dtos/lived-server.dto';
+import { SaveRequestedDataDto } from './dtos/save-requested-data.dto';
+import { RequestedData } from './entities/requested-data.dto';
 import { Server } from './entities/server.entity';
 
 @Injectable()
@@ -11,6 +13,8 @@ export class AppService {
   constructor(
     @InjectRepository(Server)
     private readonly serverRepository: Repository<Server>,
+    @InjectRepository(RequestedData)
+    private readonly requestedDataRepository: Repository<RequestedData>,
   ) {}
 
   private async getServer(name: string): Promise<Server | {}> {
@@ -30,7 +34,7 @@ export class AppService {
 
   async downdServer(
     payload: DowndServerDto,
-    @Ctx() context: RmqContext,
+    context: RmqContext,
   ): Promise<void> {
     try {
       let server = await this.getServer(payload.name);
@@ -46,7 +50,7 @@ export class AppService {
 
   async livedServer(
     payload: LivedServerDto,
-    @Ctx() context: RmqContext,
+    context: RmqContext,
   ): Promise<void> {
     try {
       let server = await this.getServer(payload.name);
@@ -54,6 +58,20 @@ export class AppService {
       server = Object.assign(server, payload);
       server = this.serverRepository.create(server);
       await this.serverRepository.save(server);
+    } catch (error) {
+    } finally {
+      this.rabbitmqAcknowledgement(context);
+    }
+  }
+
+  async saveRequestedData(
+    payload: SaveRequestedDataDto,
+    context: RmqContext,
+  ): Promise<void> {
+    try {
+      payload.date = new Date(payload.date);
+      payload = this.requestedDataRepository.create(payload);
+      await this.requestedDataRepository.save(payload);
     } catch (error) {
     } finally {
       this.rabbitmqAcknowledgement(context);
