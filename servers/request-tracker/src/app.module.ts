@@ -1,9 +1,11 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { ClientsModule } from '@nestjs/microservices';
+import { ScheduleModule } from '@nestjs/schedule';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { CronJobsController } from './cron-jobs.controller';
 import { RequestedData } from './entities/requested-data.dto';
 import { Server } from './entities/server.entity';
 import { MessagePatternsController } from './message-patterns.controller';
@@ -30,8 +32,9 @@ import { CustomNamingStrategy } from './strategies/naming.strategy';
       envFilePath: `.env.${process.env.NODE_ENV}`,
       isGlobal: true,
     }),
+    ScheduleModule.forRoot(),
   ],
-  controllers: [AppController, MessagePatternsController],
+  controllers: [AppController, MessagePatternsController, CronJobsController],
   providers: [AppService],
 })
 export class AppModule {}

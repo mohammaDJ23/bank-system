@@ -77,4 +77,14 @@ export class AppService {
       this.rabbitmqAcknowledgement(context);
     }
   }
+
+  async removeServers(): Promise<void> {
+    try {
+      await this.serverRepository
+        .createQueryBuilder('server')
+        .delete()
+        .where('server.lived_time > server.dead_time')
+        .execute();
+    } catch (error) {}
+  }
 }
