@@ -4,6 +4,8 @@ import { ClientsModule } from '@nestjs/microservices';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { DownedServer } from './entities/downed-server.entity';
+import { MessagePatternsController } from './message-patterns.controller';
 import { CustomNamingStrategy } from './strategies/naming.strategy';
 
 @Module({
@@ -18,17 +20,17 @@ import { CustomNamingStrategy } from './strategies/naming.strategy';
         password: process.env.DATABASE_PASSWORD,
         database: process.env.DATABASE_NAME,
         namingStrategy: new CustomNamingStrategy(),
-        entities: [],
+        entities: [DownedServer],
         synchronize: true,
       }),
     }),
-    TypeOrmModule.forFeature([]),
+    TypeOrmModule.forFeature([DownedServer]),
     ConfigModule.forRoot({
       envFilePath: `.env.${process.env.NODE_ENV}`,
       isGlobal: true,
     }),
   ],
-  controllers: [AppController],
+  controllers: [AppController, MessagePatternsController],
   providers: [AppService],
 })
 export class AppModule {}
