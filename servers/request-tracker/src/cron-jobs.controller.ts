@@ -6,8 +6,13 @@ import { Cron, CronExpression } from '@nestjs/schedule';
 export class CronJobsController {
   constructor(private readonly appService: AppService) {}
 
-  @Cron(CronExpression.EVERY_12_HOURS)
-  removeServers() {
+  @Cron(CronExpression.EVERY_3_HOURS)
+  removeServers(): void {
     this.appService.removeServers();
+  }
+
+  @Cron(CronExpression.EVERY_5_HOURS)
+  removeRequestedData(): void {
+    this.appService.removeRequestedData();
   }
 }

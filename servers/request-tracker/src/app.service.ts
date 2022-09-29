@@ -67,6 +67,23 @@ export class AppService {
         .delete()
         .where('server.lived_time::timestamp > server.dead_time::timestamp')
         .execute();
+
+      await this.removeRequestedData();
+    } catch (error) {}
+  }
+
+  async removeRequestedData(): Promise<void> {
+    try {
+      const server = await this.serverRepository
+        .createQueryBuilder('server')
+        .select('*')
+        .getRawOne<Server>();
+
+      if (!server)
+        await this.requestedDataRepository
+          .createQueryBuilder('requested_data')
+          .delete()
+          .execute();
     } catch (error) {}
   }
 }
