@@ -2,6 +2,7 @@ import {
   Injectable,
   ConflictException,
   NotFoundException,
+  OnApplicationBootstrap,
   OnApplicationShutdown,
   Inject,
 } from '@nestjs/common';
@@ -18,7 +19,9 @@ import { DeleteAccountDto } from './dtos/delete-account.dto';
 import { RabbitMqServices } from './types/rabbitmq';
 
 @Injectable()
-export class AppService implements OnApplicationShutdown {
+export class AppService
+  implements OnApplicationBootstrap, OnApplicationShutdown
+{
   constructor(
     @InjectRepository(User) private readonly userRepository: Repository<User>,
     @Inject(RabbitMqServices.USER) private readonly clientProxy: ClientProxy,
@@ -26,6 +29,11 @@ export class AppService implements OnApplicationShutdown {
 
   whoAmI(): string {
     return 'hello!';
+  }
+
+  async onApplicationBootstrap() {
+    const data = { name: 'user', livedTime: new Date() };
+    await this.clientProxy.emit('lived_server', data).toPromise();
   }
 
   async onApplicationShutdown(signal?: string): Promise<void> {

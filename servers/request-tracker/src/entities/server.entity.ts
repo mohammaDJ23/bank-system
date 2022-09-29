@@ -1,13 +1,16 @@
 import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()
-export class DownedServer {
+export class Server {
   @PrimaryGeneratedColumn()
   id: number;
 
   @Column({ unique: true })
   name: string;
 
-  @Column()
+  @Column({ nullable: true })
   deadTime: Date;
+
+  @Column({ nullable: true })
+  livedTime: Date;
 }
