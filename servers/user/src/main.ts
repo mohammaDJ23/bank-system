@@ -20,6 +20,7 @@ async function bootstrap() {
     },
   });
 
+  app.enableShutdownHooks();
   await app.startAllMicroservices();
   await app.listen(3002);
 }
