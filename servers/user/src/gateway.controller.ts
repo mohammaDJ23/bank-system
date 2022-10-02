@@ -63,7 +63,7 @@ export class GatewayController {
     return this.appService.findById(+id);
   }
 
-  @Post('users')
+  @Get('users')
   @UseGuards(JwtAuthGuard, AdminGuard)
   @Serializer(UserDto)
   findAll(@Body() body: FindAllDto): Promise<[UserDto[], number]> {
