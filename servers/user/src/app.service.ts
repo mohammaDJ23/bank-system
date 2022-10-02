@@ -35,7 +35,9 @@ export class AppService {
 
     payload.password = await hash(payload.password, 10);
     user = this.userRepository.create(payload);
-    return this.userRepository.save(user);
+    user = await this.userRepository.save(user);
+    await this.clientProxy.emit('created_user', user).toPromise();
+    return user;
   }
 
   async update(payload: Partial<UpdateUserDto>): Promise<UserDto> {
@@ -47,13 +49,17 @@ export class AppService {
       );
 
     user = this.userRepository.create(Object.assign(user, payload));
-    return this.userRepository.save(user);
+    user = await this.userRepository.save(user);
+    await this.clientProxy.emit('updated_user', user).toPromise();
+    return user;
   }
 
   async remove(body: DeleteAccountDto) {
-    const user = await this.userRepository.findOneBy({ id: body.id });
+    let user = await this.userRepository.findOneBy({ id: body.id });
     if (!user) throw new NotFoundException('Could not found the user.');
-    return this.userRepository.remove(user);
+    user = await this.userRepository.remove(user);
+    await this.clientProxy.emit('removed_user', user).toPromise();
+    return user;
   }
 
   async findById(id: number): Promise<UserDto> {

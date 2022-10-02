@@ -5,4 +5,5 @@ export enum RabbitMqServices {
 export enum RabbitMqQueue {
   USER = 'user-queue',
   REQUEST_TRACKER = 'request-tracker-queue',
+  BANK = 'bank-queue',
 }
