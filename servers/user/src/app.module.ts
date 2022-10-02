@@ -30,6 +30,18 @@ import { RabbitMqQueue, RabbitMqServices } from './types/rabbitmq';
           noAck: false,
         },
       },
+      {
+        name: RabbitMqServices.USER,
+        transport: Transport.RMQ,
+        options: {
+          urls: [process.env.RABBITMQ_URL],
+          queue: RabbitMqQueue.BANK,
+          queueOptions: {
+            durable: true,
+          },
+          noAck: false,
+        },
+      },
     ]),
     TypeOrmModule.forRootAsync({
       useFactory: () => ({
