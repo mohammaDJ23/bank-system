@@ -1,4 +1,9 @@
-import { Injectable, NestMiddleware, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  NestMiddleware,
+  NotFoundException,
+  BadRequestException,
+} from '@nestjs/common';
 import { NextFunction, Response } from 'express';
 import { UserService } from '../services/user.service';
 import { Request } from '../types/overwrites';
@@ -9,7 +14,13 @@ export class CurrentUserMiddleWare implements NestMiddleware {
 
   async use(request: Request, Response: Response, next: NextFunction) {
     const body = request.body || {};
-    const user = await this.userService.findByEmail(body?.email);
+
+    if (!('email' in body))
+      throw new BadRequestException(
+        'No email has founded to retrieve the user.',
+      );
+
+    const user = await this.userService.findByEmail(body.email);
 
     if (!user) throw new NotFoundException('Cound not found the user.');
 
