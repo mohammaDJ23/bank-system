@@ -24,6 +24,8 @@ export class ResetPasswordService {
     private readonly mailerService: MailerService,
   ) {}
 
+  // finding the reset password information by a token
+
   private findResetPasswordByToken(token: string): Promise<ResetPassword> {
     return this.resetPasswordRepository
       .createQueryBuilder('reset_password')
@@ -31,6 +33,8 @@ export class ResetPasswordService {
       .where('reset_password.token = :token', { token })
       .getRawOne();
   }
+
+  // at first the user needs a token for changing the password
 
   async forgotPassword(
     body: ForgotPasswordDto,
@@ -70,6 +74,8 @@ export class ResetPasswordService {
     };
   }
 
+  // the reset password logic after a user has a token then the user can change the password
+
   async resetPassword(body: ResetPasswordDto): Promise<MessageDto> {
     const actualPassword = body.password.toString().toLowerCase();
     const confirmedPassword = body.confirmedPassword.toString().toLowerCase();
@@ -106,6 +112,8 @@ export class ResetPasswordService {
 
     return { message: 'Your password has been changed.' };
   }
+
+  // cleaning up the generated token in the forgot password step in the database
 
   async removeResetPasswordTokens() {
     try {
