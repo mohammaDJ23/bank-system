@@ -7,6 +7,8 @@ import { PassportModule } from '@nestjs/passport';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { Bill } from './entities/bill.entity';
+import { User } from './entities/user.entity';
 import { AllExceptionFilter } from './filters/catch.filter';
 import { GatewayController } from './gateway.controller';
 import { JwtStrategy } from './strategies/jwt.strategy';
@@ -24,11 +26,11 @@ import { CustomNamingStrategy } from './strategies/naming.strategy';
         password: process.env.DATABASE_PASSWORD,
         database: process.env.DATABASE_NAME,
         namingStrategy: new CustomNamingStrategy(),
-        entities: [],
+        entities: [Bill, User],
         synchronize: true,
       }),
     }),
-    TypeOrmModule.forFeature([]),
+    TypeOrmModule.forFeature([Bill, User]),
     ConfigModule.forRoot({
       envFilePath: `.env.${process.env.NODE_ENV}`,
       isGlobal: true,
