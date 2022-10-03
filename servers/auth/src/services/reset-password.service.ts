@@ -58,7 +58,7 @@ export class ResetPasswordService {
       context: {
         firstName: currentUser.firstName,
         lastName: currentUser.lastName,
-        link: `${process.env.CLIENT_URL}/reset-password?token=${token}`,
+        link: `${process.env.CLIENT_URL}/auth/reset-password?token=${token}`,
       },
     };
 
@@ -90,6 +90,20 @@ export class ResetPasswordService {
     user.password = await hash(body.password, 10);
     await this.userService.update(user);
     await this.resetPasswordRepository.remove(resetPassword);
+
+    const mailerOptions = {
+      from: process.env.MAILER_USER,
+      to: user.email,
+      subject: 'Changed password',
+      template: './login',
+      context: {
+        firstName: user.firstName,
+        link: `${process.env.CLIENT_URL}/auth/login`,
+      },
+    };
+
+    await this.mailerService.sendMail(mailerOptions);
+
     return { message: 'Your password has been changed.' };
   }
 
