@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
 import * as request from 'supertest';
-import { AppModule } from './../src/app.module';
+import { AppModule } from '../src/modules/app.module';
 import { UserDto } from 'src/dtos/user.dto';
 import { TokenDto } from 'src/dtos/token.dto';
 import { MessageDto } from 'src/dtos/message.dto';

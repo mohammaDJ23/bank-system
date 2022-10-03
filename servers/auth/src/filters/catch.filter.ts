@@ -61,6 +61,9 @@ export class AllExceptionFilter implements ExceptionFilter {
     // syntax error
     const isTypeError = exception instanceof TypeError;
 
+    // the javascript Error
+    const isError = exception instanceof Error;
+
     // errors from messagePatterns
     const isObjectException =
       exception instanceof Object && Reflect.has(exception, 'response');
@@ -94,6 +97,7 @@ export class AllExceptionFilter implements ExceptionFilter {
         break;
       }
 
+      case isError:
       case isTypeError:
       case isQueryFailedException: {
         message = exception.message;

@@ -1,8 +1,8 @@
 import { ExecutionContext } from '@nestjs/common';
-import { CurrentUser as User } from '../types/user';
+import { User } from '../entities/user.entity';
+import { getRequest } from './request';
 
 export function getCurrentUser(context: ExecutionContext): User {
-  const ctx = context.switchToHttp();
-  const request = ctx.getRequest();
-  return request.user;
+  const request = getRequest(context);
+  return request.currentUser;
 }
