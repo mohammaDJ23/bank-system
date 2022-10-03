@@ -11,6 +11,7 @@ import { Bill } from './entities/bill.entity';
 import { User } from './entities/user.entity';
 import { AllExceptionFilter } from './filters/catch.filter';
 import { GatewayController } from './gateway.controller';
+import { MessagePatternController } from './message-pattern.conftoller';
 import { JwtStrategy } from './strategies/jwt.strategy';
 import { CustomNamingStrategy } from './strategies/naming.strategy';
 
@@ -41,7 +42,7 @@ import { CustomNamingStrategy } from './strategies/naming.strategy';
       signOptions: { expiresIn: process.env.JWT_EXPIRATION },
     }),
   ],
-  controllers: [AppController, GatewayController],
+  controllers: [AppController, GatewayController, MessagePatternController],
   providers: [
     AppService,
     JwtStrategy,
@@ -50,7 +51,6 @@ import { CustomNamingStrategy } from './strategies/naming.strategy';
       provide: APP_PIPE,
       useValue: new ValidationPipe({
         whitelist: true,
-        validateCustomDecorators: true,
       }),
     },
   ],

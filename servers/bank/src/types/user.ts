@@ -3,6 +3,7 @@ export interface CurrentUser {
   email: string;
   firstName: string;
   lastName: string;
+  role: string;
 }
 
 export enum Roles {
