@@ -16,6 +16,12 @@ export class BillDto {
   @Expose()
   date: Date;
 
+  @Expose()
+  createdAt: Date;
+
+  @Expose()
+  updatedAt: Date;
+
   @Transform(({ obj }) => obj.user.id)
   @Expose()
   userId: number;
