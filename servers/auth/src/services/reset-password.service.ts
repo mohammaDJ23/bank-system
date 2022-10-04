@@ -29,9 +29,8 @@ export class ResetPasswordService {
   private findResetPasswordByToken(token: string): Promise<ResetPassword> {
     return this.resetPasswordRepository
       .createQueryBuilder('reset_password')
-      .select('*')
       .where('reset_password.token = :token', { token })
-      .getRawOne();
+      .getOne();
   }
 
   // at first the user needs a token for changing the password
@@ -101,7 +100,7 @@ export class ResetPasswordService {
       from: process.env.MAILER_USER,
       to: user.email,
       subject: 'Changed password',
-      template: './login',
+      template: './changed-password',
       context: {
         firstName: user.firstName,
         link: `${process.env.CLIENT_URL}/auth/login`,
