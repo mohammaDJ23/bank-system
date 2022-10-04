@@ -75,7 +75,7 @@ import { CurrentUserMiddleWare } from '../middlewares/current-user.middleware';
       },
       defaults: {},
       template: {
-        dir: join(__dirname, 'templates'),
+        dir: join(__dirname, '../', 'templates'),
         adapter: new EjsAdapter(),
         options: {
           strict: true,
