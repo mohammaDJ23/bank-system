@@ -1,23 +1,30 @@
-import { Module, ValidationPipe, MiddlewareConsumer } from '@nestjs/common';
+import {
+  Module,
+  ValidationPipe,
+  MiddlewareConsumer,
+  RequestMethod,
+} from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { PassportModule } from '@nestjs/passport';
 import { APP_FILTER, APP_PIPE } from '@nestjs/core';
 import { ClientsModule, Transport } from '@nestjs/microservices';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
-import { AllExceptionFilter } from './filters/catch.filter';
+import { AllExceptionFilter } from '../filters/catch.filter';
 import { JwtModule } from '@nestjs/jwt';
-import { JwtStrategy } from './strategies/jwt.strategy';
+import { JwtStrategy } from '../strategies/jwt.strategy';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { CustomNamingStrategy } from './strategies/naming.strategy';
-import { ResetPassword } from './entities/reset-password.entity';
+import { CustomNamingStrategy } from '../strategies/naming.strategy';
+import { ResetPassword } from '../entities/reset-password.entity';
 import { join } from 'path';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { EjsAdapter } from '@nestjs-modules/mailer/dist/adapters/ejs.adapter';
 import { ScheduleModule } from '@nestjs/schedule';
-import { RabbitMqQueue, RabbitMqServices } from './types/rabbitmq';
-import { CronJobsController } from './cron-jobs.controller';
-import { GatewayController } from './gateway.controller';
+import { RabbitMqQueue, RabbitMqServices } from '../types/rabbitmq';
+import { CronJobsController } from '../controllers/cron-jobs.controller';
+import { GatewayController } from '../controllers/gateway.controller';
+import { UserService } from '../services/user.service';
+import { ResetPasswordService } from '../services/reset-password.service';
+import { AuthService } from '../services/auth.service';
+import { CurrentUserMiddleWare } from '../middlewares/current-user.middleware';
 
 @Module({
   imports: [
@@ -77,16 +84,17 @@ import { GatewayController } from './gateway.controller';
     }),
     ScheduleModule.forRoot(),
   ],
-  controllers: [AppController, CronJobsController, GatewayController],
+  controllers: [CronJobsController, GatewayController],
   providers: [
-    AppService,
+    UserService,
+    ResetPasswordService,
+    AuthService,
     JwtStrategy,
     { provide: APP_FILTER, useClass: AllExceptionFilter },
     {
       provide: APP_PIPE,
       useValue: new ValidationPipe({
         whitelist: true,
-        validateCustomDecorators: true,
       }),
     },
   ],
@@ -94,14 +102,11 @@ import { GatewayController } from './gateway.controller';
 export class AppModule {
   configure(consumer: MiddlewareConsumer) {
     consumer
-      .apply
-      /* 
-        run any code to run as a middleware for each request ( forRoutes("*") )
-        for example:
-      */
-
-      // cookieSecction({keys: ['iosjfiasdf']})
-      ()
-      .forRoutes('*');
+      .apply(CurrentUserMiddleWare)
+      .forRoutes(
+        { path: 'auth/login', method: RequestMethod.POST },
+        { path: 'auth/login/admin', method: RequestMethod.POST },
+        { path: 'auth/forgot-password', method: RequestMethod.POST },
+      );
   }
 }
