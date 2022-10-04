@@ -1,4 +1,11 @@
-import { Body, Controller, Post, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Post,
+  UseGuards,
+  HttpStatus,
+  HttpCode,
+} from '@nestjs/common';
 import { LoginDto } from '../dtos/login.dto';
 import { MessageDto } from '../dtos/message.dto';
 import { ForgotPasswordDto } from '../dtos/forgot-password.dto';
@@ -19,6 +26,7 @@ export class GatewayController {
   ) {}
 
   @Post('login')
+  @HttpCode(HttpStatus.OK)
   @Serializer(TokenDto)
   login(
     @Body() body: LoginDto,
@@ -28,6 +36,7 @@ export class GatewayController {
   }
 
   @Post('login/admin')
+  @HttpCode(HttpStatus.OK)
   @UseGuards(AdminAuthGuard)
   @Serializer(TokenDto)
   adminLogin(
@@ -38,6 +47,7 @@ export class GatewayController {
   }
 
   @Post('forgot-password')
+  @HttpCode(HttpStatus.OK)
   @Serializer(MessageDto)
   forgotPassword(
     @Body() body: ForgotPasswordDto,
@@ -47,6 +57,7 @@ export class GatewayController {
   }
 
   @Post('reset-password')
+  @HttpCode(HttpStatus.OK)
   @Serializer(MessageDto)
   resetPassword(@Body() body: ResetPasswordDto): Promise<MessageDto> {
     return this.resetPasswordService.resetPassword(body);
