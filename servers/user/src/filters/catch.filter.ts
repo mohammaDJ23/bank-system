@@ -10,7 +10,6 @@ import { AbstractHttpAdapter, HttpAdapterHost } from '@nestjs/core';
 import { MESSAGES } from '@nestjs/core/constants';
 import { RpcException } from '@nestjs/microservices';
 import { Exception } from 'src/types/exception';
-import { QueryFailedError } from 'typeorm';
 
 @Catch()
 export class AllExceptionFilter implements ExceptionFilter {
@@ -55,9 +54,6 @@ export class AllExceptionFilter implements ExceptionFilter {
     // some routes used for messagePattern and gateway are throwing rpc error
     const isRpcException = exception instanceof RpcException;
 
-    // sql database errors
-    const isQueryFailedException = exception instanceof QueryFailedError;
-
     // errors from messagePatterns
     const isObjectException =
       exception instanceof Object && Reflect.has(exception, 'response');
@@ -91,15 +87,17 @@ export class AllExceptionFilter implements ExceptionFilter {
         break;
       }
 
-      case isQueryFailedException: {
-        message = exception.message;
-        break;
-      }
-
       case isStringException: {
         message = exception;
         break;
       }
+
+      default:
+        if ('message' in exception) {
+          message = exception.message;
+        }
+
+        break;
     }
 
     return { message, statusCode };

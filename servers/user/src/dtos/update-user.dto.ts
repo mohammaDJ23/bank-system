@@ -1,4 +1,5 @@
-import { IsString, Matches, Length, IsNumber } from 'class-validator';
+import { IsString, Matches, Length, IsNumber, IsEnum } from 'class-validator';
+import { Roles } from 'src/types/user';
 
 export class UpdateUserDto {
   @IsNumber()
@@ -30,4 +31,7 @@ export class UpdateUserDto {
     message: 'Invalid phone number',
   })
   phone: string;
+
+  @IsEnum(Roles)
+  role: string;
 }
