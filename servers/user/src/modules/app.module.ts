@@ -2,19 +2,18 @@ import { Module, ValidationPipe } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { ClientsModule, Transport } from '@nestjs/microservices';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
-import { User } from './entities/user.entity';
-import { CustomNamingStrategy } from './strategies/naming.strategy';
-import { AllExceptionFilter } from './filters/catch.filter';
+import { UserService } from '../services/user.service';
+import { User } from '../entities/user.entity';
+import { CustomNamingStrategy } from '../strategies/naming.strategy';
+import { AllExceptionFilter } from '../filters/catch.filter';
 import { APP_FILTER, APP_PIPE } from '@nestjs/core';
 import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
-import { JwtStrategy } from './strategies/jwt.strategy';
-import { GatewayController } from './gateway.controller';
-import { MessagePatternController } from './message-patterns.controller';
-import { RabbitMqQueue, RabbitMqServices } from './types/rabbitmq';
-import { Bill } from './entities/bill.entity';
+import { JwtStrategy } from '../strategies/jwt.strategy';
+import { GatewayController } from '../controllers/gateway.controller';
+import { MessagePatternController } from '../controllers/message-patterns.controller';
+import { RabbitMqQueue, RabbitMqServices } from '../types/rabbitmq';
+import { Bill } from '../entities/bill.entity';
 
 @Module({
   imports: [
@@ -68,16 +67,15 @@ import { Bill } from './entities/bill.entity';
       signOptions: { expiresIn: process.env.JWT_EXPIRATION },
     }),
   ],
-  controllers: [AppController, GatewayController, MessagePatternController],
+  controllers: [GatewayController, MessagePatternController],
   providers: [
-    AppService,
+    UserService,
     JwtStrategy,
     { provide: APP_FILTER, useClass: AllExceptionFilter },
     {
       provide: APP_PIPE,
       useValue: new ValidationPipe({
         whitelist: true,
-        validateCustomDecorators: true,
       }),
     },
   ],
