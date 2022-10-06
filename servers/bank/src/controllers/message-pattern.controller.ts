@@ -17,8 +17,8 @@ export class MessagePatternController {
     this.userService.update(payload);
   }
 
-  @EventPattern('removed_user')
-  removeUser(@Payload() payload: User): void {
-    this.userService.remove(payload);
+  @EventPattern('deleted_user')
+  deleteUser(@Payload() payload: User): void {
+    this.userService.delete(payload);
   }
 }

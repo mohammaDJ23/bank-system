@@ -85,8 +85,8 @@ export class UserService {
 
     if (!user) throw new NotFoundException('Could not found the user.');
 
-    user = await this.userRepository.remove(user);
-    await this.clientProxy.emit('removed_user', user).toPromise();
+    await this.userRepository.delete(user.id);
+    await this.clientProxy.emit('deleted_user', user).toPromise();
     return user;
   }
 
