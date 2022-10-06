@@ -15,7 +15,6 @@ import { UpdateUserDto } from '../dtos/update-user.dto';
 import { FindAllDto } from '../dtos/find-all.dto';
 import { DeleteAccountDto } from '../dtos/delete-account.dto';
 import { RabbitMqServices } from '../types/rabbitmq';
-import { UpdateUserByAdminDto } from 'src/dtos/update-user-by-admin.dto';
 import { UpdateUserByUserDto } from 'src/dtos/update-user-by-user.dto';
 
 @Injectable()
@@ -24,8 +23,6 @@ export class UserService {
     @InjectRepository(User) private readonly userRepository: Repository<User>,
     @Inject(RabbitMqServices.USER) private readonly clientProxy: ClientProxy,
   ) {}
-
-  // creating a new user
 
   async create(body: CreateUserDto): Promise<User> {
     let user = await this.findByEmail(body.email);
@@ -39,8 +36,6 @@ export class UserService {
     return user;
   }
 
-  // upadting a user
-
   updateByUser(body: UpdateUserByUserDto, currentUser: User): Promise<User> {
     const isSameUser =
       body.id.toString().toLowerCase() ===
@@ -49,14 +44,10 @@ export class UserService {
     if (!isSameUser)
       throw new BadRequestException('Could not update a different user.');
 
-    return this.update(body);
+    return this.update(body, currentUser);
   }
 
-  updateByAdmin(body: UpdateUserByAdminDto): Promise<User> {
-    return this.update(body);
-  }
-
-  async update(body: Partial<UpdateUserDto>): Promise<User> {
+  async findAndUpdate(body: Partial<UpdateUserDto>): Promise<User> {
     let user = await this.findById(body.id);
 
     if (!user)
@@ -64,20 +55,29 @@ export class UserService {
         new NotFoundException('Could not found the user.'),
       );
 
-    const existedUser = await this.userRepository
-      .createQueryBuilder('user')
-      .where('user.id != :id', { id: body.id })
-      .andWhere('user.email = :email', { email: body.email })
-      .getOne();
+    return this.update(body, user);
+  }
 
-    if (existedUser)
-      throw new RpcException(new ConflictException('Choose another email.'));
-
+  async update(body: User | Partial<UpdateUserDto>, user: User): Promise<User> {
+    const existedUser = await this.existedUser(body);
     user.updatedAt = new Date();
     user = this.userRepository.create(Object.assign(user, body));
     user = await this.userRepository.save(user);
     await this.clientProxy.emit('updated_user', user).toPromise();
     return user;
+  }
+
+  async existedUser(user: User | Partial<UpdateUserDto>): Promise<User> {
+    const existedUser = await this.userRepository
+      .createQueryBuilder('user')
+      .where('user.id != :id', { id: user.id })
+      .andWhere('user.email = :email', { email: user.email })
+      .getOne();
+
+    if (existedUser)
+      throw new RpcException(new ConflictException('Choose another email.'));
+
+    return existedUser;
   }
 
   async remove(body: DeleteAccountDto): Promise<User> {
