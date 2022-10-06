@@ -2,6 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DeleteBillDto } from 'src/dtos/delete-bill.dto';
 import { FindAllBillDto } from 'src/dtos/find-all-bill.dto';
+import { TotalAmountDto } from 'src/dtos/total-amount.dto';
 import { UpdateBillDto } from 'src/dtos/update-bill.dto';
 import { Repository } from 'typeorm';
 import { CreateBillDto } from '../dtos/create-bill.dto';
@@ -11,25 +12,25 @@ import { User } from '../entities/user.entity';
 @Injectable()
 export class BillService {
   constructor(
-    @InjectRepository(Bill) private readonly billService: Repository<Bill>,
+    @InjectRepository(Bill) private readonly billRepository: Repository<Bill>,
   ) {}
 
   createBill(body: CreateBillDto, user: User): Promise<Bill> {
-    const createdBill = this.billService.create(body);
+    const createdBill = this.billRepository.create(body);
     createdBill.user = user;
-    return this.billService.save(createdBill);
+    return this.billRepository.save(createdBill);
   }
 
   async updateBill(body: UpdateBillDto, user: User): Promise<Bill> {
     let bill = await this.findById(body.id, user.id);
     bill = Object.assign(bill, body);
-    bill = this.billService.create(bill);
-    return this.billService.save(bill);
+    bill = this.billRepository.create(bill);
+    return this.billRepository.save(bill);
   }
 
   async deleteBill(body: DeleteBillDto, user: User): Promise<Bill> {
     const bill = await this.findById(body.id, user.id);
-    await this.billService.delete(bill.id);
+    await this.billRepository.delete(bill.id);
     return bill;
   }
 
@@ -38,7 +39,7 @@ export class BillService {
   }
 
   async findById(billId: number, userId: number): Promise<Bill> {
-    const bill = await this.billService
+    const bill = await this.billRepository
       .createQueryBuilder('bill')
       .where('bill.id = :billId', { billId })
       .andWhere('bill.user.id = :userId', { userId })
@@ -49,11 +50,20 @@ export class BillService {
     return bill;
   }
 
-  findAll(body: FindAllBillDto): Promise<[Bill[], number]> {
-    return this.billService
-      .createQueryBuilder('user')
+  findAll(body: FindAllBillDto, user: User): Promise<[Bill[], number]> {
+    return this.billRepository
+      .createQueryBuilder('bill')
+      .where('bill.user.id = :userId', { userId: user.id })
       .take(body.take)
       .skip(body.skip)
       .getManyAndCount();
+  }
+
+  getTotalAmount(user: User): Promise<TotalAmountDto> {
+    return this.billRepository
+      .createQueryBuilder('bill')
+      .select('SUM(bill.amount::INTEGER)', 'totalAmount')
+      .where('bill.user.id = :userId', { userId: user.id })
+      .getRawOne();
   }
 }
