@@ -17,6 +17,7 @@ import { JwtAuthGuard } from '../guards/jwt-auth.guard';
 import { Serializer } from '../decorators/serializer.decorator';
 import { BillService } from 'src/services/bill.service';
 import { UpdateBillDto } from 'src/dtos/update-bill.dto';
+import { DeleteBillDto } from 'src/dtos/delete-bill.dto';
 
 @UseGuards(JwtAuthGuard)
 @Serializer(BillDto)
@@ -40,5 +41,14 @@ export class GatewayController {
     @CurrentUser() user: User,
   ): Promise<Bill> {
     return this.billService.updateBill(body, user);
+  }
+
+  @Delete('delete-bill')
+  @HttpCode(HttpStatus.OK)
+  deleteBill(
+    @Body() body: DeleteBillDto,
+    @CurrentUser() user: User,
+  ): Promise<Bill> {
+    return this.billService.deleteBill(body, user);
   }
 }
