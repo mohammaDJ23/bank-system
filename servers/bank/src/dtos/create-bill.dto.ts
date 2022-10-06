@@ -2,6 +2,7 @@ import { IsString, IsNumberString, IsDate, Length } from 'class-validator';
 
 export class CreateBillDto {
   @IsNumberString()
+  @Length(1, 100)
   amount: string;
 
   @IsString()

@@ -1,6 +1,6 @@
 import { NestFactory } from '@nestjs/core';
 import { MicroserviceOptions, Transport } from '@nestjs/microservices';
-import { AppModule } from './app.module';
+import { AppModule } from './modules/app.module';
 import { RabbitMqQueue } from './types/rabbitmq';
 
 require('dotenv').config();
