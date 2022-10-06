@@ -24,16 +24,12 @@ export class ResetPasswordService {
     private readonly mailerService: MailerService,
   ) {}
 
-  // finding the reset password information by a token
-
   private findResetPasswordByToken(token: string): Promise<ResetPassword> {
     return this.resetPasswordRepository
       .createQueryBuilder('reset_password')
       .where('reset_password.token = :token', { token })
       .getOne();
   }
-
-  // at first the user needs a token for changing the password
 
   async forgotPassword(
     body: ForgotPasswordDto,
@@ -73,8 +69,6 @@ export class ResetPasswordService {
     };
   }
 
-  // the reset password logic after a user has a token then the user can change the password
-
   async resetPassword(body: ResetPasswordDto): Promise<MessageDto> {
     const actualPassword = body.password.toString().toLowerCase();
     const confirmedPassword = body.confirmedPassword.toString().toLowerCase();
@@ -92,6 +86,9 @@ export class ResetPasswordService {
       throw new BadRequestException('The token used has been expired.');
 
     const user = await this.userService.findById(resetPassword.userId);
+
+    if (!user) throw new NotFoundException('Could not found the user.');
+
     user.password = await hash(body.password, 10);
     await this.userService.update(user);
     await this.resetPasswordRepository.remove(resetPassword);
@@ -111,8 +108,6 @@ export class ResetPasswordService {
 
     return { message: 'Your password has been changed.' };
   }
-
-  // cleaning up the generated token in the forgot password step in the database
 
   async removeResetPasswordTokens() {
     try {
