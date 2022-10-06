@@ -8,6 +8,8 @@ import {
   Put,
   Delete,
   Get,
+  Param,
+  ParseIntPipe,
 } from '@nestjs/common';
 import { CurrentUser } from '../decorators/current-user.decorator';
 import { BillDto } from '../dtos/bill.dto';
@@ -58,5 +60,14 @@ export class GatewayController {
   @HttpCode(HttpStatus.OK)
   findAllBills(@Body() body: FindAllBillDto): Promise<[Bill[], number]> {
     return this.billService.findAll(body);
+  }
+
+  @Get('bill/:id')
+  @HttpCode(HttpStatus.OK)
+  findOneBill(
+    @Param('id', ParseIntPipe) id: number,
+    @CurrentUser() user: User,
+  ): Promise<Bill> {
+    return this.billService.findOne(id, user);
   }
 }
