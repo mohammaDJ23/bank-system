@@ -21,10 +21,10 @@ import { Serializer } from '../decorators/serializer.decorator';
 import { BillService } from 'src/services/bill.service';
 import { UpdateBillDto } from 'src/dtos/update-bill.dto';
 import { DeleteBillDto } from 'src/dtos/delete-bill.dto';
-import { FindAllBillDto } from 'src/dtos/find-all-bill.dto';
 import { TotalAmountDto } from 'src/dtos/total-amount.dto';
 import { PeriodAmountDto } from 'src/dtos/period-amount.dto';
 import { LastWeekDto } from 'src/dtos/last-week.dto';
+import { ListDto } from 'src/dtos/list.dto';
 
 @UseGuards(JwtAuthGuard)
 @Controller('bank')
@@ -85,11 +85,28 @@ export class GatewayController {
     return this.billService.lastWeekBills(user);
   }
 
+  @Post('bills/max-amounts')
+  @HttpCode(HttpStatus.OK)
+  maxBillAmounts(
+    @Body() body: ListDto,
+    @CurrentUser() user: User,
+  ): Promise<[Bill[], number]> {
+    return this.billService.maxBillAmounts(body, user);
+  }
+
+  @Post('bills/min-amounts')
+  @HttpCode(HttpStatus.OK)
+  minBillAmounts(
+    @Body() body: ListDto,
+    @CurrentUser() user: User,
+  ): Promise<[Bill[], number]> {
+    return this.billService.minBillAmounts(body, user);
+  }
+
   @Get('bills')
   @HttpCode(HttpStatus.OK)
-  @Serializer(BillDto)
   findAllBills(
-    @Body() body: FindAllBillDto,
+    @Body() body: ListDto,
     @CurrentUser() user: User,
   ): Promise<[Bill[], number]> {
     return this.billService.findAll(body, user);

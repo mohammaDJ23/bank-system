@@ -1,8 +1,8 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DeleteBillDto } from 'src/dtos/delete-bill.dto';
-import { FindAllBillDto } from 'src/dtos/find-all-bill.dto';
 import { LastWeekDto } from 'src/dtos/last-week.dto';
+import { ListDto } from 'src/dtos/list.dto';
 import { PeriodAmountDto } from 'src/dtos/period-amount.dto';
 import { TotalAmountDto } from 'src/dtos/total-amount.dto';
 import { UpdateBillDto } from 'src/dtos/update-bill.dto';
@@ -52,7 +52,7 @@ export class BillService {
     return bill;
   }
 
-  findAll(body: FindAllBillDto, user: User): Promise<[Bill[], number]> {
+  findAll(body: ListDto, user: User): Promise<[Bill[], number]> {
     return this.billRepository
       .createQueryBuilder('bill')
       .where('bill.user.id = :userId', { userId: user.id })
@@ -92,5 +92,25 @@ export class BillService {
       .andWhere('bill.user.id = :userId', { userId: user.id })
       .groupBy('bill.date')
       .getRawMany();
+  }
+
+  maxBillAmounts(body: ListDto, user: User): Promise<[Bill[], number]> {
+    return this.billRepository
+      .createQueryBuilder('bill')
+      .orderBy('bill.amount', 'DESC')
+      .where('bill.user.id = :userId', { userId: user.id })
+      .take(body.take)
+      .skip(body.skip)
+      .getManyAndCount();
+  }
+
+  minBillAmounts(body: ListDto, user: User): Promise<[Bill[], number]> {
+    return this.billRepository
+      .createQueryBuilder('bill')
+      .orderBy('bill.amount', 'ASC')
+      .where('bill.user.id = :userId', { userId: user.id })
+      .take(body.take)
+      .skip(body.skip)
+      .getManyAndCount();
   }
 }
