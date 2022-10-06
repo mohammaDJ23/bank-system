@@ -23,6 +23,7 @@ import { UpdateBillDto } from 'src/dtos/update-bill.dto';
 import { DeleteBillDto } from 'src/dtos/delete-bill.dto';
 import { FindAllBillDto } from 'src/dtos/find-all-bill.dto';
 import { TotalAmountDto } from 'src/dtos/total-amount.dto';
+import { PeriodAmountDto } from 'src/dtos/period-amount.dto';
 
 @UseGuards(JwtAuthGuard)
 @Controller('bank')
@@ -64,6 +65,16 @@ export class GatewayController {
   @Serializer(TotalAmountDto)
   getTotalAmount(@CurrentUser() user: User): Promise<TotalAmountDto> {
     return this.billService.getTotalAmount(user);
+  }
+
+  @Post('bill/period-amount')
+  @HttpCode(HttpStatus.OK)
+  @Serializer(TotalAmountDto)
+  PeriodAmount(
+    @Body() body: PeriodAmountDto,
+    @CurrentUser() user: User,
+  ): Promise<TotalAmountDto> {
+    return this.billService.periodAmount(body, user);
   }
 
   @Get('bills')

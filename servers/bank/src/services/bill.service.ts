@@ -2,6 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DeleteBillDto } from 'src/dtos/delete-bill.dto';
 import { FindAllBillDto } from 'src/dtos/find-all-bill.dto';
+import { PeriodAmountDto } from 'src/dtos/period-amount.dto';
 import { TotalAmountDto } from 'src/dtos/total-amount.dto';
 import { UpdateBillDto } from 'src/dtos/update-bill.dto';
 import { Repository } from 'typeorm';
@@ -64,6 +65,18 @@ export class BillService {
       .createQueryBuilder('bill')
       .select('SUM(bill.amount::INTEGER)', 'totalAmount')
       .where('bill.user.id = :userId', { userId: user.id })
+      .getRawOne();
+  }
+
+  periodAmount(body: PeriodAmountDto, user: User): Promise<TotalAmountDto> {
+    const { start, end } = body;
+
+    return this.billRepository
+      .createQueryBuilder('bill')
+      .select('SUM(bill.amount::INTEGER)', 'totalAmount')
+      .where('bill.createdAt::TIMESTAMP >= :start::TIMESTAMP', { start })
+      .andWhere('bill.createdAt::TIMESTAMP <= :end::TIMESTAMP', { end })
+      .andWhere('bill.user.id = :userId', { userId: user.id })
       .getRawOne();
   }
 }
