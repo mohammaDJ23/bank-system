@@ -2,6 +2,8 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DeleteBillDto } from 'src/dtos/delete-bill.dto';
 import { FindAllBillDto } from 'src/dtos/find-all-bill.dto';
+import { LastWeekDto } from 'src/dtos/last-week.dto';
+import { PeriodAmountDto } from 'src/dtos/period-amount.dto';
 import { TotalAmountDto } from 'src/dtos/total-amount.dto';
 import { UpdateBillDto } from 'src/dtos/update-bill.dto';
 import { Repository } from 'typeorm';
@@ -65,5 +67,30 @@ export class BillService {
       .select('SUM(bill.amount::INTEGER)', 'totalAmount')
       .where('bill.user.id = :userId', { userId: user.id })
       .getRawOne();
+  }
+
+  periodAmount(body: PeriodAmountDto, user: User): Promise<TotalAmountDto> {
+    const { start, end } = body;
+
+    return this.billRepository
+      .createQueryBuilder('bill')
+      .select('SUM(bill.amount::INTEGER)', 'totalAmount')
+      .where('bill.createdAt::TIMESTAMP >= :start::TIMESTAMP', { start })
+      .andWhere('bill.createdAt::TIMESTAMP <= :end::TIMESTAMP', { end })
+      .andWhere('bill.user.id = :userId', { userId: user.id })
+      .getRawOne();
+  }
+
+  lastWeekBills(user: User): Promise<LastWeekDto[]> {
+    return this.billRepository
+      .createQueryBuilder('bill')
+      .select('COUNT(bill.date::DATE)::INTEGER', 'count')
+      .addSelect('SUM(bill.amount::INTEGER)', 'amount')
+      .addSelect('bill.date::DATE', 'date')
+      .where('bill.date::DATE >= CURRENT_DATE - 7')
+      .andWhere('bill.date::DATE <= CURRENT_DATE - 1')
+      .andWhere('bill.user.id = :userId', { userId: user.id })
+      .groupBy('bill.date')
+      .getRawMany();
   }
 }
