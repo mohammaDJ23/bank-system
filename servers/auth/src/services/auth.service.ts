@@ -9,8 +9,6 @@ import { TokenDto } from '../dtos/token.dto';
 export class AuthService {
   constructor(private readonly jwtService: JwtService) {}
 
-  // login logic to generate the accessToken
-
   async login(body: LoginDto, currentUser: User): Promise<TokenDto> {
     const isPasswordsEqual = await compare(body.password, currentUser.password);
 
