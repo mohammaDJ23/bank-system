@@ -13,7 +13,6 @@ import { JwtStrategy } from '../strategies/jwt.strategy';
 import { GatewayController } from '../controllers/gateway.controller';
 import { MessagePatternController } from '../controllers/message-patterns.controller';
 import { RabbitMqQueue, RabbitMqServices } from '../types/rabbitmq';
-import { Bill } from '../entities/bill.entity';
 
 @Module({
   imports: [
@@ -52,11 +51,11 @@ import { Bill } from '../entities/bill.entity';
         password: process.env.DATABASE_PASSWORD,
         database: process.env.DATABASE_NAME,
         namingStrategy: new CustomNamingStrategy(),
-        entities: [User, Bill],
+        entities: [User],
         synchronize: true,
       }),
     }),
-    TypeOrmModule.forFeature([User, Bill]),
+    TypeOrmModule.forFeature([User]),
     ConfigModule.forRoot({
       envFilePath: `.env.${process.env.NODE_ENV}`,
       isGlobal: true,
