@@ -1,6 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DeleteBillDto } from 'src/dtos/delete-bill.dto';
+import { FindAllBillDto } from 'src/dtos/find-all-bill.dto';
 import { UpdateBillDto } from 'src/dtos/update-bill.dto';
 import { Repository } from 'typeorm';
 import { CreateBillDto } from '../dtos/create-bill.dto';
@@ -47,5 +48,13 @@ export class BillService {
       .where('bill.id = :billId', { billId })
       .andWhere('bill.user.id = :userId', { userId })
       .getOne();
+  }
+
+  findAll(body: FindAllBillDto): Promise<[Bill[], number]> {
+    return this.billService
+      .createQueryBuilder('user')
+      .take(body.take)
+      .skip(body.skip)
+      .getManyAndCount();
   }
 }

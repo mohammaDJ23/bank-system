@@ -7,6 +7,7 @@ import {
   HttpStatus,
   Put,
   Delete,
+  Get,
 } from '@nestjs/common';
 import { CurrentUser } from '../decorators/current-user.decorator';
 import { BillDto } from '../dtos/bill.dto';
@@ -18,6 +19,7 @@ import { Serializer } from '../decorators/serializer.decorator';
 import { BillService } from 'src/services/bill.service';
 import { UpdateBillDto } from 'src/dtos/update-bill.dto';
 import { DeleteBillDto } from 'src/dtos/delete-bill.dto';
+import { FindAllBillDto } from 'src/dtos/find-all-bill.dto';
 
 @UseGuards(JwtAuthGuard)
 @Serializer(BillDto)
@@ -50,5 +52,11 @@ export class GatewayController {
     @CurrentUser() user: User,
   ): Promise<Bill> {
     return this.billService.deleteBill(body, user);
+  }
+
+  @Get('bills')
+  @HttpCode(HttpStatus.OK)
+  findAllBills(@Body() body: FindAllBillDto): Promise<[Bill[], number]> {
+    return this.billService.findAll(body);
   }
 }
