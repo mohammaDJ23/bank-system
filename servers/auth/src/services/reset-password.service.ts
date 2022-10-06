@@ -89,8 +89,13 @@ export class ResetPasswordService {
 
     if (!user) throw new NotFoundException('Could not found the user.');
 
-    user.password = await hash(body.password, 10);
-    await this.userService.update(user);
+    const hashedPassword = await hash(body.password, 10);
+
+    const updatedUser = Object.assign<User, Partial<User>>(user, {
+      password: hashedPassword,
+    });
+
+    await this.userService.update(updatedUser, user);
     await this.resetPasswordRepository.remove(resetPassword);
 
     const mailerOptions = {

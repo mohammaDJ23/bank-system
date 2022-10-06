@@ -50,7 +50,7 @@ export class GatewayController {
   @HttpCode(HttpStatus.OK)
   @UseGuards(AdminAuthGuard)
   updateByAdmin(@Body() body: UpdateUserByAdminDto): Promise<User> {
-    return this.userService.updateByAdmin(body);
+    return this.userService.findAndUpdate(body);
   }
 
   @Delete('delete')

@@ -9,8 +9,15 @@ export class MessagePatternController {
   constructor(private readonly appService: UserService) {}
 
   @MessagePattern('update_user')
-  update(@Payload() Payload: UpdateUserDto): Promise<User> {
-    return this.appService.update(Payload);
+  update(
+    @Payload() payload: Record<'updatedUser' | 'user', User>,
+  ): Promise<User> {
+    return this.appService.update(payload.updatedUser, payload.user);
+  }
+
+  @MessagePattern('find_and_update_user')
+  findAndUpdate(@Payload() payload: UpdateUserDto): Promise<User> {
+    return this.appService.findAndUpdate(payload);
   }
 
   @MessagePattern('find_user_by_id')
