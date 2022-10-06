@@ -32,7 +32,7 @@ export class BillService {
     return this.billService
       .createQueryBuilder('bill')
       .where('bill.id = :billId', { billId })
-      .andWhere('bill.user.id = :userid', { userId })
+      .andWhere('bill.user.id = :userId', { userId })
       .getOne();
   }
 }
