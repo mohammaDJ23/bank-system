@@ -24,13 +24,13 @@ import { DeleteBillDto } from 'src/dtos/delete-bill.dto';
 import { FindAllBillDto } from 'src/dtos/find-all-bill.dto';
 
 @UseGuards(JwtAuthGuard)
-@Serializer(BillDto)
 @Controller('bank')
 export class GatewayController {
   constructor(private readonly billService: BillService) {}
 
-  @Post('create-bill')
+  @Post('bill/create')
   @HttpCode(HttpStatus.CREATED)
+  @Serializer(BillDto)
   createBill(
     @Body() body: CreateBillDto,
     @CurrentUser() user: User,
@@ -38,8 +38,9 @@ export class GatewayController {
     return this.billService.createBill(body, user);
   }
 
-  @Put('update-bill')
+  @Put('bill/update')
   @HttpCode(HttpStatus.OK)
+  @Serializer(BillDto)
   updateBill(
     @Body() body: UpdateBillDto,
     @CurrentUser() user: User,
@@ -47,8 +48,9 @@ export class GatewayController {
     return this.billService.updateBill(body, user);
   }
 
-  @Delete('delete-bill')
+  @Delete('bill/delete')
   @HttpCode(HttpStatus.OK)
+  @Serializer(BillDto)
   deleteBill(
     @Body() body: DeleteBillDto,
     @CurrentUser() user: User,
@@ -56,14 +58,22 @@ export class GatewayController {
     return this.billService.deleteBill(body, user);
   }
 
+  @Get('bill/total-amount')
+  @HttpCode(HttpStatus.OK)
+  getTotalAmount(): Promise<Record<'totalAmount', string>> {
+    return this.billService.getTotalAmount();
+  }
+
   @Get('bills')
   @HttpCode(HttpStatus.OK)
+  @Serializer(BillDto)
   findAllBills(@Body() body: FindAllBillDto): Promise<[Bill[], number]> {
     return this.billService.findAll(body);
   }
 
   @Get('bill/:id')
   @HttpCode(HttpStatus.OK)
+  @Serializer(BillDto)
   findOneBill(
     @Param('id', ParseIntPipe) id: number,
     @CurrentUser() user: User,
