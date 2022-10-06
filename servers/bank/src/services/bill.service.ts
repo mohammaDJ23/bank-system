@@ -2,6 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DeleteBillDto } from 'src/dtos/delete-bill.dto';
 import { FindAllBillDto } from 'src/dtos/find-all-bill.dto';
+import { TotalAmountDto } from 'src/dtos/total-amount.dto';
 import { UpdateBillDto } from 'src/dtos/update-bill.dto';
 import { Repository } from 'typeorm';
 import { CreateBillDto } from '../dtos/create-bill.dto';
@@ -49,18 +50,20 @@ export class BillService {
     return bill;
   }
 
-  findAll(body: FindAllBillDto): Promise<[Bill[], number]> {
+  findAll(body: FindAllBillDto, user: User): Promise<[Bill[], number]> {
     return this.billRepository
-      .createQueryBuilder('user')
+      .createQueryBuilder('bill')
+      .where('bill.user.id = :userId', { userId: user.id })
       .take(body.take)
       .skip(body.skip)
       .getManyAndCount();
   }
 
-  async getTotalAmount(): Promise<Record<'totalAmount', string>> {
+  getTotalAmount(user: User): Promise<TotalAmountDto> {
     return this.billRepository
       .createQueryBuilder('bill')
       .select('SUM(bill.amount::INTEGER)', 'totalAmount')
+      .where('bill.user.id = :userId', { userId: user.id })
       .getRawOne();
   }
 }
