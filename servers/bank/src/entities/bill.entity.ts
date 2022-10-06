@@ -22,7 +22,7 @@ export class Bill {
   @Column({ length: 500 })
   description: string;
 
-  @Column()
+  @Column({ type: 'timestamptz' })
   date: Date;
 
   @CreateDateColumn()

@@ -4,5 +4,5 @@ import { getRequest } from './request';
 
 export function getCurrentUser(context: ExecutionContext): User {
   const request = getRequest(context);
-  return request.currentUser;
+  return request.user as User;
 }

@@ -1,6 +1,15 @@
-import { IsString, IsNumberString, Length, IsDate } from 'class-validator';
+import {
+  IsString,
+  IsNumber,
+  IsNumberString,
+  Length,
+  IsDate,
+} from 'class-validator';
 
-export class CreateBillDto {
+export class UpdateBillDto {
+  @IsNumber()
+  id: number;
+
   @IsNumberString()
   @Length(1, 100)
   amount: string;
