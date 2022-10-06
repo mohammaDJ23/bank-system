@@ -26,7 +26,7 @@ export class UserService {
     await this.userService.save(payload);
   }
 
-  async remove(payload: User): Promise<void> {
-    await this.userService.remove(payload);
+  async delete(payload: User): Promise<void> {
+    await this.userService.delete(payload.id);
   }
 }
