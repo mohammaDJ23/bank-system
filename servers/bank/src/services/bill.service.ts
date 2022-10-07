@@ -56,6 +56,7 @@ export class BillService {
     return this.billRepository
       .createQueryBuilder('bill')
       .where('bill.user.id = :userId', { userId: user.id })
+      .orderBy('bill.date::TIMESTAMP', 'DESC')
       .take(body.take)
       .skip(body.skip)
       .getManyAndCount();
