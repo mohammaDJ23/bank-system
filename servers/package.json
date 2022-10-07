@@ -1,0 +1,20 @@
+{
+  "name": "servers",
+  "version": "1.0.0",
+  "description": "",
+  "scripts": {
+    "auth:dev": "npm run start:dev --prefix auth",
+    "user:dev": "npm run start:dev --prefix user",
+    "bank:dev": "npm run start:dev --prefix bank",
+    "auth:prod": "npm run start:prod --prefix auth",
+    "user:prod": "npm run start:prod --prefix user",
+    "bank:prod": "npm run start:prod --prefix bank",
+    "start:dev": "concurrently \"npm run auth:dev\" \"npm run user:dev\" \"npm run bank:dev\"",
+    "start:prod": "concurrently \"npm run auth:prod\" \"npm run user:prod\" \"npm run bank:prod\""
+  },
+  "author": "mohammad nowresideh",
+  "license": "ISC",
+  "dependencies": {
+    "concurrently": "^7.4.0"
+  }
+}
