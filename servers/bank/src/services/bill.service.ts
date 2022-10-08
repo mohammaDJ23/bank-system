@@ -62,6 +62,14 @@ export class BillService {
       .getManyAndCount();
   }
 
+  findAllWithoutLimitation(user: User): Promise<Bill[]> {
+    return this.billRepository
+      .createQueryBuilder('bill')
+      .where('bill.user.id = :userId', { userId: user.id })
+      .orderBy('bill.date::TIMESTAMP', 'DESC')
+      .getMany();
+  }
+
   getTotalAmount(user: User): Promise<TotalAmountDto> {
     return this.billRepository
       .createQueryBuilder('bill')
@@ -113,5 +121,10 @@ export class BillService {
       .take(body.take)
       .skip(body.skip)
       .getManyAndCount();
+  }
+
+  async getBillExcel(user: User) {
+    const bills = await this.findAllWithoutLimitation(user);
+    console.log(bills);
   }
 }
