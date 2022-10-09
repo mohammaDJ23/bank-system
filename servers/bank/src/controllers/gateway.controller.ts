@@ -103,6 +103,13 @@ export class GatewayController {
     return this.billService.minBillAmounts(body, user);
   }
 
+  @Post('bills/excel')
+  @HttpCode(HttpStatus.OK)
+  @Serializer(BillDto)
+  getBillExcel(@CurrentUser() user: User) {
+    return this.billService.getBillExcel(user);
+  }
+
   @Get('bills')
   @HttpCode(HttpStatus.OK)
   findAllBills(
