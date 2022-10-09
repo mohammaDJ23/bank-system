@@ -1,4 +1,9 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  InternalServerErrorException,
+  NotFoundException,
+  StreamableFile,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DeleteBillDto } from 'src/dtos/delete-bill.dto';
 import { LastWeekDto } from 'src/dtos/last-week.dto';
@@ -10,6 +15,9 @@ import { Repository } from 'typeorm';
 import { CreateBillDto } from '../dtos/create-bill.dto';
 import { Bill } from '../entities/bill.entity';
 import { User } from '../entities/user.entity';
+import { createReadStream, existsSync, ReadStream } from 'fs';
+import { join } from 'path';
+import { Workbook } from 'exceljs';
 
 @Injectable()
 export class BillService {
@@ -123,8 +131,46 @@ export class BillService {
       .getManyAndCount();
   }
 
-  async getBillExcel(user: User) {
+  async makeBillReports(fileName: string, user: User): Promise<void> {
     const bills = await this.findAllWithoutLimitation(user);
-    console.log(bills);
+    const workbook = new Workbook();
+    const workSheet = workbook.addWorksheet('bills');
+
+    if (bills.length) {
+      workSheet.columns = Object.keys(bills[0]).map((item) => {
+        return { header: item, key: item, width: 20 };
+      });
+
+      workSheet.addRows(bills);
+    }
+
+    await workbook.xlsx.writeFile(fileName);
+  }
+
+  createReadStream(fileName: string): ReadStream {
+    return createReadStream(join(process.cwd(), fileName));
+  }
+
+  async getSteamableFile(fileName: string): Promise<StreamableFile> {
+    const readedFile = this.createReadStream(fileName);
+
+    readedFile.on('error', (err: Error) => {
+      throw new InternalServerErrorException(err.message);
+    });
+
+    return new Promise<StreamableFile>((resolve) =>
+      readedFile.on('ready', () => {
+        resolve(new StreamableFile(readedFile));
+      }),
+    );
+  }
+
+  async getBillReports(user: User): Promise<StreamableFile> {
+    const billReportsFileName = 'bill-reports.xlsx';
+
+    if (!existsSync(billReportsFileName))
+      await this.makeBillReports(billReportsFileName, user);
+
+    return this.getSteamableFile(billReportsFileName);
   }
 }
