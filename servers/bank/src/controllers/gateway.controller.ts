@@ -10,6 +10,8 @@ import {
   Get,
   Param,
   ParseIntPipe,
+  Header,
+  StreamableFile,
 } from '@nestjs/common';
 import { CurrentUser } from '../decorators/current-user.decorator';
 import { BillDto } from '../dtos/bill.dto';
@@ -103,11 +105,12 @@ export class GatewayController {
     return this.billService.minBillAmounts(body, user);
   }
 
-  @Post('bills/excel')
+  @Get('bills/excel')
   @HttpCode(HttpStatus.OK)
-  @Serializer(BillDto)
-  getBillExcel(@CurrentUser() user: User) {
-    return this.billService.getBillExcel(user);
+  @Header('Content-Type', 'application/json')
+  @Header('Content-Disposition', 'attachment; filename="bill-reports.xlsx"')
+  getBillReports(@CurrentUser() user: User): Promise<StreamableFile> {
+    return this.billService.getBillReports(user);
   }
 
   @Get('bills')
