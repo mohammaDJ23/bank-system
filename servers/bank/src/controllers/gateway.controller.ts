@@ -27,6 +27,7 @@ import { TotalAmountDto } from 'src/dtos/total-amount.dto';
 import { PeriodAmountDto } from 'src/dtos/period-amount.dto';
 import { LastWeekDto } from 'src/dtos/last-week.dto';
 import { ListDto } from 'src/dtos/list.dto';
+import { BillsPeriodDto } from 'src/dtos/bills-period.dto';
 
 @UseGuards(JwtAuthGuard)
 @Controller('bank')
@@ -78,6 +79,15 @@ export class GatewayController {
     @CurrentUser() user: User,
   ): Promise<TotalAmountDto> {
     return this.billService.periodAmount(body, user);
+  }
+
+  @Post('bills/period')
+  @HttpCode(HttpStatus.OK)
+  billsPeriod(
+    @Body() body: BillsPeriodDto,
+    @CurrentUser() user: User,
+  ): Promise<[Bill[], number]> {
+    return this.billService.billsPeriod(body, user);
   }
 
   @Get('bills/last-week')
