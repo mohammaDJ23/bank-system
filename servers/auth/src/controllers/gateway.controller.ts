@@ -10,7 +10,10 @@ import { LoginDto } from '../dtos/login.dto';
 import { MessageDto } from '../dtos/message.dto';
 import { ForgotPasswordDto } from '../dtos/forgot-password.dto';
 import { TokenDto } from '../dtos/token.dto';
-import { Serializer } from '../decorators/serializer.decorator';
+import {
+  ListSerializer,
+  ObjectSerializer,
+} from '../decorators/serializer.decorator';
 import { ResetPasswordDto } from '../dtos/reset-password.dto';
 import { ResetPasswordService } from '../services/reset-password.service';
 import { AuthService } from '../services/auth.service';
@@ -27,7 +30,7 @@ export class GatewayController {
 
   @Post('login')
   @HttpCode(HttpStatus.OK)
-  @Serializer(TokenDto)
+  @ObjectSerializer(TokenDto)
   login(
     @Body() body: LoginDto,
     @CurrentUser() currentUser: User,
@@ -38,7 +41,7 @@ export class GatewayController {
   @Post('login/admin')
   @HttpCode(HttpStatus.OK)
   @UseGuards(AdminAuthGuard)
-  @Serializer(TokenDto)
+  @ObjectSerializer(TokenDto)
   adminLogin(
     @Body() body: LoginDto,
     @CurrentUser() currentUser: User,
@@ -48,7 +51,7 @@ export class GatewayController {
 
   @Post('forgot-password')
   @HttpCode(HttpStatus.OK)
-  @Serializer(MessageDto)
+  @ObjectSerializer(MessageDto)
   forgotPassword(
     @Body() body: ForgotPasswordDto,
     @CurrentUser() currentUser: User,
@@ -58,7 +61,7 @@ export class GatewayController {
 
   @Post('reset-password')
   @HttpCode(HttpStatus.OK)
-  @Serializer(MessageDto)
+  @ObjectSerializer(MessageDto)
   resetPassword(@Body() body: ResetPasswordDto): Promise<MessageDto> {
     return this.resetPasswordService.resetPassword(body);
   }
