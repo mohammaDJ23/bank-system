@@ -18,6 +18,7 @@ import { User } from '../entities/user.entity';
 import { createReadStream, existsSync, ReadStream } from 'fs';
 import { join } from 'path';
 import { Workbook } from 'exceljs';
+import { BillsPeriodDto } from 'src/dtos/bills-period.dto';
 
 @Injectable()
 export class BillService {
@@ -96,6 +97,19 @@ export class BillService {
       .andWhere('bill.createdAt::TIMESTAMP <= :end::TIMESTAMP', { end })
       .andWhere('bill.user.id = :userId', { userId: user.id })
       .getRawOne();
+  }
+
+  billsPeriod(body: BillsPeriodDto, user: User): Promise<[Bill[], number]> {
+    const { start, end, take, skip } = body;
+
+    return this.billRepository
+      .createQueryBuilder('bill')
+      .where('bill.date::TIMESTAMP >= :start', { start })
+      .andWhere('bill.date::TIMESTAMP <= :end', { end })
+      .andWhere('bill.user.id = :userId', { userId: user.id })
+      .take(take)
+      .skip(skip)
+      .getManyAndCount();
   }
 
   lastWeekBills(user: User): Promise<LastWeekDto[]> {
