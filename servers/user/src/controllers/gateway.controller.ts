@@ -15,7 +15,10 @@ import { UserService } from '../services/user.service';
 import { CreateUserDto } from '../dtos/create-user.dto';
 import { FindAllDto } from '../dtos/find-all.dto';
 import { UserDto } from '../dtos/user-dto';
-import { Serializer } from '../decorators/serializer.decorator';
+import {
+  ListSerializer,
+  ObjectSerializer,
+} from '../decorators/serializer.decorator';
 import { DeleteAccountDto } from '../dtos/delete-account.dto';
 import { JwtAuthGuard } from '../guards/jwt-auth.guard';
 import { AdminAuthGuard } from '../guards/admin-auth.guard';
@@ -25,7 +28,6 @@ import { User } from 'src/entities/user.entity';
 import { CurrentUser } from 'src/decorators/current-user.decorator';
 
 @UseGuards(JwtAuthGuard)
-@Serializer(UserDto)
 @Controller('user')
 export class GatewayController {
   constructor(private readonly userService: UserService) {}
@@ -33,12 +35,14 @@ export class GatewayController {
   @Post('create')
   @HttpCode(HttpStatus.CREATED)
   @UseGuards(AdminAuthGuard)
+  @ObjectSerializer(UserDto)
   create(@Body() body: CreateUserDto): Promise<User> {
     return this.userService.create(body);
   }
 
   @Put('update')
   @HttpCode(HttpStatus.OK)
+  @ObjectSerializer(UserDto)
   updateByUser(
     @Body() body: UpdateUserByUserDto,
     @CurrentUser() user: User,
@@ -49,6 +53,7 @@ export class GatewayController {
   @Put('update/admin')
   @HttpCode(HttpStatus.OK)
   @UseGuards(AdminAuthGuard)
+  @ObjectSerializer(UserDto)
   updateByAdmin(@Body() body: UpdateUserByAdminDto): Promise<User> {
     return this.userService.findAndUpdate(body);
   }
@@ -56,6 +61,7 @@ export class GatewayController {
   @Delete('delete')
   @HttpCode(HttpStatus.OK)
   @UseGuards(AdminAuthGuard)
+  @ObjectSerializer(UserDto)
   remove(@Body() body: DeleteAccountDto): Promise<User> {
     return this.userService.remove(body);
   }
@@ -63,12 +69,14 @@ export class GatewayController {
   @Get('all')
   @HttpCode(HttpStatus.OK)
   @UseGuards(AdminAuthGuard)
+  @ListSerializer(UserDto)
   findAll(@Body() body: FindAllDto): Promise<[User[], number]> {
     return this.userService.findAll(body);
   }
 
   @Get(':id')
   @HttpCode(HttpStatus.OK)
+  @ObjectSerializer(UserDto)
   findOne(@Param('id', ParseIntPipe) id: number): Promise<User> {
     return this.userService.findOne(id);
   }
