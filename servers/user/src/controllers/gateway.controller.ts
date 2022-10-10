@@ -25,7 +25,6 @@ import { User } from 'src/entities/user.entity';
 import { CurrentUser } from 'src/decorators/current-user.decorator';
 
 @UseGuards(JwtAuthGuard)
-@Serializer(UserDto)
 @Controller('user')
 export class GatewayController {
   constructor(private readonly userService: UserService) {}
@@ -33,12 +32,14 @@ export class GatewayController {
   @Post('create')
   @HttpCode(HttpStatus.CREATED)
   @UseGuards(AdminAuthGuard)
+  @Serializer(UserDto)
   create(@Body() body: CreateUserDto): Promise<User> {
     return this.userService.create(body);
   }
 
   @Put('update')
   @HttpCode(HttpStatus.OK)
+  @Serializer(UserDto)
   updateByUser(
     @Body() body: UpdateUserByUserDto,
     @CurrentUser() user: User,
@@ -49,6 +50,7 @@ export class GatewayController {
   @Put('update/admin')
   @HttpCode(HttpStatus.OK)
   @UseGuards(AdminAuthGuard)
+  @Serializer(UserDto)
   updateByAdmin(@Body() body: UpdateUserByAdminDto): Promise<User> {
     return this.userService.findAndUpdate(body);
   }
@@ -56,6 +58,7 @@ export class GatewayController {
   @Delete('delete')
   @HttpCode(HttpStatus.OK)
   @UseGuards(AdminAuthGuard)
+  @Serializer(UserDto)
   remove(@Body() body: DeleteAccountDto): Promise<User> {
     return this.userService.remove(body);
   }
@@ -69,6 +72,7 @@ export class GatewayController {
 
   @Get(':id')
   @HttpCode(HttpStatus.OK)
+  @Serializer(UserDto)
   findOne(@Param('id', ParseIntPipe) id: number): Promise<User> {
     return this.userService.findOne(id);
   }
