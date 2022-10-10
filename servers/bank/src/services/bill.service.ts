@@ -61,11 +61,12 @@ export class BillService {
     return bill;
   }
 
-  findAll(body: ListDto, user: User): Promise<[Bill[], number]> {
+  async findAll(body: ListDto, user: User): Promise<[Bill[], number]> {
     return this.billRepository
       .createQueryBuilder('bill')
+      .innerJoinAndSelect('bill.user', 'user')
       .where('bill.user.id = :userId', { userId: user.id })
-      .orderBy('bill.date::TIMESTAMP', 'DESC')
+      .orderBy('bill.date', 'DESC')
       .take(body.take)
       .skip(body.skip)
       .getManyAndCount();
@@ -104,6 +105,7 @@ export class BillService {
 
     return this.billRepository
       .createQueryBuilder('bill')
+      .innerJoinAndSelect('bill.user', 'user')
       .where('bill.date::TIMESTAMP >= :start', { start })
       .andWhere('bill.date::TIMESTAMP <= :end', { end })
       .andWhere('bill.user.id = :userId', { userId: user.id })
@@ -128,8 +130,9 @@ export class BillService {
   maxBillAmounts(body: ListDto, user: User): Promise<[Bill[], number]> {
     return this.billRepository
       .createQueryBuilder('bill')
-      .orderBy('bill.amount', 'DESC')
+      .innerJoinAndSelect('bill.user', 'user')
       .where('bill.user.id = :userId', { userId: user.id })
+      .orderBy('bill.amount', 'DESC')
       .take(body.take)
       .skip(body.skip)
       .getManyAndCount();
@@ -138,8 +141,9 @@ export class BillService {
   minBillAmounts(body: ListDto, user: User): Promise<[Bill[], number]> {
     return this.billRepository
       .createQueryBuilder('bill')
-      .orderBy('bill.amount', 'ASC')
+      .innerJoinAndSelect('bill.user', 'user')
       .where('bill.user.id = :userId', { userId: user.id })
+      .orderBy('bill.amount', 'ASC')
       .take(body.take)
       .skip(body.skip)
       .getManyAndCount();
