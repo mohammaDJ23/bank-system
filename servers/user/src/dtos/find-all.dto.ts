@@ -1,9 +1,3 @@
-import { IsNumber } from 'class-validator';
+import { ListDto } from './list.dto';
 
-export class FindAllDto {
-  @IsNumber()
-  skip: number;
-
-  @IsNumber()
-  take: number;
-}
+export class FindAllDto extends ListDto {}
