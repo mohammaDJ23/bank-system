@@ -2,8 +2,8 @@ import { IsNumber } from 'class-validator';
 
 export class ListDto {
   @IsNumber()
-  take: number;
+  page: number;
 
   @IsNumber()
-  page: number;
+  take: number;
 }

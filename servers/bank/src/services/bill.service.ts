@@ -68,7 +68,7 @@ export class BillService {
       .where('bill.user.id = :userId', { userId: user.id })
       .orderBy('bill.date', 'DESC')
       .take(body.take)
-      .skip(body.skip)
+      .skip((body.page - 1) * body.take)
       .getManyAndCount();
   }
 
@@ -89,28 +89,28 @@ export class BillService {
   }
 
   periodAmount(body: PeriodAmountDto, user: User): Promise<TotalAmountDto> {
-    const { start, end } = body;
-
     return this.billRepository
       .createQueryBuilder('bill')
       .select('SUM(bill.amount::INTEGER)', 'totalAmount')
-      .where('bill.createdAt::TIMESTAMP >= :start::TIMESTAMP', { start })
-      .andWhere('bill.createdAt::TIMESTAMP <= :end::TIMESTAMP', { end })
+      .where('bill.createdAt::TIMESTAMP >= :start::TIMESTAMP', {
+        start: body.start,
+      })
+      .andWhere('bill.createdAt::TIMESTAMP <= :end::TIMESTAMP', {
+        end: body.end,
+      })
       .andWhere('bill.user.id = :userId', { userId: user.id })
       .getRawOne();
   }
 
   billsPeriod(body: BillsPeriodDto, user: User): Promise<[Bill[], number]> {
-    const { start, end, take, skip } = body;
-
     return this.billRepository
       .createQueryBuilder('bill')
       .innerJoinAndSelect('bill.user', 'user')
-      .where('bill.date::TIMESTAMP >= :start', { start })
-      .andWhere('bill.date::TIMESTAMP <= :end', { end })
+      .where('bill.date::TIMESTAMP >= :start', { start: body.start })
+      .andWhere('bill.date::TIMESTAMP <= :end', { end: body.end })
       .andWhere('bill.user.id = :userId', { userId: user.id })
-      .take(take)
-      .skip(skip)
+      .take(body.take)
+      .skip((body.page - 1) * body.take)
       .getManyAndCount();
   }
 
@@ -134,7 +134,7 @@ export class BillService {
       .where('bill.user.id = :userId', { userId: user.id })
       .orderBy('bill.amount', 'DESC')
       .take(body.take)
-      .skip(body.skip)
+      .skip((body.page - 1) * body.take)
       .getManyAndCount();
   }
 
@@ -145,7 +145,7 @@ export class BillService {
       .where('bill.user.id = :userId', { userId: user.id })
       .orderBy('bill.amount', 'ASC')
       .take(body.take)
-      .skip(body.skip)
+      .skip((body.page - 1) * body.take)
       .getManyAndCount();
   }
 

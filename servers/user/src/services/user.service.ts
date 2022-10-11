@@ -116,7 +116,7 @@ export class UserService {
     return this.userRepository
       .createQueryBuilder()
       .take(body.take)
-      .skip(body.skip)
+      .skip((body.page - 1) * body.take)
       .getManyAndCount();
   }
 }

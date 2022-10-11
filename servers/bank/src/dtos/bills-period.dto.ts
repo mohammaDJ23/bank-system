@@ -1,15 +1,10 @@
-import { IsDate, IsNumber } from 'class-validator';
+import { IsDate } from 'class-validator';
+import { ListDto } from './list.dto';
 
-export class BillsPeriodDto {
+export class BillsPeriodDto extends ListDto {
   @IsDate()
   start: Date;
 
   @IsDate()
   end: Date;
-
-  @IsNumber()
-  take: number;
-
-  @IsNumber()
-  skip: number;
 }
