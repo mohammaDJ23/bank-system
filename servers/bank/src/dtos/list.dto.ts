@@ -5,5 +5,5 @@ export class ListDto {
   take: number;
 
   @IsNumber()
-  skip: number;
+  page: number;
 }
