@@ -13,6 +13,7 @@ import { JwtStrategy } from '../strategies/jwt.strategy';
 import { GatewayController } from '../controllers/gateway.controller';
 import { MessagePatternController } from '../controllers/message-patterns.controller';
 import { RabbitMqQueue, RabbitMqServices } from '../types/rabbitmq';
+import { RabbitmqService } from 'src/services/rabbitmq.service';
 
 @Module({
   imports: [
@@ -70,6 +71,7 @@ import { RabbitMqQueue, RabbitMqServices } from '../types/rabbitmq';
   providers: [
     UserService,
     JwtStrategy,
+    RabbitmqService,
     { provide: APP_FILTER, useClass: AllExceptionFilter },
     {
       provide: APP_PIPE,

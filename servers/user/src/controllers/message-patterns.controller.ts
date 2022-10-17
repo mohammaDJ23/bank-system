@@ -1,5 +1,10 @@
 import { Controller } from '@nestjs/common';
-import { MessagePattern, Payload } from '@nestjs/microservices';
+import {
+  Ctx,
+  MessagePattern,
+  Payload,
+  RmqContext,
+} from '@nestjs/microservices';
 import { UserService } from '../services/user.service';
 import { UpdateUserDto } from '../dtos/update-user.dto';
 import { User } from 'src/entities/user.entity';
@@ -11,22 +16,29 @@ export class MessagePatternController {
   @MessagePattern('update_user')
   update(
     @Payload() payload: Record<'updatedUser' | 'user', User>,
+    @Ctx() context: RmqContext,
   ): Promise<User> {
-    return this.appService.update(payload.updatedUser, payload.user);
+    return this.appService.update(payload.updatedUser, payload.user, context);
   }
 
   @MessagePattern('find_and_update_user')
-  findAndUpdate(@Payload() payload: UpdateUserDto): Promise<User> {
-    return this.appService.findAndUpdate(payload);
+  findAndUpdate(
+    @Payload() payload: UpdateUserDto,
+    @Ctx() context: RmqContext,
+  ): Promise<User> {
+    return this.appService.findAndUpdate(payload, context);
   }
 
   @MessagePattern('find_user_by_id')
-  findById(@Payload() id: number): Promise<User> {
-    return this.appService.findById(id);
+  findById(@Payload() id: number, @Ctx() context: RmqContext): Promise<User> {
+    return this.appService.findById(id, context);
   }
 
   @MessagePattern('find_user_by_email')
-  findByEmail(@Payload() email: string): Promise<User> {
-    return this.appService.findByEmail(email);
+  findByEmail(
+    @Payload() email: string,
+    @Ctx() context: RmqContext,
+  ): Promise<User> {
+    return this.appService.findByEmail(email, context);
   }
 }

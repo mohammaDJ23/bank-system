@@ -14,6 +14,7 @@ import { JwtStrategy } from '../strategies/jwt.strategy';
 import { CustomNamingStrategy } from '../strategies/naming.strategy';
 import { BillService } from 'src/services/bill.service';
 import { UserService } from 'src/services/user.service';
+import { RabbitmqService } from 'src/services/rabbitmq.service';
 
 @Module({
   imports: [
@@ -47,6 +48,7 @@ import { UserService } from 'src/services/user.service';
     UserService,
     BillService,
     JwtStrategy,
+    RabbitmqService,
     { provide: APP_FILTER, useClass: AllExceptionFilter },
     {
       provide: APP_PIPE,
