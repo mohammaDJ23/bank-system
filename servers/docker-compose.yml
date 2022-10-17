@@ -1,0 +1,66 @@
+version: '3.8'
+
+services:
+  auth:
+    build: ./auth
+    container_name: auth
+    restart: always
+    env_file:
+      - .env.production
+    volumes:
+      - .:/usr/src/auth
+    ports:
+      - 3001:3001
+    depends_on:
+      - postgres
+      - rabbitmq
+      - user
+
+  bank:
+    build: ./bank
+    container_name: bank
+    restart: always
+    env_file:
+      - .env.production
+    volumes:
+      - .:/usr/src/auth
+    ports:
+      - 3003:3003
+    depends_on:
+      - postgres
+      - rabbitmq
+      - user
+
+  user:
+    build: ./user
+    container_name: user
+    restart: always
+    env_file:
+      - .env.production
+    volumes:
+      - .:/usr/src/auth
+    ports:
+      - 3002:3002
+    depends_on:
+      - postgres
+      - rabbitmq
+      - bank
+
+  postgres:
+    image: postgres
+    container_name: postgres
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgress
+      - POSTGRES_DB=postgres
+    restart: always
+    ports:
+      - 5432:5432
+
+  rabbitmq:
+    image: rabbitmq:3.8-management-alpine
+    container_name: rabbitmq
+    restart: always
+    ports:
+      - 5672:5672
+      - 15672:15672
