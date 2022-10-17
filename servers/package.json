@@ -10,7 +10,10 @@
     "user:prod": "npm run start:prod --prefix user",
     "bank:prod": "npm run start:prod --prefix bank",
     "start:dev": "concurrently \"npm run auth:dev\" \"npm run user:dev\" \"npm run bank:dev\"",
-    "start:prod": "concurrently \"npm run auth:prod\" \"npm run user:prod\" \"npm run bank:prod\""
+    "start:prod": "concurrently \"npm run auth:prod\" \"npm run user:prod\" \"npm run bank:prod\"",
+    "docker:build:images": "concurrently \"docker build --tag auth ./auth\" \"docker build --tag user ./user\" \"docker build --tag bank ./bank\"",
+    "docker:run:containers": "concurrently \"docker run --name auth -p 3001:3001 auth\" \"docker run --name user -p 3002:3002 user\" \"docker run --name bank -p 3003:3003 bank\"",
+    "docker:compose:up": "docker compose --env-file .env up"
   },
   "author": "mohammad nowresideh",
   "license": "ISC",
