@@ -50,9 +50,7 @@ services:
     image: postgres
     container_name: postgres
     environment:
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgress
-      - POSTGRES_DB=postgres
+      - 'POSTGRES_PASSWORD=${POSTGRES_PASSWORD}'
     restart: always
     ports:
       - 5432:5432
