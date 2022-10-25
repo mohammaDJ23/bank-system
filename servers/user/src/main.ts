@@ -2,6 +2,7 @@ import { NestFactory } from '@nestjs/core';
 import { MicroserviceOptions, Transport } from '@nestjs/microservices';
 import { AppModule } from './modules/app.module';
 import { RabbitMqQueue } from './types/rabbitmq';
+import { swagger } from './libs/swagger';
 
 require('dotenv').config();
 
@@ -20,6 +21,7 @@ async function bootstrap() {
     },
   });
 
+  swagger(app);
   await app.startAllMicroservices();
   await app.listen(process.env.PORT);
 }

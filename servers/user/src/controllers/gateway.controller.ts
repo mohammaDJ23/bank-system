@@ -19,6 +19,7 @@ import {
   ListSerializer,
   ObjectSerializer,
 } from '../decorators/serializer.decorator';
+import { ApiBody, ApiResponse, ApiTags, ApiBearerAuth } from '@nestjs/swagger';
 import { DeleteAccountDto } from '../dtos/delete-account.dto';
 import { JwtAuthGuard } from '../guards/jwt-auth.guard';
 import { AdminAuthGuard } from '../guards/admin-auth.guard';
@@ -26,9 +27,11 @@ import { UpdateUserByUserDto } from '../dtos/update-user-by-user.dto';
 import { UpdateUserByAdminDto } from '../dtos/update-user-by-admin.dto';
 import { User } from 'src/entities/user.entity';
 import { CurrentUser } from 'src/decorators/current-user.decorator';
+import { ErrorDto } from 'src/dtos/error.dto';
 
 @UseGuards(JwtAuthGuard)
 @Controller('user')
+@ApiTags('user')
 export class GatewayController {
   constructor(private readonly userService: UserService) {}
 
@@ -36,6 +39,12 @@ export class GatewayController {
   @HttpCode(HttpStatus.CREATED)
   @UseGuards(AdminAuthGuard)
   @ObjectSerializer(UserDto)
+  @ApiBody({ type: CreateUserDto })
+  @ApiBearerAuth()
+  @ApiResponse({ status: HttpStatus.CREATED, type: UserDto })
+  @ApiResponse({ status: HttpStatus.UNAUTHORIZED, type: ErrorDto })
+  @ApiResponse({ status: HttpStatus.CONFLICT, type: ErrorDto })
+  @ApiResponse({ status: HttpStatus.INTERNAL_SERVER_ERROR, type: ErrorDto })
   create(@Body() body: CreateUserDto): Promise<User> {
     return this.userService.create(body);
   }
@@ -43,6 +52,13 @@ export class GatewayController {
   @Put('update')
   @HttpCode(HttpStatus.OK)
   @ObjectSerializer(UserDto)
+  @ApiBody({ type: UpdateUserByUserDto })
+  @ApiBearerAuth()
+  @ApiResponse({ status: HttpStatus.OK, type: UserDto })
+  @ApiResponse({ status: HttpStatus.UNAUTHORIZED, type: ErrorDto })
+  @ApiResponse({ status: HttpStatus.CONFLICT, type: ErrorDto })
+  @ApiResponse({ status: HttpStatus.BAD_REQUEST, type: ErrorDto })
+  @ApiResponse({ status: HttpStatus.INTERNAL_SERVER_ERROR, type: ErrorDto })
   updateByUser(
     @Body() body: UpdateUserByUserDto,
     @CurrentUser() user: User,
@@ -54,6 +70,13 @@ export class GatewayController {
   @HttpCode(HttpStatus.OK)
   @UseGuards(AdminAuthGuard)
   @ObjectSerializer(UserDto)
+  @ApiBody({ type: UpdateUserByAdminDto })
+  @ApiBearerAuth()
+  @ApiResponse({ status: HttpStatus.OK, type: UserDto })
+  @ApiResponse({ status: HttpStatus.UNAUTHORIZED, type: ErrorDto })
+  @ApiResponse({ status: HttpStatus.CONFLICT, type: ErrorDto })
+  @ApiResponse({ status: HttpStatus.NOT_FOUND, type: ErrorDto })
+  @ApiResponse({ status: HttpStatus.INTERNAL_SERVER_ERROR, type: ErrorDto })
   updateByAdmin(@Body() body: UpdateUserByAdminDto): Promise<User> {
     return this.userService.findAndUpdate(body);
   }
