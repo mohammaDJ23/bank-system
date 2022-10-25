@@ -70,6 +70,13 @@ export class GatewayController {
   @HttpCode(HttpStatus.OK)
   @UseGuards(AdminAuthGuard)
   @ObjectSerializer(UserDto)
+  @ApiBody({ type: UpdateUserByAdminDto })
+  @ApiBearerAuth()
+  @ApiResponse({ status: HttpStatus.OK, type: UserDto })
+  @ApiResponse({ status: HttpStatus.UNAUTHORIZED, type: ErrorDto })
+  @ApiResponse({ status: HttpStatus.CONFLICT, type: ErrorDto })
+  @ApiResponse({ status: HttpStatus.NOT_FOUND, type: ErrorDto })
+  @ApiResponse({ status: HttpStatus.INTERNAL_SERVER_ERROR, type: ErrorDto })
   updateByAdmin(@Body() body: UpdateUserByAdminDto): Promise<User> {
     return this.userService.findAndUpdate(body);
   }
