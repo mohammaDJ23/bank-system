@@ -6,7 +6,6 @@ export function swagger(app: INestApplication): void {
     .setTitle('User apis')
     .setDescription('The apis of the user service')
     .setVersion('1.0')
-    .addTag('User')
     .build();
 
   const document = SwaggerModule.createDocument(app, config);
