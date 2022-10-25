@@ -40,7 +40,7 @@ export class GatewayController {
   @UseGuards(AdminAuthGuard)
   @ObjectSerializer(UserDto)
   @ApiBody({ type: CreateUserDto })
-  @ApiBearerAuth('admin auth')
+  @ApiBearerAuth()
   @ApiResponse({ status: HttpStatus.CREATED, type: UserDto })
   @ApiResponse({ status: HttpStatus.UNAUTHORIZED, type: ErrorDto })
   @ApiResponse({ status: HttpStatus.CONFLICT, type: ErrorDto })
@@ -52,6 +52,13 @@ export class GatewayController {
   @Put('update')
   @HttpCode(HttpStatus.OK)
   @ObjectSerializer(UserDto)
+  @ApiBody({ type: UpdateUserByUserDto })
+  @ApiBearerAuth()
+  @ApiResponse({ status: HttpStatus.OK, type: UserDto })
+  @ApiResponse({ status: HttpStatus.UNAUTHORIZED, type: ErrorDto })
+  @ApiResponse({ status: HttpStatus.CONFLICT, type: ErrorDto })
+  @ApiResponse({ status: HttpStatus.BAD_REQUEST, type: ErrorDto })
+  @ApiResponse({ status: HttpStatus.INTERNAL_SERVER_ERROR, type: ErrorDto })
   updateByUser(
     @Body() body: UpdateUserByUserDto,
     @CurrentUser() user: User,
