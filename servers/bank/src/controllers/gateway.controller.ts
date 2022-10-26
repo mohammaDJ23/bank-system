@@ -13,6 +13,7 @@ import {
   Header,
   StreamableFile,
 } from '@nestjs/common';
+import { ApiBody, ApiTags, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
 import { CurrentUser } from '../decorators/current-user.decorator';
 import { BillDto } from '../dtos/bill.dto';
 import { CreateBillDto } from '../dtos/create-bill.dto';
@@ -31,15 +32,22 @@ import { PeriodAmountDto } from 'src/dtos/period-amount.dto';
 import { LastWeekDto } from 'src/dtos/last-week.dto';
 import { ListDto } from 'src/dtos/list.dto';
 import { BillsPeriodDto } from 'src/dtos/bills-period.dto';
+import { ErrorDto } from 'src/dtos/error.dto';
 
 @UseGuards(JwtAuthGuard)
 @Controller('bank')
+@ApiTags('bank')
 export class GatewayController {
   constructor(private readonly billService: BillService) {}
 
   @Post('bill/create')
   @HttpCode(HttpStatus.CREATED)
   @ObjectSerializer(BillDto)
+  @ApiBody({ type: CreateBillDto })
+  @ApiBearerAuth()
+  @ApiResponse({ status: HttpStatus.CREATED, type: BillDto })
+  @ApiResponse({ status: HttpStatus.UNAUTHORIZED, type: ErrorDto })
+  @ApiResponse({ status: HttpStatus.INTERNAL_SERVER_ERROR, type: ErrorDto })
   createBill(
     @Body() body: CreateBillDto,
     @CurrentUser() user: User,
