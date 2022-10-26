@@ -1,5 +1,6 @@
 import { NestFactory } from '@nestjs/core';
 import { MicroserviceOptions, Transport } from '@nestjs/microservices';
+import { swagger } from './libs/swagger';
 import { AppModule } from './modules/app.module';
 import { RabbitMqQueue } from './types/rabbitmq';
 
@@ -20,6 +21,7 @@ async function bootstrap() {
     },
   });
 
+  swagger(app);
   await app.startAllMicroservices();
   await app.listen(process.env.PORT);
 }
