@@ -116,6 +116,11 @@ export class GatewayController {
   @Post('bills/period')
   @HttpCode(HttpStatus.OK)
   @ListSerializer(BillDto)
+  @ApiBody({ type: BillsPeriodDto })
+  @ApiBearerAuth()
+  @ApiResponse({ status: HttpStatus.OK, type: BillDto, isArray: true })
+  @ApiResponse({ status: HttpStatus.UNAUTHORIZED, type: ErrorDto })
+  @ApiResponse({ status: HttpStatus.INTERNAL_SERVER_ERROR, type: ErrorDto })
   billsPeriod(
     @Body() body: BillsPeriodDto,
     @CurrentUser() user: User,
