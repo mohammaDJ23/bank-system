@@ -179,6 +179,10 @@ export class GatewayController {
   @HttpCode(HttpStatus.OK)
   @Header('Content-Type', 'application/json')
   @Header('Content-Disposition', 'attachment; filename="bill-reports.xlsx"')
+  @ApiBearerAuth()
+  @ApiResponse({ status: HttpStatus.OK, type: StreamableFile })
+  @ApiResponse({ status: HttpStatus.UNAUTHORIZED, type: ErrorDto })
+  @ApiResponse({ status: HttpStatus.INTERNAL_SERVER_ERROR, type: ErrorDto })
   getBillReports(@CurrentUser() user: User): Promise<StreamableFile> {
     return this.billService.getBillReports(user);
   }
