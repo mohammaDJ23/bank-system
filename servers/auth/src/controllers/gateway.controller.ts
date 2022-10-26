@@ -6,15 +6,12 @@ import {
   HttpStatus,
   HttpCode,
 } from '@nestjs/common';
-import { ApiBody, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
+import { ApiBody, ApiResponse } from '@nestjs/swagger';
 import { LoginDto } from '../dtos/login.dto';
 import { MessageDto } from '../dtos/message.dto';
 import { ForgotPasswordDto } from '../dtos/forgot-password.dto';
 import { TokenDto } from '../dtos/token.dto';
-import {
-  ListSerializer,
-  ObjectSerializer,
-} from '../decorators/serializer.decorator';
+import { ObjectSerializer } from '../decorators/serializer.decorator';
 import { ResetPasswordDto } from '../dtos/reset-password.dto';
 import { ResetPasswordService } from '../services/reset-password.service';
 import { AuthService } from '../services/auth.service';
@@ -79,6 +76,11 @@ export class GatewayController {
   @Post('reset-password')
   @HttpCode(HttpStatus.OK)
   @ObjectSerializer(MessageDto)
+  @ApiBody({ type: ResetPasswordDto })
+  @ApiResponse({ status: HttpStatus.OK, type: MessageDto })
+  @ApiResponse({ status: HttpStatus.NOT_FOUND, type: ErrorDto })
+  @ApiResponse({ status: HttpStatus.BAD_REQUEST, type: ErrorDto })
+  @ApiResponse({ status: HttpStatus.INTERNAL_SERVER_ERROR, type: ErrorDto })
   resetPassword(@Body() body: ResetPasswordDto): Promise<MessageDto> {
     return this.resetPasswordService.resetPassword(body);
   }
