@@ -180,6 +180,11 @@ export class GatewayController {
   @Get('bills')
   @HttpCode(HttpStatus.OK)
   @ListSerializer(BillDto)
+  @ApiBody({ type: ListDto })
+  @ApiBearerAuth()
+  @ApiResponse({ status: HttpStatus.OK, type: BillDto, isArray: true })
+  @ApiResponse({ status: HttpStatus.UNAUTHORIZED, type: ErrorDto })
+  @ApiResponse({ status: HttpStatus.INTERNAL_SERVER_ERROR, type: ErrorDto })
   findAllBills(
     @Body() body: ListDto,
     @CurrentUser() user: User,
