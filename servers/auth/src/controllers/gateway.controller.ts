@@ -6,6 +6,7 @@ import {
   HttpStatus,
   HttpCode,
 } from '@nestjs/common';
+import { ApiBody, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
 import { LoginDto } from '../dtos/login.dto';
 import { MessageDto } from '../dtos/message.dto';
 import { ForgotPasswordDto } from '../dtos/forgot-password.dto';
@@ -20,6 +21,7 @@ import { AuthService } from '../services/auth.service';
 import { CurrentUser } from '../decorators/current-user.decorator';
 import { User } from '../entities/user.entity';
 import { AdminAuthGuard } from '../guards/admin-auth.guard';
+import { ErrorDto } from 'src/dtos/error.dto';
 
 @Controller('auth')
 export class GatewayController {
@@ -31,6 +33,11 @@ export class GatewayController {
   @Post('login')
   @HttpCode(HttpStatus.OK)
   @ObjectSerializer(TokenDto)
+  @ApiBody({ type: LoginDto })
+  @ApiResponse({ status: HttpStatus.OK, type: TokenDto })
+  @ApiResponse({ status: HttpStatus.NOT_FOUND, type: ErrorDto })
+  @ApiResponse({ status: HttpStatus.BAD_REQUEST, type: ErrorDto })
+  @ApiResponse({ status: HttpStatus.INTERNAL_SERVER_ERROR, type: ErrorDto })
   login(
     @Body() body: LoginDto,
     @CurrentUser() currentUser: User,
