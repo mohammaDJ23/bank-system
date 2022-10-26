@@ -6,7 +6,7 @@ import {
   HttpStatus,
   HttpCode,
 } from '@nestjs/common';
-import { ApiBody, ApiResponse } from '@nestjs/swagger';
+import { ApiBody, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { LoginDto } from '../dtos/login.dto';
 import { MessageDto } from '../dtos/message.dto';
 import { ForgotPasswordDto } from '../dtos/forgot-password.dto';
@@ -21,6 +21,7 @@ import { AdminAuthGuard } from '../guards/admin-auth.guard';
 import { ErrorDto } from 'src/dtos/error.dto';
 
 @Controller('auth')
+@ApiTags('auth')
 export class GatewayController {
   constructor(
     private readonly authService: AuthService,
