@@ -74,6 +74,12 @@ export class GatewayController {
   @Delete('bill/delete')
   @HttpCode(HttpStatus.OK)
   @ObjectSerializer(BillDto)
+  @ApiBody({ type: DeleteBillDto })
+  @ApiBearerAuth()
+  @ApiResponse({ status: HttpStatus.OK, type: BillDto })
+  @ApiResponse({ status: HttpStatus.UNAUTHORIZED, type: ErrorDto })
+  @ApiResponse({ status: HttpStatus.NOT_FOUND, type: ErrorDto })
+  @ApiResponse({ status: HttpStatus.INTERNAL_SERVER_ERROR, type: ErrorDto })
   deleteBill(
     @Body() body: DeleteBillDto,
     @CurrentUser() user: User,
