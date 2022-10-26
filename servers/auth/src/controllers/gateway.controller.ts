@@ -49,6 +49,11 @@ export class GatewayController {
   @HttpCode(HttpStatus.OK)
   @UseGuards(AdminAuthGuard)
   @ObjectSerializer(TokenDto)
+  @ApiBody({ type: LoginDto })
+  @ApiResponse({ status: HttpStatus.OK, type: TokenDto })
+  @ApiResponse({ status: HttpStatus.NOT_FOUND, type: ErrorDto })
+  @ApiResponse({ status: HttpStatus.BAD_REQUEST, type: ErrorDto })
+  @ApiResponse({ status: HttpStatus.INTERNAL_SERVER_ERROR, type: ErrorDto })
   adminLogin(
     @Body() body: LoginDto,
     @CurrentUser() currentUser: User,
@@ -59,6 +64,11 @@ export class GatewayController {
   @Post('forgot-password')
   @HttpCode(HttpStatus.OK)
   @ObjectSerializer(MessageDto)
+  @ApiBody({ type: ForgotPasswordDto })
+  @ApiResponse({ status: HttpStatus.OK, type: MessageDto })
+  @ApiResponse({ status: HttpStatus.NOT_FOUND, type: ErrorDto })
+  @ApiResponse({ status: HttpStatus.BAD_REQUEST, type: ErrorDto })
+  @ApiResponse({ status: HttpStatus.INTERNAL_SERVER_ERROR, type: ErrorDto })
   forgotPassword(
     @Body() body: ForgotPasswordDto,
     @CurrentUser() currentUser: User,
