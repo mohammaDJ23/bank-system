@@ -13,7 +13,13 @@ import {
   Header,
   StreamableFile,
 } from '@nestjs/common';
-import { ApiBody, ApiTags, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
+import {
+  ApiBody,
+  ApiTags,
+  ApiResponse,
+  ApiBearerAuth,
+  ApiParam,
+} from '@nestjs/swagger';
 import { CurrentUser } from '../decorators/current-user.decorator';
 import { BillDto } from '../dtos/bill.dto';
 import { CreateBillDto } from '../dtos/create-bill.dto';
@@ -195,6 +201,12 @@ export class GatewayController {
   @Get('bill/:id')
   @HttpCode(HttpStatus.OK)
   @ObjectSerializer(BillDto)
+  @ApiParam({ name: 'id', type: 'number' })
+  @ApiBearerAuth()
+  @ApiResponse({ status: HttpStatus.OK, type: BillDto })
+  @ApiResponse({ status: HttpStatus.UNAUTHORIZED, type: ErrorDto })
+  @ApiResponse({ status: HttpStatus.NOT_FOUND, type: ErrorDto })
+  @ApiResponse({ status: HttpStatus.INTERNAL_SERVER_ERROR, type: ErrorDto })
   findOneBill(
     @Param('id', ParseIntPipe) id: number,
     @CurrentUser() user: User,
