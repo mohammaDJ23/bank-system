@@ -19,7 +19,6 @@ export class UserDto {
   email: string;
 
   @Exclude()
-  @ApiProperty()
   password: string;
 
   @Expose()
