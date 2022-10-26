@@ -1,4 +1,5 @@
 import { Matches } from 'class-validator';
+import { ApiProperty } from '@nestjs/swagger';
 
 export class ForgotPasswordDto {
   @Matches(
@@ -7,5 +8,6 @@ export class ForgotPasswordDto {
       message: 'Invalid email',
     },
   )
+  @ApiProperty()
   email: string;
 }

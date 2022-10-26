@@ -1,4 +1,5 @@
 import { Matches, Length } from 'class-validator';
+import { ApiProperty } from '@nestjs/swagger';
 
 export class LoginDto {
   @Matches(
@@ -7,11 +8,13 @@ export class LoginDto {
       message: 'Invalid email',
     },
   )
+  @ApiProperty()
   email: string;
 
   @Matches(/^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{6,45}$/, {
     message: 'The password should be strong',
   })
   @Length(6, 45)
+  @ApiProperty()
   password: string;
 }

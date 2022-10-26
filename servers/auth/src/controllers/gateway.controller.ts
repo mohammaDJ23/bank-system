@@ -6,20 +6,19 @@ import {
   HttpStatus,
   HttpCode,
 } from '@nestjs/common';
+import { ApiBody, ApiResponse } from '@nestjs/swagger';
 import { LoginDto } from '../dtos/login.dto';
 import { MessageDto } from '../dtos/message.dto';
 import { ForgotPasswordDto } from '../dtos/forgot-password.dto';
 import { TokenDto } from '../dtos/token.dto';
-import {
-  ListSerializer,
-  ObjectSerializer,
-} from '../decorators/serializer.decorator';
+import { ObjectSerializer } from '../decorators/serializer.decorator';
 import { ResetPasswordDto } from '../dtos/reset-password.dto';
 import { ResetPasswordService } from '../services/reset-password.service';
 import { AuthService } from '../services/auth.service';
 import { CurrentUser } from '../decorators/current-user.decorator';
 import { User } from '../entities/user.entity';
 import { AdminAuthGuard } from '../guards/admin-auth.guard';
+import { ErrorDto } from 'src/dtos/error.dto';
 
 @Controller('auth')
 export class GatewayController {
@@ -31,6 +30,11 @@ export class GatewayController {
   @Post('login')
   @HttpCode(HttpStatus.OK)
   @ObjectSerializer(TokenDto)
+  @ApiBody({ type: LoginDto })
+  @ApiResponse({ status: HttpStatus.OK, type: TokenDto })
+  @ApiResponse({ status: HttpStatus.NOT_FOUND, type: ErrorDto })
+  @ApiResponse({ status: HttpStatus.BAD_REQUEST, type: ErrorDto })
+  @ApiResponse({ status: HttpStatus.INTERNAL_SERVER_ERROR, type: ErrorDto })
   login(
     @Body() body: LoginDto,
     @CurrentUser() currentUser: User,
@@ -42,6 +46,11 @@ export class GatewayController {
   @HttpCode(HttpStatus.OK)
   @UseGuards(AdminAuthGuard)
   @ObjectSerializer(TokenDto)
+  @ApiBody({ type: LoginDto })
+  @ApiResponse({ status: HttpStatus.OK, type: TokenDto })
+  @ApiResponse({ status: HttpStatus.NOT_FOUND, type: ErrorDto })
+  @ApiResponse({ status: HttpStatus.BAD_REQUEST, type: ErrorDto })
+  @ApiResponse({ status: HttpStatus.INTERNAL_SERVER_ERROR, type: ErrorDto })
   adminLogin(
     @Body() body: LoginDto,
     @CurrentUser() currentUser: User,
@@ -52,6 +61,11 @@ export class GatewayController {
   @Post('forgot-password')
   @HttpCode(HttpStatus.OK)
   @ObjectSerializer(MessageDto)
+  @ApiBody({ type: ForgotPasswordDto })
+  @ApiResponse({ status: HttpStatus.OK, type: MessageDto })
+  @ApiResponse({ status: HttpStatus.NOT_FOUND, type: ErrorDto })
+  @ApiResponse({ status: HttpStatus.BAD_REQUEST, type: ErrorDto })
+  @ApiResponse({ status: HttpStatus.INTERNAL_SERVER_ERROR, type: ErrorDto })
   forgotPassword(
     @Body() body: ForgotPasswordDto,
     @CurrentUser() currentUser: User,
@@ -62,6 +76,11 @@ export class GatewayController {
   @Post('reset-password')
   @HttpCode(HttpStatus.OK)
   @ObjectSerializer(MessageDto)
+  @ApiBody({ type: ResetPasswordDto })
+  @ApiResponse({ status: HttpStatus.OK, type: MessageDto })
+  @ApiResponse({ status: HttpStatus.NOT_FOUND, type: ErrorDto })
+  @ApiResponse({ status: HttpStatus.BAD_REQUEST, type: ErrorDto })
+  @ApiResponse({ status: HttpStatus.INTERNAL_SERVER_ERROR, type: ErrorDto })
   resetPassword(@Body() body: ResetPasswordDto): Promise<MessageDto> {
     return this.resetPasswordService.resetPassword(body);
   }
