@@ -131,6 +131,10 @@ export class GatewayController {
   @Get('bills/last-week')
   @HttpCode(HttpStatus.OK)
   @ObjectSerializer(LastWeekDto)
+  @ApiBearerAuth()
+  @ApiResponse({ status: HttpStatus.OK, type: LastWeekDto, isArray: true })
+  @ApiResponse({ status: HttpStatus.UNAUTHORIZED, type: ErrorDto })
+  @ApiResponse({ status: HttpStatus.INTERNAL_SERVER_ERROR, type: ErrorDto })
   lastWeekBills(@CurrentUser() user: User): Promise<LastWeekDto[]> {
     return this.billService.lastWeekBills(user);
   }
