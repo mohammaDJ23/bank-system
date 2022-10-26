@@ -58,6 +58,12 @@ export class GatewayController {
   @Put('bill/update')
   @HttpCode(HttpStatus.OK)
   @ObjectSerializer(BillDto)
+  @ApiBody({ type: UpdateBillDto })
+  @ApiBearerAuth()
+  @ApiResponse({ status: HttpStatus.OK, type: BillDto })
+  @ApiResponse({ status: HttpStatus.UNAUTHORIZED, type: ErrorDto })
+  @ApiResponse({ status: HttpStatus.NOT_FOUND, type: ErrorDto })
+  @ApiResponse({ status: HttpStatus.INTERNAL_SERVER_ERROR, type: ErrorDto })
   updateBill(
     @Body() body: UpdateBillDto,
     @CurrentUser() user: User,
