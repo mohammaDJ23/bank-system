@@ -19,7 +19,13 @@ import {
   ListSerializer,
   ObjectSerializer,
 } from '../decorators/serializer.decorator';
-import { ApiBody, ApiResponse, ApiTags, ApiBearerAuth } from '@nestjs/swagger';
+import {
+  ApiBody,
+  ApiResponse,
+  ApiTags,
+  ApiBearerAuth,
+  ApiParam,
+} from '@nestjs/swagger';
 import { DeleteAccountDto } from '../dtos/delete-account.dto';
 import { JwtAuthGuard } from '../guards/jwt-auth.guard';
 import { AdminAuthGuard } from '../guards/admin-auth.guard';
@@ -111,6 +117,12 @@ export class GatewayController {
   @Get(':id')
   @HttpCode(HttpStatus.OK)
   @ObjectSerializer(UserDto)
+  @ApiParam({ name: 'id', type: Number })
+  @ApiBearerAuth()
+  @ApiResponse({ status: HttpStatus.OK, type: UserDto })
+  @ApiResponse({ status: HttpStatus.UNAUTHORIZED, type: ErrorDto })
+  @ApiResponse({ status: HttpStatus.NOT_FOUND, type: ErrorDto })
+  @ApiResponse({ status: HttpStatus.INTERNAL_SERVER_ERROR, type: ErrorDto })
   findOne(@Param('id', ParseIntPipe) id: number): Promise<User> {
     return this.userService.findOne(id);
   }
