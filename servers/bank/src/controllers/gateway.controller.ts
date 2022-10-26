@@ -90,6 +90,10 @@ export class GatewayController {
   @Get('bill/total-amount')
   @HttpCode(HttpStatus.OK)
   @ObjectSerializer(TotalAmountDto)
+  @ApiBearerAuth()
+  @ApiResponse({ status: HttpStatus.OK, type: TotalAmountDto })
+  @ApiResponse({ status: HttpStatus.UNAUTHORIZED, type: ErrorDto })
+  @ApiResponse({ status: HttpStatus.INTERNAL_SERVER_ERROR, type: ErrorDto })
   getTotalAmount(@CurrentUser() user: User): Promise<TotalAmountDto> {
     return this.billService.getTotalAmount(user);
   }
