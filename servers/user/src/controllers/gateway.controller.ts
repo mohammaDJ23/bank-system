@@ -14,7 +14,7 @@ import {
 import { UserService } from '../services/user.service';
 import { CreateUserDto } from '../dtos/create-user.dto';
 import { FindAllDto } from '../dtos/find-all.dto';
-import { UserDto } from '../dtos/user-dto';
+import { UserDto } from '../dtos/user.dto';
 import {
   ListSerializer,
   ObjectSerializer,
