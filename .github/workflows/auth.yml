@@ -5,7 +5,7 @@ on:
     branches:
       - master
     paths:
-      - 'servers/auth/**'
+      - '/servers/auth/**'
 
 defaults:
   run:
