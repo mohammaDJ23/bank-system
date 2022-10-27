@@ -1,14 +1,14 @@
 import ReactDOM from 'react-dom/client';
 import App from './App';
-import { Env } from './lib';
+import { isDev } from './lib';
 
-function mount(element: Element) {
+function mount(element: Element): void {
   const root = ReactDOM.createRoot(element);
   root.render(<App />);
 }
 
-if (Env.isDev()) {
-  const element = document.querySelector('#auth-service-root');
+if (isDev()) {
+  const element = document.querySelector('#auth-service');
 
   if (element) {
     mount(element);
