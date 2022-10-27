@@ -5,11 +5,8 @@ name: auth
 
 on:
   push:
-    branches: ['master']
-    paths:
-      - 'servers/auth/**'
-  pull_request:
-    branches: ['master']
+    branches:
+      - master
     paths:
       - 'servers/auth/**'
 
