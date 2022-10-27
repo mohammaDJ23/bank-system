@@ -13,6 +13,13 @@ import {
   Header,
   StreamableFile,
 } from '@nestjs/common';
+import {
+  ApiBody,
+  ApiTags,
+  ApiResponse,
+  ApiBearerAuth,
+  ApiParam,
+} from '@nestjs/swagger';
 import { CurrentUser } from '../decorators/current-user.decorator';
 import { BillDto } from '../dtos/bill.dto';
 import { CreateBillDto } from '../dtos/create-bill.dto';
@@ -31,15 +38,22 @@ import { PeriodAmountDto } from 'src/dtos/period-amount.dto';
 import { LastWeekDto } from 'src/dtos/last-week.dto';
 import { ListDto } from 'src/dtos/list.dto';
 import { BillsPeriodDto } from 'src/dtos/bills-period.dto';
+import { ErrorDto } from 'src/dtos/error.dto';
 
 @UseGuards(JwtAuthGuard)
 @Controller('bank')
+@ApiTags('bank')
 export class GatewayController {
   constructor(private readonly billService: BillService) {}
 
   @Post('bill/create')
   @HttpCode(HttpStatus.CREATED)
   @ObjectSerializer(BillDto)
+  @ApiBody({ type: CreateBillDto })
+  @ApiBearerAuth()
+  @ApiResponse({ status: HttpStatus.CREATED, type: BillDto })
+  @ApiResponse({ status: HttpStatus.UNAUTHORIZED, type: ErrorDto })
+  @ApiResponse({ status: HttpStatus.INTERNAL_SERVER_ERROR, type: ErrorDto })
   createBill(
     @Body() body: CreateBillDto,
     @CurrentUser() user: User,
@@ -50,6 +64,12 @@ export class GatewayController {
   @Put('bill/update')
   @HttpCode(HttpStatus.OK)
   @ObjectSerializer(BillDto)
+  @ApiBody({ type: UpdateBillDto })
+  @ApiBearerAuth()
+  @ApiResponse({ status: HttpStatus.OK, type: BillDto })
+  @ApiResponse({ status: HttpStatus.UNAUTHORIZED, type: ErrorDto })
+  @ApiResponse({ status: HttpStatus.NOT_FOUND, type: ErrorDto })
+  @ApiResponse({ status: HttpStatus.INTERNAL_SERVER_ERROR, type: ErrorDto })
   updateBill(
     @Body() body: UpdateBillDto,
     @CurrentUser() user: User,
@@ -60,6 +80,12 @@ export class GatewayController {
   @Delete('bill/delete')
   @HttpCode(HttpStatus.OK)
   @ObjectSerializer(BillDto)
+  @ApiBody({ type: DeleteBillDto })
+  @ApiBearerAuth()
+  @ApiResponse({ status: HttpStatus.OK, type: BillDto })
+  @ApiResponse({ status: HttpStatus.UNAUTHORIZED, type: ErrorDto })
+  @ApiResponse({ status: HttpStatus.NOT_FOUND, type: ErrorDto })
+  @ApiResponse({ status: HttpStatus.INTERNAL_SERVER_ERROR, type: ErrorDto })
   deleteBill(
     @Body() body: DeleteBillDto,
     @CurrentUser() user: User,
@@ -70,6 +96,10 @@ export class GatewayController {
   @Get('bill/total-amount')
   @HttpCode(HttpStatus.OK)
   @ObjectSerializer(TotalAmountDto)
+  @ApiBearerAuth()
+  @ApiResponse({ status: HttpStatus.OK, type: TotalAmountDto })
+  @ApiResponse({ status: HttpStatus.UNAUTHORIZED, type: ErrorDto })
+  @ApiResponse({ status: HttpStatus.INTERNAL_SERVER_ERROR, type: ErrorDto })
   getTotalAmount(@CurrentUser() user: User): Promise<TotalAmountDto> {
     return this.billService.getTotalAmount(user);
   }
@@ -77,6 +107,11 @@ export class GatewayController {
   @Post('bill/period-amount')
   @HttpCode(HttpStatus.OK)
   @ObjectSerializer(TotalAmountDto)
+  @ApiBody({ type: PeriodAmountDto })
+  @ApiBearerAuth()
+  @ApiResponse({ status: HttpStatus.OK, type: TotalAmountDto })
+  @ApiResponse({ status: HttpStatus.UNAUTHORIZED, type: ErrorDto })
+  @ApiResponse({ status: HttpStatus.INTERNAL_SERVER_ERROR, type: ErrorDto })
   PeriodAmount(
     @Body() body: PeriodAmountDto,
     @CurrentUser() user: User,
@@ -87,6 +122,11 @@ export class GatewayController {
   @Post('bills/period')
   @HttpCode(HttpStatus.OK)
   @ListSerializer(BillDto)
+  @ApiBody({ type: BillsPeriodDto })
+  @ApiBearerAuth()
+  @ApiResponse({ status: HttpStatus.OK, type: BillDto, isArray: true })
+  @ApiResponse({ status: HttpStatus.UNAUTHORIZED, type: ErrorDto })
+  @ApiResponse({ status: HttpStatus.INTERNAL_SERVER_ERROR, type: ErrorDto })
   billsPeriod(
     @Body() body: BillsPeriodDto,
     @CurrentUser() user: User,
@@ -97,6 +137,10 @@ export class GatewayController {
   @Get('bills/last-week')
   @HttpCode(HttpStatus.OK)
   @ObjectSerializer(LastWeekDto)
+  @ApiBearerAuth()
+  @ApiResponse({ status: HttpStatus.OK, type: LastWeekDto, isArray: true })
+  @ApiResponse({ status: HttpStatus.UNAUTHORIZED, type: ErrorDto })
+  @ApiResponse({ status: HttpStatus.INTERNAL_SERVER_ERROR, type: ErrorDto })
   lastWeekBills(@CurrentUser() user: User): Promise<LastWeekDto[]> {
     return this.billService.lastWeekBills(user);
   }
@@ -104,6 +148,11 @@ export class GatewayController {
   @Post('bills/max-amounts')
   @HttpCode(HttpStatus.OK)
   @ListSerializer(BillDto)
+  @ApiBody({ type: ListDto })
+  @ApiBearerAuth()
+  @ApiResponse({ status: HttpStatus.OK, type: BillDto, isArray: true })
+  @ApiResponse({ status: HttpStatus.UNAUTHORIZED, type: ErrorDto })
+  @ApiResponse({ status: HttpStatus.INTERNAL_SERVER_ERROR, type: ErrorDto })
   maxBillAmounts(
     @Body() body: ListDto,
     @CurrentUser() user: User,
@@ -114,6 +163,11 @@ export class GatewayController {
   @Post('bills/min-amounts')
   @HttpCode(HttpStatus.OK)
   @ListSerializer(BillDto)
+  @ApiBody({ type: ListDto })
+  @ApiBearerAuth()
+  @ApiResponse({ status: HttpStatus.OK, type: BillDto, isArray: true })
+  @ApiResponse({ status: HttpStatus.UNAUTHORIZED, type: ErrorDto })
+  @ApiResponse({ status: HttpStatus.INTERNAL_SERVER_ERROR, type: ErrorDto })
   minBillAmounts(
     @Body() body: ListDto,
     @CurrentUser() user: User,
@@ -125,6 +179,10 @@ export class GatewayController {
   @HttpCode(HttpStatus.OK)
   @Header('Content-Type', 'application/json')
   @Header('Content-Disposition', 'attachment; filename="bill-reports.xlsx"')
+  @ApiBearerAuth()
+  @ApiResponse({ status: HttpStatus.OK, type: StreamableFile })
+  @ApiResponse({ status: HttpStatus.UNAUTHORIZED, type: ErrorDto })
+  @ApiResponse({ status: HttpStatus.INTERNAL_SERVER_ERROR, type: ErrorDto })
   getBillReports(@CurrentUser() user: User): Promise<StreamableFile> {
     return this.billService.getBillReports(user);
   }
@@ -132,6 +190,11 @@ export class GatewayController {
   @Get('bills')
   @HttpCode(HttpStatus.OK)
   @ListSerializer(BillDto)
+  @ApiBody({ type: ListDto })
+  @ApiBearerAuth()
+  @ApiResponse({ status: HttpStatus.OK, type: BillDto, isArray: true })
+  @ApiResponse({ status: HttpStatus.UNAUTHORIZED, type: ErrorDto })
+  @ApiResponse({ status: HttpStatus.INTERNAL_SERVER_ERROR, type: ErrorDto })
   findAllBills(
     @Body() body: ListDto,
     @CurrentUser() user: User,
@@ -142,6 +205,12 @@ export class GatewayController {
   @Get('bill/:id')
   @HttpCode(HttpStatus.OK)
   @ObjectSerializer(BillDto)
+  @ApiParam({ name: 'id', type: 'number' })
+  @ApiBearerAuth()
+  @ApiResponse({ status: HttpStatus.OK, type: BillDto })
+  @ApiResponse({ status: HttpStatus.UNAUTHORIZED, type: ErrorDto })
+  @ApiResponse({ status: HttpStatus.NOT_FOUND, type: ErrorDto })
+  @ApiResponse({ status: HttpStatus.INTERNAL_SERVER_ERROR, type: ErrorDto })
   findOneBill(
     @Param('id', ParseIntPipe) id: number,
     @CurrentUser() user: User,
