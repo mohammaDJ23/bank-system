@@ -4,6 +4,8 @@ import { Transport, MicroserviceOptions } from '@nestjs/microservices';
 import { RabbitMqQueue } from './types/rabbitmq';
 import { swagger } from './libs/swagger';
 
+// some dymmy changes
+
 require('dotenv').config();
 
 async function bootstrap() {
