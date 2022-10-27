@@ -1,0 +1,21 @@
+name: client-container
+
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - 'clients/container/**'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: ./clients/container
+
+    steps:
+      - uses: actions/checkout@v3
+      - run: npm install
+      - run: npm run build:webpack
