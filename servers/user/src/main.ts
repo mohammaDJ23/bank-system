@@ -4,8 +4,6 @@ import { AppModule } from './modules/app.module';
 import { RabbitMqQueue } from './types/rabbitmq';
 import { swagger } from './libs/swagger';
 
-// change
-
 require('dotenv').config();
 
 async function bootstrap() {
