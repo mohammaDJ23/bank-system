@@ -1,21 +1,23 @@
-name: deploy-auth
+# This workflow will do a clean installation of node dependencies, cache/restore them, build the source code and run tests across different versions of node
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-nodejs
+
+name: auth
 
 on:
   push:
-    branches:
-      - master
+    branches: ['master']
     paths:
-      - '/servers/auth/**'
-
-defaults:
-  run:
-    working-directory: servers/auth
+      - 'servers/auth/**'
+  pull_request:
+    branches: ['master']
+    paths:
+      - 'servers/auth/**'
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - run: npm install
       - run: npm run build
