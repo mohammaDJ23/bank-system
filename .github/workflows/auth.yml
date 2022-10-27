@@ -7,11 +7,11 @@ on:
   push:
     branches: ['master']
     paths:
-      - 'servers/auth/**'
+      - '/auth/**'
   pull_request:
     branches: ['master']
     paths:
-      - 'servers/auth/**'
+      - 'auth/**'
 
 jobs:
   build:
