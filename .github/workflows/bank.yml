@@ -1,11 +1,11 @@
-name: auth
+name: bank
 
 on:
   push:
     branches:
       - master
     paths:
-      - 'servers/auth/**'
+      - 'servers/bank/**'
 
 jobs:
   build:
@@ -13,7 +13,7 @@ jobs:
 
     defaults:
       run:
-        working-directory: ./servers/auth
+        working-directory: ./servers/bank
 
     steps:
       - uses: actions/checkout@v3
