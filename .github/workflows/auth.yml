@@ -7,12 +7,14 @@ on:
   push:
     branches:
       - master
-    paths:
-      - 'servers/auth/**'
 
 jobs:
   build:
     runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: ./servers/auth
 
     steps:
       - uses: actions/checkout@v3
