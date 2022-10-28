@@ -16,13 +16,13 @@ module.exports = merge(commonConfig, {
     ignored: /node_modules/,
   },
   output: {
-    publicPath: 'http://localhost:3004/',
+    publicPath: 'http://localhost:3005/',
     filename: '[name].bundle.js',
     path: path.resolve(__dirname, '../dist'),
     clean: true,
   },
   devServer: {
-    port: 3004,
+    port: 3005,
     open: true,
   },
   plugins: [
