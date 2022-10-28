@@ -1,9 +1,13 @@
 <script>
 const AuthApp = require('auth/AuthApp');
 
-export default {};
+export default {
+  mounted() {
+    AuthApp.mount(this.$refs._auth);
+  },
+};
 </script>
 
 <template>
-  <div></div>
+  <div ref="_auth"></div>
 </template>
