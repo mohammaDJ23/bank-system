@@ -1,5 +1,16 @@
-<script setup></script>
+<script>
+import AuthApp from './components/Auth.vue';
+
+export default {
+  components: {
+    AuthApp,
+  },
+};
+</script>
 
 <template>
-  <div>running app</div>
+  <div>
+    <div>hey container</div>
+    <AuthApp />
+  </div>
 </template>
