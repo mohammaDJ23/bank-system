@@ -12,7 +12,7 @@ module.exports = merge(commonConfig, {
     path: path.resolve(__dirname, '../dist'),
     clean: true,
   },
-  devServer: { port: 3005 },
+  devServer: { port: 3005, historyApiFallback: true },
   plugins: [
     new ModuleFederationPlugin({
       name: 'auth',

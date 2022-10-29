@@ -1,14 +1,16 @@
-import { BrowserRouter as Router, Routes, Route, useRoutes } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Login from './pages/Login';
 import LoginAdmin from './pages/LoginAdmin';
 
 function App() {
-  let routes = useRoutes([
-    { path: '/login', element: <Login /> },
-    { path: '/login/admin', element: <LoginAdmin /> },
-  ]);
-
-  return <Router basename="/auth">{routes}</Router>;
+  return (
+    <Router>
+      <Routes>
+        <Route path="/login" element={<Login />} />
+        <Route path="/login/admin" element={<LoginAdmin />} />
+      </Routes>
+    </Router>
+  );
 }
 
 export default App;
