@@ -11,7 +11,7 @@ module.exports = merge(commonConfig, {
     new ModuleFederationPlugin({
       name: 'auth',
       filename: 'remoteEntry.js',
-      exposes: { './AuthApp': './src/bootstrap' },
+      exposes: { './AuthApp': './src/main.js' },
       shared: packageJson.dependencies,
     }),
   ],

@@ -1,7 +1,8 @@
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const { VueLoaderPlugin } = require('vue-loader');
 
 module.exports = {
-  entry: './src/index.ts',
+  entry: './src/index.js',
   module: {
     rules: [
       {
@@ -16,14 +17,17 @@ module.exports = {
         },
       },
       {
-        test: /\.(js|jsx|tsx|ts)$/,
-        loader: 'ts-loader',
+        test: /\.(js|jsx)$/,
         exclude: /node_modules/,
+      },
+      {
+        test: /\.vue$/,
+        loader: 'vue-loader',
       },
     ],
   },
   resolve: {
-    extensions: ['.ts', '.tsx', '.js', '.jsx'],
+    extensions: ['.js', '.jsx', '.vue'],
   },
-  plugins: [new HtmlWebpackPlugin({ template: './public/index.html' })],
+  plugins: [new HtmlWebpackPlugin({ template: './index.html' }), new VueLoaderPlugin()],
 };
