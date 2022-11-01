@@ -5,7 +5,9 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "webpack:start:dev": "webpack serve --config config/webpack.dev.js"
+    "webpack:start:dev": "webpack serve --config config/webpack.dev.js",
+    "webpack:start:prod": "webpack serve --config config/webpack.prod.js",
+    "webpack:build:prod": "webpack --config config/webpack.prod.js"
   },
   "dependencies": {
     "vue": "^3.2.41",
