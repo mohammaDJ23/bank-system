@@ -21,6 +21,4 @@ if (process.env.NODE_ENV === 'development') {
   if (element) mount(element);
 }
 
-mount();
-
 export { mount };
