@@ -1,3 +1,3 @@
 <template>
-  <div>Login page</div>
+  <router-link to="/auth/login/admin">Login page</router-link>
 </template>

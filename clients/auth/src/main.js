@@ -4,15 +4,33 @@ import App from './App.vue';
 import Login from './components/Login.vue';
 import AdminLogin from './components/AdminLogin.vue';
 
-function mount(element) {
+const mountOptions = {
+  onChildNavigate: function () {},
+};
+
+function mount(element, { onChildNavigate } = mountOptions) {
   const routes = [
-    { path: '/auth/login', component: Login },
-    { path: '/auth/login/admin', component: AdminLogin },
+    { path: '/auth/login', name: 'Login', component: Login },
+    { path: '/auth/login/admin', name: 'AdminLogin', component: AdminLogin },
   ];
 
-  const router = createRouter({ history: createWebHistory(), routes });
+  const history = createWebHistory();
+
+  const router = createRouter({ history, routes });
+
+  router.afterEach(({ path }) => {
+    onChildNavigate(path);
+  });
 
   createApp(App).use(router).mount(element);
+
+  return {
+    onParentNavigate: function (path) {
+      if (history.location !== path) {
+        history.push(path);
+      }
+    },
+  };
 }
 
 if (process.env.NODE_ENV === 'development') {
