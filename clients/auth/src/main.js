@@ -22,7 +22,11 @@ function mount(element, { onChildNavigate } = mountOptions) {
     onChildNavigate(path);
   });
 
-  createApp(App).use(router).mount(element);
+  const app = createApp(App);
+
+  app.use(router);
+
+  app.mount(element);
 
   return {
     onParentNavigate: function (path) {
