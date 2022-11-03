@@ -1,8 +1,10 @@
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const { VueLoaderPlugin } = require('vue-loader');
+const webpack = require('webpack');
 
 module.exports = {
   entry: './src/index.js',
+  devtool: 'source-map',
   module: {
     rules: [
       {
@@ -37,5 +39,9 @@ module.exports = {
   resolve: {
     extensions: ['.js', '.jsx', '.vue'],
   },
-  plugins: [new HtmlWebpackPlugin({ template: './index.html' }), new VueLoaderPlugin()],
+  plugins: [
+    new HtmlWebpackPlugin({ template: './index.html' }),
+    new VueLoaderPlugin(),
+    new webpack.DefinePlugin({ __VUE_OPTIONS_API__: true, __VUE_PROD_DEVTOOLS__: true }),
+  ],
 };

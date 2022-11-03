@@ -1,23 +1,23 @@
 import { createApp } from 'vue';
 import { createRouter, createWebHistory } from 'vue-router';
 import ElementPlus from 'element-plus';
+import { routes } from './lib';
 import App from './App.vue';
-import Login from './pages/Login.vue';
-import AdminLogin from './pages/AdminLogin.vue';
-import 'element-plus/dist/index.css';
 
 const mountOptions = {
   onChildNavigate: function () {},
 };
 
+const mountExporation = {
+  onParentNavigate: function (path) {
+    if (history.location !== path) {
+      history.push(path);
+    }
+  },
+};
+
 function mount(element, { onChildNavigate } = mountOptions) {
-  const routes = [
-    { path: '/auth/login', name: 'Login', component: Login },
-    { path: '/auth/login/admin', name: 'AdminLogin', component: AdminLogin },
-  ];
-
   const history = createWebHistory();
-
   const router = createRouter({ history, routes });
 
   router.afterEach(({ path }) => {
@@ -31,17 +31,12 @@ function mount(element, { onChildNavigate } = mountOptions) {
 
   app.mount(element);
 
-  return {
-    onParentNavigate: function (path) {
-      if (history.location !== path) {
-        history.push(path);
-      }
-    },
-  };
+  return mountExporation;
 }
 
 if (process.env.NODE_ENV === 'development') {
   const element = document.querySelector('#_auth-service');
+
   if (element) mount(element);
 }
 
