@@ -1,8 +1,10 @@
 import { createApp } from 'vue';
 import { createRouter, createWebHistory } from 'vue-router';
+import ElementPlus from 'element-plus';
 import App from './App.vue';
 import Login from './pages/Login.vue';
 import AdminLogin from './pages/AdminLogin.vue';
+import 'element-plus/dist/index.css';
 
 const mountOptions = {
   onChildNavigate: function () {},
@@ -25,6 +27,7 @@ function mount(element, { onChildNavigate } = mountOptions) {
   const app = createApp(App);
 
   app.use(router);
+  app.use(ElementPlus);
 
   app.mount(element);
 
@@ -39,7 +42,6 @@ function mount(element, { onChildNavigate } = mountOptions) {
 
 if (process.env.NODE_ENV === 'development') {
   const element = document.querySelector('#_auth-service');
-
   if (element) mount(element);
 }
 
