@@ -10,6 +10,8 @@
     "webpack:build:prod": "webpack --config config/webpack.prod.js"
   },
   "dependencies": {
+    "@popperjs/core": "^2.11.6",
+    "bootstrap": "^5.2.2",
     "element-plus": "^2.2.19",
     "unplugin-element-plus": "^0.4.1",
     "vue": "^3.2.41",

@@ -3,18 +3,21 @@ import { createRouter, createWebHistory } from 'vue-router';
 import ElementPlus from 'element-plus';
 import { routes } from './lib';
 import App from './App.vue';
+import 'element-plus/dist/index.css';
 
 const mountOptions = {
   onChildNavigate: function () {},
 };
 
-const mountExporation = {
-  onParentNavigate: function (path) {
-    if (history.location !== path) {
-      history.push(path);
-    }
-  },
-};
+function mountExportation({ history }) {
+  return {
+    onParentNavigate: function (path) {
+      if (history.location !== path) {
+        history.push(path);
+      }
+    },
+  };
+}
 
 function mount(element, { onChildNavigate } = mountOptions) {
   const history = createWebHistory();
@@ -31,7 +34,7 @@ function mount(element, { onChildNavigate } = mountOptions) {
 
   app.mount(element);
 
-  return mountExporation;
+  return mountExportation({ history });
 }
 
 if (process.env.NODE_ENV === 'development') {
