@@ -1,3 +1,11 @@
 <template>
-  <router-link to="/auth/login/admin">Login page</router-link>
+  <Login />
 </template>
+
+<script>
+import Login from '../components/Login.vue';
+
+export default {
+  components: { Login },
+};
+</script>
