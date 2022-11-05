@@ -32,7 +32,12 @@ module.exports = {
       },
       {
         test: /\.scss|\.css$/,
-        use: ['vue-style-loader', 'style-loader', 'css-loader', 'sass-loader'],
+        use: [
+          // 'vue-style-loader',
+          'style-loader',
+          { loader: 'css-loader', options: { modules: true } },
+          'sass-loader',
+        ],
       },
     ],
   },
