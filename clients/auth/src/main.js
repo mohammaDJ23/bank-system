@@ -3,7 +3,6 @@ import { createRouter, createWebHistory } from 'vue-router';
 import ElementPlus from 'element-plus';
 import { routes } from './lib';
 import App from './App.vue';
-import 'element-plus/dist/index.css';
 
 const mountOptions = {
   onChildNavigate: function () {},
