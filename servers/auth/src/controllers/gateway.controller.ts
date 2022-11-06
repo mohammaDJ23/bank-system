@@ -43,22 +43,6 @@ export class GatewayController {
     return this.authService.login(body, currentUser);
   }
 
-  @Post('login/admin')
-  @HttpCode(HttpStatus.OK)
-  @UseGuards(AdminAuthGuard)
-  @ObjectSerializer(TokenDto)
-  @ApiBody({ type: LoginDto })
-  @ApiResponse({ status: HttpStatus.OK, type: TokenDto })
-  @ApiResponse({ status: HttpStatus.NOT_FOUND, type: ErrorDto })
-  @ApiResponse({ status: HttpStatus.BAD_REQUEST, type: ErrorDto })
-  @ApiResponse({ status: HttpStatus.INTERNAL_SERVER_ERROR, type: ErrorDto })
-  adminLogin(
-    @Body() body: LoginDto,
-    @CurrentUser() currentUser: User,
-  ): Promise<TokenDto> {
-    return this.authService.login(body, currentUser);
-  }
-
   @Post('forgot-password')
   @HttpCode(HttpStatus.OK)
   @ObjectSerializer(MessageDto)
