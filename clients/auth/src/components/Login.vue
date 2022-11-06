@@ -1,52 +1,37 @@
 <template>
-  <el-card class="box-card">
-    <template #header>
-      <div class="card-header text-center">
-        <span><b>User login</b></span>
-      </div>
-    </template>
+  <Form formTitle="User login" buttonTitle="Login">
+    <div class="w-100">
+      <el-input
+        name="email"
+        size="large"
+        placeholder="Email"
+        type="email"
+        clearable
+        v-model="email"
+      />
+    </div>
 
-    <form @keyup.enter="onSubmit">
-      <div class="d-flex flex-column gap-3 justify-content-center align-items-center">
-        <div class="w-100">
-          <el-input
-            name="email"
-            size="large"
-            placeholder="Email"
-            type="email"
-            clearable
-            v-model="email"
-          />
-        </div>
-
-        <div class="w-100">
-          <el-input
-            size="large"
-            placeholder="Password"
-            type="password"
-            name="password"
-            clearable
-            show-password
-            maxlength="45"
-            v-model="password"
-          />
-        </div>
-
-        <div class="w-50">
-          <el-button class="w-100" type="primary" @click="onSubmit">Send</el-button>
-        </div>
-      </div>
-    </form>
-  </el-card>
+    <div class="w-100">
+      <el-input
+        size="large"
+        placeholder="Password"
+        type="password"
+        name="password"
+        clearable
+        show-password
+        maxlength="45"
+        v-model="password"
+      />
+    </div>
+  </Form>
 </template>
 
 <script>
+import Form from './Form.vue';
+
 export default {
-  methods: {
-    onSubmit: function (event) {
-      console.log(this.email, this.password);
-    },
-  },
+  components: { Form },
+
   data: function () {
     return {
       email: '',
