@@ -1,5 +1,5 @@
 <template>
-  <Form formTitle="User login" buttonTitle="Login">
+  <Form :formTitle="formTitle" :buttonTitle="buttonTitle">
     <div class="w-100">
       <el-input
         name="email"
@@ -31,6 +31,7 @@ import Form from './Form.vue';
 
 export default {
   components: { Form },
+  props: { formTitle: String, buttonTitle: String },
 
   data: function () {
     return {
