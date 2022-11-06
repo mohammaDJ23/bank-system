@@ -1,13 +1,5 @@
 <template>
-  <el-card class="box-card">
-    <template #header>
-      <div class="card-header text-center">
-        <span
-          ><b>{{ formTitle }}</b></span
-        >
-      </div>
-    </template>
-
+  <Card :title="formTitle">
     <form @keyup.enter="onSubmit">
       <div class="d-flex flex-column gap-3 justify-content-center align-items-center">
         <slot />
@@ -17,11 +9,14 @@
         </div>
       </div>
     </form>
-  </el-card>
+  </Card>
 </template>
 
 <script>
+import Card from './Card.vue';
+
 export default {
+  components: { Card },
   props: { formTitle: String, buttonTitle: { type: String, value: 'Send' } },
 
   methods: {
