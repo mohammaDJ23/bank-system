@@ -5,9 +5,3 @@ export class Login extends Form {
 
   password = '';
 }
-
-export class AdminLogin extends Form {
-  email = '';
-
-  password = '';
-}

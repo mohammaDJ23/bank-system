@@ -7,7 +7,7 @@
         placeholder="Email"
         type="email"
         clearable
-        v-model="email"
+        :value="getForm.email"
       />
     </div>
 
@@ -20,24 +20,26 @@
         clearable
         show-password
         maxlength="45"
-        v-model="password"
+        :value="getForm.password"
       />
     </div>
   </Form>
 </template>
 
 <script>
+import { mapActions, mapGetters } from 'vuex';
 import Form from './Form.vue';
+import { Login } from '../lib';
 
 export default {
   components: { Form },
   props: { formTitle: String, buttonTitle: String },
 
-  data: function () {
-    return {
-      email: '',
-      password: '',
-    };
+  beforeMount: function () {
+    this.setForms([Login]);
   },
+
+  methods: mapActions(['setForms']),
+  computed: mapGetters(['getForm']),
 };
 </script>
