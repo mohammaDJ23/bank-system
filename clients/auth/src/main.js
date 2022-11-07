@@ -3,6 +3,7 @@ import { createRouter, createWebHistory } from 'vue-router';
 import ElementPlus from 'element-plus';
 import { routes } from './lib';
 import App from './App.vue';
+import { store } from './store';
 
 const mountOptions = {
   onChildNavigate: function () {},
@@ -29,6 +30,7 @@ function mount(element, { onChildNavigate } = mountOptions) {
   const app = createApp(App);
 
   app.use(router);
+  app.use(store);
   app.use(ElementPlus);
 
   app.mount(element);

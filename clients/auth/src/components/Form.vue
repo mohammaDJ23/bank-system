@@ -17,7 +17,7 @@ import Card from './Card.vue';
 
 export default {
   components: { Card },
-  props: { formTitle: String, buttonTitle: { type: String, value: 'Send' } },
+  props: { formTitle: String, buttonTitle: { type: String, default: 'Send' } },
 
   methods: {
     onSubmit: function (event) {
