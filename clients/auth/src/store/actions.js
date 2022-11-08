@@ -10,4 +10,8 @@ export const actions = {
   clearForm: function (context, instance) {
     context.commit('clearForm', instance);
   },
+
+  removeForm: function (context, instance) {
+    context.commit('removeForm', instance);
+  },
 };
