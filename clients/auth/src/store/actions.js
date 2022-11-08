@@ -3,7 +3,7 @@ export const actions = {
     context.commit('setForms', forms);
   },
 
-  changeForm: function (context, payload) {
-    context.commit('changeForm', payload);
+  changeInput: function (context, payload) {
+    context.commit('changeInput', payload);
   },
 };
