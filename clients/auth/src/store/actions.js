@@ -6,4 +6,8 @@ export const actions = {
   changeInput: function (context, payload) {
     context.commit('changeInput', payload);
   },
+
+  clearForm: function (context, instance) {
+    context.commit('clearForm', instance);
+  },
 };
