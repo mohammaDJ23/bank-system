@@ -11,4 +11,14 @@ export const mutations = {
 
     form[inputName] = value;
   },
+
+  clearForm: function (state, instance) {
+    const form = state[instance.name];
+
+    if (!form) throw new Error('Invalid instance.');
+
+    const pureForm = new instance();
+
+    for (let input in pureForm) form[input] = pureForm[input];
+  },
 };
