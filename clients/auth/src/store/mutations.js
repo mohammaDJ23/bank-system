@@ -3,7 +3,7 @@ export const mutations = {
     for (let instance of forms) state[instance.name] = new instance();
   },
 
-  changeForm: function (state, { instance, inputName, value }) {
+  changeInput: function (state, { instance, inputName, value }) {
     const form = state[instance.name];
 
     if (!form) throw new Error('Invalid instance.');
