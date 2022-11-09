@@ -1,17 +1,17 @@
 export const actions = {
-  setForms: function (context, forms) {
+  setForms(context, forms) {
     context.commit('setForms', forms);
   },
 
-  changeInput: function (context, payload) {
+  changeInput(context, payload) {
     context.commit('changeInput', payload);
   },
 
-  clearForm: function (context, instance) {
+  clearForm(context, instance) {
     context.commit('clearForm', instance);
   },
 
-  removeForm: function (context, instance) {
-    context.commit('removeForm', instance);
+  removeForms(context, instance) {
+    context.commit('removeForms', instance);
   },
 };

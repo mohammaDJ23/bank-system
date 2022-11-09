@@ -22,9 +22,11 @@ export const mutations = {
     for (let input in pureForm) form[input] = pureForm[input];
   },
 
-  removeForm(state, instance) {
-    if (!state[instance.name]) throw new Error('Invalid instance.');
+  removeForms(state, forms) {
+    for (let instance of forms) {
+      if (!state[instance.name]) throw new Error('Invalid instance.');
 
-    delete state[instance.name];
+      delete state[instance.name];
+    }
   },
 };
