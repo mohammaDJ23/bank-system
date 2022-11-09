@@ -1,15 +1,15 @@
 export const getters = {
-  getForms: function (state) {
+  getForms(state) {
     return state;
   },
 
-  getForm: function (state) {
+  getForm(state) {
     return function (instance) {
       return state[instance.name];
     };
   },
 
-  getInput: function (state) {
+  getInput(state) {
     return function (instance, inputName) {
       return state[instance.name][inputName];
     };

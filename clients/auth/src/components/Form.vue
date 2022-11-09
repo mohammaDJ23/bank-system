@@ -20,7 +20,7 @@ export default {
   props: { formTitle: String, buttonTitle: { type: String, default: 'Send' } },
 
   methods: {
-    onSubmit: function (event) {
+    onSubmit(event) {
       console.log(event);
     },
   },

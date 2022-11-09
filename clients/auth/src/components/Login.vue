@@ -35,7 +35,7 @@ export default {
   components: { Form },
   props: { formTitle: String, buttonTitle: String },
 
-  beforeMount: function () {
+  beforeMount() {
     this.setForms([Login]);
   },
 

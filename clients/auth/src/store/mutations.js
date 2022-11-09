@@ -1,18 +1,18 @@
 export const mutations = {
-  setForms: function (state, forms) {
+  setForms(state, forms) {
     for (let instance of forms) state[instance.name] = new instance();
   },
 
-  changeInput: function (state, { instance, inputName, value }) {
+  changeInput(state, { instance, inputName, value }) {
     const form = state[instance.name];
 
     if (!form) throw new Error('Invalid instance.');
-    if (!form[inputName]) throw new Error('Invalid input.');
+    if (!(inputName in form)) throw new Error('Invalid input.');
 
     form[inputName] = value;
   },
 
-  clearForm: function (state, instance) {
+  clearForm(state, instance) {
     const form = state[instance.name];
 
     if (!form) throw new Error('Invalid instance.');
@@ -22,9 +22,11 @@ export const mutations = {
     for (let input in pureForm) form[input] = pureForm[input];
   },
 
-  removeForm(state, instance) {
-    if (!state[instance.name]) throw new Error('Invalid instance.');
+  removeForms(state, forms) {
+    for (let instance of forms) {
+      if (!state[instance.name]) throw new Error('Invalid instance.');
 
-    delete state[instance.name];
+      delete state[instance.name];
+    }
   },
 };
