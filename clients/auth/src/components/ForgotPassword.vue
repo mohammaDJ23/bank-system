@@ -8,7 +8,14 @@
         name="email"
         clearable
         maxlength="45"
-        v-model="getForm.email"
+        v-model.lazy="getForm(ForgotPassword).email"
+        @input="
+          changeInput({
+            instance: ForgotPassword,
+            inputName: 'email',
+            value: $event,
+          })
+        "
       />
     </div>
   </Form>
@@ -21,13 +28,16 @@ import { ForgotPassword } from '../lib';
 
 export default {
   components: { Form },
-  props: { formTitle: String },
+  props: {
+    formTitle: String,
+    ForgotPassword: { type: ForgotPassword, default: () => ForgotPassword },
+  },
 
   beforeMount() {
     this.setForms([ForgotPassword]);
   },
 
-  methods: mapActions(['setForms']),
+  methods: mapActions(['setForms', 'changeInput']),
   computed: mapGetters(['getForm']),
 };
 </script>
