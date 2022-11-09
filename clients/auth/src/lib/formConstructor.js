@@ -1,19 +1,19 @@
 export class Form {
-  #inputsValidationStore = new Map();
+  inputsValidationStore = new Map();
 
   getConstructorName() {
     return this.constructor.name;
   }
 
-  #getInputsValidationStore(constructorName = this.getConstructorName()) {
-    return this.#inputsValidationStore.get(constructorName) || {};
+  getInputsValidationStore(constructorName = this.getConstructorName()) {
+    return this.inputsValidationStore.get(constructorName) || {};
   }
 
-  #setInputValidationStore(inputs = {}, constructorName = this.getConstructorName()) {
-    this.#inputsValidationStore.set(constructorName, inputs);
+  setInputValidationStore(inputs = {}, constructorName = this.getConstructorName()) {
+    this.inputsValidationStore.set(constructorName, inputs);
   }
 
-  #getInputName(inputName = '') {
+  getInputName(inputName = '') {
     if (!(inputName in this)) {
       throw new Error('Invalid input.');
     }
@@ -22,16 +22,16 @@ export class Form {
   }
 
   isInputValid(inputName, callback = function (value = null) {}) {
-    inputName = this.#getInputName(inputName);
+    inputName = this.getInputName(inputName);
     const isInputValid = !!callback.call(Object.freeze(this), this[inputName]);
-    let inputs = this.#getInputsValidationStore();
+    let inputs = this.getInputsValidationStore();
     inputs = Object.assign(inputs, { [inputName]: isInputValid });
-    this.#setInputValidationStore(inputs);
+    this.setInputValidationStore(inputs);
     return isInputValid;
   }
 
   isFormValid() {
-    const inputs = this.#getInputsValidationStore();
+    const inputs = this.getInputsValidationStore();
     let isValid = !!Object.keys(inputs).length;
 
     for (const input in inputs) {
