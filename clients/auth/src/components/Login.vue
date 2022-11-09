@@ -7,7 +7,14 @@
         placeholder="Email"
         type="email"
         clearable
-        :value="getForm.email"
+        v-model.lazy="getForm(Login).email"
+        @input="
+          changeInput({
+            instance: Login,
+            inputName: 'email',
+            value: $event,
+          })
+        "
       />
     </div>
 
@@ -20,7 +27,14 @@
         clearable
         show-password
         maxlength="45"
-        :value="getForm.password"
+        v-model.lazy="getForm(Login).password"
+        @input="
+          changeInput({
+            instance: Login,
+            inputName: 'password',
+            value: $event,
+          })
+        "
       />
     </div>
   </Form>
@@ -33,13 +47,17 @@ import { Login } from '../lib';
 
 export default {
   components: { Form },
-  props: { formTitle: String, buttonTitle: String },
+  props: {
+    formTitle: String,
+    buttonTitle: String,
+    Login: { type: Login, default: () => Login },
+  },
 
   beforeMount() {
     this.setForms([Login]);
   },
 
-  methods: mapActions(['setForms']),
+  methods: mapActions(['setForms', 'changeInput']),
   computed: mapGetters(['getForm']),
 };
 </script>
