@@ -1,5 +1,8 @@
 export class Form {
-  inputsValidationStore = new Map();
+  static {
+    this.prototype.inputsValidationStore = new Map();
+    Object.freeze(this.prototype);
+  }
 
   getConstructorName() {
     return this.constructor.name;
