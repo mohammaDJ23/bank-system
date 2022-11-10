@@ -1,6 +1,6 @@
-import Login from '../pages/Login.vue';
-import ResetPassword from '../pages/ResetPassword.vue';
-import ForgotPassword from '../pages/ForgotPassword.vue';
+import Login from '../../pages/Login.vue';
+import ResetPassword from '../../pages/ResetPassword.vue';
+import ForgotPassword from '../../pages/ForgotPassword.vue';
 
 export const routes = [
   { path: '/auth/login', name: 'Login', component: Login },
