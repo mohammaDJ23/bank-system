@@ -1,64 +1,28 @@
 <template>
-  <Form :formTitle="formTitle">
-    <div class="w-100">
-      <el-input
-        size="large"
-        placeholder="Password"
-        type="password"
-        name="password"
-        clearable
-        show-password
-        maxlength="45"
-        v-model.lazy="getForm(ResetPassword).password"
-        @input="
-          changeInput({
-            instance: ResetPassword,
-            inputName: 'password',
-            value: $event,
-          })
-        "
-      />
-    </div>
+  <Form :form-schema="formSchema" :rules="rules">
+    <el-form-item class="w-100" label="Password" prop="password">
+      <el-input v-model="formSchema.password" type="password" autocomplete="off" />
+    </el-form-item>
 
-    <div class="w-100">
-      <el-input
-        size="large"
-        placeholder="Confirmed password"
-        type="password"
-        name="confirmedPassword"
-        clearable
-        show-password
-        maxlength="45"
-        v-model.lazy="getForm(ResetPassword).confirmedPassword"
-        @input="
-          changeInput({
-            instance: ResetPassword,
-            inputName: 'confirmedPassword',
-            value: $event,
-          })
-        "
-      />
-    </div>
+    <el-form-item class="w-100" label="Confirmed password" prop="confirmedPassword">
+      <el-input v-model="formSchema.confirmedPassword" type="password" autocomplete="off" />
+    </el-form-item>
   </Form>
 </template>
 
-<script>
-import { mapActions, mapGetters } from 'vuex';
+<script setup>
+import { reactive } from 'vue';
 import Form from './Form.vue';
-import { ResetPassword } from '../lib';
+import { isPassword, isSamePassword, ResetPassword } from '../lib';
 
-export default {
-  components: { Form },
-  props: {
-    formTitle: String,
-    ResetPassword: { type: Object, default: () => ResetPassword },
-  },
+const resetPassword = new ResetPassword();
+const formSchema = reactive(resetPassword);
 
-  beforeMount() {
-    this.setForms([ResetPassword]);
-  },
-
-  methods: mapActions(['setForms', 'changeInput']),
-  computed: mapGetters(['getForm']),
-};
+const rules = reactive({
+  password: [{ validator: isPassword, trigger: 'change' }],
+  confirmedPassword: [
+    { validator: isPassword, trigger: 'change' },
+    { validator: isSamePassword(formSchema), trigger: 'blur' },
+  ],
+});
 </script>

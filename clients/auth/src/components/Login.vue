@@ -1,63 +1,25 @@
 <template>
-  <Form :formTitle="formTitle" :buttonTitle="buttonTitle">
-    <div class="w-100">
-      <el-input
-        name="email"
-        size="large"
-        placeholder="Email"
-        type="email"
-        clearable
-        v-model.lazy="getForm(Login).email"
-        @input="
-          changeInput({
-            instance: Login,
-            inputName: 'email',
-            value: $event,
-          })
-        "
-      />
-    </div>
+  <Form :form-schema="formSchema" :rules="rules">
+    <el-form-item class="w-100" label="Email" prop="email">
+      <el-input v-model="formSchema.email" type="email" autocomplete="off" />
+    </el-form-item>
 
-    <div class="w-100">
-      <el-input
-        size="large"
-        placeholder="Password"
-        type="password"
-        name="password"
-        clearable
-        show-password
-        maxlength="45"
-        v-model.lazy="getForm(Login).password"
-        @input="
-          changeInput({
-            instance: Login,
-            inputName: 'password',
-            value: $event,
-          })
-        "
-      />
-    </div>
+    <el-form-item class="w-100" label="Password" prop="password">
+      <el-input v-model="formSchema.password" type="password" autocomplete="off" />
+    </el-form-item>
   </Form>
 </template>
 
-<script>
-import { mapActions, mapGetters } from 'vuex';
+<script setup>
+import { reactive } from 'vue';
 import Form from './Form.vue';
-import { Login } from '../lib';
+import { isEmail, isPassword, Login } from '../lib';
 
-export default {
-  components: { Form },
-  props: {
-    formTitle: String,
-    buttonTitle: String,
-    Login: { type: Login, default: () => Login },
-  },
+const login = new Login();
+const formSchema = reactive(login);
 
-  beforeMount() {
-    this.setForms([Login]);
-  },
-
-  methods: mapActions(['setForms', 'changeInput']),
-  computed: mapGetters(['getForm']),
-};
+const rules = reactive({
+  email: [{ validator: isEmail, trigger: 'change' }],
+  password: [{ validator: isPassword, trigger: 'change' }],
+});
 </script>
