@@ -1,28 +1,44 @@
 <template>
   <Card :title="formTitle">
-    <form @keyup.enter="onSubmit">
-      <div class="d-flex flex-column gap-3 justify-content-center align-items-center">
+    <el-form
+      @keyup.enter="onSubmit(formRef)"
+      ref="formRef"
+      :model="formSchema"
+      :rules="rules"
+      class="demo-ruleForm"
+      label-position="top"
+      status-icon
+    >
+      <div class="d-flex flex-column gap-1 justify-content-center align-items-start">
         <slot />
 
-        <div class="w-50">
-          <el-button class="w-100" type="primary" @click="onSubmit">{{ buttonTitle }}</el-button>
-        </div>
+        <el-form-item class="mt-3">
+          <el-button type="primary" @click="onSubmit(formRef)">{{ buttonTitle }}</el-button>
+        </el-form-item>
       </div>
-    </form>
+    </el-form>
   </Card>
 </template>
 
-<script>
+<script setup>
+import { ref } from 'vue';
 import Card from './Card.vue';
 
-export default {
-  components: { Card },
-  props: { formTitle: String, buttonTitle: { type: String, default: 'Send' } },
+const formRef = ref();
 
-  methods: {
-    onSubmit(event) {
-      console.log(event);
-    },
-  },
-};
+const props = defineProps({
+  formTitle: String,
+  rules: Object,
+  formSchema: Object,
+  buttonTitle: { type: String, default: 'Send' },
+});
+
+function onSubmit(formEl) {
+  if (!formEl) return;
+
+  formEl.validate(valid => {
+    if (valid) console.log('submit!');
+    else console.log('error submit!');
+  });
+}
 </script>
