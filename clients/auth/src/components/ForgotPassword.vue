@@ -1,43 +1,20 @@
 <template>
-  <Form :formTitle="formTitle">
-    <div class="w-100">
-      <el-input
-        size="large"
-        placeholder="Email"
-        type="email"
-        name="email"
-        clearable
-        maxlength="45"
-        v-model.lazy="getForm(ForgotPassword).email"
-        @input="
-          changeInput({
-            instance: ForgotPassword,
-            inputName: 'email',
-            value: $event,
-          })
-        "
-      />
-    </div>
+  <Form :form-schema="formSchema" :rules="rules">
+    <el-form-item class="w-100" label="Email" prop="email">
+      <el-input v-model="formSchema.email" type="email" autocomplete="off" />
+    </el-form-item>
   </Form>
 </template>
 
-<script>
-import { mapActions, mapGetters } from 'vuex';
+<script setup>
+import { reactive } from 'vue';
 import Form from './Form.vue';
-import { ForgotPassword } from '../lib';
+import { isEmail, ForgotPassword } from '../lib';
 
-export default {
-  components: { Form },
-  props: {
-    formTitle: String,
-    ForgotPassword: { type: ForgotPassword, default: () => ForgotPassword },
-  },
+const forgotPassword = new ForgotPassword();
+const formSchema = reactive(forgotPassword);
 
-  beforeMount() {
-    this.setForms([ForgotPassword]);
-  },
-
-  methods: mapActions(['setForms', 'changeInput']),
-  computed: mapGetters(['getForm']),
-};
+const rules = reactive({
+  email: [{ validator: isEmail, trigger: 'change' }],
+});
 </script>
