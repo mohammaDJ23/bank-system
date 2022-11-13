@@ -22,7 +22,7 @@ const rules = reactive({
   password: [{ validator: isPassword, trigger: 'change' }],
   confirmedPassword: [
     { validator: isPassword, trigger: 'change' },
-    { validator: isSamePassword(formSchema.password), trigger: 'blur' },
+    { validator: isSamePassword(formSchema), trigger: 'blur' },
   ],
 });
 </script>
