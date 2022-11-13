@@ -1,63 +1,45 @@
 <template>
-  <Form :formTitle="formTitle" :buttonTitle="buttonTitle">
-    <div class="w-100">
-      <el-input
-        name="email"
-        size="large"
-        placeholder="Email"
-        type="email"
-        clearable
-        v-model.lazy="getForm(Login).email"
-        @input="
-          changeInput({
-            instance: Login,
-            inputName: 'email',
-            value: $event,
-          })
-        "
-      />
-    </div>
+  <el-form
+    ref="formRef"
+    :model="form"
+    :rules="rules"
+    class="demo-ruleForm"
+    label-position="top"
+    status-icon
+  >
+    <el-form-item label="Email" prop="email">
+      <el-input v-model="form.email" type="email" autocomplete="off" />
+    </el-form-item>
 
-    <div class="w-100">
-      <el-input
-        size="large"
-        placeholder="Password"
-        type="password"
-        name="password"
-        clearable
-        show-password
-        maxlength="45"
-        v-model.lazy="getForm(Login).password"
-        @input="
-          changeInput({
-            instance: Login,
-            inputName: 'password',
-            value: $event,
-          })
-        "
-      />
-    </div>
-  </Form>
+    <el-form-item label="Password" prop="password">
+      <el-input v-model="form.password" type="password" autocomplete="off" />
+    </el-form-item>
+
+    <el-form-item>
+      <el-button type="primary" @click="submitForm(formRef)">Send</el-button>
+    </el-form-item>
+  </el-form>
 </template>
 
-<script>
-import { mapActions, mapGetters } from 'vuex';
-import Form from './Form.vue';
-import { Login } from '../lib';
+<script setup>
+import { reactive, ref } from 'vue';
+import { isEmail, isPassword, Login } from '../lib';
 
-export default {
-  components: { Form },
-  props: {
-    formTitle: String,
-    buttonTitle: String,
-    Login: { type: Login, default: () => Login },
-  },
+const formRef = ref();
+const login = new Login();
+const form = reactive(login);
 
-  beforeMount() {
-    this.setForms([Login]);
-  },
+const rules = reactive({
+  email: [{ validator: isEmail, trigger: 'change' }],
+  password: [{ validator: isPassword, trigger: 'change' }],
+});
 
-  methods: mapActions(['setForms', 'changeInput']),
-  computed: mapGetters(['getForm']),
-};
+function submitForm(formEl) {
+  if (!formEl) return;
+
+  formEl.validate(function (valid) {
+    if (valid) console.log('submit!');
+    else console.log('error submit!');
+  });
+}
 </script>
