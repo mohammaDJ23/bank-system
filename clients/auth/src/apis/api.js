@@ -6,6 +6,9 @@ export const apis = {
       url: '/auth/login',
       method: 'post',
       data,
+      header: {
+        'Content-Type': 'application/json',
+      },
     };
   },
 
@@ -14,6 +17,9 @@ export const apis = {
       url: '/auth/forgot-password',
       method: 'post',
       data,
+      header: {
+        'Content-Type': 'application/json',
+      },
     };
   },
 
@@ -22,6 +28,9 @@ export const apis = {
       url: '/auth/forgot-password',
       method: 'post',
       data,
+      header: {
+        'Content-Type': 'application/json',
+      },
     };
   },
 };
