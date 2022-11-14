@@ -23,8 +23,10 @@
 <script setup>
 import { ref } from 'vue';
 import Card from './Card.vue';
+import { useClientFetch } from '../hooks';
 
 const formRef = ref();
+const { request } = useClientFetch();
 
 const props = defineProps({
   formTitle: String,
@@ -35,6 +37,8 @@ const props = defineProps({
 
 function onSubmit(formEl) {
   if (!formEl) return;
+
+  request();
 
   formEl.validate(valid => {
     if (valid) console.log('submit!');
