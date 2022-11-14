@@ -2,6 +2,7 @@
   <Card :title="formTitle">
     <el-form
       @keyup.enter="onSubmit(formRef)"
+      @submit.prevent=""
       ref="formRef"
       :model="formSchema"
       :rules="rules"
