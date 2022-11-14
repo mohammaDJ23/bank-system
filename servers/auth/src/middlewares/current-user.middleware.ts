@@ -13,7 +13,7 @@ export class CurrentUserMiddleWare implements NestMiddleware {
   constructor(private userService: UserService) {}
 
   async use(request: Request, Response: Response, next: NextFunction) {
-    const body = request.body?.data || {};
+    const body = request.body || {};
 
     if (!('email' in body))
       throw new BadRequestException(
