@@ -1,4 +1,4 @@
 import { createStore } from 'vuex';
-import { authModule } from './modules/auth';
+import { requestProcessModule } from './modules/requestProcess';
 
-export const store = createStore({ modules: { authModule } });
+export const store = createStore({ modules: { requestProcessModule } });

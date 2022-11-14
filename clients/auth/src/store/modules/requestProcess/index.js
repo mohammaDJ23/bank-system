@@ -3,4 +3,4 @@ import { actions } from './actions';
 import { mutations } from './mutations';
 import { getters } from './getters';
 
-export const authModule = { state, actions, mutations, getters };
+export const requestProcessModule = { state, actions, mutations, getters };
