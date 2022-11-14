@@ -16,7 +16,6 @@ export const actions = {
 
       context.commit('success', formConstructorName);
     } catch (error) {
-      context.commit('error', { [formConstructorName]: error });
     } finally {
       context.commit('loading', { [formConstructorName]: false });
     }

@@ -1,1 +1,1 @@
-export const state = { loadings: {}, errors: {}, successes: {} };
+export const state = { loadings: {}, successes: {} };
