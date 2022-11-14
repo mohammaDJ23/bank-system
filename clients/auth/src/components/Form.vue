@@ -13,7 +13,9 @@
         <slot />
 
         <el-form-item class="mt-3">
-          <el-button type="primary" @click="onSubmit(formRef)">{{ buttonTitle }}</el-button>
+          <el-button type="primary" @click="onSubmit(formRef)" :disabled="!!isFormProcessing">{{
+            buttonTitle
+          }}</el-button>
         </el-form-item>
       </div>
     </el-form>
@@ -21,11 +23,13 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
+import { useStore } from 'vuex';
 import Card from './Card.vue';
 import { useClientFetch } from '../hooks';
 
 const formRef = ref();
+const store = useStore();
 const { request } = useClientFetch();
 
 const props = defineProps({
@@ -34,6 +38,10 @@ const props = defineProps({
   formSchema: Object,
   buttonTitle: { type: String, default: 'Send' },
 });
+
+const isFormProcessing = computed(
+  () => store.state.requestProcessModule.loadings[props.formSchema.constructor.name],
+);
 
 function onSubmit(formEl) {
   if (!formEl) return;
