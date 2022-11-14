@@ -38,10 +38,8 @@ const props = defineProps({
 function onSubmit(formEl) {
   if (!formEl) return;
 
-  request();
-
   formEl.validate(valid => {
-    if (valid) console.log('submit!');
+    if (valid && props.formSchema) request(props.formSchema);
     else console.log('error submit!');
   });
 }
