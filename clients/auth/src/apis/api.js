@@ -1,9 +1,27 @@
 import { Login, ForgotPassword, ResetPassword } from '../lib';
 
 export const apis = {
-  [Login.name]() {},
+  [Login.name](data) {
+    return {
+      url: '/auth/login',
+      method: 'post',
+      data,
+    };
+  },
 
-  [ForgotPassword.name]() {},
+  [ForgotPassword.name](data) {
+    return {
+      url: '/auth/forgot-password',
+      method: 'post',
+      data,
+    };
+  },
 
-  [ResetPassword.name]() {},
+  [ResetPassword.name](data) {
+    return {
+      url: '/auth/forgot-password',
+      method: 'post',
+      data,
+    };
+  },
 };
