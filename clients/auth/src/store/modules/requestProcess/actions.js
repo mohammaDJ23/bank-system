@@ -17,9 +17,11 @@ export const actions = {
 
       context.commit('success', formConstructorName);
     } catch (error) {
+      const message = error?.response?.data?.message || error?.message || 'Something went wrong.';
+
       ElNotification({
         title: 'Error',
-        message: error.message || 'Something went wrong.',
+        message,
         type: 'error',
       });
     } finally {
