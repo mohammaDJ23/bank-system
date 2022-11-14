@@ -1,4 +1,5 @@
 import { ResetApi, apis } from '../../../apis';
+import { ElNotification } from 'element-plus';
 
 export const actions = {
   async request(context, formSchema) {
@@ -16,6 +17,11 @@ export const actions = {
 
       context.commit('success', formConstructorName);
     } catch (error) {
+      ElNotification({
+        title: 'Error',
+        message: error.message || 'Something went wrong.',
+        type: 'error',
+      });
     } finally {
       context.commit('loading', { [formConstructorName]: false });
     }
