@@ -6,6 +6,8 @@ export const actions = {
     const formConstructorName = formSchema?.constructor?.name || '';
 
     try {
+      if (context.getters.getLoading(formConstructorName)) return;
+
       context.commit('loading', { [formConstructorName]: true });
 
       if (typeof formSchema.beforeSubmit === 'function') formSchema.beforeSubmit(context);
