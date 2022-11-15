@@ -1,5 +1,4 @@
 import { Form } from './formConstructor';
-import { isMicroFrontEnd } from '../../lib';
 import { router } from '../../main';
 
 export class ResetPassword extends Form {
