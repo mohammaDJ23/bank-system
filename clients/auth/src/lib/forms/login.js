@@ -10,7 +10,7 @@ export class Login extends Form {
   afterSubmit(context, res) {
     localStorage.setItem('accessToken', res.data.accessToken);
 
-    if (process.env.IS_MICRO_FRONT_END) router.push('/');
+    if (JSON.parse(process.env.IS_MICRO_FRONT_END)) router.push('/');
     else
       ElNotification({
         title: 'Success',
