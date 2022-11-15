@@ -19,20 +19,16 @@ function mountExportation({ history }) {
   };
 }
 
-function mount(element, { onChildNavigate } = mountOptions) {
-  const history = createWebHistory();
-  const router = createRouter({ history, routes });
+const history = createWebHistory();
+export const router = createRouter({ history, routes });
 
+function mount(element, { onChildNavigate } = mountOptions) {
   router.afterEach(({ path }) => {
     onChildNavigate(path);
   });
 
   router.beforeEach((to, from, next) => {
-    const token = localStorage.getItem('accessToken');
-
-    if (process.env.IS_MICRO_FRONT_END && token) next('/');
-    else if (!token) next();
-    else next();
+    next();
   });
 
   const app = createApp(App);
