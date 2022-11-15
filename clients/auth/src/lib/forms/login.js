@@ -1,6 +1,7 @@
 import { Form } from './formConstructor';
 import { router } from '../../main';
 import { ElNotification } from 'element-plus';
+import { isMicroFrontEnd } from '../validations';
 
 export class Login extends Form {
   email = '';
@@ -10,7 +11,7 @@ export class Login extends Form {
   afterSubmit(context, res) {
     localStorage.setItem('accessToken', res.data.accessToken);
 
-    if (JSON.parse(process.env.IS_MICRO_FRONT_END)) router.push('/');
+    if (isMicroFrontEnd()) router.push('/');
     else
       ElNotification({
         title: 'Success',
