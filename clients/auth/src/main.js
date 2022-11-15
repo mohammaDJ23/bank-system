@@ -1,4 +1,4 @@
-import { createApp } from 'vue';
+import { createApp, nextTick } from 'vue';
 import { createRouter, createWebHistory } from 'vue-router';
 import ElementPlus from 'element-plus';
 import { routes } from './lib';
@@ -25,6 +25,14 @@ function mount(element, { onChildNavigate } = mountOptions) {
 
   router.afterEach(({ path }) => {
     onChildNavigate(path);
+  });
+
+  router.beforeEach((to, from, next) => {
+    const token = localStorage.getItem('accessToken');
+
+    if (process.env.IS_MICRO_FRONT_END && token) next('/');
+    else if (!token) next();
+    else next();
   });
 
   const app = createApp(App);
