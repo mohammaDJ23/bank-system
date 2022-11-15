@@ -1,9 +1,4 @@
 import { createStore } from 'vuex';
-import { state } from './state';
-import { actions } from './actions';
-import { mutations } from './mutations';
-import { getters } from './getters';
+import { requestProcessModule } from './modules/requestProcess';
 
-const formModule = { state, actions, mutations, getters };
-
-export const store = createStore({ modules: { formModule } });
+export const store = createStore({ modules: { requestProcessModule } });
