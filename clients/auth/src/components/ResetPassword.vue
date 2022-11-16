@@ -33,7 +33,7 @@ const { isFormProcessing } = useForm(formSchema);
 const rules = reactive({
   password: [{ validator: isPassword, trigger: 'change' }],
   confirmedPassword: [
-    { validator: isPassword, trigger: 'change' },
+    { validator: isSamePassword(formSchema), trigger: 'change' },
     { validator: isSamePassword(formSchema), trigger: 'blur' },
   ],
 });
