@@ -6,6 +6,7 @@
         v-model="formSchema.password"
         type="password"
         autocomplete="off"
+        name="password"
       />
     </el-form-item>
 
@@ -15,20 +16,22 @@
         v-model="formSchema.confirmedPassword"
         type="password"
         autocomplete="off"
+        name="confirmedPassword"
       />
     </el-form-item>
   </Form>
 </template>
 
 <script setup>
-import { reactive } from 'vue';
+import { reactive, onMounted } from 'vue';
 import Form from './Form.vue';
 import { isPassword, isSamePassword, ResetPassword } from '../lib';
-import { useForm } from '../hooks';
+import { useForm, useFocus } from '../hooks';
 
 const resetPassword = new ResetPassword();
 const formSchema = reactive(resetPassword);
 const { isFormProcessing } = useForm(formSchema);
+const { focus } = useFocus();
 
 const rules = reactive({
   password: [{ validator: isPassword, trigger: 'change' }],
@@ -36,5 +39,9 @@ const rules = reactive({
     { validator: isSamePassword(formSchema), trigger: 'change' },
     { validator: isSamePassword(formSchema), trigger: 'blur' },
   ],
+});
+
+onMounted(() => {
+  focus('password');
 });
 </script>
