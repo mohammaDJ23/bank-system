@@ -1,5 +1,5 @@
 <template>
-  <Form :form-schema="formSchema" :rules="rules">
+  <Form :form-schema="formSchema" :rules="rules" show-login-button>
     <el-form-item class="w-100" label="Email" prop="email">
       <el-input
         :disabled="!!isFormProcessing"
