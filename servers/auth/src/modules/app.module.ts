@@ -105,7 +105,6 @@ export class AppModule {
       .apply(CurrentUserMiddleWare)
       .forRoutes(
         { path: 'auth/login', method: RequestMethod.POST },
-        { path: 'auth/login/admin', method: RequestMethod.POST },
         { path: 'auth/forgot-password', method: RequestMethod.POST },
       );
   }

@@ -25,7 +25,7 @@ export const apis = {
 
   [ResetPassword.name](data) {
     return {
-      url: '/auth/forgot-password',
+      url: '/auth/reset-password',
       method: 'post',
       data,
       header: {

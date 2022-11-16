@@ -27,7 +27,7 @@
 import { ref, computed } from 'vue';
 import { useStore } from 'vuex';
 import Card from './Card.vue';
-import { useClientFetch } from '../hooks';
+import { useClientFetch, useForm } from '../hooks';
 
 const formRef = ref();
 const store = useStore();
@@ -40,9 +40,7 @@ const props = defineProps({
   buttonTitle: { type: String, default: 'Send' },
 });
 
-const isFormProcessing = computed(
-  () => store.state.requestProcessModule.loadings[props.formSchema.constructor.name],
-);
+const { isFormProcessing } = useForm(props.formSchema);
 
 function onSubmit(formEl) {
   if (!formEl) return;

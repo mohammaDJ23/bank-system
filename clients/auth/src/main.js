@@ -1,7 +1,8 @@
-import { createApp } from 'vue';
+import { createApp, nextTick } from 'vue';
 import { createRouter, createWebHistory } from 'vue-router';
 import ElementPlus from 'element-plus';
-import { routes } from './lib';
+import { decodeToken } from 'react-jwt';
+import { isMicroFrontEnd, routes } from './lib';
 import App from './App.vue';
 import { store } from './store';
 
@@ -19,12 +20,29 @@ function mountExportation({ history }) {
   };
 }
 
-function mount(element, { onChildNavigate } = mountOptions) {
-  const history = createWebHistory();
-  const router = createRouter({ history, routes });
+const history = createWebHistory();
+export const router = createRouter({ history, routes });
 
+function mount(element, { onChildNavigate } = mountOptions) {
   router.afterEach(({ path }) => {
     onChildNavigate(path);
+  });
+
+  router.beforeEach((to, from, next) => {
+    if (isMicroFrontEnd()) {
+      const splitedCookie = document.cookie.split(';');
+      const findedToken = splitedCookie.find(item => item.trim().startsWith('access_token'));
+      const findedTokenExpiration = splitedCookie.find(item =>
+        item.trim().startsWith('access_token_expiration'),
+      );
+
+      if (findedToken && findedTokenExpiration) {
+        const [tokenExpirationName, tokenExpiration] = findedTokenExpiration.split('=');
+
+        if (new Date().getTime() > new Date(tokenExpiration).getTime()) next();
+        else next('/');
+      } else next();
+    } else next();
   });
 
   const app = createApp(App);
