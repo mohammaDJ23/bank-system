@@ -9,7 +9,7 @@ export class Login extends Form {
   password = '';
 
   afterSubmit(context, res) {
-    localStorage.setItem('accessToken', res.data.accessToken);
+    document.cookie = `access_token=${res.data.accessToken}`;
 
     if (isMicroFrontEnd()) router.push('/');
     else
