@@ -57,7 +57,7 @@ export class ResetPasswordService {
       context: {
         firstName: currentUser.firstName,
         lastName: currentUser.lastName,
-        link: `${process.env.CLIENT_URL}/auth/reset-password?token=${token}`,
+        link: `${process.env.CLIENT_CONTAINER_URL}/auth/reset-password?token=${token}`,
       },
     };
 
@@ -105,7 +105,7 @@ export class ResetPasswordService {
       template: './changed-password',
       context: {
         firstName: user.firstName,
-        link: `${process.env.CLIENT_URL}/auth/login`,
+        link: `${process.env.CLIENT_CONTAINER_URL}/auth/login`,
       },
     };
 

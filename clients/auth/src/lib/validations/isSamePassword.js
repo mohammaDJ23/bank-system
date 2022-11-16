@@ -3,7 +3,7 @@ export function isSamePassword(formSchema) {
     const isSamePassword =
       formSchema.password.toString().toLowerCase() === value.toString().toLowerCase();
 
-    if (!isSamePassword) callback(new Error('The password is not the same'));
+    if (!isSamePassword || !value) callback(new Error('The password is not the same'));
     else callback();
   };
 }
