@@ -6,6 +6,8 @@ export class ResetPassword extends Form {
 
   confirmedPassword = '';
 
+  token = '';
+
   afterSubmit(context, res) {
     router.push('/auth/login');
   }
