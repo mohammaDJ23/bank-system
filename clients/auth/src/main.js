@@ -1,7 +1,6 @@
 import { createApp, nextTick } from 'vue';
 import { createRouter, createWebHistory } from 'vue-router';
 import ElementPlus from 'element-plus';
-import { decodeToken } from 'react-jwt';
 import { isMicroFrontEnd, routes } from './lib';
 import App from './App.vue';
 import { store } from './store';
