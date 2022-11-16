@@ -16,6 +16,7 @@
     "dotenv": "^16.0.3",
     "element-plus": "^2.2.19",
     "jsonwebtoken": "^8.5.1",
+    "react-jwt": "^1.1.7",
     "unplugin-element-plus": "^0.4.1",
     "vue": "^3.2.41",
     "vue-router": "^4.1.6",
