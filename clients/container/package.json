@@ -25,7 +25,6 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "webpack:start:dev": "webpack serve --config config/webpack.dev.js",
-    "webpack:start:prod": "webpack serve --config config/webpack.prod.js",
     "webpack:build:prod": "webpack --config config/webpack.prod.js"
   },
   "eslintConfig": {
