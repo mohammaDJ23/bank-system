@@ -5,15 +5,11 @@
   "main": "index.js",
   "scripts": {
     "webpack:start:dev:auth": "npm run webpack:start:dev --prefix auth",
-    "webpack:start:prod:auth": "npm run webpack:start:prod --prefix auth",
     "webpack:start:dev:container": "npm run webpack:start:dev --prefix container",
-    "webpack:start:prod:container": "npm run webpack:start:prod --prefix container",
     "webpack:build:auth": "npm run webpack:build:prod --prefix auth",
     "webpack:build:container": "npm run webpack:build:prod --prefix container",
     "webpack:start:dev": "concurrently \"npm run webpack:start:dev:auth\" \"npm run webpack:start:dev:container\"",
-    "webpack:start:prod": "concurrently \"npm run webpack:start:prod:auth\" \"npm run webpack:start:prod:container\"",
-    "webpack:build": "concurrently \"npm run webpack:build:auth\" \"npm run webpack:build:container\"",
-    "webpack:start:develop:container": "concurrently \"npm run webpack:start:prod:auth\" \"npm run webpack:start:dev:container\""
+    "webpack:build": "concurrently \"npm run webpack:build:auth\" \"npm run webpack:build:container\""
   },
   "author": "mohammad nowresideh",
   "license": "ISC",
