@@ -1,7 +1,7 @@
-import { createApp, nextTick } from 'vue';
+import { createApp } from 'vue';
 import { createRouter, createWebHistory } from 'vue-router';
 import ElementPlus from 'element-plus';
-import { isMicroFrontEnd, routes } from './lib';
+import { routes } from './lib';
 import App from './App.vue';
 import { store } from './store';
 
@@ -25,23 +25,6 @@ export const router = createRouter({ history, routes });
 function mount(element, { onChildNavigate } = mountOptions) {
   router.afterEach(({ path }) => {
     onChildNavigate(path);
-  });
-
-  router.beforeEach((to, from, next) => {
-    if (isMicroFrontEnd()) {
-      const splitedCookie = document.cookie.split(';');
-      const findedToken = splitedCookie.find(item => item.trim().startsWith('access_token'));
-      const findedTokenExpiration = splitedCookie.find(item =>
-        item.trim().startsWith('access_token_expiration'),
-      );
-
-      if (findedToken && findedTokenExpiration) {
-        const [tokenExpirationName, tokenExpiration] = findedTokenExpiration.split('=');
-
-        if (new Date().getTime() > new Date(tokenExpiration).getTime()) next();
-        else next('/');
-      } else next();
-    } else next();
   });
 
   const app = createApp(App);
