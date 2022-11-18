@@ -11,7 +11,7 @@ const commonConfig = require('./webpack.common');
 module.exports = merge(commonConfig, {
   mode: 'development',
   devtool: 'source-map',
-  output: { publicPath: '/' },
+  output: { publicPath: 'http://localhost:3005/' },
   devServer: { port: 3005, historyApiFallback: true },
   plugins: [
     new ModuleFederationPlugin({

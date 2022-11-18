@@ -10,7 +10,8 @@ const dotenv = require('dotenv').config({
 
 module.exports = merge(commonConfig, {
   mode: 'development',
-  output: { publicPath: '/' },
+  devtool: 'source-map',
+  output: { publicPath: 'http://localhost:3004/' },
   devServer: { port: 3004, historyApiFallback: true },
   plugins: [
     new ModuleFederationPlugin({
