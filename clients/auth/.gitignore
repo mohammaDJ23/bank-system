@@ -9,6 +9,7 @@ lerna-debug.log*
 .vscode
 .env.development
 .env.production
+.env.micro
 
 node_modules
 .DS_Store

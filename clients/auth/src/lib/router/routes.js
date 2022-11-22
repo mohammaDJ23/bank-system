@@ -14,5 +14,5 @@ export const routes = [
     },
   },
   { path: '/auth/forgot-password', name: 'ForgotPassword', component: ForgotPassword },
-  { path: '/:catchAll(.*)*', redirect: '/auth/login' },
+  // { path: '/:catchAll(.*)*', redirect: '/auth/login' },
 ];
