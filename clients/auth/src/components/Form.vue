@@ -20,13 +20,13 @@
             }}</el-button>
           </el-form-item>
 
-          <el-form-item v-if="showForgotPasswordButton" class="mt-3">
+          <el-form-item v-if="forgotPasswordButton" class="mt-3">
             <el-button
               type="primary"
               link
               @click="redirect('/auth/forgot-password')"
               :disabled="!!isFormProcessing"
-              >Forgot your password?</el-button
+              >{{ forgotPasswordButton }}</el-button
             >
           </el-form-item>
 
@@ -62,7 +62,7 @@ const props = defineProps({
   rules: Object,
   formSchema: Object,
   buttonTitle: { type: String, default: 'Send' },
-  showForgotPasswordButton: { type: Boolean, default: false },
+  forgotPasswordButton: { type: String, default: '' },
   showLoginButton: { type: Boolean, default: false },
 });
 

@@ -1,5 +1,5 @@
 <template>
-  <Form :form-schema="formSchema" :rules="rules" show-forgot-password-button>
+  <Form :form-schema="formSchema" :rules="rules" forgot-password-button="Forgot your password?">
     <el-form-item class="w-100" label="Email" prop="email">
       <el-input
         :disabled="!!isFormProcessing"
