@@ -7,6 +7,7 @@
         type="email"
         autocomplete="off"
         name="email"
+        @input="cacheInput('email', $event)"
       />
     </el-form-item>
 
@@ -25,12 +26,12 @@
 <script setup>
 import { reactive, onMounted } from 'vue';
 import Form from './Form.vue';
-import { isEmail, isPassword, Login } from '../lib';
+import { isEmail, isPassword, LocalStorage, Login } from '../lib';
 import { useFocus, useForm } from '../hooks';
 
 const login = new Login();
 const formSchema = reactive(login);
-const { isFormProcessing } = useForm(formSchema);
+const { isFormProcessing, cacheInput } = useForm(formSchema);
 const { focus } = useFocus();
 
 const rules = reactive({

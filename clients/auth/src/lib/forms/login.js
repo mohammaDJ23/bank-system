@@ -9,6 +9,11 @@ export class Login extends Form {
 
   password = '';
 
+  constructor() {
+    super();
+    this.setCachedInput('email');
+  }
+
   afterSubmit(context, res) {
     const decodedToken = decodeToken(res.data.accessToken);
     document.cookie = `access_token=${res.data.accessToken}`;
