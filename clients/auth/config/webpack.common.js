@@ -1,6 +1,9 @@
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const { VueLoaderPlugin } = require('vue-loader');
 const webpack = require('webpack');
+const path = require('path');
+const { ModuleFederationPlugin } = require('webpack').container;
+const packageJson = require('../package.json');
 
 module.exports = {
   entry: './src/index.js',
@@ -47,5 +50,18 @@ module.exports = {
     new HtmlWebpackPlugin({ template: './index.html' }),
     new VueLoaderPlugin(),
     new webpack.DefinePlugin({ __VUE_OPTIONS_API__: true, __VUE_PROD_DEVTOOLS__: true }),
+    new ModuleFederationPlugin({
+      name: 'auth',
+      filename: 'remoteEntry.js',
+      exposes: { './AuthApp': './src/main.js' },
+      shared: packageJson.dependencies,
+    }),
   ],
+  output: {
+    publicPath: 'http://localhost:3005/',
+    filename: '[name].bundle.js',
+    path: path.resolve(__dirname, '../dist'),
+    clean: true,
+  },
+  devServer: { port: 3005, historyApiFallback: true },
 };
