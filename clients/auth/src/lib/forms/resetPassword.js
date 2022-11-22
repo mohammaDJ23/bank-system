@@ -9,9 +9,9 @@ export class ResetPassword extends Form {
   token = '';
 
   beforeSubmit(context) {
-    const query = router.currentRoute.value.query || '';
+    const token = router.currentRoute.value.token || '';
 
-    if (query) this.token = query;
+    if (token) this.token = token;
   }
 
   afterSubmit(context, res) {
