@@ -7,6 +7,7 @@
         type="email"
         autocomplete="off"
         name="email"
+        @input="cacheInput('email', $event)"
       />
     </el-form-item>
   </Form>
@@ -20,7 +21,7 @@ import { useForm, useFocus } from '../hooks';
 
 const forgotPassword = new ForgotPassword();
 const formSchema = reactive(forgotPassword);
-const { isFormProcessing } = useForm(formSchema);
+const { isFormProcessing, cacheInput } = useForm(formSchema);
 const { focus } = useFocus();
 
 const rules = reactive({

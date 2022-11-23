@@ -8,10 +8,11 @@ export class ResetPassword extends Form {
 
   token = '';
 
-  beforeSubmit(context) {
-    const params = new URLSearchParams(window.location.search);
+  constructor() {
+    super();
 
-    if (params.has('token')) this.token = params.get('token');
+    const token = router.currentRoute.value.query.token || '';
+    if (token) this.token = token;
   }
 
   afterSubmit(context, res) {

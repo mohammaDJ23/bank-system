@@ -1,5 +1,6 @@
 import { computed } from 'vue';
 import { useStore } from 'vuex';
+import { LocalStorage } from '../lib';
 
 export function useForm(formSchema) {
   const store = useStore();
@@ -8,5 +9,9 @@ export function useForm(formSchema) {
     () => store.state.requestProcessModule.loadings[formSchema.constructor.name],
   );
 
-  return { isFormProcessing };
+  function cacheInput(key, val) {
+    LocalStorage.setItem(key, val);
+  }
+
+  return { isFormProcessing, cacheInput };
 }

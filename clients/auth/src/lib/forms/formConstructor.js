@@ -1,3 +1,5 @@
+import { LocalStorage } from '../storage';
+
 export class Form {
   static {
     this.prototype.inputsValidationStore = new Map();
@@ -42,5 +44,10 @@ export class Form {
     }
 
     return isValid;
+  }
+
+  setCachedInput(key) {
+    const cachedInput = LocalStorage.getItem(key);
+    if (cachedInput) this[key] = cachedInput;
   }
 }
