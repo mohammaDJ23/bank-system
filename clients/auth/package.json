@@ -15,6 +15,7 @@
     "bootstrap": "^5.2.2",
     "dotenv": "^16.0.3",
     "element-plus": "^2.2.19",
+    "gsap": "^3.11.3",
     "jsonwebtoken": "^8.5.1",
     "react-jwt": "^1.1.7",
     "terser-webpack-plugin": "^5.3.6",
