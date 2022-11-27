@@ -1,0 +1,21 @@
+name: bank-client
+
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - 'clients/bank/**'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: ./clients/bank
+
+    steps:
+      - uses: actions/checkout@v3
+      - run: npm install
+      - run: npm run webpack:build:prod
