@@ -1,0 +1,59 @@
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+const path = require('path');
+const { ModuleFederationPlugin } = require('webpack').container;
+const packageJson = require('../package.json');
+
+module.exports = {
+  entry: './src/index.ts',
+  module: {
+    rules: [
+      {
+        test: /\.m?js$/,
+        exclude: /node_modules/,
+        use: {
+          loader: 'babel-loader',
+          options: {
+            presets: ['@babel/preset-react', '@babel/preset-env'],
+            plugins: ['@babel/plugin-transform-runtime'],
+          },
+        },
+      },
+      {
+        test: /\.(js|jsx)$/,
+        exclude: /node_modules/,
+      },
+      {
+        test: /\.tsx?$/,
+        use: 'ts-loader',
+        exclude: /node_modules/,
+      },
+      {
+        test: /\.(png|jpe?g|gif|woff|svg|eot|ttf)$/i,
+        use: [{ loader: 'file-loader' }],
+      },
+      {
+        test: /\.scss|\.css$/,
+        use: ['style-loader', 'css-loader', 'sass-loader'],
+      },
+    ],
+  },
+  resolve: {
+    extensions: ['.js', '.jsx', '.ts', '.tsx'],
+  },
+  plugins: [
+    new HtmlWebpackPlugin({ template: './public/index.html' }),
+    new ModuleFederationPlugin({
+      name: 'bank',
+      filename: 'remoteEntry.js',
+      exposes: { './BankApp': './src/bootstrap.tsx' },
+      shared: packageJson.dependencies,
+    }),
+  ],
+  output: {
+    publicPath: 'http://localhost:3006/',
+    filename: '[name].bundle.js',
+    path: path.resolve(__dirname, '../dist'),
+    clean: true,
+  },
+  devServer: { port: 3006, historyApiFallback: true },
+};
