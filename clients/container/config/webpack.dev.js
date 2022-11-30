@@ -1,7 +1,5 @@
 const { merge } = require('webpack-merge');
 const path = require('path');
-const { ModuleFederationPlugin } = require('webpack').container;
-const packageJson = require('../package.json');
 const commonConfig = require('./webpack.common');
 const webpack = require('webpack');
 const dotenv = require('dotenv').config({
@@ -11,16 +9,7 @@ const dotenv = require('dotenv').config({
 module.exports = merge(commonConfig, {
   mode: 'development',
   devtool: 'source-map',
-  output: { publicPath: 'http://localhost:3004/' },
-  devServer: { port: 3004, historyApiFallback: true },
   plugins: [
-    new ModuleFederationPlugin({
-      name: 'container',
-      filename: 'remoteEntry.js',
-      exposes: {},
-      remotes: { auth: 'auth@http://localhost:3005/remoteEntry.js' },
-      shared: packageJson.dependencies,
-    }),
     new webpack.DefinePlugin({
       'process.env': JSON.stringify(dotenv.parsed),
     }),

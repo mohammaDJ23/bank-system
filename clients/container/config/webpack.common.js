@@ -1,4 +1,7 @@
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const { ModuleFederationPlugin } = require('webpack').container;
+const path = require('path');
+const packageJson = require('../package.json');
 
 module.exports = {
   module: {
@@ -24,5 +27,24 @@ module.exports = {
   resolve: {
     extensions: ['.js', '.jsx', '.ts', '.tsx'],
   },
-  plugins: [new HtmlWebpackPlugin({ template: './public/index.html' })],
+  plugins: [
+    new HtmlWebpackPlugin({ template: './public/index.html' }),
+    new ModuleFederationPlugin({
+      name: 'container',
+      filename: 'remoteEntry.js',
+      exposes: {},
+      remotes: {
+        auth: 'auth@http://localhost:3005/remoteEntry.js',
+        bank: 'bank@http://localhost:3006/remoteEntry.js',
+      },
+      shared: packageJson.dependencies,
+    }),
+  ],
+  output: {
+    publicPath: 'http://localhost:3004/',
+    filename: '[name].bundle.js',
+    path: path.resolve(__dirname, '../dist'),
+    clean: true,
+  },
+  devServer: { port: 3004, historyApiFallback: true },
 };
