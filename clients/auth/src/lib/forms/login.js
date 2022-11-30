@@ -1,5 +1,6 @@
 import { decodeToken } from 'react-jwt';
 import { Form } from './formConstructor';
+import { LocalStorage } from '../';
 import { router } from '../../main';
 import { ElNotification } from 'element-plus';
 import { isMicroFrontEnd } from '../validations';
@@ -15,9 +16,14 @@ export class Login extends Form {
   }
 
   afterSubmit(context, res) {
-    const decodedToken = decodeToken(res.data.accessToken);
-    document.cookie = `access_token=${res.data.accessToken}`;
-    document.cookie = `access_token_expiration=${new Date().getTime() + decodedToken.expiration}`;
+    const token = res.data.accessToken;
+    const decodedToken = decodeToken(token);
+    const storableData = [
+      ['access_token', token],
+      ['access_token_expiration', new Date().getTime() + decodedToken.expiration],
+    ];
+
+    for (let [key, value] of storableData) LocalStorage.setItem(key, value);
 
     if (isMicroFrontEnd()) router.push('/');
     else
