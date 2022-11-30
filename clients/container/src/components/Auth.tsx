@@ -15,6 +15,8 @@ function Auth() {
             navigate(path);
           }
         },
+
+        initialPath: location.pathname,
       });
 
       onParentNavigate(location.pathname);
