@@ -1,4 +1,5 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { Routes, Route, unstable_HistoryRouter as HistoryRouter } from 'react-router-dom';
+import { history } from './lib';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.js';
@@ -6,7 +7,8 @@ import 'element-theme-default';
 
 function App() {
   return (
-    <BrowserRouter basename="bank">
+    /**@ts-ignore */
+    <HistoryRouter history={history} basename="bank">
       <Routes>
         <Route path="create-user" element={<div>create user</div>} />
         <Route path="update-user" element={<div>update user</div>} />
@@ -17,7 +19,7 @@ function App() {
         <Route path="users/:id" element={<div>update user</div>} />
         <Route path="bills/:id" element={<div>update bill</div>} />
       </Routes>
-    </BrowserRouter>
+    </HistoryRouter>
   );
 }
 
