@@ -10,6 +10,7 @@ function App() {
         <Route path="auth/*" element={!isUserAuthenticated() ? <Auth /> : <Navigate to="/" />} />
         <Route path="bank/*" element={isUserAuthenticated() ? <Bank /> : <Navigate to="/" />} />
         <Route path="/" element={<div>container home</div>} />
+        <Route path="*" element={<Navigate to="/" />} />
       </Routes>
     </BrowserRouter>
   );
