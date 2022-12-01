@@ -1,14 +1,11 @@
-export function showPath() {
-  const splitedCookie = document.cookie.split(';');
-  const findedToken = splitedCookie.find(item => item.trim().startsWith('access_token'));
-  const findedTokenExpiration = splitedCookie.find(item =>
-    item.trim().startsWith('access_token_expiration'),
-  );
+import { getItem } from './localStorage';
 
-  if (findedToken && findedTokenExpiration) {
-    const [tokenExpirationName, tokenExpiration] = findedTokenExpiration.split('=');
-    if (new Date().getTime() > new Date(tokenExpiration).getTime()) return false;
-  }
+export function isUserAuthenticated() {
+  const token = getItem<string>('token');
+  const tokenExpiration = getItem<Date>('token_expiration');
 
-  return true;
+  if (token && tokenExpiration)
+    if (new Date().getTime() > new Date(tokenExpiration).getTime()) return token;
+
+  return null;
 }
