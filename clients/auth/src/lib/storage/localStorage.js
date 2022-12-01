@@ -4,7 +4,7 @@ export class LocalStorage {
   }
 
   static getItem(key) {
-    return JSON.parse(localStorage.getItem(key));
+    return JSON.parse(localStorage.getItem(key) || JSON.stringify(''));
   }
 
   static removeItem(key) {
