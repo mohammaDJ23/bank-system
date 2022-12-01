@@ -1,18 +1,23 @@
+interface Navigate {
+  (path: string): void;
+}
+
+interface MountOptions {
+  onChildNavigate: Navigate;
+}
+
+interface MountExportation {
+  onParentNavigate: Navigate;
+}
+
+interface Mount {
+  (element: Element, options: MountOptions): MountExportation;
+}
+
 declare module 'auth/AuthApp' {
-  export declare interface Navigator {
-    (path: string): void;
-  }
+  export const mount: Mount;
+}
 
-  export declare interface NavigationOptions {
-    onChildNavigate: Navigator;
-  }
-
-  export declare interface MountExportation {
-    onParentNavigate: Navigator;
-  }
-
-  export declare function mount(
-    element: Element,
-    navigationOptions: NavigationOptions,
-  ): MountExportation;
+declare module 'bank/BankApp' {
+  export const mount: Mount;
 }
