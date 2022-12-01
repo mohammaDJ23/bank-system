@@ -1,6 +1,7 @@
 const Login = () => import('../../pages/Login.vue');
 const ResetPassword = () => import('../../pages/ResetPassword.vue');
 const ForgotPassword = () => import('../../pages/ForgotPassword.vue');
+const NotFound = () => import('../../pages/NotFound.vue');
 
 export const routes = [
   { path: '/auth/login', name: 'Login', component: Login },
@@ -14,5 +15,5 @@ export const routes = [
     },
   },
   { path: '/auth/forgot-password', name: 'ForgotPassword', component: ForgotPassword },
-  // { path: '/:catchAll(.*)*', redirect: '/auth/login' },
+  { path: '/:catchAll(.*)', name: 'NotFound', component: NotFound },
 ];
