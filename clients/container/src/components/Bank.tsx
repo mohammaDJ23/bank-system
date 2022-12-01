@@ -1,27 +1,8 @@
 import { mount } from 'bank/BankApp';
-import { useEffect, useRef } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useInitialMicro } from '../hooks';
 
 function Auth() {
-  const ref = useRef<HTMLDivElement | null>(null);
-  const navigate = useNavigate();
-  const location = useLocation();
-
-  useEffect(() => {
-    if (ref.current) {
-      const { onParentNavigate } = mount(ref.current, {
-        onChildNavigate: function (path) {
-          if (location.pathname !== path) {
-            navigate(path);
-          }
-        },
-
-        initialPath: location.pathname,
-      });
-
-      onParentNavigate(location.pathname);
-    }
-  }, [location, navigate]);
+  const { ref } = useInitialMicro(mount);
 
   return <div ref={ref} />;
 }
