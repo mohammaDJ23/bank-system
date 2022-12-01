@@ -1,11 +1,12 @@
-import { getItem } from './localStorage';
+import { decodeToken } from 'react-jwt';
+import { LocalStorage } from './';
 
 export function isUserAuthenticated() {
-  const token = getItem<string>('token');
-  const tokenExpiration = getItem<Date>('token_expiration');
+  const token = LocalStorage.getItem<string>('access_token');
+  const tokenExpiration = LocalStorage.getItem<number>('access_token_expiration');
 
   if (token && tokenExpiration)
-    if (new Date().getTime() > new Date(tokenExpiration).getTime()) return token;
+    if (new Date().getTime() < new Date(tokenExpiration).getTime()) return decodeToken(token);
 
   return null;
 }

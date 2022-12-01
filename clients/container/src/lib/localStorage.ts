@@ -1,15 +1,17 @@
-export function getItem<T>(key: string): T {
-  return JSON.parse(localStorage.getItem(key) || JSON.stringify(''));
-}
+export class LocalStorage {
+  static getItem<T>(key: string): T {
+    return JSON.parse(localStorage.getItem(key) || JSON.stringify(''));
+  }
 
-export function setItem(key: string, value: unknown): void {
-  return localStorage.setItem(key, JSON.stringify(value));
-}
+  static setItem(key: string, value: unknown): void {
+    return localStorage.setItem(key, JSON.stringify(value));
+  }
 
-export function removeItem(key: string): void {
-  localStorage.removeItem(key);
-}
+  static removeItem(key: string): void {
+    localStorage.removeItem(key);
+  }
 
-export function clear() {
-  localStorage.clear();
+  static clear() {
+    localStorage.clear();
+  }
 }
