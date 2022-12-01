@@ -4,6 +4,7 @@ interface Navigate {
 
 interface MountOptions {
   onChildNavigate: Navigate;
+  initialPath: string;
 }
 
 interface MountExportation {
