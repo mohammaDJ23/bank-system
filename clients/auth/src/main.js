@@ -5,15 +5,14 @@ import { routes } from './lib';
 import App from './App.vue';
 import { store } from './store';
 
-export let router = null;
+const history = createWebHistory();
+export let router = createRouter({ history, routes });
 
-function mount(element, mountOptions) {
-  const history = mountOptions.history || createMemoryHistory(mountOptions.initialPath || '/');
+function mount(element, { history, onChildNavigate, initialPath }) {
+  history = history || createMemoryHistory(initialPath || '/');
 
-  router = createRouter({ history, routes });
-
-  router.afterEach(({ path }) => {
-    mountOptions.onChildNavigate && mountOptions.onChildNavigate(path);
+  router.afterEach(guard => {
+    onChildNavigate && onChildNavigate(guard.path);
   });
 
   const app = createApp(App);
@@ -36,7 +35,7 @@ function mount(element, mountOptions) {
 if (process.env.NODE_ENV === 'development') {
   const element = document.querySelector('#_auth-service');
 
-  if (element) mount(element, { history: createWebHistory() });
+  if (element) mount(element, { history });
 }
 
 export { mount };

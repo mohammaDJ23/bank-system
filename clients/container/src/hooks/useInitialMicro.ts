@@ -5,11 +5,10 @@ export function useInitialMicro(mount: Mount) {
   const ref = useRef<HTMLDivElement | null>(null);
   const navigate = useNavigate();
   const location = useLocation();
-  const mountExportation = useRef<ReturnType<Mount> | null>(null);
 
   useEffect(() => {
     if (ref.current) {
-      mountExportation.current = mount(ref.current, {
+      const { onParentNavigate } = mount(ref.current, {
         onChildNavigate: function (path) {
           if (location.pathname !== path) {
             navigate(path);
@@ -18,14 +17,10 @@ export function useInitialMicro(mount: Mount) {
 
         initialPath: location.pathname,
       });
-    }
-  }, []);
 
-  useEffect(() => {
-    if (mountExportation.current) {
-      mountExportation.current.onParentNavigate(location.pathname);
+      onParentNavigate(location.pathname);
     }
-  }, [location]);
+  }, [location, navigate, mount]);
 
   return { ref };
 }
