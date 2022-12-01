@@ -1,3 +1,5 @@
+import { BrowserHistory, MemoryHistory } from 'history';
+
 export namespace Bank {
   interface OnChildNavigate {
     (path: string): void;
@@ -8,10 +10,16 @@ export namespace Bank {
   }
 
   export interface MountOptions {
-    onChildNavigate: OnChildNavigate;
+    onChildNavigate?: OnChildNavigate;
+    history?: BrowserHistory;
+    initialPath?: string;
   }
 
   export interface MountExportation {
     onParentNavigate: OnParentNavigate;
+  }
+
+  export interface AppImportation {
+    history: BrowserHistory | MemoryHistory;
   }
 }
