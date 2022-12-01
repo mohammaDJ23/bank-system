@@ -7,15 +7,19 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
-        {!isUserAuthenticated() && (
-          <Route path="auth">
-            <Route path="*" element={<Auth />} />
-          </Route>
-        )}
+        <>
+          {!isUserAuthenticated() && (
+            <Route path="auth">
+              <Route path="*" element={<Auth />} />
+            </Route>
+          )}
 
-        <Route path="bank">
-          <Route path="*" element={<Bank />} />
-        </Route>
+          {isUserAuthenticated() && (
+            <Route path="bank">
+              <Route path="*" element={<Bank />} />
+            </Route>
+          )}
+        </>
       </Routes>
     </BrowserRouter>
   );
