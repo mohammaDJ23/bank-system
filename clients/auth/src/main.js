@@ -1,30 +1,19 @@
 import { createApp } from 'vue';
-import { createRouter, createWebHistory } from 'vue-router';
+import { createRouter, createWebHistory, createMemoryHistory } from 'vue-router';
 import ElementPlus from 'element-plus';
 import { routes } from './lib';
 import App from './App.vue';
 import { store } from './store';
 
-const mountOptions = {
-  onChildNavigate: function () {},
-};
+export let router = null;
 
-function mountExportation({ history }) {
-  return {
-    onParentNavigate: function (path) {
-      if (history.location !== path) {
-        history.push(path);
-      }
-    },
-  };
-}
+function mount(element, mountOptions) {
+  const history = mountOptions.history || createMemoryHistory(mountOptions.initialPath || '/');
 
-const history = createWebHistory();
-export const router = createRouter({ history, routes });
+  router = createRouter({ history, routes });
 
-function mount(element, { onChildNavigate } = mountOptions) {
   router.afterEach(({ path }) => {
-    onChildNavigate(path);
+    mountOptions.onChildNavigate && mountOptions.onChildNavigate(path);
   });
 
   const app = createApp(App);
@@ -35,13 +24,19 @@ function mount(element, { onChildNavigate } = mountOptions) {
 
   app.mount(element);
 
-  return mountExportation({ history });
+  return {
+    onParentNavigate: function (path) {
+      if (history.location !== path) {
+        history.push(path);
+      }
+    },
+  };
 }
 
 if (process.env.NODE_ENV === 'development') {
   const element = document.querySelector('#_auth-service');
 
-  if (element) mount(element);
+  if (element) mount(element, { history: createWebHistory() });
 }
 
 export { mount };
