@@ -1,7 +1,8 @@
 import { decodeToken } from 'react-jwt';
+import { Container } from '../types';
 import { LocalStorage } from './';
 
-export function isUserAuthenticated() {
+export function isUserAuthenticated(): null | Container.IsUserAuthenticatedExporation {
   const token = LocalStorage.getItem<string>('access_token');
   const tokenExpiration = LocalStorage.getItem<number>('access_token_expiration');
 
