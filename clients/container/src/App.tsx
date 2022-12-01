@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Auth from './components/Auth';
 import Bank from './components/Bank';
 import { isUserAuthenticated } from './lib';
@@ -19,8 +19,6 @@ function App() {
               <Route path="*" element={<Bank />} />
             </Route>
           )}
-
-          <Route path="*" element={<Navigate to="/" />} />
         </>
       </Routes>
     </BrowserRouter>
