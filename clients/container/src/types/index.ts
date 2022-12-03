@@ -1,5 +1,5 @@
 export namespace Container {
-  export interface IsUserAuthenticatedExporation {
+  export interface TokenInfo {
     id: number;
     email: string;
     firstName: string;
