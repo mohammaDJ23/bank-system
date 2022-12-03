@@ -5,6 +5,7 @@ import { Bank } from './types';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.js';
 import 'element-theme-default';
+import './assets/styles/index.scss';
 
 const App: FC<Bank.AppImportation> = props => {
   return (
