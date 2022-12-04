@@ -21,11 +21,11 @@ import { styled } from '@mui/material/styles';
 import { routes } from '../lib';
 
 interface StyledListItemTextAttr {
-  active: boolean;
+  active: string | undefined;
 }
 
 interface StyledListItemIconAttr {
-  active: boolean;
+  active: string | undefined;
 }
 
 const navigationItems = [
@@ -80,7 +80,8 @@ const Navigation: FC<PropsWithChildren> = ({ children }) => {
   const activeRouteTitle = activeRoute?.title || 'Bank system';
 
   function isPathActive(item: typeof navigationItems[number]) {
-    return item.path === activeRoute?.path;
+    const isActive = item.path === activeRoute?.path;
+    return isActive ? isActive.toString() : undefined;
   }
 
   return (

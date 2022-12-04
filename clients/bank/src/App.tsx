@@ -19,8 +19,9 @@ const App: FC<AppImportation> = props => {
       <Routes>
         {routes.map(route => (
           <Route
+            key={route.path}
             path={route.path}
-            element={<Navigation key={route.path}>{route.element}</Navigation>}
+            element={<Navigation>{route.element}</Navigation>}
           />
         ))}
 
