@@ -16,15 +16,16 @@ const App: FC<AppImportation> = props => {
   return (
     /**@ts-ignore */
     <HistoryRouter history={props.history}>
-      <Navigation>
-        <Routes>
-          {routes.map(route => (
-            <Route key={route.path} path={route.path} element={route.element} />
-          ))}
+      <Routes>
+        {routes.map(route => (
+          <Route
+            path={route.path}
+            element={<Navigation key={route.path}>{route.element}</Navigation>}
+          />
+        ))}
 
-          <Route path="*" element={<Navigate to="/" />} />
-        </Routes>
-      </Navigation>
+        <Route path="*" element={<Navigate to="/" />} />
+      </Routes>
     </HistoryRouter>
   );
 };

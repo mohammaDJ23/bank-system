@@ -1,5 +1,5 @@
 import { PropsWithChildren, FC, useState } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate, matchPath } from 'react-router-dom';
 import Drawer from '@mui/material/Drawer';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
@@ -76,17 +76,11 @@ const Navigation: FC<PropsWithChildren> = ({ children }) => {
   const [open, setOpen] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
-  const activeNavigationItem = navigationItems.find(
-    item => item.path.toString().toLowerCase() === location.pathname.toString().toLowerCase(),
-  );
-  const activeRoute = routes.find(
-    route => route.path.toString().toLowerCase() === location.pathname.toString().toLowerCase(),
-  );
-
-  const activeRouteName = activeRoute?.title || 'Bank system';
+  const activeRoute = routes.find(route => matchPath(route.path, location.pathname));
+  const activeRouteTitle = activeRoute?.title || 'Bank system';
 
   function isPathActive(item: typeof navigationItems[number]) {
-    return item.path === activeNavigationItem?.path;
+    return item.path === activeRoute?.path;
   }
 
   return (
@@ -104,7 +98,7 @@ const Navigation: FC<PropsWithChildren> = ({ children }) => {
           </IconButton>
 
           <Typography variant="h6" noWrap component="div">
-            {activeRouteName}
+            {activeRouteTitle}
           </Typography>
         </Toolbar>
       </AppBar>
