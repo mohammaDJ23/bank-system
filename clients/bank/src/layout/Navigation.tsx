@@ -79,8 +79,12 @@ const Navigation: FC<PropsWithChildren> = ({ children }) => {
   const activeRoute = routes.find(route => matchPath(route.path, location.pathname));
   const activeRouteTitle = activeRoute?.title || 'Bank system';
 
+  function isSamePath(item: typeof navigationItems[number]) {
+    return item.path === activeRoute?.path;
+  }
+
   function isPathActive(item: typeof navigationItems[number]) {
-    const isActive = item.path === activeRoute?.path;
+    const isActive = isSamePath(item);
     return isActive ? isActive.toString() : undefined;
   }
 
@@ -119,7 +123,7 @@ const Navigation: FC<PropsWithChildren> = ({ children }) => {
               <ListItem
                 onClick={() => {
                   setOpen(false);
-                  navigate(item.path);
+                  if (!isSamePath(item)) navigate(item.path);
                 }}
                 key={index}
                 disablePadding
