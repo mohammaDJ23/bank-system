@@ -1,11 +1,28 @@
 /// <reference path="./index.d.ts" />
 
 import ReactDOM from 'react-dom/client';
-import { createBrowserHistory, createMemoryHistory } from 'history';
+import { BrowserHistory, createBrowserHistory, createMemoryHistory } from 'history';
 import App from './App';
-import { Bank } from './types';
 
-function mount(el: Element, mountOptions: Bank.MountOptions): Bank.MountExportation {
+interface OnChildNavigate {
+  (path: string): void;
+}
+
+interface OnParentNavigate {
+  (path: string): void;
+}
+
+interface MountOptions {
+  onChildNavigate?: OnChildNavigate;
+  history?: BrowserHistory;
+  initialPath?: string;
+}
+
+interface MountExportation {
+  onParentNavigate: OnParentNavigate;
+}
+
+function mount(el: Element, mountOptions: MountOptions): MountExportation {
   const history =
     mountOptions.history ||
     createMemoryHistory({
