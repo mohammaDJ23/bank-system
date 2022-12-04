@@ -1,5 +1,5 @@
 import { Routes, Route, unstable_HistoryRouter as HistoryRouter, Navigate } from 'react-router-dom';
-import { FC } from 'react';
+import { FC, Suspense } from 'react';
 import Navigation from './layout/Navigation';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.js';
@@ -21,7 +21,11 @@ const App: FC<AppImportation> = props => {
           <Route
             key={route.path}
             path={route.path}
-            element={<Navigation>{route.element}</Navigation>}
+            element={
+              <Suspense fallback={<div>Loading...</div>}>
+                <Navigation>{route.element}</Navigation>
+              </Suspense>
+            }
           />
         ))}
 
