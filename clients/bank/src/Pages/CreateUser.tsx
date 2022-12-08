@@ -1,5 +1,7 @@
+import CreateUserContent from '../components/CreateUser';
+
 const CreateUser = () => {
-  return <div>Create User</div>;
+  return <CreateUserContent />;
 };
 
 export default CreateUser;
