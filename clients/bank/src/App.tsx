@@ -8,6 +8,7 @@ import './assets/styles/index.scss';
 import { routes } from './lib';
 import { BrowserHistory, MemoryHistory } from 'history';
 import LoadingFallback from './layout/LoadingFallback';
+import MainContainer from './layout/MainContainer';
 
 interface AppImportation {
   history: BrowserHistory | MemoryHistory;
@@ -24,7 +25,163 @@ const App: FC<AppImportation> = props => {
             path={route.path}
             element={
               <Suspense fallback={<LoadingFallback />}>
-                <Navigation>{route.element}</Navigation>
+                <Navigation>
+                  <MainContainer>
+                    <div>
+                      soijfoiajsdoifjoiapsjdfalksdjf;akjsdflkjadsf;lkjas;dlkfja;lksdjf;laksjdf;lkasjdf;lkjalskdjf;lkasjdlk;fja;sldkjfakjsdfkajsd;lfkjals;kdjf;laksjdf;lkajsd;lkfja;lksdjf;laksdjflkjas;lkdfjl;ksdf
+                    </div>
+                    <div>
+                      soijfoiajsdoifjoiapsjdfalksdjf;akjsdflkjadsf;lkjas;dlkfja;lksdjf;laksjdf;lkasjdf;lkjalskdjf;lkasjdlk;fja;sldkjfakjsdfkajsd;lfkjals;kdjf;laksjdf;lkajsd;lkfja;lksdjf;laksdjflkjas;lkdfjl;ksdf
+                    </div>{' '}
+                    <div>
+                      soijfoiajsdoifjoiapsjdfalksdjf;akjsdflkjadsf;lkjas;dlkfja;lksdjf;laksjdf;lkasjdf;lkjalskdjf;lkasjdlk;fja;sldkjfakjsdfkajsd;lfkjals;kdjf;laksjdf;lkajsd;lkfja;lksdjf;laksdjflkjas;lkdfjl;ksdf
+                    </div>{' '}
+                    <div>
+                      soijfoiajsdoifjoiapsjdfalksdjf;akjsdflkjadsf;lkjas;dlkfja;lksdjf;laksjdf;lkasjdf;lkjalskdjf;lkasjdlk;fja;sldkjfakjsdfkajsd;lfkjals;kdjf;laksjdf;lkajsd;lkfja;lksdjf;laksdjflkjas;lkdfjl;ksdf
+                    </div>{' '}
+                    <div>
+                      soijfoiajsdoifjoiapsjdfalksdjf;akjsdflkjadsf;lkjas;dlkfja;lksdjf;laksjdf;lkasjdf;lkjalskdjf;lkasjdlk;fja;sldkjfakjsdfkajsd;lfkjals;kdjf;laksjdf;lkajsd;lkfja;lksdjf;laksdjflkjas;lkdfjl;ksdf
+                    </div>{' '}
+                    <div>
+                      soijfoiajsdoifjoiapsjdfalksdjf;akjsdflkjadsf;lkjas;dlkfja;lksdjf;laksjdf;lkasjdf;lkjalskdjf;lkasjdlk;fja;sldkjfakjsdfkajsd;lfkjals;kdjf;laksjdf;lkajsd;lkfja;lksdjf;laksdjflkjas;lkdfjl;ksdf
+                    </div>{' '}
+                    <div>
+                      soijfoiajsdoifjoiapsjdfalksdjf;akjsdflkjadsf;lkjas;dlkfja;lksdjf;laksjdf;lkasjdf;lkjalskdjf;lkasjdlk;fja;sldkjfakjsdfkajsd;lfkjals;kdjf;laksjdf;lkajsd;lkfja;lksdjf;laksdjflkjas;lkdfjl;ksdf
+                    </div>{' '}
+                    <div>
+                      soijfoiajsdoifjoiapsjdfalksdjf;akjsdflkjadsf;lkjas;dlkfja;lksdjf;laksjdf;lkasjdf;lkjalskdjf;lkasjdlk;fja;sldkjfakjsdfkajsd;lfkjals;kdjf;laksjdf;lkajsd;lkfja;lksdjf;laksdjflkjas;lkdfjl;ksdf
+                    </div>{' '}
+                    <div>
+                      soijfoiajsdoifjoiapsjdfalksdjf;akjsdflkjadsf;lkjas;dlkfja;lksdjf;laksjdf;lkasjdf;lkjalskdjf;lkasjdlk;fja;sldkjfakjsdfkajsd;lfkjals;kdjf;laksjdf;lkajsd;lkfja;lksdjf;laksdjflkjas;lkdfjl;ksdf
+                    </div>{' '}
+                    <div>
+                      soijfoiajsdoifjoiapsjdfalksdjf;akjsdflkjadsf;lkjas;dlkfja;lksdjf;laksjdf;lkasjdf;lkjalskdjf;lkasjdlk;fja;sldkjfakjsdfkajsd;lfkjals;kdjf;laksjdf;lkajsd;lkfja;lksdjf;laksdjflkjas;lkdfjl;ksdf
+                    </div>{' '}
+                    <div>
+                      soijfoiajsdoifjoiapsjdfalksdjf;akjsdflkjadsf;lkjas;dlkfja;lksdjf;laksjdf;lkasjdf;lkjalskdjf;lkasjdlk;fja;sldkjfakjsdfkajsd;lfkjals;kdjf;laksjdf;lkajsd;lkfja;lksdjf;laksdjflkjas;lkdfjl;ksdf
+                    </div>{' '}
+                    <div>
+                      soijfoiajsdoifjoiapsjdfalksdjf;akjsdflkjadsf;lkjas;dlkfja;lksdjf;laksjdf;lkasjdf;lkjalskdjf;lkasjdlk;fja;sldkjfakjsdfkajsd;lfkjals;kdjf;laksjdf;lkajsd;lkfja;lksdjf;laksdjflkjas;lkdfjl;ksdf
+                    </div>{' '}
+                    <div>
+                      soijfoiajsdoifjoiapsjdfalksdjf;akjsdflkjadsf;lkjas;dlkfja;lksdjf;laksjdf;lkasjdf;lkjalskdjf;lkasjdlk;fja;sldkjfakjsdfkajsd;lfkjals;kdjf;laksjdf;lkajsd;lkfja;lksdjf;laksdjflkjas;lkdfjl;ksdf
+                    </div>{' '}
+                    <div>
+                      soijfoiajsdoifjoiapsjdfalksdjf;akjsdflkjadsf;lkjas;dlkfja;lksdjf;laksjdf;lkasjdf;lkjalskdjf;lkasjdlk;fja;sldkjfakjsdfkajsd;lfkjals;kdjf;laksjdf;lkajsd;lkfja;lksdjf;laksdjflkjas;lkdfjl;ksdf
+                    </div>{' '}
+                    <div>
+                      soijfoiajsdoifjoiapsjdfalksdjf;akjsdflkjadsf;lkjas;dlkfja;lksdjf;laksjdf;lkasjdf;lkjalskdjf;lkasjdlk;fja;sldkjfakjsdfkajsd;lfkjals;kdjf;laksjdf;lkajsd;lkfja;lksdjf;laksdjflkjas;lkdfjl;ksdf
+                    </div>{' '}
+                    <div>
+                      soijfoiajsdoifjoiapsjdfalksdjf;akjsdflkjadsf;lkjas;dlkfja;lksdjf;laksjdf;lkasjdf;lkjalskdjf;lkasjdlk;fja;sldkjfakjsdfkajsd;lfkjals;kdjf;laksjdf;lkajsd;lkfja;lksdjf;laksdjflkjas;lkdfjl;ksdf
+                    </div>{' '}
+                    <div>
+                      soijfoiajsdoifjoiapsjdfalksdjf;akjsdflkjadsf;lkjas;dlkfja;lksdjf;laksjdf;lkasjdf;lkjalskdjf;lkasjdlk;fja;sldkjfakjsdfkajsd;lfkjals;kdjf;laksjdf;lkajsd;lkfja;lksdjf;laksdjflkjas;lkdfjl;ksdf
+                    </div>{' '}
+                    <div>
+                      soijfoiajsdoifjoiapsjdfalksdjf;akjsdflkjadsf;lkjas;dlkfja;lksdjf;laksjdf;lkasjdf;lkjalskdjf;lkasjdlk;fja;sldkjfakjsdfkajsd;lfkjals;kdjf;laksjdf;lkajsd;lkfja;lksdjf;laksdjflkjas;lkdfjl;ksdf
+                    </div>{' '}
+                    <div>
+                      soijfoiajsdoifjoiapsjdfalksdjf;akjsdflkjadsf;lkjas;dlkfja;lksdjf;laksjdf;lkasjdf;lkjalskdjf;lkasjdlk;fja;sldkjfakjsdfkajsd;lfkjals;kdjf;laksjdf;lkajsd;lkfja;lksdjf;laksdjflkjas;lkdfjl;ksdf
+                    </div>{' '}
+                    <div>
+                      soijfoiajsdoifjoiapsjdfalksdjf;akjsdflkjadsf;lkjas;dlkfja;lksdjf;laksjdf;lkasjdf;lkjalskdjf;lkasjdlk;fja;sldkjfakjsdfkajsd;lfkjals;kdjf;laksjdf;lkajsd;lkfja;lksdjf;laksdjflkjas;lkdfjl;ksdf
+                    </div>{' '}
+                    <div>
+                      soijfoiajsdoifjoiapsjdfalksdjf;akjsdflkjadsf;lkjas;dlkfja;lksdjf;laksjdf;lkasjdf;lkjalskdjf;lkasjdlk;fja;sldkjfakjsdfkajsd;lfkjals;kdjf;laksjdf;lkajsd;lkfja;lksdjf;laksdjflkjas;lkdfjl;ksdf
+                    </div>{' '}
+                    <div>
+                      soijfoiajsdoifjoiapsjdfalksdjf;akjsdflkjadsf;lkjas;dlkfja;lksdjf;laksjdf;lkasjdf;lkjalskdjf;lkasjdlk;fja;sldkjfakjsdfkajsd;lfkjals;kdjf;laksjdf;lkajsd;lkfja;lksdjf;laksdjflkjas;lkdfjl;ksdf
+                    </div>{' '}
+                    <div>
+                      soijfoiajsdoifjoiapsjdfalksdjf;akjsdflkjadsf;lkjas;dlkfja;lksdjf;laksjdf;lkasjdf;lkjalskdjf;lkasjdlk;fja;sldkjfakjsdfkajsd;lfkjals;kdjf;laksjdf;lkajsd;lkfja;lksdjf;laksdjflkjas;lkdfjl;ksdf
+                    </div>{' '}
+                    <div>
+                      soijfoiajsdoifjoiapsjdfalksdjf;akjsdflkjadsf;lkjas;dlkfja;lksdjf;laksjdf;lkasjdf;lkjalskdjf;lkasjdlk;fja;sldkjfakjsdfkajsd;lfkjals;kdjf;laksjdf;lkajsd;lkfja;lksdjf;laksdjflkjas;lkdfjl;ksdf
+                    </div>{' '}
+                    <div>
+                      soijfoiajsdoifjoiapsjdfalksdjf;akjsdflkjadsf;lkjas;dlkfja;lksdjf;laksjdf;lkasjdf;lkjalskdjf;lkasjdlk;fja;sldkjfakjsdfkajsd;lfkjals;kdjf;laksjdf;lkajsd;lkfja;lksdjf;laksdjflkjas;lkdfjl;ksdf
+                    </div>{' '}
+                    <div>
+                      soijfoiajsdoifjoiapsjdfalksdjf;akjsdflkjadsf;lkjas;dlkfja;lksdjf;laksjdf;lkasjdf;lkjalskdjf;lkasjdlk;fja;sldkjfakjsdfkajsd;lfkjals;kdjf;laksjdf;lkajsd;lkfja;lksdjf;laksdjflkjas;lkdfjl;ksdf
+                    </div>{' '}
+                    <div>
+                      soijfoiajsdoifjoiapsjdfalksdjf;akjsdflkjadsf;lkjas;dlkfja;lksdjf;laksjdf;lkasjdf;lkjalskdjf;lkasjdlk;fja;sldkjfakjsdfkajsd;lfkjals;kdjf;laksjdf;lkajsd;lkfja;lksdjf;laksdjflkjas;lkdfjl;ksdf
+                    </div>{' '}
+                    <div>
+                      soijfoiajsdoifjoiapsjdfalksdjf;akjsdflkjadsf;lkjas;dlkfja;lksdjf;laksjdf;lkasjdf;lkjalskdjf;lkasjdlk;fja;sldkjfakjsdfkajsd;lfkjals;kdjf;laksjdf;lkajsd;lkfja;lksdjf;laksdjflkjas;lkdfjl;ksdf
+                    </div>{' '}
+                    <div>
+                      soijfoiajsdoifjoiapsjdfalksdjf;akjsdflkjadsf;lkjas;dlkfja;lksdjf;laksjdf;lkasjdf;lkjalskdjf;lkasjdlk;fja;sldkjfakjsdfkajsd;lfkjals;kdjf;laksjdf;lkajsd;lkfja;lksdjf;laksdjflkjas;lkdfjl;ksdf
+                    </div>{' '}
+                    <div>
+                      soijfoiajsdoifjoiapsjdfalksdjf;akjsdflkjadsf;lkjas;dlkfja;lksdjf;laksjdf;lkasjdf;lkjalskdjf;lkasjdlk;fja;sldkjfakjsdfkajsd;lfkjals;kdjf;laksjdf;lkajsd;lkfja;lksdjf;laksdjflkjas;lkdfjl;ksdf
+                    </div>{' '}
+                    <div>
+                      soijfoiajsdoifjoiapsjdfalksdjf;akjsdflkjadsf;lkjas;dlkfja;lksdjf;laksjdf;lkasjdf;lkjalskdjf;lkasjdlk;fja;sldkjfakjsdfkajsd;lfkjals;kdjf;laksjdf;lkajsd;lkfja;lksdjf;laksdjflkjas;lkdfjl;ksdf
+                    </div>{' '}
+                    <div>
+                      soijfoiajsdoifjoiapsjdfalksdjf;akjsdflkjadsf;lkjas;dlkfja;lksdjf;laksjdf;lkasjdf;lkjalskdjf;lkasjdlk;fja;sldkjfakjsdfkajsd;lfkjals;kdjf;laksjdf;lkajsd;lkfja;lksdjf;laksdjflkjas;lkdfjl;ksdf
+                    </div>{' '}
+                    <div>
+                      soijfoiajsdoifjoiapsjdfalksdjf;akjsdflkjadsf;lkjas;dlkfja;lksdjf;laksjdf;lkasjdf;lkjalskdjf;lkasjdlk;fja;sldkjfakjsdfkajsd;lfkjals;kdjf;laksjdf;lkajsd;lkfja;lksdjf;laksdjflkjas;lkdfjl;ksdf
+                    </div>{' '}
+                    <div>
+                      soijfoiajsdoifjoiapsjdfalksdjf;akjsdflkjadsf;lkjas;dlkfja;lksdjf;laksjdf;lkasjdf;lkjalskdjf;lkasjdlk;fja;sldkjfakjsdfkajsd;lfkjals;kdjf;laksjdf;lkajsd;lkfja;lksdjf;laksdjflkjas;lkdfjl;ksdf
+                    </div>{' '}
+                    <div>
+                      soijfoiajsdoifjoiapsjdfalksdjf;akjsdflkjadsf;lkjas;dlkfja;lksdjf;laksjdf;lkasjdf;lkjalskdjf;lkasjdlk;fja;sldkjfakjsdfkajsd;lfkjals;kdjf;laksjdf;lkajsd;lkfja;lksdjf;laksdjflkjas;lkdfjl;ksdf
+                    </div>{' '}
+                    <div>
+                      soijfoiajsdoifjoiapsjdfalksdjf;akjsdflkjadsf;lkjas;dlkfja;lksdjf;laksjdf;lkasjdf;lkjalskdjf;lkasjdlk;fja;sldkjfakjsdfkajsd;lfkjals;kdjf;laksjdf;lkajsd;lkfja;lksdjf;laksdjflkjas;lkdfjl;ksdf
+                    </div>{' '}
+                    <div>
+                      soijfoiajsdoifjoiapsjdfalksdjf;akjsdflkjadsf;lkjas;dlkfja;lksdjf;laksjdf;lkasjdf;lkjalskdjf;lkasjdlk;fja;sldkjfakjsdfkajsd;lfkjals;kdjf;laksjdf;lkajsd;lkfja;lksdjf;laksdjflkjas;lkdfjl;ksdf
+                    </div>{' '}
+                    <div>
+                      soijfoiajsdoifjoiapsjdfalksdjf;akjsdflkjadsf;lkjas;dlkfja;lksdjf;laksjdf;lkasjdf;lkjalskdjf;lkasjdlk;fja;sldkjfakjsdfkajsd;lfkjals;kdjf;laksjdf;lkajsd;lkfja;lksdjf;laksdjflkjas;lkdfjl;ksdf
+                    </div>{' '}
+                    <div>
+                      soijfoiajsdoifjoiapsjdfalksdjf;akjsdflkjadsf;lkjas;dlkfja;lksdjf;laksjdf;lkasjdf;lkjalskdjf;lkasjdlk;fja;sldkjfakjsdfkajsd;lfkjals;kdjf;laksjdf;lkajsd;lkfja;lksdjf;laksdjflkjas;lkdfjl;ksdf
+                    </div>{' '}
+                    <div>
+                      soijfoiajsdoifjoiapsjdfalksdjf;akjsdflkjadsf;lkjas;dlkfja;lksdjf;laksjdf;lkasjdf;lkjalskdjf;lkasjdlk;fja;sldkjfakjsdfkajsd;lfkjals;kdjf;laksjdf;lkajsd;lkfja;lksdjf;laksdjflkjas;lkdfjl;ksdf
+                    </div>{' '}
+                    <div>
+                      soijfoiajsdoifjoiapsjdfalksdjf;akjsdflkjadsf;lkjas;dlkfja;lksdjf;laksjdf;lkasjdf;lkjalskdjf;lkasjdlk;fja;sldkjfakjsdfkajsd;lfkjals;kdjf;laksjdf;lkajsd;lkfja;lksdjf;laksdjflkjas;lkdfjl;ksdf
+                    </div>{' '}
+                    <div>
+                      soijfoiajsdoifjoiapsjdfalksdjf;akjsdflkjadsf;lkjas;dlkfja;lksdjf;laksjdf;lkasjdf;lkjalskdjf;lkasjdlk;fja;sldkjfakjsdfkajsd;lfkjals;kdjf;laksjdf;lkajsd;lkfja;lksdjf;laksdjflkjas;lkdfjl;ksdf
+                    </div>{' '}
+                    <div>
+                      soijfoiajsdoifjoiapsjdfalksdjf;akjsdflkjadsf;lkjas;dlkfja;lksdjf;laksjdf;lkasjdf;lkjalskdjf;lkasjdlk;fja;sldkjfakjsdfkajsd;lfkjals;kdjf;laksjdf;lkajsd;lkfja;lksdjf;laksdjflkjas;lkdfjl;ksdf
+                    </div>{' '}
+                    <div>
+                      soijfoiajsdoifjoiapsjdfalksdjf;akjsdflkjadsf;lkjas;dlkfja;lksdjf;laksjdf;lkasjdf;lkjalskdjf;lkasjdlk;fja;sldkjfakjsdfkajsd;lfkjals;kdjf;laksjdf;lkajsd;lkfja;lksdjf;laksdjflkjas;lkdfjl;ksdf
+                    </div>{' '}
+                    <div>
+                      soijfoiajsdoifjoiapsjdfalksdjf;akjsdflkjadsf;lkjas;dlkfja;lksdjf;laksjdf;lkasjdf;lkjalskdjf;lkasjdlk;fja;sldkjfakjsdfkajsd;lfkjals;kdjf;laksjdf;lkajsd;lkfja;lksdjf;laksdjflkjas;lkdfjl;ksdf
+                    </div>{' '}
+                    <div>
+                      soijfoiajsdoifjoiapsjdfalksdjf;akjsdflkjadsf;lkjas;dlkfja;lksdjf;laksjdf;lkasjdf;lkjalskdjf;lkasjdlk;fja;sldkjfakjsdfkajsd;lfkjals;kdjf;laksjdf;lkajsd;lkfja;lksdjf;laksdjflkjas;lkdfjl;ksdf
+                    </div>{' '}
+                    <div>
+                      soijfoiajsdoifjoiapsjdfalksdjf;akjsdflkjadsf;lkjas;dlkfja;lksdjf;laksjdf;lkasjdf;lkjalskdjf;lkasjdlk;fja;sldkjfakjsdfkajsd;lfkjals;kdjf;laksjdf;lkajsd;lkfja;lksdjf;laksdjflkjas;lkdfjl;ksdf
+                    </div>{' '}
+                    <div>
+                      soijfoiajsdoifjoiapsjdfalksdjf;akjsdflkjadsf;lkjas;dlkfja;lksdjf;laksjdf;lkasjdf;lkjalskdjf;lkasjdlk;fja;sldkjfakjsdfkajsd;lfkjals;kdjf;laksjdf;lkajsd;lkfja;lksdjf;laksdjflkjas;lkdfjl;ksdf
+                    </div>{' '}
+                    <div>
+                      soijfoiajsdoifjoiapsjdfalksdjf;akjsdflkjadsf;lkjas;dlkfja;lksdjf;laksjdf;lkasjdf;lkjalskdjf;lkasjdlk;fja;sldkjfakjsdfkajsd;lfkjals;kdjf;laksjdf;lkajsd;lkfja;lksdjf;laksdjflkjas;lkdfjl;ksdf
+                    </div>{' '}
+                    <div>
+                      soijfoiajsdoifjoiapsjdfalksdjf;akjsdflkjadsf;lkjas;dlkfja;lksdjf;laksjdf;lkasjdf;lkjalskdjf;lkasjdlk;fja;sldkjfakjsdfkajsd;lfkjals;kdjf;laksjdf;lkajsd;lkfja;lksdjf;laksdjflkjas;lkdfjl;ksdf
+                    </div>{' '}
+                    <div>
+                      soijfoiajsdoifjoiapsjdfalksdjf;akjsdflkjadsf;lkjas;dlkfja;lksdjf;laksjdf;lkasjdf;lkjalskdjf;lkasjdlk;fja;sldkjfakjsdfkajsd;lfkjals;kdjf;laksjdf;lkajsd;lkfja;lksdjf;laksdjflkjas;lkdfjl;ksdf
+                    </div>
+                  </MainContainer>
+                </Navigation>
               </Suspense>
             }
           />
