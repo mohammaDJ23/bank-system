@@ -8,7 +8,6 @@ import './assets/styles/index.scss';
 import { routes } from './lib';
 import { BrowserHistory, MemoryHistory } from 'history';
 import LoadingFallback from './layout/LoadingFallback';
-import MainContainer from './layout/MainContainer';
 
 interface AppImportation {
   history: BrowserHistory | MemoryHistory;
@@ -25,9 +24,7 @@ const App: FC<AppImportation> = props => {
             path={route.path}
             element={
               <Suspense fallback={<LoadingFallback />}>
-                <Navigation>
-                  <MainContainer>{route.element}</MainContainer>
-                </Navigation>
+                <Navigation>{route.element}</Navigation>
               </Suspense>
             }
           />

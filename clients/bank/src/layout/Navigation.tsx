@@ -43,9 +43,11 @@ const AppBar = styled('div')(({ theme }) => ({
   minHeight: '64px',
   width: '100%',
   backgroundColor: '#20a0ff',
+  transition: 'all 0.3s',
   [theme.breakpoints.between('xs', 'sm')]: {
     minHeight: '48px',
     '.css-hyum1k-MuiToolbar-root': {
+      transition: 'all 0.3s',
       minHeight: '48px',
     },
   },
@@ -53,6 +55,7 @@ const AppBar = styled('div')(({ theme }) => ({
 
 const ChildrenWrapper = styled('div')(({ theme }) => ({
   marginTop: theme.spacing(8),
+  transition: 'all 0.3s',
   [theme.breakpoints.down('sm')]: {
     marginTop: theme.spacing(6),
   },
@@ -99,10 +102,10 @@ const Navigation: FC<PropsWithChildren> = ({ children }) => {
             edge="start"
             sx={{ mr: 2 }}
           >
-            <MenuIcon />
+            <MenuIcon sx={{ color: 'white' }} />
           </IconButton>
 
-          <Typography variant="h6" noWrap component="div">
+          <Typography variant="h6" noWrap component="div" sx={{ color: 'white' }}>
             {activeRouteTitle}
           </Typography>
         </Toolbar>
