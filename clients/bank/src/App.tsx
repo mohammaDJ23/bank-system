@@ -1,3 +1,4 @@
+import 'reflect-metadata';
 import { Routes, Route, unstable_HistoryRouter as HistoryRouter, Navigate } from 'react-router-dom';
 import { FC, Suspense } from 'react';
 import Navigation from './layout/Navigation';

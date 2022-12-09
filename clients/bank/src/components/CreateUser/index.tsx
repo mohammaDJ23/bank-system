@@ -1,46 +1,29 @@
 import FormContainer from '../../layout/FormContainer';
 import { Input, Form, Button, Select } from 'element-react';
-import { CreateUser } from '../../lib/forms';
+import { CreateUser, Rules, Roles } from '../../lib';
 import { useRef, useState } from 'react';
-import { isFirstName, isLastName, isEmail, isPassword, isPhone, isRole, Roles } from '../../lib';
+
+interface ConstructFunction {
+  new (...arg: any[]): {};
+}
 
 const CreateUserContent = () => {
   const formRef = useRef<Form | null>(null);
   const [createUser, setCreateUser] = useState(new CreateUser());
-  const rules: Object = {
-    firstName: [
-      { validator: isFirstName, trigger: 'blur' },
-      { validator: isFirstName, trigger: 'change' },
-    ],
-    lastName: [
-      { validator: isLastName, trigger: 'blur' },
-      { validator: isLastName, trigger: 'change' },
-    ],
-    email: [
-      { validator: isEmail, trigger: 'blur' },
-      { validator: isEmail, trigger: 'change' },
-    ],
-    password: [
-      { validator: isPassword, trigger: 'blur' },
-      { validator: isPassword, trigger: 'change' },
-    ],
-    phone: [
-      { validator: isPhone, trigger: 'blur' },
-      { validator: isPhone, trigger: 'change' },
-    ],
-    role: [
-      { validator: isRole, trigger: 'blur' },
-      { validator: isRole, trigger: 'change' },
-    ],
-  };
+  const rules: Rules = createUser.getRules();
   const roles = [
     { value: Roles.ADMIN, label: Roles.ADMIN },
     { value: Roles.USER, label: Roles.USER },
   ];
 
+  function copiedConstructor<T extends object>(instance: T) {
+    const copy = new (instance.constructor as ConstructFunction)();
+    return Object.assign(copy, instance);
+  }
+
   function onChange(name: string, value: any) {
     setCreateUser(prevState => {
-      return Object.assign({}, prevState, { [name]: value });
+      return Object.assign(copiedConstructor(prevState), { [name]: value });
     });
   }
 
@@ -63,7 +46,7 @@ const CreateUserContent = () => {
     formRef.current.resetFields();
 
     setCreateUser(prevState => {
-      return Object.assign({}, new CreateUser());
+      return Object.assign(copiedConstructor(prevState), new CreateUser());
     });
   }
 
