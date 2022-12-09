@@ -3,8 +3,8 @@ import { Input, Form, Button, Select } from 'element-react';
 import { CreateUser, Rules, Roles } from '../../lib';
 import { useRef, useState } from 'react';
 
-interface ConstructFunction {
-  new (...arg: any[]): {};
+interface Constuctor {
+  new (...args: any[]): {};
 }
 
 const CreateUserContent = () => {
@@ -16,14 +16,16 @@ const CreateUserContent = () => {
     { value: Roles.USER, label: Roles.USER },
   ];
 
-  function copiedConstructor<T extends object>(instance: T) {
-    const copy = new (instance.constructor as ConstructFunction)();
+  function copyConstructor<T extends object>(instance: T) {
+    const copy = new (instance.constructor as Constuctor)();
     return Object.assign(copy, instance);
   }
 
   function onChange(name: string, value: any) {
     setCreateUser(prevState => {
-      return Object.assign(copiedConstructor(prevState), { [name]: value });
+      return Object.assign(copyConstructor(prevState), {
+        [name]: value,
+      });
     });
   }
 
@@ -46,7 +48,7 @@ const CreateUserContent = () => {
     formRef.current.resetFields();
 
     setCreateUser(prevState => {
-      return Object.assign(copiedConstructor(prevState), new CreateUser());
+      return Object.assign(copyConstructor(prevState), new CreateUser());
     });
   }
 
