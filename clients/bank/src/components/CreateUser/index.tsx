@@ -1,67 +1,25 @@
 import FormContainer from '../../layout/FormContainer';
 import { Input, Form, Button, Select } from 'element-react';
-import { CreateUser, Rules, Roles } from '../../lib';
-import { useRef, useState } from 'react';
-
-interface Constuctor {
-  new (...args: any[]): {};
-}
+import { CreateUser, Roles } from '../../lib';
+import { useForm } from '../../hooks';
 
 const CreateUserContent = () => {
-  const formRef = useRef<Form | null>(null);
-  const [createUser, setCreateUser] = useState(new CreateUser());
-  const rules: Rules = createUser.getRules();
+  const { formRef, rules, form, onChange, onSubmit, resetForm } = useForm(new CreateUser());
   const roles = [
     { value: Roles.ADMIN, label: Roles.ADMIN },
     { value: Roles.USER, label: Roles.USER },
   ];
 
-  function copyConstructor<T extends object>(instance: T) {
-    const copy = new (instance.constructor as Constuctor)();
-    return Object.assign(copy, instance);
-  }
-
-  function onChange(name: string, value: any) {
-    setCreateUser(prevState => {
-      return Object.assign(copyConstructor(prevState), {
-        [name]: value,
-      });
-    });
-  }
-
-  function onSubmit() {
-    if (!formRef.current) return;
-
-    formRef.current.validate(valid => {
-      if (valid) {
-        console.log('submit!!');
-      } else {
-        console.log('error submit!!');
-        return false;
-      }
-    });
-  }
-
-  function resetForm() {
-    if (!formRef.current) return;
-
-    formRef.current.resetFields();
-
-    setCreateUser(prevState => {
-      return Object.assign(copyConstructor(prevState), new CreateUser());
-    });
-  }
-
   return (
     <FormContainer>
       {/**@ts-ignore */}
-      <Form ref={formRef} model={createUser} rules={rules} labelPosition="top" labelWidth="120">
+      <Form ref={formRef} model={form} rules={rules} labelPosition="top" labelWidth="120">
         {/**@ts-ignore */}
         <Form.Item label="First name" prop="firstName">
           <Input
             type="text"
             onChange={value => onChange('firstName', value)}
-            value={createUser.firstName}
+            value={form.firstName}
           ></Input>
         </Form.Item>
 
@@ -70,7 +28,7 @@ const CreateUserContent = () => {
           <Input
             type="text"
             onChange={value => onChange('lastName', value)}
-            value={createUser.lastName}
+            value={form.lastName}
           ></Input>
         </Form.Item>
 
@@ -79,7 +37,7 @@ const CreateUserContent = () => {
           <Input
             type="email"
             onChange={value => onChange('email', value)}
-            value={createUser.email}
+            value={form.email}
           ></Input>
         </Form.Item>
 
@@ -88,13 +46,13 @@ const CreateUserContent = () => {
           <Input
             type="password"
             onChange={value => onChange('password', value)}
-            value={createUser.password}
+            value={form.password}
           ></Input>
         </Form.Item>
 
         {/**@ts-ignore */}
         <Form.Item label="Phone" prop="phone">
-          <Input onChange={value => onChange('phone', value)} value={createUser.phone}></Input>
+          <Input onChange={value => onChange('phone', value)} value={form.phone}></Input>
         </Form.Item>
 
         {/**@ts-ignore */}
@@ -102,7 +60,7 @@ const CreateUserContent = () => {
           {/**@ts-ignore */}
           <Select
             placeholder="Select a role"
-            value={createUser.role}
+            value={form.role}
             clearable
             onChange={value => onChange('role', value)}
             style={{ width: '100%' }}
