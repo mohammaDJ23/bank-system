@@ -18,7 +18,15 @@ const Modal: FC<ModalImportation> = ({
 }) => {
   return (
     /**@ts-ignore */
-    <Dialog title={title} size="tiny" visible={isActive} onCancel={onCancel} lockScroll={false}>
+    <Dialog
+      /**@ts-ignore */
+      title={title}
+      size="tiny"
+      visible={isActive}
+      onCancel={onCancel}
+      lockScroll={false}
+      style={{ maxWidth: '484px', width: '100%' }}
+    >
       {/**@ts-ignore */}
       <Dialog.Body>
         <span>{body}</span>
