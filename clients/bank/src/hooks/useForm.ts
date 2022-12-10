@@ -2,14 +2,14 @@ import { Form } from 'element-react';
 import { useState, useRef } from 'react';
 import { Form as FormConstructor } from '../lib';
 
-interface Constuctor {
-  new (...args: any[]): any;
+interface FormInstance extends FormConstructor {}
+
+interface Constuctor<T extends FormInstance = FormInstance> {
+  new (...args: any[]): T;
 }
 
-type InitialForm = object & FormConstructor;
-
-export function useForm<T extends InitialForm>(initialForm: T) {
-  const [form, setForm] = useState<T>(initialForm);
+export function useForm<T extends FormInstance>(initialForm: Constuctor<T>) {
+  const [form, setForm] = useState<T>(new initialForm());
   const formRef = useRef<Form | null>(null);
   const rules = form.getRules();
 

@@ -4,7 +4,7 @@ import { CreateUser, Roles } from '../../lib';
 import { useForm } from '../../hooks';
 
 const CreateUserContent = () => {
-  const { formRef, rules, form, onChange, onSubmit, resetForm } = useForm(new CreateUser());
+  const { formRef, rules, form, onChange, onSubmit, resetForm } = useForm(CreateUser);
   const roles = [
     { value: Roles.ADMIN, label: Roles.ADMIN },
     { value: Roles.USER, label: Roles.USER },
