@@ -25,6 +25,7 @@ const Content = styled('div')(({ theme }) => ({
   padding: '16px',
   [theme.breakpoints.up('xl')]: {
     maxWidth: '1000px',
+    padding: '32px 16px',
   },
   [theme.breakpoints.down('xl')]: {
     maxWidth: '900px',
