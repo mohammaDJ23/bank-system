@@ -29,7 +29,7 @@ export class CreateUserDto {
   @Length(6, 45)
   password: string;
 
-  @Matches(/^(\+\d{1,2}\s?)?1?\-?\.?\s?\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4}$/, {
+  @Matches(/^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/im, {
     message: 'Invalid phone number',
   })
   @ApiProperty()
