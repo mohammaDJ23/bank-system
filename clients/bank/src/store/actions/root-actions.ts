@@ -1,1 +1,3 @@
-export type RootActions = {};
+import { ModalActions } from './';
+
+export type RootActions = ModalActions;

@@ -1,1 +1,1 @@
-export {};
+export { modalReducer } from './modal';
