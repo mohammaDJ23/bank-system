@@ -9,30 +9,34 @@ import './assets/styles/index.scss';
 import { routes } from './lib';
 import { BrowserHistory, MemoryHistory } from 'history';
 import LoadingFallback from './layout/LoadingFallback';
+import { Provider } from 'react-redux';
+import { store } from './store';
 
 interface AppImportation {
   history: BrowserHistory | MemoryHistory;
 }
 
-const App: FC<AppImportation> = props => {
+const App: FC<AppImportation> = (props) => {
   return (
     /**@ts-ignore */
     <HistoryRouter history={props.history}>
-      <Routes>
-        {routes.map(route => (
-          <Route
-            key={route.path}
-            path={route.path}
-            element={
-              <Suspense fallback={<LoadingFallback />}>
-                <Navigation>{route.element}</Navigation>
-              </Suspense>
-            }
-          />
-        ))}
+      <Provider store={store}>
+        <Routes>
+          {routes.map((route) => (
+            <Route
+              key={route.path}
+              path={route.path}
+              element={
+                <Suspense fallback={<LoadingFallback />}>
+                  <Navigation>{route.element}</Navigation>
+                </Suspense>
+              }
+            />
+          ))}
 
-        <Route path="*" element={<Navigate to="/" />} />
-      </Routes>
+          <Route path="*" element={<Navigate to="/" />} />
+        </Routes>
+      </Provider>
     </HistoryRouter>
   );
 };

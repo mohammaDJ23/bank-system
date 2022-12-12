@@ -5,6 +5,7 @@ interface ModalImportation {
   title?: string | JSX.Element;
   isActive?: boolean;
   body?: string | JSX.Element;
+  isLoading?: boolean;
   onCancel?(): void;
   onConfirm?(): void;
 }
@@ -13,6 +14,7 @@ const Modal: FC<ModalImportation> = ({
   title = 'Confirmation',
   isActive = false,
   body = 'Are you sure to do the process?',
+  isLoading = false,
   onCancel = () => {},
   onConfirm = () => {},
 }) => {
