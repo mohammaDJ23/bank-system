@@ -1,6 +1,8 @@
 import { Form } from 'element-react';
 import { useState, useRef } from 'react';
 import { Form as FormConstructor } from '../lib';
+import { ModalNames } from '../store';
+import { useAction } from './useActions';
 
 interface FormInstance extends FormConstructor {}
 
@@ -12,6 +14,7 @@ export function useForm<T extends FormInstance>(initialForm: Constuctor<T>) {
   const [form, setForm] = useState<T>(new initialForm());
   const formRef = useRef<Form | null>(null);
   const rules = form.getRules();
+  const { showModal } = useAction();
 
   function copyConstructor(instance: T) {
     const copy = new (instance.constructor as Constuctor)();
@@ -32,9 +35,16 @@ export function useForm<T extends FormInstance>(initialForm: Constuctor<T>) {
     formRef.current.validate(valid => {
       if (valid) {
         console.log('submit!!');
-      } else {
-        console.log('error submit!!');
-        return false;
+      }
+    });
+  }
+
+  function onSubmitWithConfirmation() {
+    if (!formRef.current) return;
+
+    formRef.current.validate(valid => {
+      if (valid) {
+        showModal(ModalNames.CONFIRMATION);
       }
     });
   }
@@ -49,5 +59,5 @@ export function useForm<T extends FormInstance>(initialForm: Constuctor<T>) {
     });
   }
 
-  return { resetForm, onChange, onSubmit, form, formRef, rules };
+  return { resetForm, onChange, onSubmit, onSubmitWithConfirmation, form, formRef, rules };
 }

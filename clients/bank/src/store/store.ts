@@ -3,7 +3,7 @@ import thunk from 'redux-thunk';
 import { modalReducer } from './reducers';
 
 const reducers = combineReducers({
-  modalReducer,
+  modals: modalReducer,
 });
 
 export const store = createStore(reducers, {}, applyMiddleware(thunk));

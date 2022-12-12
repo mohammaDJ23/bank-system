@@ -5,6 +5,10 @@ export enum Modal {
   HIDE_MODAL = 'HIDE_MODAL',
 }
 
+export enum ModalNames {
+  CONFIRMATION = 'CONFIRMATION',
+}
+
 export interface ModalState {
   [key: string]: boolean;
 }
