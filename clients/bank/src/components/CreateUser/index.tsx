@@ -4,7 +4,7 @@ import { CreateUser, Roles } from '../../lib';
 import { useForm } from '../../hooks';
 
 const CreateUserContent = () => {
-  const { formRef, rules, form, onChange, onSubmit, resetForm } = useForm(new CreateUser());
+  const { formRef, rules, form, onChange, onSubmit, resetForm } = useForm(CreateUser);
   const roles = [
     { value: Roles.ADMIN, label: Roles.ADMIN },
     { value: Roles.USER, label: Roles.USER },
@@ -15,7 +15,7 @@ const CreateUserContent = () => {
       {/**@ts-ignore */}
       <Form ref={formRef} model={form} rules={rules} labelPosition="top" labelWidth="120">
         {/**@ts-ignore */}
-        <Form.Item label="First name" prop="firstName">
+        <Form.Item style={{ marginBottom: '32px' }} label="First name" prop="firstName">
           <Input
             type="text"
             onChange={value => onChange('firstName', value)}
@@ -24,7 +24,7 @@ const CreateUserContent = () => {
         </Form.Item>
 
         {/**@ts-ignore */}
-        <Form.Item label="Last name" prop="lastName">
+        <Form.Item style={{ marginBottom: '32px' }} label="Last name" prop="lastName">
           <Input
             type="text"
             onChange={value => onChange('lastName', value)}
@@ -33,7 +33,7 @@ const CreateUserContent = () => {
         </Form.Item>
 
         {/**@ts-ignore */}
-        <Form.Item label="Email" prop="email">
+        <Form.Item style={{ marginBottom: '32px' }} label="Email" prop="email">
           <Input
             type="email"
             onChange={value => onChange('email', value)}
@@ -42,7 +42,7 @@ const CreateUserContent = () => {
         </Form.Item>
 
         {/**@ts-ignore */}
-        <Form.Item label="Password" prop="password">
+        <Form.Item style={{ marginBottom: '32px' }} label="Password" prop="password">
           <Input
             type="password"
             onChange={value => onChange('password', value)}
@@ -51,12 +51,12 @@ const CreateUserContent = () => {
         </Form.Item>
 
         {/**@ts-ignore */}
-        <Form.Item label="Phone" prop="phone">
+        <Form.Item style={{ marginBottom: '32px' }} label="Phone" prop="phone">
           <Input onChange={value => onChange('phone', value)} value={form.phone}></Input>
         </Form.Item>
 
         {/**@ts-ignore */}
-        <Form.Item label="Role" prop="role">
+        <Form.Item style={{ marginBottom: '32px' }} label="Role" prop="role">
           {/**@ts-ignore */}
           <Select
             placeholder="Select a role"
@@ -72,7 +72,7 @@ const CreateUserContent = () => {
         </Form.Item>
 
         {/**@ts-ignore */}
-        <Form.Item>
+        <Form.Item style={{ marginBottom: '32px' }}>
           {/**@ts-ignore */}
           <Button type="primary" onClick={() => onSubmit()}>
             Create
