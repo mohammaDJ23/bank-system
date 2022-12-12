@@ -1,4 +1,9 @@
-import { HideModalAction, Modal, ModalActions, ShowModalAction } from '../actions';
+import { HideModalAction, RootActions, ShowModalAction } from '../actions';
+
+export enum Modal {
+  SHOW_MODAL = 'SHOW_MODAL',
+  HIDE_MODAL = 'HIDE_MODAL',
+}
 
 export interface ModalState {
   [key: string]: boolean;
@@ -22,7 +27,7 @@ function hideModal(state: ModalState, action: HideModalAction): ModalState {
   return newState;
 }
 
-export function modalReducer(state: ModalState = initialState, actions: ModalActions): ModalState {
+export function modalReducer(state: ModalState = initialState, actions: RootActions): ModalState {
   switch (actions.type) {
     case Modal.SHOW_MODAL:
       return showModal(state, actions);

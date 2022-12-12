@@ -1,8 +1,4 @@
-export enum Modal {
-  SHOW_MODAL = 'SHOW_MODAL',
-  HIDE_MODAL = 'HIDE_MODAL',
-  IS_MODAL_ACTIVE = 'IS_MODAL_ACTIVE',
-}
+import { Modal } from '../reducers';
 
 export interface ShowModalAction {
   type: Modal.SHOW_MODAL;
@@ -14,12 +10,7 @@ export interface HideModalAction {
   payload: { name: string };
 }
 
-export interface IsModalActiveAction {
-  type: Modal.IS_MODAL_ACTIVE;
-  payload: { name: string };
-}
-
-export type ModalActions = ShowModalAction | HideModalAction | IsModalActiveAction;
+export type ModalActions = ShowModalAction | HideModalAction;
 
 export function showModal(name: string): ShowModalAction {
   return {
@@ -31,13 +22,6 @@ export function showModal(name: string): ShowModalAction {
 export function hideModal(name: string): HideModalAction {
   return {
     type: Modal.HIDE_MODAL,
-    payload: { name },
-  };
-}
-
-export function isModalActive(name: string): IsModalActiveAction {
-  return {
-    type: Modal.IS_MODAL_ACTIVE,
     payload: { name },
   };
 }
