@@ -1,5 +1,7 @@
+import CreateBillContent from '../components/CreateBill';
+
 const CreateBill = () => {
-  return <div>Create bill</div>;
+  return <CreateBillContent />;
 };
 
 export default CreateBill;
