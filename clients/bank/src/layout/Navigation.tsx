@@ -18,7 +18,7 @@ import AddCardIcon from '@mui/icons-material/AddCard';
 import CreditCardIcon from '@mui/icons-material/CreditCard';
 import CloseIcon from '@mui/icons-material/Close';
 import { styled } from '@mui/material/styles';
-import { routes } from '../lib';
+import { isAdmin, isUser, routes } from '../lib';
 
 interface StyledListItemTextAttr {
   active: string | undefined;
@@ -29,10 +29,25 @@ interface StyledListItemIconAttr {
 }
 
 const navigationItems = [
-  { title: 'Create user', icon: <GroupAddIcon />, path: '/bank/create-user' },
-  { title: 'Create bill', icon: <AddCardIcon />, path: '/bank/create-bill' },
-  { title: 'users', icon: <SupervisorAccountIcon />, path: '/bank/users' },
-  { title: 'bills', icon: <CreditCardIcon />, path: '/bank/bills' },
+  {
+    title: 'Create user',
+    icon: <GroupAddIcon />,
+    path: '/bank/create-user',
+    role: isAdmin,
+  },
+  {
+    title: 'Create bill',
+    icon: <AddCardIcon />,
+    path: '/bank/create-bill',
+    role: isUser,
+  },
+  {
+    title: 'users',
+    icon: <SupervisorAccountIcon />,
+    path: '/bank/users',
+    role: isAdmin,
+  },
+  { title: 'bills', icon: <CreditCardIcon />, path: '/bank/bills', role: isUser },
 ];
 
 const AppBar = styled('div')(({ theme }) => ({
@@ -122,21 +137,26 @@ const Navigation: FC<PropsWithChildren> = ({ children }) => {
           <Divider />
 
           <List>
-            {navigationItems.map((item, index) => (
-              <ListItem
-                onClick={() => {
-                  setOpen(false);
-                  if (!isSamePath(item)) navigate(item.path);
-                }}
-                key={index}
-                disablePadding
-              >
-                <ListItemButton>
-                  <StyledListItemIcon active={isPathActive(item)}>{item.icon}</StyledListItemIcon>
-                  <StyledListItemText active={isPathActive(item)} primary={item.title} />
-                </ListItemButton>
-              </ListItem>
-            ))}
+            {navigationItems.map(
+              (item, index) =>
+                item.role() === isUser() && (
+                  <ListItem
+                    onClick={() => {
+                      setOpen(false);
+                      if (!isSamePath(item)) navigate(item.path);
+                    }}
+                    key={index}
+                    disablePadding
+                  >
+                    <ListItemButton>
+                      <StyledListItemIcon active={isPathActive(item)}>
+                        {item.icon}
+                      </StyledListItemIcon>
+                      <StyledListItemText active={isPathActive(item)} primary={item.title} />
+                    </ListItemButton>
+                  </ListItem>
+                )
+            )}
           </List>
         </Box>
       </Drawer>
