@@ -89,7 +89,7 @@ const UpdateUserContent = () => {
           <Form.Item style={{ marginBottom: '32px' }}>
             {/**@ts-ignore */}
             <Button type="primary" onClick={() => onSubmitWithConfirmation()}>
-              Create
+              Update
             </Button>
 
             {/**@ts-ignore */}

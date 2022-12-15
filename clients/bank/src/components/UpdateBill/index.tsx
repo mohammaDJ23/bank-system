@@ -55,7 +55,7 @@ const UpdateBillContent = () => {
         <Form.Item style={{ marginBottom: '32px' }}>
           {/**@ts-ignore */}
           <Button type="primary" onClick={() => onSubmit()}>
-            Create
+            Update
           </Button>
 
           {/**@ts-ignore */}
