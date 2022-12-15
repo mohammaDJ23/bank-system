@@ -1,13 +1,13 @@
 import FormContainer from '../../layout/FormContainer';
 import { Input, Form, Button, Select } from 'element-react';
 import { CreateUser, UserRoles } from '../../lib';
-import { useAction, useForm, useState } from '../../hooks';
+import { useAction, useForm, useSelector } from '../../hooks';
 import { ModalNames } from '../../store';
 import Modal from '../Modal';
 
 const CreateUserContent = () => {
   const { hideModal } = useAction();
-  const { modals } = useState();
+  const { modals } = useSelector();
   const { formRef, rules, form, onChange, onSubmitWithConfirmation, resetForm } = useForm(
     CreateUser
   );
