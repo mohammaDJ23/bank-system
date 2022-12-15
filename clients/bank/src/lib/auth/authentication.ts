@@ -32,3 +32,11 @@ export function getTokenInfo() {
 export function isUserAuthenticated() {
   return !!getToken();
 }
+
+export function isUser() {
+  return getTokenInfo()?.role === UserRoles.USER;
+}
+
+export function isAdmin() {
+  return getTokenInfo()?.role === UserRoles.ADMIN;
+}
