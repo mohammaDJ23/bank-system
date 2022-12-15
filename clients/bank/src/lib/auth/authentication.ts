@@ -15,6 +15,13 @@ export interface TokenInfo {
   expiration: string;
 }
 
+export function getUserRoles() {
+  return [
+    { value: UserRoles.ADMIN, label: UserRoles.ADMIN },
+    { value: UserRoles.USER, label: UserRoles.USER },
+  ];
+}
+
 export function getToken(): string {
   const token = LocalStorage.getItem<string>('access_token');
   const tokenExpiration = LocalStorage.getItem<number>('access_token_expiration');

@@ -1,5 +1,7 @@
+import UpdateUserContent from '../components/updateUser';
+
 const UpdateUser = () => {
-  return <div>Update user</div>;
+  return <UpdateUserContent />;
 };
 
 export default UpdateUser;
