@@ -5,3 +5,7 @@ export * from './isPassword';
 export * from './isPhone';
 export * from './isRole';
 export * from './isMicroFrontEnd';
+export * from './isAmount';
+export * from './isReceiver';
+export * from './isDescriptions';
+export * from './isDate';
