@@ -3,34 +3,38 @@ import { isReceiver, isAmount, isDescription, isDate } from '../validations';
 import { Form } from './formConstructor';
 
 export class UpdateBill extends Form {
-  id: number = 0;
+  id: number;
 
   @DefineRules([
     { validator: isAmount, trigger: 'blur' },
     { validator: isAmount, trigger: 'change' },
   ])
-  amount: string = '';
+  amount: string;
 
   @DefineRules([
     { validator: isReceiver, trigger: 'blur' },
     { validator: isReceiver, trigger: 'change' },
   ])
-  receiver: string = '';
+  receiver: string;
 
   @DefineRules([
     { validator: isDescription, trigger: 'blur' },
     { validator: isDescription, trigger: 'change' },
   ])
-  description: string = '';
+  description: string;
 
   @DefineRules([
     { validator: isDate, trigger: 'blur' },
     { validator: isDate, trigger: 'change' },
   ])
-  date: Date = new Date();
+  date: Date;
 
-  constructor() {
+  constructor(arg: Omit<UpdateBill, keyof Form>) {
     super();
-    this.id = +this.getParam('id');
+    this.id = arg.id;
+    this.amount = arg.amount;
+    this.receiver = arg.receiver;
+    this.description = arg.description;
+    this.date = arg.date;
   }
 }

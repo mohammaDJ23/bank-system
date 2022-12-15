@@ -16,7 +16,7 @@ const CreateUserContent = () => {
     onSubmitWithConfirmation,
     isConfirmationModalActive,
     resetForm,
-  } = useForm(CreateUser);
+  } = useForm(new CreateUser());
 
   return (
     <>

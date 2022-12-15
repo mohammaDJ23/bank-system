@@ -1,6 +1,6 @@
 import FormContainer from '../../layout/FormContainer';
 import { Input, Form, Button, Select } from 'element-react';
-import { UpdateUserByAdmin, UpdateUserByUser } from '../../lib';
+import { UpdateUserByAdmin, UpdateUserByUser, UserRoles } from '../../lib';
 import { useAction, useForm } from '../../hooks';
 import { ModalNames } from '../../store';
 import Modal from '../Modal';
@@ -10,7 +10,16 @@ const UpdateUserContent = () => {
   const { hideModal } = useAction();
   const { isAdmin, getUserRoles } = useAuth();
   const isUserAdmin = isAdmin();
-  const currentForm = isUserAdmin ? UpdateUserByAdmin : UpdateUserByUser;
+  const currentForm = isUserAdmin
+    ? new UpdateUserByAdmin({
+        id: 0,
+        firstName: '',
+        lastName: '',
+        email: '',
+        phone: '',
+        role: UserRoles.USER,
+      })
+    : new UpdateUserByUser({ id: 0, firstName: '', lastName: '', email: '', phone: '' });
   const {
     formRef,
     rules,

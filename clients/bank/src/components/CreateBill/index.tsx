@@ -4,7 +4,7 @@ import { CreateBill } from '../../lib';
 import { useForm } from '../../hooks';
 
 const CreateBillContent = () => {
-  const { formRef, rules, form, onChange, onSubmit, resetForm } = useForm(CreateBill);
+  const { formRef, rules, form, onChange, onSubmit, resetForm } = useForm(new CreateBill());
 
   return (
     <FormContainer>
