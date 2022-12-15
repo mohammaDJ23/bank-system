@@ -1,4 +1,4 @@
-import UpdateUserContent from '../components/updateUser';
+import UpdateUserContent from '../components/UpdateUser';
 
 const UpdateUser = () => {
   return <UpdateUserContent />;
