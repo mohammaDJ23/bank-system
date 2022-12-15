@@ -1,4 +1,4 @@
-import { DefineRules, isEmail, isFirstName, isLastName, isPassword, isPhone, isRole } from '../';
+import { DefineRules, isEmail, isFirstName, isLastName, isPhone, isRole } from '../';
 import { Form } from './formConstructor';
 
 export class UpdateUserByAdmin extends Form {
@@ -33,6 +33,11 @@ export class UpdateUserByAdmin extends Form {
     { validator: isRole, trigger: 'change' },
   ])
   role: string = '';
+
+  constructor() {
+    super();
+    this.id = +this.setPropWithParam('id');
+  }
 }
 
 export class UpdateUserByUser extends Form {
@@ -61,4 +66,9 @@ export class UpdateUserByUser extends Form {
     { validator: isPhone, trigger: 'change' },
   ])
   phone: string = '';
+
+  constructor() {
+    super();
+    this.id = +this.setPropWithParam('id');
+  }
 }
