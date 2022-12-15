@@ -36,7 +36,8 @@ const CreateBillContent = () => {
         {/**@ts-ignore */}
         <Form.Item style={{ marginBottom: '32px' }} label="Description" prop="description">
           <Input
-            type="text"
+            type="textarea"
+            autosize={{ minRows: 5 }}
             onChange={value => onChange('description', value)}
             value={form.description}
           ></Input>
