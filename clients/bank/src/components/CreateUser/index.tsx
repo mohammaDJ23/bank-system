@@ -1,6 +1,6 @@
 import FormContainer from '../../layout/FormContainer';
 import { Input, Form, Button, Select } from 'element-react';
-import { CreateUser, Roles } from '../../lib';
+import { CreateUser, UserRoles } from '../../lib';
 import { useAction, useForm, useState } from '../../hooks';
 import { ModalNames } from '../../store';
 import Modal from '../Modal';
@@ -12,8 +12,8 @@ const CreateUserContent = () => {
     CreateUser
   );
   const roles = [
-    { value: Roles.ADMIN, label: Roles.ADMIN },
-    { value: Roles.USER, label: Roles.USER },
+    { value: UserRoles.ADMIN, label: UserRoles.ADMIN },
+    { value: UserRoles.USER, label: UserRoles.USER },
   ];
 
   function isConfirmationModalActive() {
