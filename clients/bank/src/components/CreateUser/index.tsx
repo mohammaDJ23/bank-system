@@ -1,24 +1,22 @@
 import FormContainer from '../../layout/FormContainer';
 import { Input, Form, Button, Select } from 'element-react';
-import { CreateUser, UserRoles } from '../../lib';
-import { useAction, useForm, useSelector } from '../../hooks';
+import { CreateUser } from '../../lib';
+import { useAction, useAuth, useForm } from '../../hooks';
 import { ModalNames } from '../../store';
 import Modal from '../Modal';
 
 const CreateUserContent = () => {
   const { hideModal } = useAction();
-  const { modals } = useSelector();
-  const { formRef, rules, form, onChange, onSubmitWithConfirmation, resetForm } = useForm(
-    CreateUser
-  );
-  const roles = [
-    { value: UserRoles.ADMIN, label: UserRoles.ADMIN },
-    { value: UserRoles.USER, label: UserRoles.USER },
-  ];
-
-  function isConfirmationModalActive() {
-    return !!modals[ModalNames.CONFIRMATION];
-  }
+  const { getUserRoles } = useAuth();
+  const {
+    formRef,
+    rules,
+    form,
+    onChange,
+    onSubmitWithConfirmation,
+    isConfirmationModalActive,
+    resetForm,
+  } = useForm(CreateUser);
 
   return (
     <>
@@ -76,7 +74,7 @@ const CreateUserContent = () => {
               onChange={value => onChange('role', value)}
               style={{ width: '100%' }}
             >
-              {roles.map(el => (
+              {getUserRoles().map(el => (
                 <Select.Option key={el.value} label={el.label} value={el.value} />
               ))}
             </Select>
