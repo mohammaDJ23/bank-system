@@ -14,7 +14,7 @@ export class Form {
     return Reflect.getMetadata(FormMetadataTypes.FORM_RULES, this.getPrototype()) || {};
   }
 
-  setPropWithParam(param: string): string {
+  getParam(param: string): string {
     let currentMatchPath: PathMatch<string> | null = null;
     let findedParam: string = '';
 

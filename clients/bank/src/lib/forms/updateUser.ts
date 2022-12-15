@@ -36,7 +36,7 @@ export class UpdateUserByAdmin extends Form {
 
   constructor() {
     super();
-    this.id = +this.setPropWithParam('id');
+    this.id = +this.getParam('id');
   }
 }
 
@@ -69,6 +69,6 @@ export class UpdateUserByUser extends Form {
 
   constructor() {
     super();
-    this.id = +this.setPropWithParam('id');
+    this.id = +this.getParam('id');
   }
 }
