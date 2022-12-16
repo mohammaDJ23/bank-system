@@ -1,5 +1,7 @@
+import UpdateBillContent from '../components/UpdateBill';
+
 const UpdateBill = () => {
-  return <div>Update bill</div>;
+  return <UpdateBillContent />;
 };
 
 export default UpdateBill;

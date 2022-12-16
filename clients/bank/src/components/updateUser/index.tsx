@@ -1,13 +1,25 @@
 import FormContainer from '../../layout/FormContainer';
 import { Input, Form, Button, Select } from 'element-react';
-import { CreateUser } from '../../lib';
-import { useAction, useAuth, useForm } from '../../hooks';
+import { UpdateUserByAdmin, UpdateUserByUser, UserRoles } from '../../lib';
+import { useAction, useForm } from '../../hooks';
 import { ModalNames } from '../../store';
 import Modal from '../Modal';
+import { useAuth } from '../../hooks';
 
-const CreateUserContent = () => {
+const UpdateUserContent = () => {
   const { hideModal } = useAction();
-  const { getUserRoles } = useAuth();
+  const { isAdmin, getUserRoles } = useAuth();
+  const isUserAdmin = isAdmin();
+  const currentForm = isUserAdmin
+    ? new UpdateUserByAdmin({
+        id: 0,
+        firstName: '',
+        lastName: '',
+        email: '',
+        phone: '',
+        role: UserRoles.USER,
+      })
+    : new UpdateUserByUser({ id: 0, firstName: '', lastName: '', email: '', phone: '' });
   const {
     formRef,
     rules,
@@ -16,7 +28,7 @@ const CreateUserContent = () => {
     onSubmitWithConfirmation,
     isConfirmationModalActive,
     resetForm,
-  } = useForm(new CreateUser());
+  } = useForm(currentForm);
 
   return (
     <>
@@ -51,40 +63,33 @@ const CreateUserContent = () => {
           </Form.Item>
 
           {/**@ts-ignore */}
-          <Form.Item style={{ marginBottom: '32px' }} label="Password" prop="password">
-            <Input
-              type="password"
-              onChange={value => onChange('password', value)}
-              value={form.password}
-            ></Input>
-          </Form.Item>
-
-          {/**@ts-ignore */}
           <Form.Item style={{ marginBottom: '32px' }} label="Phone" prop="phone">
             <Input onChange={value => onChange('phone', value)} value={form.phone}></Input>
           </Form.Item>
 
-          {/**@ts-ignore */}
-          <Form.Item style={{ marginBottom: '32px' }} label="Role" prop="role">
-            {/**@ts-ignore */}
-            <Select
-              placeholder="Select a role"
-              value={form.role}
-              clearable
-              onChange={value => onChange('role', value)}
-              style={{ width: '100%' }}
-            >
-              {getUserRoles().map(el => (
-                <Select.Option key={el.value} label={el.label} value={el.value} />
-              ))}
-            </Select>
-          </Form.Item>
+          {isUserAdmin && (
+            /**@ts-ignore */
+            <Form.Item style={{ marginBottom: '32px' }} label="Role" prop="role">
+              {/**@ts-ignore */}
+              <Select
+                placeholder="Select a role"
+                value={(form as UpdateUserByAdmin).role}
+                clearable
+                onChange={value => onChange('role', value)}
+                style={{ width: '100%' }}
+              >
+                {getUserRoles().map(el => (
+                  <Select.Option key={el.value} label={el.label} value={el.value} />
+                ))}
+              </Select>
+            </Form.Item>
+          )}
 
           {/**@ts-ignore */}
           <Form.Item style={{ marginBottom: '32px' }}>
             {/**@ts-ignore */}
             <Button type="primary" onClick={() => onSubmitWithConfirmation()}>
-              Create
+              Update
             </Button>
 
             {/**@ts-ignore */}
@@ -102,4 +107,4 @@ const CreateUserContent = () => {
   );
 };
 
-export default CreateUserContent;
+export default UpdateUserContent;

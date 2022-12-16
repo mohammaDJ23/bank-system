@@ -6,7 +6,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.js';
 import 'element-theme-default';
 import './assets/styles/index.scss';
-import { routes } from './lib';
+import { isMicroFrontEnd, routes } from './lib';
 import { BrowserHistory, MemoryHistory } from 'history';
 import LoadingFallback from './layout/LoadingFallback';
 import { Provider } from 'react-redux';
@@ -16,13 +16,13 @@ interface AppImportation {
   history: BrowserHistory | MemoryHistory;
 }
 
-const App: FC<AppImportation> = (props) => {
+const App: FC<AppImportation> = props => {
   return (
     /**@ts-ignore */
     <HistoryRouter history={props.history}>
       <Provider store={store}>
         <Routes>
-          {routes.map((route) => (
+          {routes.map(route => (
             <Route
               key={route.path}
               path={route.path}
@@ -34,7 +34,10 @@ const App: FC<AppImportation> = (props) => {
             />
           ))}
 
-          <Route path="*" element={<Navigate to="/" />} />
+          <Route
+            path="*"
+            element={<Navigate to={isMicroFrontEnd() ? '/' : '/bank/create-bill'} />}
+          />
         </Routes>
       </Provider>
     </HistoryRouter>

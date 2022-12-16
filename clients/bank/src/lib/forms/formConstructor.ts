@@ -1,4 +1,5 @@
-import { FormMetadataTypes, Rule, Rules } from '../';
+import { matchPath, PathMatch } from 'react-router-dom';
+import { FormMetadataTypes, routes, Rule, Rules } from '../';
 
 export class Form {
   getPrototype(): object {
@@ -11,5 +12,18 @@ export class Form {
 
   getRules(): Rules {
     return Reflect.getMetadata(FormMetadataTypes.FORM_RULES, this.getPrototype()) || {};
+  }
+
+  getParam(param: string): string {
+    let currentMatchPath: PathMatch<string> | null = null;
+    let findedParam: string = '';
+
+    routes.forEach(route => {
+      currentMatchPath = matchPath(route.path, window.location.pathname);
+      if (currentMatchPath && typeof currentMatchPath.params[param] === 'string')
+        findedParam = currentMatchPath.params[param] as string;
+    });
+
+    return findedParam;
   }
 }

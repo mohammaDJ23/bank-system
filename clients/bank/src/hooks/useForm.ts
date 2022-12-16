@@ -3,21 +3,23 @@ import { useState, useRef } from 'react';
 import { Form as FormConstructor } from '../lib';
 import { ModalNames } from '../store';
 import { useAction } from './useActions';
+import { useSelector } from '../hooks';
 
 interface FormInstance extends FormConstructor {}
 
-interface Constuctor<T extends FormInstance = FormInstance> {
-  new (...args: any[]): T;
+interface Constuctor {
+  new (...args: any[]): {};
 }
 
-export function useForm<T extends FormInstance>(initialForm: Constuctor<T>) {
-  const [form, setForm] = useState<T>(new initialForm());
+export function useForm<T extends FormInstance>(initialForm: T) {
+  const [form, setForm] = useState<T>(initialForm);
   const formRef = useRef<Form | null>(null);
   const rules = form.getRules();
   const { showModal } = useAction();
+  const { modals } = useSelector();
 
   function copyConstructor(instance: T) {
-    const copy = new (instance.constructor as Constuctor)();
+    const copy = new (instance.constructor as Constuctor)(instance);
     return Object.assign(copy, instance);
   }
 
@@ -59,5 +61,18 @@ export function useForm<T extends FormInstance>(initialForm: Constuctor<T>) {
     });
   }
 
-  return { resetForm, onChange, onSubmit, onSubmitWithConfirmation, form, formRef, rules };
+  function isConfirmationModalActive() {
+    return !!modals[ModalNames.CONFIRMATION];
+  }
+
+  return {
+    resetForm,
+    onChange,
+    onSubmit,
+    onSubmitWithConfirmation,
+    isConfirmationModalActive,
+    form,
+    formRef,
+    rules,
+  };
 }
