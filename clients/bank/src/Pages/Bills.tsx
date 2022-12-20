@@ -1,5 +1,7 @@
+import BillsContent from '../components/Bills';
+
 const Bills = () => {
-  return <div>Bills</div>;
+  return <BillsContent />;
 };
 
 export default Bills;
