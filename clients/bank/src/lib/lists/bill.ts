@@ -1,4 +1,4 @@
-import { ListObj } from './list';
+import { ListInstance, ListObj } from './list';
 
 export interface BillObj {
   id: number;
@@ -11,7 +11,7 @@ export interface BillObj {
   userId: number;
 }
 
-export class BillList {
+export class BillList implements ListInstance {
   constructor(
     public list: ListObj<BillObj> = {},
     public page: number = 1,

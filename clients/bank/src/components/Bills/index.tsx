@@ -12,7 +12,8 @@ import {
   Typography,
 } from '@mui/material';
 import moment from 'moment';
-import { BillList } from '../../lib';
+import { useList } from '../../hooks';
+import { BillList, BillObj } from '../../lib';
 
 const BadgeWrapper = styled('div')(({ theme }) => ({
   position: 'absolute',
@@ -36,15 +37,13 @@ const StyledSkeleton = styled(Skeleton)<SkeletonProps>(({ theme, width, height }
 }));
 
 const BillsContent = () => {
-  const billList = new BillList();
-  const currentList = billList.list[billList.page] || [];
-  const isEmptyList = currentList.length <= 0;
+  const { list, take, isEmptyList } = useList<BillObj>(new BillList());
   const isListProcessing = false;
 
   function skeleton() {
     return (
       <List>
-        {Array(billList.take)
+        {Array(take)
           .fill(null)
           .map((_, i) => (
             <ListItem
@@ -71,10 +70,10 @@ const BillsContent = () => {
     );
   }
 
-  function list() {
+  function listCom() {
     return (
       <List>
-        {currentList.map((bill, index) => (
+        {list.map((bill, index) => (
           <Card
             key={index}
             variant="outlined"
@@ -132,7 +131,7 @@ const BillsContent = () => {
     );
   }
 
-  return isListProcessing ? skeleton() : isEmptyList ? emptyList() : list();
+  return isListProcessing ? skeleton() : isEmptyList ? emptyList() : listCom();
 };
 
 export default BillsContent;
