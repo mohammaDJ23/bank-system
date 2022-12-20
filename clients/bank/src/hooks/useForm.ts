@@ -1,15 +1,11 @@
 import { Form } from 'element-react';
 import { useState, useRef } from 'react';
-import { Form as FormConstructor } from '../lib';
+import { copyConstructor, Form as FormConstructor } from '../lib';
 import { ModalNames } from '../store';
 import { useAction } from './useActions';
 import { useSelector } from '../hooks';
 
 interface FormInstance extends FormConstructor {}
-
-interface Constuctor {
-  new (...args: any[]): {};
-}
 
 export function useForm<T extends FormInstance>(initialForm: T) {
   const [form, setForm] = useState<T>(initialForm);
@@ -18,14 +14,9 @@ export function useForm<T extends FormInstance>(initialForm: T) {
   const { showModal } = useAction();
   const { modals } = useSelector();
 
-  function copyConstructor(instance: T) {
-    const copy = new (instance.constructor as Constuctor)(instance);
-    return Object.assign(copy, instance);
-  }
-
   function onChange(name: string, value: any) {
     setForm(prevState => {
-      return Object.assign(copyConstructor(prevState), {
+      return Object.assign(copyConstructor<T>(prevState), {
         [name]: value,
       });
     });
@@ -57,7 +48,7 @@ export function useForm<T extends FormInstance>(initialForm: T) {
     formRef.current.resetFields();
 
     setForm(prevState => {
-      return Object.assign(copyConstructor(prevState), initialForm);
+      return Object.assign(copyConstructor<T>(prevState), initialForm);
     });
   }
 
