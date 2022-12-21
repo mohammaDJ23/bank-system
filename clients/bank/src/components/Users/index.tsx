@@ -9,12 +9,12 @@ import {
   styled,
   Skeleton,
   SkeletonProps,
-  Typography,
 } from '@mui/material';
 import moment from 'moment';
 import { useList } from '../../hooks';
 import ListContainer from '../../layout/ListContainer';
 import { UserList, UserObj } from '../../lib';
+import EmptyList from '../EmptyList';
 
 const BadgeWrapper = styled('div')(({ theme }) => ({
   position: 'absolute',
@@ -39,7 +39,7 @@ const StyledSkeleton = styled(Skeleton)<SkeletonProps>(({ theme, width, height }
 
 const UsersContent = () => {
   const { list, take, isEmptyList } = useList<UserObj>(new UserList());
-  const isListProcessing = true;
+  const isListProcessing = false;
 
   function skeleton() {
     return (
@@ -147,17 +147,9 @@ const UsersContent = () => {
     );
   }
 
-  function emptyList() {
-    return (
-      <Box textAlign="center" pt="30px">
-        <Typography>Empty List</Typography>
-      </Box>
-    );
-  }
-
   return (
     <ListContainer>
-      {isListProcessing ? skeleton() : isEmptyList ? emptyList() : billList()}
+      {isListProcessing ? skeleton() : isEmptyList ? <EmptyList /> : billList()}
     </ListContainer>
   );
 };
