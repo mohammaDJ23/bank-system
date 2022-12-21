@@ -20,7 +20,7 @@ const Content = styled('div')(({ theme }) => ({
   width: '100%',
   height: '100%',
   margin: 'auto',
-  wordBreak: 'break-all',
+  wordBreak: 'break-word',
   transition: 'all 0.3s',
   padding: '0 16px 32px 16px',
   [theme.breakpoints.up('xl')]: {
