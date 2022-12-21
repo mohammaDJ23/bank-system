@@ -13,6 +13,7 @@ import {
 } from '@mui/material';
 import moment from 'moment';
 import { useList } from '../../hooks';
+import ListContainer from '../../layout/ListContainer';
 import { BillList, BillObj } from '../../lib';
 
 const BadgeWrapper = styled('div')(({ theme }) => ({
@@ -47,12 +48,14 @@ const BillsContent = () => {
           .fill(null)
           .map((_, i) => (
             <ListItem
+              key={i}
               sx={{
                 display: 'flex',
                 flexDirection: 'column',
                 gap: '10px',
                 my: '25px',
                 alignItems: 'start',
+                px: '0',
               }}
             >
               <Box maxWidth="600px" width="100%" height="14px">
@@ -70,14 +73,14 @@ const BillsContent = () => {
     );
   }
 
-  function listCom() {
+  function billList() {
     return (
       <List>
         {list.map((bill, index) => (
           <Card
             key={index}
             variant="outlined"
-            sx={{ margin: '20px', position: 'relative', overflow: 'visible' }}
+            sx={{ my: '20px', position: 'relative', overflow: 'visible' }}
           >
             <ListItemButton>
               <ListItem disablePadding sx={{ my: '10px' }}>
@@ -131,7 +134,11 @@ const BillsContent = () => {
     );
   }
 
-  return isListProcessing ? skeleton() : isEmptyList ? emptyList() : listCom();
+  return (
+    <ListContainer>
+      {isListProcessing ? skeleton() : isEmptyList ? emptyList() : billList()}
+    </ListContainer>
+  );
 };
 
 export default BillsContent;
