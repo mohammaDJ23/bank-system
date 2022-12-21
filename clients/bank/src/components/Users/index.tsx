@@ -11,6 +11,7 @@ import {
   SkeletonProps,
 } from '@mui/material';
 import moment from 'moment';
+import { useNavigate } from 'react-router-dom';
 import { useList } from '../../hooks';
 import ListContainer from '../../layout/ListContainer';
 import { UserList, UserObj } from '../../lib';
@@ -38,6 +39,7 @@ const StyledSkeleton = styled(Skeleton)<SkeletonProps>(({ theme, width, height }
 }));
 
 const UsersContent = () => {
+  const navigate = useNavigate();
   const { list, take, isEmptyList } = useList<UserObj>(new UserList());
   const isListProcessing = false;
 
@@ -92,6 +94,7 @@ const UsersContent = () => {
             key={index}
             variant="outlined"
             sx={{ my: '20px', position: 'relative', overflow: 'visible' }}
+            onClick={() => navigate(`/bank/users/${user.id}`)}
           >
             <ListItemButton>
               <ListItem disablePadding sx={{ my: '10px' }}>
