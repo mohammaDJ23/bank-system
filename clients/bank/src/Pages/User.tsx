@@ -1,5 +1,7 @@
+import UserContent from '../components/User';
+
 const User = () => {
-  return <div>User</div>;
+  return <UserContent />;
 };
 
 export default User;
