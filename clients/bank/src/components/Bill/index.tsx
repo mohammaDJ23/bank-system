@@ -143,7 +143,7 @@ const BillContent = () => {
           <Box mt="30px">
             {/**@ts-ignore */}
             <Button onClick={onDeleteBill} type="danger">
-              Delete the bill
+              Deleting the bill
             </Button>
           </Box>
         </Box>

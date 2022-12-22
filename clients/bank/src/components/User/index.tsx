@@ -142,13 +142,13 @@ const UserContent = () => {
           <Box mt="30px">
             {/**@ts-ignore */}
             <Button onClick={onDeleteAccount} type="danger">
-              Delete account
+              Deleting the account
             </Button>
           </Box>
         </Box>
 
         <Modal
-          title="Delete Account"
+          title="Deleting the Account"
           body="Are you sure do delete the user account?"
           isActive={modals[ModalNames.CONFIRMATION]}
           onCancel={() => hideModal(ModalNames.CONFIRMATION)}
