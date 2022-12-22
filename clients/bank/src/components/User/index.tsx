@@ -1,6 +1,15 @@
 import { useState } from 'react';
 import moment from 'moment';
-import { Box, Typography, IconButton, Menu, MenuItem } from '@mui/material';
+import {
+  Box,
+  Typography,
+  IconButton,
+  Menu,
+  MenuItem,
+  Skeleton,
+  styled,
+  SkeletonProps,
+} from '@mui/material';
 import { MoreVert } from '@mui/icons-material';
 import DefaultContainer from '../../layout/DefaultContainer';
 import { useNavigate } from 'react-router-dom';
@@ -8,6 +17,12 @@ import { Button } from 'element-react';
 import { useAction, useSelector } from '../../hooks';
 import Modal from '../Modal';
 import { ModalNames } from '../../store';
+
+const StyledSkeleton = styled(Skeleton)<SkeletonProps>(({ theme, width, height }) => ({
+  width,
+  height,
+  transform: 'scale(1)',
+}));
 
 const UserContent = () => {
   const user = {
@@ -26,6 +41,7 @@ const UserContent = () => {
   const navigate = useNavigate();
   const { showModal, hideModal } = useAction();
   const { modals } = useSelector();
+  const isUserProcessing = false;
 
   function onMenuOpen(event: React.MouseEvent<HTMLElement>) {
     setAnchorEl(event.currentTarget);
@@ -46,9 +62,43 @@ const UserContent = () => {
     showModal(ModalNames.CONFIRMATION);
   }
 
-  return (
-    <>
-      <DefaultContainer>
+  function skeleton() {
+    return (
+      <Box width="100%" display="flex" alignItems="start" gap="12px" flexDirection="column">
+        <Box
+          width="100%"
+          display="flex"
+          alignItems="center"
+          justifyContent="space-between"
+          gap="15px"
+          mb="15px"
+        >
+          <Box maxWidth="400px" width="100%" height="14px">
+            <StyledSkeleton width="100%" height="100%" />
+          </Box>
+          <Box maxWidth="40px" width="100%" height="14px">
+            <StyledSkeleton width="100%" height="100%" />
+          </Box>
+        </Box>
+        <Box maxWidth="180px" width="100%" height="12px">
+          <StyledSkeleton width="100%" height="100%" />
+        </Box>
+        <Box maxWidth="280px" width="100%" height="12px">
+          <StyledSkeleton width="100%" height="100%" />
+        </Box>
+        <Box maxWidth="130px" width="100%" height="12px">
+          <StyledSkeleton width="100%" height="100%" />
+        </Box>
+        <Box maxWidth="250px" width="100%" height="12px">
+          <StyledSkeleton width="100%" height="100%" />
+        </Box>
+      </Box>
+    );
+  }
+
+  function userDetails() {
+    return (
+      <>
         <Box width="100%" display="flex" flexDirection="column" alignItems="start" gap="8px">
           <Box
             width="100%"
@@ -96,16 +146,19 @@ const UserContent = () => {
             </Button>
           </Box>
         </Box>
-      </DefaultContainer>
-      <Modal
-        title="Delete Account"
-        body="Are you sure do delete the user account?"
-        isActive={modals[ModalNames.CONFIRMATION]}
-        onCancel={() => hideModal(ModalNames.CONFIRMATION)}
-        onConfirm={() => console.log('submit')}
-      />
-    </>
-  );
+
+        <Modal
+          title="Delete Account"
+          body="Are you sure do delete the user account?"
+          isActive={modals[ModalNames.CONFIRMATION]}
+          onCancel={() => hideModal(ModalNames.CONFIRMATION)}
+          onConfirm={() => console.log('submit')}
+        />
+      </>
+    );
+  }
+
+  return <DefaultContainer>{isUserProcessing ? skeleton() : userDetails()}</DefaultContainer>;
 };
 
 export default UserContent;
