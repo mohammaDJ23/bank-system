@@ -17,5 +17,5 @@ export const routes = [
   { title: 'Update bill', path: '/bank/update-bill/:id', element: <UpdateBill /> },
   { title: 'Update user', path: '/bank/update-user/:id', element: <UpdateUser /> },
   { title: 'User', path: '/bank/users/:id', element: <User /> },
-  { title: 'Bill', path: '/bank/bill/:id', element: <Bill /> },
+  { title: 'Bill', path: '/bank/bills/:id', element: <Bill /> },
 ];
