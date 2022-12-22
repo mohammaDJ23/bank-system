@@ -7,8 +7,6 @@ import {
   Card,
   Badge,
   styled,
-  Skeleton,
-  SkeletonProps,
 } from '@mui/material';
 import moment from 'moment';
 import { useNavigate } from 'react-router-dom';
@@ -16,6 +14,7 @@ import { useList } from '../../hooks';
 import ListContainer from '../../layout/ListContainer';
 import { UserList, UserObj } from '../../lib';
 import EmptyList from '../EmptyList';
+import Skeleton from '../Skeleton';
 
 const BadgeWrapper = styled('div')(({ theme }) => ({
   position: 'absolute',
@@ -30,12 +29,6 @@ const BadgeWrapper = styled('div')(({ theme }) => ({
     position: 'unset',
     padding: '2px 6px',
   },
-}));
-
-const StyledSkeleton = styled(Skeleton)<SkeletonProps>(({ theme, width, height }) => ({
-  width,
-  height,
-  transform: 'scale(1)',
 }));
 
 const UsersContent = () => {
@@ -61,10 +54,10 @@ const UsersContent = () => {
               }}
             >
               <Box maxWidth="400px" width="100%" height="14px">
-                <StyledSkeleton width="100%" height="100%" />
+                <Skeleton width="100%" height="100%" />
               </Box>
               <Box maxWidth="150px" width="100%" height="12px">
-                <StyledSkeleton width="100%" height="100%" />
+                <Skeleton width="100%" height="100%" />
               </Box>
               <Box
                 width="100%"
@@ -74,10 +67,10 @@ const UsersContent = () => {
                 gap="10px"
               >
                 <Box maxWidth="40px" width="100%" height="10px">
-                  <StyledSkeleton width="100%" height="100%" />
+                  <Skeleton width="100%" height="100%" />
                 </Box>
                 <Box maxWidth="100px" width="100%" height="10px">
-                  <StyledSkeleton width="100%" height="100%" />
+                  <Skeleton width="100%" height="100%" />
                 </Box>
               </Box>
             </ListItem>

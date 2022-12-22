@@ -1,13 +1,4 @@
-import {
-  Box,
-  Typography,
-  Menu,
-  MenuItem,
-  IconButton,
-  Skeleton,
-  styled,
-  SkeletonProps,
-} from '@mui/material';
+import { Box, Typography, Menu, MenuItem, IconButton } from '@mui/material';
 import { MoreVert } from '@mui/icons-material';
 import moment from 'moment';
 import DefaultContainer from '../../layout/DefaultContainer';
@@ -17,12 +8,7 @@ import { useAction, useSelector } from '../../hooks';
 import Modal from '../Modal';
 import { ModalNames } from '../../store';
 import { useState } from 'react';
-
-const StyledSkeleton = styled(Skeleton)<SkeletonProps>(({ theme, width, height }) => ({
-  width,
-  height,
-  transform: 'scale(1)',
-}));
+import Skeleton from '../Skeleton';
 
 const BillContent = () => {
   const bill = {
@@ -75,23 +61,23 @@ const BillContent = () => {
           mb="15px"
         >
           <Box maxWidth="400px" width="100%" height="14px">
-            <StyledSkeleton width="100%" height="100%" />
+            <Skeleton width="100%" height="100%" />
           </Box>
           <Box maxWidth="40px" width="100%" height="14px">
-            <StyledSkeleton width="100%" height="100%" />
+            <Skeleton width="100%" height="100%" />
           </Box>
         </Box>
         <Box maxWidth="150px" width="100%" height="12px">
-          <StyledSkeleton width="100%" height="100%" />
+          <Skeleton width="100%" height="100%" />
         </Box>
         <Box maxWidth="300px" width="100%" height="12px">
-          <StyledSkeleton width="100%" height="100%" />
+          <Skeleton width="100%" height="100%" />
         </Box>
         <Box maxWidth="130px" width="100%" height="12px">
-          <StyledSkeleton width="100%" height="100%" />
+          <Skeleton width="100%" height="100%" />
         </Box>
         <Box maxWidth="140px" width="100%" height="12px">
-          <StyledSkeleton width="100%" height="100%" />
+          <Skeleton width="100%" height="100%" />
         </Box>
       </Box>
     );

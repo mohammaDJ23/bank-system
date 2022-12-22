@@ -1,15 +1,6 @@
 import { useState } from 'react';
 import moment from 'moment';
-import {
-  Box,
-  Typography,
-  IconButton,
-  Menu,
-  MenuItem,
-  Skeleton,
-  styled,
-  SkeletonProps,
-} from '@mui/material';
+import { Box, Typography, IconButton, Menu, MenuItem } from '@mui/material';
 import { MoreVert } from '@mui/icons-material';
 import DefaultContainer from '../../layout/DefaultContainer';
 import { useNavigate } from 'react-router-dom';
@@ -17,12 +8,7 @@ import { Button } from 'element-react';
 import { useAction, useSelector } from '../../hooks';
 import Modal from '../Modal';
 import { ModalNames } from '../../store';
-
-const StyledSkeleton = styled(Skeleton)<SkeletonProps>(({ theme, width, height }) => ({
-  width,
-  height,
-  transform: 'scale(1)',
-}));
+import Skeleton from '../Skeleton';
 
 const UserContent = () => {
   const user = {
@@ -74,23 +60,23 @@ const UserContent = () => {
           mb="15px"
         >
           <Box maxWidth="400px" width="100%" height="14px">
-            <StyledSkeleton width="100%" height="100%" />
+            <Skeleton width="100%" height="100%" />
           </Box>
           <Box maxWidth="40px" width="100%" height="14px">
-            <StyledSkeleton width="100%" height="100%" />
+            <Skeleton width="100%" height="100%" />
           </Box>
         </Box>
         <Box maxWidth="180px" width="100%" height="12px">
-          <StyledSkeleton width="100%" height="100%" />
+          <Skeleton width="100%" height="100%" />
         </Box>
         <Box maxWidth="280px" width="100%" height="12px">
-          <StyledSkeleton width="100%" height="100%" />
+          <Skeleton width="100%" height="100%" />
         </Box>
         <Box maxWidth="130px" width="100%" height="12px">
-          <StyledSkeleton width="100%" height="100%" />
+          <Skeleton width="100%" height="100%" />
         </Box>
         <Box maxWidth="250px" width="100%" height="12px">
-          <StyledSkeleton width="100%" height="100%" />
+          <Skeleton width="100%" height="100%" />
         </Box>
       </Box>
     );

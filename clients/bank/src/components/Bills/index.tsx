@@ -7,8 +7,6 @@ import {
   Card,
   Badge,
   styled,
-  Skeleton,
-  SkeletonProps,
 } from '@mui/material';
 import moment from 'moment';
 import { useNavigate } from 'react-router-dom';
@@ -16,6 +14,7 @@ import { useList } from '../../hooks';
 import ListContainer from '../../layout/ListContainer';
 import { BillList, BillObj } from '../../lib';
 import EmptyList from '../EmptyList';
+import Skeleton from '../Skeleton';
 
 const BadgeWrapper = styled('div')(({ theme }) => ({
   position: 'absolute',
@@ -30,12 +29,6 @@ const BadgeWrapper = styled('div')(({ theme }) => ({
     position: 'unset',
     padding: '2px 6px',
   },
-}));
-
-const StyledSkeleton = styled(Skeleton)<SkeletonProps>(({ theme, width, height }) => ({
-  width,
-  height,
-  transform: 'scale(1)',
 }));
 
 const BillsContent = () => {
@@ -61,13 +54,13 @@ const BillsContent = () => {
               }}
             >
               <Box maxWidth="600px" width="100%" height="14px">
-                <StyledSkeleton width="100%" height="100%" />
+                <Skeleton width="100%" height="100%" />
               </Box>
               <Box maxWidth="350px" width="100%" height="12px">
-                <StyledSkeleton width="100%" height="100%" />
+                <Skeleton width="100%" height="100%" />
               </Box>
               <Box alignSelf="end" maxWidth="150px" width="100%" height="10px">
-                <StyledSkeleton width="100%" height="100%" />
+                <Skeleton width="100%" height="100%" />
               </Box>
             </ListItem>
           ))}
