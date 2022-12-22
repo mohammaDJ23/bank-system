@@ -1,4 +1,4 @@
-import { styled } from '@mui/material/styles';
+import { styled, Box } from '@mui/material';
 import { FC, PropsWithChildren } from 'react';
 
 const Container = styled('div')(({ theme }) => ({
@@ -38,7 +38,9 @@ const MainContainer: FC<PropsWithChildren> = ({ children }) => {
   return (
     <Container>
       <Wrapper>
-        <Content>{children}</Content>
+        <Content>
+          <Box pb="16px">{children}</Box>
+        </Content>
       </Wrapper>
     </Container>
   );

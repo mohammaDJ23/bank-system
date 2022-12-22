@@ -165,7 +165,7 @@ const UserContent = () => {
 
   return (
     <DefaultContainer>
-      {isUserProcessing ? skeleton() : !user ? userDetails() : notFound()}
+      {isUserProcessing ? skeleton() : user ? userDetails() : notFound()}
     </DefaultContainer>
   );
 };
