@@ -144,7 +144,30 @@ const UserContent = () => {
     );
   }
 
-  return <DefaultContainer>{isUserProcessing ? skeleton() : userDetails()}</DefaultContainer>;
+  function notFound() {
+    return (
+      <Box
+        display="flex"
+        alignItems="center"
+        justifyContent="center"
+        flexDirection="column"
+        gap="12px"
+        mt="20px"
+      >
+        <Typography>Not found the user</Typography>
+        {/**@ts-ignore */}
+        <Button onClick={() => navigate('/bank/users')} type="primary">
+          Back to the user list
+        </Button>
+      </Box>
+    );
+  }
+
+  return (
+    <DefaultContainer>
+      {isUserProcessing ? skeleton() : !user ? userDetails() : notFound()}
+    </DefaultContainer>
+  );
 };
 
 export default UserContent;

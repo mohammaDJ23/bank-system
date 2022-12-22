@@ -144,7 +144,30 @@ const BillContent = () => {
     );
   }
 
-  return <DefaultContainer>{isBillProcessing ? skeleton() : billDetails()}</DefaultContainer>;
+  function notFound() {
+    return (
+      <Box
+        display="flex"
+        alignItems="center"
+        justifyContent="center"
+        flexDirection="column"
+        gap="12px"
+        mt="20px"
+      >
+        <Typography>Not found the bill</Typography>
+        {/**@ts-ignore */}
+        <Button onClick={() => navigate('/bank/bills')} type="primary">
+          Back to the bill list
+        </Button>
+      </Box>
+    );
+  }
+
+  return (
+    <DefaultContainer>
+      {isBillProcessing ? skeleton() : bill ? billDetails() : notFound()}
+    </DefaultContainer>
+  );
 };
 
 export default BillContent;
