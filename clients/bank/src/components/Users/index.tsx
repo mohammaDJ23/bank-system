@@ -12,7 +12,7 @@ import moment from 'moment';
 import { useNavigate } from 'react-router-dom';
 import { useList } from '../../hooks';
 import ListContainer from '../../layout/ListContainer';
-import { BillList, BillObj } from '../../lib';
+import { UserList, UserObj } from '../../lib';
 import EmptyList from '../EmptyList';
 import Skeleton from '../Skeleton';
 
@@ -31,9 +31,9 @@ const BadgeWrapper = styled('div')(({ theme }) => ({
   },
 }));
 
-const BillsContent = () => {
+const UsersContent = () => {
   const navigate = useNavigate();
-  const { list, take, isEmptyList } = useList<BillObj>(new BillList());
+  const { list, take, isEmptyList } = useList<UserObj>(new UserList());
   const isListProcessing = false;
 
   function skeleton() {
@@ -53,14 +53,25 @@ const BillsContent = () => {
                 px: '0',
               }}
             >
-              <Box maxWidth="600px" width="100%" height="14px">
+              <Box maxWidth="400px" width="100%" height="14px">
                 <Skeleton width="100%" height="100%" />
               </Box>
-              <Box maxWidth="350px" width="100%" height="12px">
+              <Box maxWidth="150px" width="100%" height="12px">
                 <Skeleton width="100%" height="100%" />
               </Box>
-              <Box alignSelf="end" maxWidth="150px" width="100%" height="10px">
-                <Skeleton width="100%" height="100%" />
+              <Box
+                width="100%"
+                display="flex"
+                alignItems="center"
+                justifyContent="space-between"
+                gap="10px"
+              >
+                <Box maxWidth="40px" width="100%" height="10px">
+                  <Skeleton width="100%" height="100%" />
+                </Box>
+                <Box maxWidth="100px" width="100%" height="10px">
+                  <Skeleton width="100%" height="100%" />
+                </Box>
               </Box>
             </ListItem>
           ))}
@@ -71,12 +82,12 @@ const BillsContent = () => {
   function billList() {
     return (
       <List>
-        {list.map((bill, index) => (
+        {list.map((user, index) => (
           <Card
             key={index}
             variant="outlined"
             sx={{ my: '20px', position: 'relative', overflow: 'visible' }}
-            onClick={() => navigate(`/bank/bills/${bill.id}`)}
+            onClick={() => navigate(`/bank/users/${user.id}`)}
           >
             <ListItemButton>
               <ListItem disablePadding sx={{ my: '10px' }}>
@@ -92,25 +103,35 @@ const BillsContent = () => {
                       primaryTypographyProps={{ fontSize: '14px', mb: '10px' }}
                       secondaryTypographyProps={{ fontSize: '12px' }}
                       sx={{ margin: '0' }}
-                      primary={`${bill.receiver} received ${bill.amount} at ${moment(
-                        bill.date
-                      ).format('ll')}`}
-                      secondary={bill.description}
+                      primary={`${user.firstName} ${user.lastName}`}
+                      secondary={user.phone}
                     />
                   </Box>
-
-                  <Box component="div" alignSelf="end">
+                  <Box
+                    component="div"
+                    display="flex"
+                    alignItems="center"
+                    justifyContent="space-between"
+                    gap="10px"
+                    width="100%"
+                    flexWrap="wrap"
+                  >
                     <ListItemText
+                      sx={{ flex: 'unset' }}
+                      secondaryTypographyProps={{ fontSize: '10px' }}
+                      secondary={user.role}
+                    />
+                    <ListItemText
+                      sx={{ flex: 'unset' }}
                       secondaryTypographyProps={{ fontSize: '10px' }}
                       secondary={
-                        new Date(bill.updatedAt) > new Date(bill.createdAt)
-                          ? `updated at ${moment(bill.updatedAt).fromNow()}`
-                          : `${moment(bill.createdAt).fromNow()}`
+                        new Date(user.updatedAt) > new Date(user.createdAt)
+                          ? `${moment(user.updatedAt).format('lll')} was updated`
+                          : `${moment(user.createdAt).format('lll')}`
                       }
                     />
                   </Box>
                 </Box>
-
                 <BadgeWrapper>
                   <Badge max={Infinity} badgeContent={index + 1} color="primary"></Badge>
                 </BadgeWrapper>
@@ -129,4 +150,4 @@ const BillsContent = () => {
   );
 };
 
-export default BillsContent;
+export default UsersContent;

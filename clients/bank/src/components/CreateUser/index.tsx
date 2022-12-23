@@ -1,22 +1,11 @@
 import FormContainer from '../../layout/FormContainer';
 import { Input, Form, Button, Select } from 'element-react';
 import { CreateUser } from '../../lib';
-import { useAction, useAuth, useForm } from '../../hooks';
-import { ModalNames } from '../../store';
-import Modal from '../Modal';
+import { useAuth, useForm } from '../../hooks';
 
 const CreateUserContent = () => {
-  const { hideModal } = useAction();
   const { getUserRoles } = useAuth();
-  const {
-    formRef,
-    rules,
-    form,
-    onChange,
-    onSubmitWithConfirmation,
-    isConfirmationModalActive,
-    resetForm,
-  } = useForm(new CreateUser());
+  const { formRef, rules, form, onChange, onSubmit, resetForm } = useForm(new CreateUser());
 
   return (
     <>
@@ -83,7 +72,7 @@ const CreateUserContent = () => {
           {/**@ts-ignore */}
           <Form.Item style={{ marginBottom: '32px' }}>
             {/**@ts-ignore */}
-            <Button type="primary" onClick={() => onSubmitWithConfirmation()}>
+            <Button type="primary" onClick={() => onSubmit()}>
               Create
             </Button>
 
@@ -92,12 +81,6 @@ const CreateUserContent = () => {
           </Form.Item>
         </Form>
       </FormContainer>
-
-      <Modal
-        isActive={isConfirmationModalActive()}
-        onCancel={() => hideModal(ModalNames.CONFIRMATION)}
-        onConfirm={() => console.log('submit')}
-      />
     </>
   );
 };

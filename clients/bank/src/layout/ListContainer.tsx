@@ -20,9 +20,9 @@ const Content = styled('div')(({ theme }) => ({
   width: '100%',
   height: '100%',
   margin: 'auto',
-  wordBreak: 'break-all',
+  wordBreak: 'break-word',
   transition: 'all 0.3s',
-  padding: '32px 16px',
+  padding: '0 16px 32px 16px',
   [theme.breakpoints.up('xl')]: {
     maxWidth: '1000px',
   },
@@ -30,19 +30,20 @@ const Content = styled('div')(({ theme }) => ({
     maxWidth: '900px',
   },
   [theme.breakpoints.down('lg')]: {
-    maxWidth: '700px',
+    maxWidth: '800px',
   },
   [theme.breakpoints.down('md')]: {
-    maxWidth: '600px',
-    padding: '16px',
+    maxWidth: '700px',
+    padding: '0 16px 16px 16px',
   },
 }));
 
-const FormContainer: FC<PropsWithChildren> = ({ children }) => {
+const ListContainer: FC<PropsWithChildren> = ({ children }) => {
   return (
     <Container>
       <Wrapper>
         <Content>
+          {' '}
           <Box pb="16px">{children}</Box>
         </Content>
       </Wrapper>
@@ -50,4 +51,4 @@ const FormContainer: FC<PropsWithChildren> = ({ children }) => {
   );
 };
 
-export default FormContainer;
+export default ListContainer;
