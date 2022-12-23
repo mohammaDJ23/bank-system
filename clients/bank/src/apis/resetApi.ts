@@ -1,7 +1,13 @@
 import axios, { AxiosRequestConfig, CreateAxiosDefaults, AxiosInstance } from 'axios';
+import { getToken } from '../lib';
 
 export class ResetApi {
   create(config: CreateAxiosDefaults): AxiosInstance {
+    const token = getToken();
+
+    if (!token) throw new Error('unauthorized');
+
+    config.headers = { Authorization: `Bearer ${token}` };
     return axios.create(config);
   }
 
