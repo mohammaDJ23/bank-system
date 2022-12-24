@@ -1,13 +1,10 @@
 import { Dispatch, Store } from 'redux';
-import { Apis } from '../../apis';
+import { Apis, ErrorObj } from '../../apis';
+import { RequestProcess } from '../reducers';
 import { RootState } from '../store';
 import { RootActions } from './root-actions';
-
-export enum RequestProcess {
-  LOADING = 'LOADING',
-  SUCCESS = 'SUCCESS',
-  ERROR = 'ERROR',
-}
+import { Notification } from 'element-react';
+import { AxiosError } from 'axios';
 
 export interface LoadingAction {
   type: RequestProcess.LOADING;
@@ -57,7 +54,14 @@ export function asyncOp(
       await cb.call({ dispatch, store }, dispatch, store);
       dispatch(success(apiName));
     } catch (err) {
+      const message =
+        err instanceof AxiosError<ErrorObj>
+          ? err.response?.data?.message || err.response?.statusText || err.message
+          : err instanceof Error
+          ? err.message
+          : 'Something went wrong';
       dispatch(error(apiName));
+      Notification(message, 'error');
     }
   };
 }

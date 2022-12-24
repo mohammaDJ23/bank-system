@@ -1,10 +1,11 @@
 import { RootActions } from '../actions';
-import {
-  ErrorAction,
-  LoadingAction,
-  RequestProcess,
-  SuccessAction,
-} from '../actions/requestProcess';
+import { ErrorAction, LoadingAction, SuccessAction } from '../actions/requestProcess';
+
+export enum RequestProcess {
+  LOADING = 'LOADING',
+  SUCCESS = 'SUCCESS',
+  ERROR = 'ERROR',
+}
 
 export interface RequestProcessState {
   [key: string]: boolean;

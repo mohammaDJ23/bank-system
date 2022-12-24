@@ -36,7 +36,7 @@ export class ResetApi {
 
   static req<T = any, K = any>(
     req: AxiosRequestConfig<T>,
-    config: CreateAxiosDefaults<T>
+    config?: CreateAxiosDefaults<T>
   ): Promise<AxiosResponse<T, K>> {
     const restApi = new ResetApi(config);
     return restApi.build<T, K>(req);
