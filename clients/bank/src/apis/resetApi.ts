@@ -17,4 +17,9 @@ export class ResetApi {
       throw error;
     }
   }
+
+  static req<T>(req: AxiosRequestConfig<T>, config: CreateAxiosDefaults<T>) {
+    const restApi = new ResetApi(config);
+    return restApi.build<T>(req);
+  }
 }

@@ -22,12 +22,12 @@ export function useForm<T extends FormInstance>(initialForm: T) {
     });
   }
 
-  function onSubmit() {
+  function onSubmit(callback: () => void) {
     if (!formRef.current) return;
 
     formRef.current.validate(valid => {
       if (valid) {
-        console.log('submit!!');
+        callback.call({});
       }
     });
   }
