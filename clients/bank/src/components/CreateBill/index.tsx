@@ -2,9 +2,13 @@ import FormContainer from '../../layout/FormContainer';
 import { Input, Form, Button } from 'element-react';
 import { CreateBill } from '../../lib';
 import { useForm } from '../../hooks';
+import { Apis } from '../../apis';
 
 const CreateBillContent = () => {
-  const { formRef, rules, form, onChange, onSubmit, resetForm } = useForm(new CreateBill());
+  const { formRef, rules, form, onChange, onSubmit, resetForm, isFormProcessing } = useForm(
+    new CreateBill()
+  );
+  const isLoading = isFormProcessing(Apis.CREATE_BILL);
 
   return (
     <FormContainer>
@@ -16,6 +20,7 @@ const CreateBillContent = () => {
             type="number"
             onChange={value => onChange('amount', value)}
             value={form.amount}
+            disabled={isLoading}
           ></Input>
         </Form.Item>
 
@@ -25,12 +30,18 @@ const CreateBillContent = () => {
             type="text"
             onChange={value => onChange('receiver', value)}
             value={form.receiver}
+            disabled={isLoading}
           ></Input>
         </Form.Item>
 
         {/**@ts-ignore */}
         <Form.Item style={{ marginBottom: '32px' }} label="Date" prop="date">
-          <Input type="date" onChange={value => onChange('date', value)} value={form.date}></Input>
+          <Input
+            type="date"
+            onChange={value => onChange('date', value)}
+            value={form.date}
+            disabled={isLoading}
+          ></Input>
         </Form.Item>
 
         {/**@ts-ignore */}
@@ -40,18 +51,21 @@ const CreateBillContent = () => {
             autosize={{ minRows: 5 }}
             onChange={value => onChange('description', value)}
             value={form.description}
+            disabled={isLoading}
           ></Input>
         </Form.Item>
 
         {/**@ts-ignore */}
         <Form.Item style={{ marginBottom: '32px' }}>
           {/**@ts-ignore */}
-          <Button type="primary" onClick={() => onSubmit()}>
+          <Button type="primary" onClick={() => onSubmit(Apis.CREATE_BILL)} disabled={isLoading}>
             Create
           </Button>
 
           {/**@ts-ignore */}
-          <Button onClick={() => resetForm()}>Reset</Button>
+          <Button onClick={() => resetForm(Apis.CREATE_BILL)} disabled={isLoading}>
+            Reset
+          </Button>
         </Form.Item>
       </Form>
     </FormContainer>
