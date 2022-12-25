@@ -1,4 +1,6 @@
+import { Notification } from 'element-react';
 import {
+  AfterSubmition,
   DefineRules,
   DefineVal,
   isEmail,
@@ -61,5 +63,10 @@ export class CreateUser extends Form {
     this.password = this.getCachedInput('password');
     this.phone = this.getCachedInput('phone');
     this.role = this.getCachedInput('role');
+  }
+
+  @AfterSubmition()
+  showSuccessfulMessage() {
+    Notification('Your have created a new user successfully.', 'success');
   }
 }
