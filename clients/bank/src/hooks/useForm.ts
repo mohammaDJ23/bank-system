@@ -34,6 +34,7 @@ export function useForm<T extends FormInstance>(initialForm: T) {
       if (valid) {
         asyncOp(async (dispatch, store) => {
           await ResetApi.req(apis[apiName](form as T as any), config);
+          resetForm(apiName);
         }, apiName);
       }
     });
