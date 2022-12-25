@@ -54,12 +54,14 @@ export function asyncOp(
       await cb.call({ dispatch, store }, dispatch, store);
       dispatch(success(apiName));
     } catch (err) {
-      const message =
+      let message =
         err instanceof AxiosError<ErrorObj>
           ? err.response?.data?.message || err.response?.statusText || err.message
           : err instanceof Error
           ? err.message
           : 'Something went wrong';
+      message = Array.isArray(message) ? message.join(' - ') : message;
+
       dispatch(error(apiName));
       Notification(message, 'error');
     }
