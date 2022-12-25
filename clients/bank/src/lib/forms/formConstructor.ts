@@ -1,5 +1,9 @@
+import { Dispatch } from 'react';
 import { matchPath, PathMatch } from 'react-router-dom';
+import { Store } from 'redux';
 import { Constructor, FormMetadataTypes, LocalStorage, routes, Rule, Rules } from '../';
+import { RootState } from '../../store';
+import { RootActions } from '../../store/actions';
 
 export class Form {
   getPrototype(): object {
@@ -48,5 +52,23 @@ export class Form {
     for (let key in initialInputs) this[key as keyof this] = initialInputs[key];
     LocalStorage.removeItem(this.getConstructorName());
     return new (this.constructor as Constructor)() as T;
+  }
+
+  beforeSubmition(dispatch: Dispatch<RootActions>, store: Store<RootState>) {
+    const beforeSubmitionAction: ((
+      dispatch: Dispatch<RootActions>,
+      store: Store<RootState>
+    ) => void)[] =
+      Reflect.getMetadata(FormMetadataTypes.BEFORE_SUBMITION, this.getPrototype()) || [];
+    beforeSubmitionAction.forEach(fn => fn.call(this, dispatch, store));
+  }
+
+  afterSubmition(dispatch: Dispatch<RootActions>, store: Store<RootState>) {
+    const afterSubmitionFns: ((
+      dispatch: Dispatch<RootActions>,
+      store: Store<RootState>
+    ) => void)[] =
+      Reflect.getMetadata(FormMetadataTypes.AFTER_SUBMITION, this.getPrototype()) || [];
+    afterSubmitionFns.forEach(fn => fn.call(this, dispatch, store));
   }
 }

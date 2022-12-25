@@ -1,4 +1,7 @@
-import { DefineRules, DefineVal } from '../decorators';
+import type { Dispatch, Store } from 'redux';
+import { RootState } from '../../store';
+import { RootActions } from '../../store/actions';
+import { BeforeSubmition, DefineRules, DefineVal } from '../decorators';
 import { isReceiver, isAmount, isDescription, isDate } from '../validations';
 import { Form } from './formConstructor';
 
@@ -37,5 +40,10 @@ export class CreateBill extends Form {
     this.receiver = this.getCachedInput('receiver');
     this.description = this.getCachedInput('description');
     this.date = this.getCachedInput('date');
+  }
+
+  @BeforeSubmition()
+  changeDateFormat(dispatch: Dispatch<RootActions>, store: Store<RootState>) {
+    this.date = new Date(this.date);
   }
 }
