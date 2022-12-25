@@ -20,9 +20,10 @@ export function useForm<T extends FormInstance>(initialForm: T) {
 
   function onChange(name: string, value: any) {
     setForm(prevState => {
-      return Object.assign(copyConstructor<T>(prevState), {
-        [name]: value,
-      });
+      const constructedForm = copyConstructor<T>(prevState);
+      const newState = Object.assign(constructedForm, { [name]: value });
+      constructedForm.cachInput(name, value);
+      return newState;
     });
   }
 
@@ -54,7 +55,10 @@ export function useForm<T extends FormInstance>(initialForm: T) {
     formRef.current.resetFields();
 
     setForm(prevState => {
-      return Object.assign(copyConstructor<T>(prevState), initialForm);
+      const constructedForm = copyConstructor<T>(prevState);
+      const resetedForm = constructedForm.resetCach<T>();
+      const newState = Object.assign(constructedForm, resetedForm);
+      return newState;
     });
   }
 
