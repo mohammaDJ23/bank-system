@@ -1,12 +1,12 @@
-import { IsDate } from 'class-validator';
+import { IsDateString } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class PeriodAmountDto {
-  @IsDate()
+  @IsDateString()
   @ApiProperty()
   start: Date;
 
-  @IsDate()
+  @IsDateString()
   @ApiProperty()
   end: Date;
 }

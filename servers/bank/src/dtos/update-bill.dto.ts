@@ -3,7 +3,7 @@ import {
   IsNumber,
   IsNumberString,
   Length,
-  IsDate,
+  IsDateString,
 } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
@@ -27,7 +27,7 @@ export class UpdateBillDto {
   @ApiProperty()
   description: string;
 
-  @IsDate()
+  @IsDateString()
   @ApiProperty()
   date: Date;
 }
