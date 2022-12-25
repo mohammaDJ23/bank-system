@@ -12,5 +12,5 @@ export class LastWeekDto {
 
   @Expose()
   @ApiProperty()
-  date: Date;
+  date: string;
 }
