@@ -4,6 +4,8 @@ import { copyConstructor, Form as FormConstructor } from '../lib';
 import { ModalNames } from '../store';
 import { useAction } from './useActions';
 import { useSelector } from '../hooks';
+import { apis, Apis, ResetApi } from '../apis';
+import { CreateAxiosDefaults } from 'axios';
 
 interface FormInstance extends FormConstructor {}
 
@@ -13,21 +15,27 @@ export function useForm<T extends FormInstance>(initialForm: T) {
   const rules = form.getRules();
   const { showModal } = useAction();
   const { modals } = useSelector();
+  const { asyncOp } = useAction();
+  const { loadings } = useSelector();
 
   function onChange(name: string, value: any) {
     setForm(prevState => {
-      return Object.assign(copyConstructor<T>(prevState), {
-        [name]: value,
-      });
+      const constructedForm = copyConstructor<T>(prevState);
+      const newState = Object.assign(constructedForm, { [name]: value });
+      constructedForm.cachInput(name, value);
+      return newState;
     });
   }
 
-  function onSubmit() {
-    if (!formRef.current) return;
+  function onSubmit(apiName: Apis, config?: CreateAxiosDefaults) {
+    if (!formRef.current || isFormProcessing(apiName)) return;
 
     formRef.current.validate(valid => {
       if (valid) {
-        console.log('submit!!');
+        asyncOp(async (dispatch, store) => {
+          await ResetApi.req(apis[apiName](form as T as any), config);
+          resetForm(apiName);
+        }, apiName);
       }
     });
   }
@@ -42,18 +50,25 @@ export function useForm<T extends FormInstance>(initialForm: T) {
     });
   }
 
-  function resetForm() {
-    if (!formRef.current) return;
+  function resetForm(apiName: Apis) {
+    if (!formRef.current || isFormProcessing(apiName)) return;
 
     formRef.current.resetFields();
 
     setForm(prevState => {
-      return Object.assign(copyConstructor<T>(prevState), initialForm);
+      const constructedForm = copyConstructor<T>(prevState);
+      const resetedForm = constructedForm.resetCach<T>();
+      const newState = Object.assign(constructedForm, resetedForm);
+      return newState;
     });
   }
 
   function isConfirmationModalActive() {
     return !!modals[ModalNames.CONFIRMATION];
+  }
+
+  function isFormProcessing(apiName: Apis) {
+    return !!loadings[apiName];
   }
 
   return {
@@ -62,6 +77,7 @@ export function useForm<T extends FormInstance>(initialForm: T) {
     onSubmit,
     onSubmitWithConfirmation,
     isConfirmationModalActive,
+    isFormProcessing,
     form,
     formRef,
     rules,

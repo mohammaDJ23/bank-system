@@ -1,3 +1,5 @@
+import { FormMetadataTypes } from '.';
+
 export interface Rule {
   validator(rule: Object, value: string, callback: (error?: Error) => void): void;
   trigger: string;
@@ -5,10 +7,6 @@ export interface Rule {
 
 export interface Rules {
   [key: string]: Rule[];
-}
-
-export enum FormMetadataTypes {
-  FORM_RULES = 'FORM_RULES',
 }
 
 export function DefineRules(rules: Rule[]): (target: any, prop: string) => void {

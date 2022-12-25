@@ -21,6 +21,7 @@ async function bootstrap() {
     },
   });
 
+  app.enableCors();
   swagger(app);
   await app.startAllMicroservices();
   await app.listen(process.env.PORT);
