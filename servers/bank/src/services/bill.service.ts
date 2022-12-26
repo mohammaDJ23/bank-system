@@ -61,14 +61,18 @@ export class BillService {
     return bill;
   }
 
-  async findAll(body: ListDto, user: User): Promise<[Bill[], number]> {
+  async findAll(
+    page: number,
+    take: number,
+    user: User,
+  ): Promise<[Bill[], number]> {
     return this.billRepository
       .createQueryBuilder('bill')
       .innerJoinAndSelect('bill.user', 'user')
       .where('bill.user.id = :userId', { userId: user.id })
       .orderBy('bill.date', 'DESC')
-      .take(body.take)
-      .skip((body.page - 1) * body.take)
+      .take(take)
+      .skip((page - 1) * take)
       .getManyAndCount();
   }
 

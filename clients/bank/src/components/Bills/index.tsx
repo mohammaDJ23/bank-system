@@ -8,13 +8,15 @@ import {
   Badge,
   styled,
 } from '@mui/material';
+import { useEffect } from 'react';
 import moment from 'moment';
 import { useNavigate } from 'react-router-dom';
-import { useList } from '../../hooks';
+import { useAction, useList, useSelector } from '../../hooks';
 import ListContainer from '../../layout/ListContainer';
-import { BillList, BillObj } from '../../lib';
+import { BillList, BillObj, ListResponse } from '../../lib';
 import EmptyList from '../EmptyList';
 import Skeleton from '../Skeleton';
+import { apis, Apis, ResetApi } from '../../apis';
 
 const BadgeWrapper = styled('div')(({ theme }) => ({
   position: 'absolute',
@@ -33,8 +35,17 @@ const BadgeWrapper = styled('div')(({ theme }) => ({
 
 const BillsContent = () => {
   const navigate = useNavigate();
-  const { list, take, isEmptyList } = useList<BillObj>(new BillList());
-  const isListProcessing = false;
+  const { asyncOp } = useAction();
+  const { loadings } = useSelector();
+  const { list, take, page, isEmptyList } = useList<BillObj>(new BillList());
+  const isListProcessing = loadings[Apis.BILLS];
+
+  useEffect(() => {
+    asyncOp(async () => {
+      const response = await ResetApi.req(apis[Apis.BILLS]({ page, take }));
+      const [list, total]: ListResponse<BillObj> = response.data;
+    }, Apis.BILLS);
+  }, []);
 
   function skeleton() {
     return (

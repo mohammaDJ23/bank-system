@@ -1,5 +1,12 @@
 import { AxiosRequestConfig } from 'axios';
-import { CreateBill, CreateUser, UpdateBill, UpdateUserByAdmin, UpdateUserByUser } from '../lib';
+import {
+  ListInstance,
+  CreateBill,
+  CreateUser,
+  UpdateBill,
+  UpdateUserByAdmin,
+  UpdateUserByUser,
+} from '../lib';
 
 export enum Apis {
   CREATE_USER = 'CREATE_USER',
@@ -70,9 +77,9 @@ export const apis = {
       method: 'get',
     };
   },
-  [Apis.BILLS](): AxiosRequestConfig {
+  [Apis.BILLS](params: Pick<ListInstance, 'take' | 'page'>): AxiosRequestConfig {
     return {
-      url: '/bank/bills',
+      url: `/bank/bills?page=${params.page}&take=${params.take}`,
       method: 'get',
     };
   },
