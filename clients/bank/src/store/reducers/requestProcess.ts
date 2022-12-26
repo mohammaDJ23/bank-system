@@ -18,13 +18,11 @@ function loading(state: RequestProcessState, action: LoadingAction): RequestProc
 }
 
 function success(state: RequestProcessState, action: SuccessAction): RequestProcessState {
-  delete state[action.payload.name];
-  return Object.assign({}, state);
+  return Object.assign({}, state, { [action.payload.name]: false });
 }
 
 function error(state: RequestProcessState, action: ErrorAction): RequestProcessState {
-  delete state[action.payload.name];
-  return Object.assign({}, state);
+  return Object.assign({}, state, { [action.payload.name]: false });
 }
 
 export function requsetProcessReducer(
