@@ -11,7 +11,7 @@ import {
 import { useEffect } from 'react';
 import moment from 'moment';
 import { useNavigate } from 'react-router-dom';
-import { useAction, useList, useSelector } from '../../hooks';
+import { useAction, useList } from '../../hooks';
 import ListContainer from '../../layout/ListContainer';
 import { BillList, BillObj, ListResponse } from '../../lib';
 import EmptyList from '../EmptyList';
@@ -36,9 +36,7 @@ const BadgeWrapper = styled('div')(({ theme }) => ({
 const BillsContent = () => {
   const navigate = useNavigate();
   const { asyncOp } = useAction();
-  const { loadings } = useSelector();
-  const { list, take, page, isEmptyList, initializeList } = useList<BillObj>();
-  const isListProcessing = loadings[Apis.BILLS];
+  const { list, take, page, isEmptyList, initializeList, isListProcessing } = useList<BillObj>();
 
   useEffect(() => {
     asyncOp(async () => {
@@ -139,7 +137,7 @@ const BillsContent = () => {
 
   return (
     <ListContainer>
-      {isListProcessing ? skeleton() : isEmptyList ? <EmptyList /> : billList()}
+      {isListProcessing(Apis.BILLS) ? skeleton() : isEmptyList ? <EmptyList /> : billList()}
     </ListContainer>
   );
 };

@@ -1,10 +1,13 @@
 import { useCallback, useState } from 'react';
+import { Apis } from '../apis';
 import { copyConstructor, DefaultList, ListInstance } from '../lib';
+import { useSelector } from './useSelector';
 
 export function useList<K extends object, T extends ListInstance<K> = ListInstance<K>>(
   initialList: T = new DefaultList() as T
 ) {
   const [createdList, setCreatedList] = useState<T>(initialList);
+  const { loadings } = useSelector();
   const page = createdList.page;
   const list = createdList.list[page] || [];
   const take = createdList.take;
@@ -44,6 +47,13 @@ export function useList<K extends object, T extends ListInstance<K> = ListInstan
     setCreatedList(list);
   }, []);
 
+  const isListProcessing = useCallback(
+    (apiName: Apis) => {
+      return loadings[apiName] === undefined || loadings[apiName];
+    },
+    [loadings]
+  );
+
   return {
     list,
     page,
@@ -54,5 +64,6 @@ export function useList<K extends object, T extends ListInstance<K> = ListInstan
     onChange,
     onTakeChange,
     initializeList,
+    isListProcessing,
   };
 }
