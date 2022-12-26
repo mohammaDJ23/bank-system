@@ -117,7 +117,11 @@ const BillsContent = () => {
                   </Box>
 
                   <BadgeWrapper>
-                    <Badge max={Infinity} badgeContent={index + 1} color="primary"></Badge>
+                    <Badge
+                      max={Infinity}
+                      badgeContent={page * take - take + index + 1}
+                      color="primary"
+                    ></Badge>
                   </BadgeWrapper>
                 </ListItem>
               </ListItemButton>
