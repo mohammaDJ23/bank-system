@@ -48,8 +48,7 @@ const BillsContent = () => {
     initializeList,
     isListProcessing,
     onPageChange,
-  } = useList<BillObj>();
-  const isLoading = isListProcessing(Apis.BILLS);
+  } = useList<BillObj>({ initialList: new BillList(), apiName: Apis.BILLS });
 
   useEffect(() => {
     asyncOp(async () => {
@@ -153,7 +152,7 @@ const BillsContent = () => {
             count={count}
             page={page}
             size="small"
-            onChange={(_, page) => onPageChange(page, Apis.BILLS)}
+            onChange={(_, page) => onPageChange(page)}
           />
         </Stack>
       </>
@@ -162,7 +161,7 @@ const BillsContent = () => {
 
   return (
     <ListContainer>
-      {isLoading ? skeleton() : isEmptyList ? <EmptyList /> : billList()}
+      {isListProcessing() ? skeleton() : isEmptyList ? <EmptyList /> : billList()}
     </ListContainer>
   );
 };

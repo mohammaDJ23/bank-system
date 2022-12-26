@@ -3,10 +3,16 @@ import { Apis } from '../apis';
 import { copyConstructor, DefaultList, ListInstance } from '../lib';
 import { useSelector } from './useSelector';
 
-export function useList<K extends object, T extends ListInstance<K> = ListInstance<K>>(
-  initialList: T = new DefaultList() as T
-) {
-  const [createdList, setCreatedList] = useState<T>(initialList);
+export interface UseListOptions<T extends object = object> {
+  initialList: ListInstance<T>;
+  apiName: Apis;
+}
+
+export function useList<
+  K extends object = object,
+  T extends UseListOptions<K>['initialList'] = UseListOptions<K>['initialList']
+>({ initialList = new DefaultList(), apiName }: UseListOptions<K>) {
+  const [createdList, setCreatedList] = useState<T>(initialList as T);
   const { loadings } = useSelector();
   const page = createdList.page;
   const entireList = createdList.list;
@@ -16,18 +22,15 @@ export function useList<K extends object, T extends ListInstance<K> = ListInstan
   const isEmptyList = list.length <= 0;
   const count = Math.ceil(total / take);
 
-  const isListProcessing = useCallback(
-    (apiName: Apis) => {
-      return loadings[apiName] === undefined || loadings[apiName];
-    },
-    [loadings]
-  );
+  const isListProcessing = useCallback(() => {
+    return loadings[apiName] === undefined || loadings[apiName];
+  }, [loadings, apiName]);
 
   const onPageChange = useCallback(
-    (newPage: number, apiName: Apis) => {
+    (newPage: number) => {
       if (newPage === page) return;
 
-      if (!isListProcessing(apiName)) {
+      if (!isListProcessing()) {
         setCreatedList(prevState => {
           const newState = copyConstructor<T>(prevState);
           return Object.assign(newState, { page: newPage });
@@ -53,9 +56,9 @@ export function useList<K extends object, T extends ListInstance<K> = ListInstan
   }, []);
 
   const onChange = useCallback(
-    <T extends any>(list: T[], page: number, apiName: Apis) => {
+    <T extends any>(list: T[], page: number) => {
       onListChange(list, page);
-      onPageChange(page, apiName);
+      onPageChange(page);
     },
     [onListChange, onPageChange]
   );
