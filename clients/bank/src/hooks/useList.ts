@@ -14,7 +14,7 @@ export function useList<
   T extends UseListOptions<K>['initialList'] = UseListOptions<K>['initialList']
 >({ initialList = new DefaultList(), apiName }: UseListOptions<K>) {
   const [createdList, setCreatedList] = useState<T>(initialList as T);
-  const { loadings } = useSelector();
+  const { loadings, listContainer } = useSelector();
   const { asyncOp } = useAction();
   const page = createdList.page;
   const entireList = createdList.list;
@@ -37,9 +37,12 @@ export function useList<
           const newState = copyConstructor<T>(prevState);
           return Object.assign(newState, { page: newPage });
         });
+        if (listContainer.element) {
+          listContainer.element.scrollTo({ behavior: 'smooth', top: 0 });
+        }
       }
     },
-    [page, isListProcessing]
+    [page, isListProcessing, listContainer]
   );
 
   const onListChange = useCallback(<K extends any>(list: K[], page: number) => {
