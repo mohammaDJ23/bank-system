@@ -9,16 +9,33 @@ export function useList<K extends object, T extends ListInstance<K> = ListInstan
   const [createdList, setCreatedList] = useState<T>(initialList);
   const { loadings } = useSelector();
   const page = createdList.page;
+  const entireList = createdList.list;
   const list = createdList.list[page] || [];
   const take = createdList.take;
+  const total = createdList.total;
   const isEmptyList = list.length <= 0;
+  const count = Math.ceil(total / take);
 
-  const onPageChange = useCallback((page: number) => {
-    setCreatedList(prevState => {
-      const newState = copyConstructor<T>(prevState);
-      return Object.assign(newState, { page });
-    });
-  }, []);
+  const isListProcessing = useCallback(
+    (apiName: Apis) => {
+      return loadings[apiName] === undefined || loadings[apiName];
+    },
+    [loadings]
+  );
+
+  const onPageChange = useCallback(
+    (newPage: number, apiName: Apis) => {
+      if (newPage === page) return;
+
+      if (!isListProcessing(apiName)) {
+        setCreatedList(prevState => {
+          const newState = copyConstructor<T>(prevState);
+          return Object.assign(newState, { page: newPage });
+        });
+      }
+    },
+    [page, isListProcessing]
+  );
 
   const onListChange = useCallback(<K extends any>(list: K[], page: number) => {
     setCreatedList(prevState => {
@@ -36,9 +53,9 @@ export function useList<K extends object, T extends ListInstance<K> = ListInstan
   }, []);
 
   const onChange = useCallback(
-    <T extends any>(list: T[], page: number) => {
+    <T extends any>(list: T[], page: number, apiName: Apis) => {
       onListChange(list, page);
-      onPageChange(page);
+      onPageChange(page, apiName);
     },
     [onListChange, onPageChange]
   );
@@ -47,18 +64,14 @@ export function useList<K extends object, T extends ListInstance<K> = ListInstan
     setCreatedList(list);
   }, []);
 
-  const isListProcessing = useCallback(
-    (apiName: Apis) => {
-      return loadings[apiName] === undefined || loadings[apiName];
-    },
-    [loadings]
-  );
-
   return {
     list,
     page,
     take,
+    total,
+    count,
     isEmptyList,
+    entireList,
     onPageChange,
     onListChange,
     onChange,

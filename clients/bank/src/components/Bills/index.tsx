@@ -7,6 +7,8 @@ import {
   Card,
   Badge,
   styled,
+  Stack,
+  Pagination,
 } from '@mui/material';
 import { useEffect } from 'react';
 import moment from 'moment';
@@ -36,18 +38,30 @@ const BadgeWrapper = styled('div')(({ theme }) => ({
 const BillsContent = () => {
   const navigate = useNavigate();
   const { asyncOp } = useAction();
-  const { list, take, page, isEmptyList, initializeList, isListProcessing } = useList<BillObj>();
+  const {
+    list,
+    entireList,
+    take,
+    count,
+    page,
+    isEmptyList,
+    initializeList,
+    isListProcessing,
+    onPageChange,
+  } = useList<BillObj>();
+  const isLoading = isListProcessing(Apis.BILLS);
 
   useEffect(() => {
     asyncOp(async () => {
       const response = await ResetApi.req(apis[Apis.BILLS]({ page, take }));
       const [list, total]: ListResponse<BillObj> = response.data;
       const billList = new BillList();
-      billList.list[billList.page] = list;
+      billList.list = Object.assign(entireList, { [page]: list });
+      billList.page = page;
       billList.total = total;
       initializeList(billList);
     }, Apis.BILLS);
-  }, []);
+  }, [page, take, entireList, initializeList, asyncOp]);
 
   function skeleton() {
     return (
@@ -83,61 +97,72 @@ const BillsContent = () => {
 
   function billList() {
     return (
-      <List>
-        {list.map((bill, index) => (
-          <Card
-            key={index}
-            variant="outlined"
-            sx={{ my: '20px', position: 'relative', overflow: 'visible' }}
-            onClick={() => navigate(`/bank/bills/${bill.id}`)}
-          >
-            <ListItemButton>
-              <ListItem disablePadding sx={{ my: '10px' }}>
-                <Box
-                  display="flex"
-                  flexDirection="column"
-                  alignItems="start"
-                  width="100%"
-                  gap="10px"
-                >
-                  <Box component="div">
-                    <ListItemText
-                      primaryTypographyProps={{ fontSize: '14px', mb: '10px' }}
-                      secondaryTypographyProps={{ fontSize: '12px' }}
-                      sx={{ margin: '0' }}
-                      primary={`${bill.receiver} received ${bill.amount} at ${moment(
-                        bill.date
-                      ).format('ll')}`}
-                      secondary={bill.description}
-                    />
+      <>
+        <List>
+          {list.map((bill, index) => (
+            <Card
+              key={index}
+              variant="outlined"
+              sx={{ my: '20px', position: 'relative', overflow: 'visible' }}
+              onClick={() => navigate(`/bank/bills/${bill.id}`)}
+            >
+              <ListItemButton>
+                <ListItem disablePadding sx={{ my: '10px' }}>
+                  <Box
+                    display="flex"
+                    flexDirection="column"
+                    alignItems="start"
+                    width="100%"
+                    gap="10px"
+                  >
+                    <Box component="div">
+                      <ListItemText
+                        primaryTypographyProps={{ fontSize: '14px', mb: '10px' }}
+                        secondaryTypographyProps={{ fontSize: '12px' }}
+                        sx={{ margin: '0' }}
+                        primary={`${bill.receiver} received ${bill.amount} at ${moment(
+                          bill.date
+                        ).format('ll')}`}
+                        secondary={bill.description}
+                      />
+                    </Box>
+
+                    <Box component="div" alignSelf="end">
+                      <ListItemText
+                        secondaryTypographyProps={{ fontSize: '10px' }}
+                        secondary={
+                          new Date(bill.updatedAt) > new Date(bill.createdAt)
+                            ? `updated at ${moment(bill.updatedAt).fromNow()}`
+                            : `${moment(bill.createdAt).fromNow()}`
+                        }
+                      />
+                    </Box>
                   </Box>
 
-                  <Box component="div" alignSelf="end">
-                    <ListItemText
-                      secondaryTypographyProps={{ fontSize: '10px' }}
-                      secondary={
-                        new Date(bill.updatedAt) > new Date(bill.createdAt)
-                          ? `updated at ${moment(bill.updatedAt).fromNow()}`
-                          : `${moment(bill.createdAt).fromNow()}`
-                      }
-                    />
-                  </Box>
-                </Box>
+                  <BadgeWrapper>
+                    <Badge max={Infinity} badgeContent={index + 1} color="primary"></Badge>
+                  </BadgeWrapper>
+                </ListItem>
+              </ListItemButton>
+            </Card>
+          ))}
+        </List>
 
-                <BadgeWrapper>
-                  <Badge max={Infinity} badgeContent={index + 1} color="primary"></Badge>
-                </BadgeWrapper>
-              </ListItem>
-            </ListItemButton>
-          </Card>
-        ))}
-      </List>
+        <Stack spacing={2} alignItems="center">
+          <Pagination
+            count={count}
+            page={page}
+            size="small"
+            onChange={(_, page) => onPageChange(page, Apis.BILLS)}
+          />
+        </Stack>
+      </>
     );
   }
 
   return (
     <ListContainer>
-      {isListProcessing(Apis.BILLS) ? skeleton() : isEmptyList ? <EmptyList /> : billList()}
+      {isLoading ? skeleton() : isEmptyList ? <EmptyList /> : billList()}
     </ListContainer>
   );
 };
