@@ -77,7 +77,7 @@ export const apis = {
       method: 'get',
     };
   },
-  [Apis.BILLS](params: Pick<ListInstance, 'take' | 'page'>): AxiosRequestConfig {
+  [Apis.BILLS]<T>(params: Pick<ListInstance<T>, 'take' | 'page'>): AxiosRequestConfig {
     return {
       url: `/bank/bills?page=${params.page}&take=${params.take}`,
       method: 'get',

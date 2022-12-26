@@ -10,15 +10,14 @@ import {
   Stack,
   Pagination,
 } from '@mui/material';
-import { useEffect } from 'react';
 import moment from 'moment';
 import { useNavigate } from 'react-router-dom';
-import { useAction, useList } from '../../hooks';
+import { useList } from '../../hooks';
 import ListContainer from '../../layout/ListContainer';
-import { BillList, BillObj, ListResponse } from '../../lib';
+import { BillList, BillObj } from '../../lib';
 import EmptyList from '../EmptyList';
 import Skeleton from '../Skeleton';
-import { apis, Apis, ResetApi } from '../../apis';
+import { Apis } from '../../apis';
 
 const BadgeWrapper = styled('div')(({ theme }) => ({
   position: 'absolute',
@@ -37,30 +36,9 @@ const BadgeWrapper = styled('div')(({ theme }) => ({
 
 const BillsContent = () => {
   const navigate = useNavigate();
-  const { asyncOp } = useAction();
-  const {
-    list,
-    entireList,
-    take,
-    count,
-    page,
-    isEmptyList,
-    initializeList,
-    isListProcessing,
-    onPageChange,
-  } = useList<BillObj>({ initialList: new BillList(), apiName: Apis.BILLS });
-
-  useEffect(() => {
-    asyncOp(async () => {
-      const response = await ResetApi.req(apis[Apis.BILLS]({ page, take }));
-      const [list, total]: ListResponse<BillObj> = response.data;
-      const billList = new BillList();
-      billList.list = Object.assign(entireList, { [page]: list });
-      billList.page = page;
-      billList.total = total;
-      initializeList(billList);
-    }, Apis.BILLS);
-  }, [page, take, entireList, initializeList, asyncOp]);
+  const { list, take, count, page, isEmptyList, isListProcessing, onPageChange } = useList<BillObj>(
+    { initialList: new BillList(), apiName: Apis.BILLS }
+  );
 
   function skeleton() {
     return (

@@ -1,7 +1,8 @@
-import { useCallback, useState } from 'react';
-import { Apis } from '../apis';
-import { copyConstructor, DefaultList, ListInstance } from '../lib';
+import { useCallback, useEffect, useState } from 'react';
+import { apis, Apis, ResetApi } from '../apis';
+import { Constructor, copyConstructor, DefaultList, ListInstance, ListResponse } from '../lib';
 import { useSelector } from './useSelector';
+import { useAction } from './';
 
 export interface UseListOptions<T extends object = object> {
   initialList: ListInstance<T>;
@@ -14,6 +15,7 @@ export function useList<
 >({ initialList = new DefaultList(), apiName }: UseListOptions<K>) {
   const [createdList, setCreatedList] = useState<T>(initialList as T);
   const { loadings } = useSelector();
+  const { asyncOp } = useAction();
   const page = createdList.page;
   const entireList = createdList.list;
   const list = createdList.list[page] || [];
@@ -66,6 +68,19 @@ export function useList<
   const initializeList = useCallback((list: T) => {
     setCreatedList(list);
   }, []);
+
+  useEffect(() => {
+    asyncOp(async () => {
+      if (Array.isArray(entireList[page])) return;
+      const response = await ResetApi.req(apis[apiName]<K>({ page, take } as any));
+      const [list, total]: ListResponse<K> = response.data;
+      const billList = new (createdList.constructor as Constructor)() as T;
+      billList.list = Object.assign(entireList, { [page]: list });
+      billList.page = page;
+      billList.total = total;
+      initializeList(billList);
+    }, apiName);
+  }, [page, take, entireList, apiName, createdList, initializeList, asyncOp]);
 
   return {
     list,
