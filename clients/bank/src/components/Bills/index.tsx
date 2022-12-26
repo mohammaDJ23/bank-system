@@ -37,13 +37,17 @@ const BillsContent = () => {
   const navigate = useNavigate();
   const { asyncOp } = useAction();
   const { loadings } = useSelector();
-  const { list, take, page, isEmptyList } = useList<BillObj>(new BillList());
+  const { list, take, page, isEmptyList, initializeList } = useList<BillObj>();
   const isListProcessing = loadings[Apis.BILLS];
 
   useEffect(() => {
     asyncOp(async () => {
       const response = await ResetApi.req(apis[Apis.BILLS]({ page, take }));
       const [list, total]: ListResponse<BillObj> = response.data;
+      const billList = new BillList();
+      billList.list[billList.page] = list;
+      billList.total = total;
+      initializeList(billList);
     }, Apis.BILLS);
   }, []);
 

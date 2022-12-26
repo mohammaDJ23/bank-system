@@ -1,8 +1,9 @@
 import { useCallback, useState } from 'react';
-import { copyConstructor, ListInstance } from '../lib';
+import { apis, ResetApi } from '../apis';
+import { copyConstructor, DefaultList, ListInstance } from '../lib';
 
 export function useList<K extends object, T extends ListInstance<K> = ListInstance<K>>(
-  initialList: T
+  initialList: T = new DefaultList() as T
 ) {
   const [createdList, setCreatedList] = useState<T>(initialList);
   const page = createdList.page;
@@ -40,5 +41,19 @@ export function useList<K extends object, T extends ListInstance<K> = ListInstan
     [onListChange, onPageChange]
   );
 
-  return { list, page, take, isEmptyList, onPageChange, onListChange, onChange, onTakeChange };
+  const initializeList = useCallback((list: T) => {
+    setCreatedList(list);
+  }, []);
+
+  return {
+    list,
+    page,
+    take,
+    isEmptyList,
+    onPageChange,
+    onListChange,
+    onChange,
+    onTakeChange,
+    initializeList,
+  };
 }
