@@ -27,9 +27,9 @@ const App: FC<AppImportation> = props => {
               key={route.path}
               path={route.path}
               element={
-                <Suspense fallback={<LoadingFallback />}>
-                  <Navigation>{route.element}</Navigation>
-                </Suspense>
+                <Navigation>
+                  <Suspense fallback={<LoadingFallback />}> {route.element}</Suspense>
+                </Navigation>
               }
             />
           ))}
