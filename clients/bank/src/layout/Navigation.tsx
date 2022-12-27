@@ -73,7 +73,7 @@ const Navigation: FC<PropsWithChildren> = ({ children }) => {
   const [open, setOpen] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
-  const { isAdmin } = useAuth();
+  const { isAdmin, isUser } = useAuth();
   const activeRoute = routes.find(route => matchPath(route.path, location.pathname));
   const activeRouteTitle = activeRoute?.title || 'Bank system';
 
@@ -156,7 +156,7 @@ const Navigation: FC<PropsWithChildren> = ({ children }) => {
                 </ListItem>
               );
 
-              return isAdmin() ? navigationEl : item.role === UserRoles.USER && navigationEl;
+              return isAdmin() ? navigationEl : isUser(item.role) && navigationEl;
             })}
           </List>
         </Box>
