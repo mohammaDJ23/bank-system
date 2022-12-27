@@ -14,23 +14,9 @@ import { Apis } from '../../apis';
 import { useList } from '../../hooks';
 import ListContainer from '../../layout/ListContainer';
 import { UserList, UserObj } from '../../lib';
+import CountBadge from '../CountBadge';
 import EmptyList from '../EmptyList';
 import Skeleton from '../Skeleton';
-
-const BadgeWrapper = styled('div')(({ theme }) => ({
-  position: 'absolute',
-  zIndex: '1',
-  top: '-32px',
-  right: '-10px',
-  '.css-1c32n2y-MuiBadge-root': {
-    display: 'unset',
-  },
-  '.css-106c1u2-MuiBadge-badge': {
-    display: 'unset',
-    position: 'unset',
-    padding: '2px 6px',
-  },
-}));
 
 const UsersContent = () => {
   const navigate = useNavigate();
@@ -136,9 +122,6 @@ const UsersContent = () => {
                     />
                   </Box>
                 </Box>
-                <BadgeWrapper>
-                  <Badge max={Infinity} badgeContent={index + 1} color="primary"></Badge>
-                </BadgeWrapper>
               </ListItem>
             </ListItemButton>
           </Card>

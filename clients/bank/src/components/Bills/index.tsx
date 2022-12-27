@@ -5,8 +5,6 @@ import {
   ListItemButton,
   Box,
   Card,
-  Badge,
-  styled,
   Stack,
   Pagination,
 } from '@mui/material';
@@ -18,21 +16,7 @@ import { BillList, BillObj } from '../../lib';
 import EmptyList from '../EmptyList';
 import Skeleton from '../Skeleton';
 import { Apis } from '../../apis';
-
-const BadgeWrapper = styled('div')(({ theme }) => ({
-  position: 'absolute',
-  zIndex: '1',
-  top: '-32px',
-  right: '-10px',
-  '.css-1c32n2y-MuiBadge-root': {
-    display: 'unset',
-  },
-  '.css-106c1u2-MuiBadge-badge': {
-    display: 'unset',
-    position: 'unset',
-    padding: '2px 6px',
-  },
-}));
+import CountBadge from '../CountBadge';
 
 const BillsContent = () => {
   const navigate = useNavigate();
@@ -116,13 +100,7 @@ const BillsContent = () => {
                     </Box>
                   </Box>
 
-                  <BadgeWrapper>
-                    <Badge
-                      max={Infinity}
-                      badgeContent={page * take - take + index + 1}
-                      color="primary"
-                    ></Badge>
-                  </BadgeWrapper>
+                  <CountBadge index={index} page={page} take={take} />
                 </ListItem>
               </ListItemButton>
             </Card>
