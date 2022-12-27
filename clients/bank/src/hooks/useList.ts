@@ -3,16 +3,18 @@ import { apis, Apis, ResetApi } from '../apis';
 import { Constructor, copyConstructor, DefaultList, ListInstance, ListResponse } from '../lib';
 import { useSelector } from './useSelector';
 import { useAction } from './';
+import { AxiosRequestConfig } from 'axios';
 
 export interface UseListOptions<T extends object = object> {
   initialList: ListInstance<T>;
   apiName: Apis;
+  config?: AxiosRequestConfig;
 }
 
 export function useList<
   K extends object = object,
   T extends UseListOptions<K>['initialList'] = UseListOptions<K>['initialList']
->({ initialList = new DefaultList(), apiName }: UseListOptions<K>) {
+>({ initialList = new DefaultList(), apiName, config }: UseListOptions<K>) {
   const [createdList, setCreatedList] = useState<T>(initialList as T);
   const { loadings, listContainer } = useSelector();
   const { asyncOp } = useAction();
@@ -75,7 +77,7 @@ export function useList<
   useEffect(() => {
     asyncOp(async () => {
       if (Array.isArray(entireList[page])) return;
-      const response = await ResetApi.req(apis[apiName]<K>({ page, take } as any));
+      const response = await ResetApi.req(apis[apiName]<K>({ page, take } as any), config);
       const [list, total]: ListResponse<K> = response.data;
       const billList = new (createdList.constructor as Constructor)() as T;
       billList.list = Object.assign(entireList, { [page]: list });

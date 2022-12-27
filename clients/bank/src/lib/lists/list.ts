@@ -9,6 +9,8 @@ export interface ListInstance<T = any> {
   total: number;
 }
 
+export type ListParams<T> = Pick<ListInstance<T>, 'take' | 'page'>;
+
 export type ListResponse<T extends unknown = unknown> = [T[], number];
 
 export class DefaultList implements ListInstance {

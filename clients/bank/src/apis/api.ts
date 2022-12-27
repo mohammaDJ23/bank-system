@@ -6,6 +6,7 @@ import {
   UpdateBill,
   UpdateUserByAdmin,
   UpdateUserByUser,
+  ListParams,
 } from '../lib';
 
 export enum Apis {
@@ -71,13 +72,13 @@ export const apis = {
       },
     };
   },
-  [Apis.USERS](): AxiosRequestConfig {
+  [Apis.USERS]<T>(params: ListParams<T>): AxiosRequestConfig {
     return {
-      url: '/user/all',
+      url: `/user/all?page=${params.page}&take=${params.take}`,
       method: 'get',
     };
   },
-  [Apis.BILLS]<T>(params: Pick<ListInstance<T>, 'take' | 'page'>): AxiosRequestConfig {
+  [Apis.BILLS]<T>(params: ListParams<T>): AxiosRequestConfig {
     return {
       url: `/bank/bills?page=${params.page}&take=${params.take}`,
       method: 'get',
