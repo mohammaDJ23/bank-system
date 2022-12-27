@@ -5,6 +5,7 @@ export enum RequestProcess {
   LOADING = 'LOADING',
   SUCCESS = 'SUCCESS',
   ERROR = 'ERROR',
+  CLEAN = 'CLEAN',
 }
 
 export interface RequestProcessState {
@@ -25,6 +26,10 @@ function error(state: RequestProcessState, action: ErrorAction): RequestProcessS
   return Object.assign({}, state, { [action.payload.name]: false });
 }
 
+function clean() {
+  return Object.assign({});
+}
+
 export function requsetProcessReducer(
   state: RequestProcessState = initialState,
   actions: RootActions
@@ -38,6 +43,9 @@ export function requsetProcessReducer(
 
     case RequestProcess.ERROR:
       return error(state, actions);
+
+    case RequestProcess.CLEAN:
+      return clean();
 
     default:
       return state;
