@@ -1,6 +1,5 @@
 import { AxiosRequestConfig } from 'axios';
 import {
-  ListInstance,
   CreateBill,
   CreateUser,
   UpdateBill,

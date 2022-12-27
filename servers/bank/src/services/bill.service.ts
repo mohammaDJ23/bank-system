@@ -52,8 +52,9 @@ export class BillService {
   async findById(billId: number, userId: number): Promise<Bill> {
     const bill = await this.billRepository
       .createQueryBuilder('bill')
-      .where('bill.id = :billId', { billId })
-      .andWhere('bill.user.id = :userId', { userId })
+      .innerJoinAndSelect('bill.user', 'user')
+      .where('bill.user.id = :userId', { userId })
+      .andWhere('bill.id = :billId', { billId })
       .getOne();
 
     if (!bill) throw new NotFoundException('Could not found the bill.');
