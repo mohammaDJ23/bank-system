@@ -11,7 +11,7 @@ import { BrowserHistory, MemoryHistory } from 'history';
 import LoadingFallback from './layout/LoadingFallback';
 import { Provider } from 'react-redux';
 import { store } from './store';
-import StateCleanerProvider from './components/hoc/StateCleanerProvider';
+import RequestProcessCleanerProvider from './components/hoc/RequestProcessCleanerProvider';
 
 interface AppImportation {
   history: BrowserHistory | MemoryHistory;
@@ -28,11 +28,11 @@ const App: FC<AppImportation> = props => {
               key={route.path}
               path={route.path}
               element={
-                <StateCleanerProvider>
+                <RequestProcessCleanerProvider>
                   <Navigation>
                     <Suspense fallback={<LoadingFallback />}> {route.element}</Suspense>
                   </Navigation>
-                </StateCleanerProvider>
+                </RequestProcessCleanerProvider>
               }
             />
           ))}

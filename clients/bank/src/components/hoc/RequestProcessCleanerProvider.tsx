@@ -1,7 +1,7 @@
 import { FC, PropsWithChildren, Fragment, useEffect } from 'react';
 import { useAction } from '../../hooks';
 
-const StateCleanerProvider: FC<PropsWithChildren> = ({ children }) => {
+const RequestProcessCleanerProvider: FC<PropsWithChildren> = ({ children }) => {
   const { cleanRequestProcess } = useAction();
 
   useEffect(() => {
@@ -13,4 +13,4 @@ const StateCleanerProvider: FC<PropsWithChildren> = ({ children }) => {
   return <Fragment>{children}</Fragment>;
 };
 
-export default StateCleanerProvider;
+export default RequestProcessCleanerProvider;
