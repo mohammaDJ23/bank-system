@@ -1,13 +1,4 @@
-import {
-  List,
-  ListItem,
-  ListItemText,
-  ListItemButton,
-  Box,
-  Card,
-  Stack,
-  Pagination,
-} from '@mui/material';
+import { List, ListItem, ListItemText, ListItemButton, Box, Card } from '@mui/material';
 import moment from 'moment';
 import { useNavigate } from 'react-router-dom';
 import { useList } from '../../hooks';
@@ -17,6 +8,7 @@ import EmptyList from '../EmptyList';
 import Skeleton from '../Skeleton';
 import { Apis } from '../../apis';
 import CountBadge from '../CountBadge';
+import Pagination from '../Pagination';
 
 const BillsContent = () => {
   const navigate = useNavigate();
@@ -107,14 +99,7 @@ const BillsContent = () => {
           ))}
         </List>
 
-        <Stack spacing={2} alignItems="center">
-          <Pagination
-            count={count}
-            page={page}
-            size="small"
-            onChange={(_, page) => onPageChange(page)}
-          />
-        </Stack>
+        <Pagination page={page} count={count} onPageChange={onPageChange} />
       </>
     );
   }
