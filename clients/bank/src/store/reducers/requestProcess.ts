@@ -5,6 +5,7 @@ export enum RequestProcess {
   LOADING = 'LOADING',
   SUCCESS = 'SUCCESS',
   ERROR = 'ERROR',
+  CLEAN = 'CLEAN',
 }
 
 export interface RequestProcessState {
@@ -18,13 +19,15 @@ function loading(state: RequestProcessState, action: LoadingAction): RequestProc
 }
 
 function success(state: RequestProcessState, action: SuccessAction): RequestProcessState {
-  delete state[action.payload.name];
-  return Object.assign({}, state);
+  return Object.assign({}, state, { [action.payload.name]: false });
 }
 
 function error(state: RequestProcessState, action: ErrorAction): RequestProcessState {
-  delete state[action.payload.name];
-  return Object.assign({}, state);
+  return Object.assign({}, state, { [action.payload.name]: false });
+}
+
+function clean() {
+  return Object.assign({});
 }
 
 export function requsetProcessReducer(
@@ -40,6 +43,9 @@ export function requsetProcessReducer(
 
     case RequestProcess.ERROR:
       return error(state, actions);
+
+    case RequestProcess.CLEAN:
+      return clean();
 
     default:
       return state;

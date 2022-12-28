@@ -52,8 +52,9 @@ export class BillService {
   async findById(billId: number, userId: number): Promise<Bill> {
     const bill = await this.billRepository
       .createQueryBuilder('bill')
-      .where('bill.id = :billId', { billId })
-      .andWhere('bill.user.id = :userId', { userId })
+      .innerJoinAndSelect('bill.user', 'user')
+      .where('bill.user.id = :userId', { userId })
+      .andWhere('bill.id = :billId', { billId })
       .getOne();
 
     if (!bill) throw new NotFoundException('Could not found the bill.');
@@ -61,14 +62,18 @@ export class BillService {
     return bill;
   }
 
-  async findAll(body: ListDto, user: User): Promise<[Bill[], number]> {
+  async findAll(
+    page: number,
+    take: number,
+    user: User,
+  ): Promise<[Bill[], number]> {
     return this.billRepository
       .createQueryBuilder('bill')
       .innerJoinAndSelect('bill.user', 'user')
       .where('bill.user.id = :userId', { userId: user.id })
       .orderBy('bill.date', 'DESC')
-      .take(body.take)
-      .skip((body.page - 1) * body.take)
+      .take(take)
+      .skip((page - 1) * take)
       .getManyAndCount();
   }
 

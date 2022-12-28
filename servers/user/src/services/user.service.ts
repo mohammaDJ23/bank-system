@@ -154,11 +154,11 @@ export class UserService {
     }
   }
 
-  findAll(body: FindAllDto): Promise<[User[], number]> {
+  findAll(page: number, take: number): Promise<[User[], number]> {
     return this.userRepository
       .createQueryBuilder()
-      .take(body.take)
-      .skip((body.page - 1) * body.take)
+      .take(take)
+      .skip((page - 1) * take)
       .getManyAndCount();
   }
 }

@@ -40,10 +40,10 @@ export function isUserAuthenticated() {
   return !!getToken();
 }
 
-export function isUser() {
-  return getTokenInfo()?.role === UserRoles.USER;
+export function isUser(role?: UserRoles) {
+  return role || getTokenInfo()?.role === UserRoles.USER;
 }
 
-export function isAdmin() {
-  return getTokenInfo()?.role === UserRoles.ADMIN;
+export function isAdmin(role?: UserRoles) {
+  return role || getTokenInfo()?.role === UserRoles.ADMIN;
 }

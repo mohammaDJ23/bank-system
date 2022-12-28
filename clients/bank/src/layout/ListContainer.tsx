@@ -1,5 +1,6 @@
 import { styled, Box } from '@mui/material';
-import { FC, PropsWithChildren } from 'react';
+import { FC, PropsWithChildren, useEffect, useRef } from 'react';
+import { useAction } from '../hooks';
 
 const Container = styled('div')(({ theme }) => ({
   width: '100vw',
@@ -39,11 +40,19 @@ const Content = styled('div')(({ theme }) => ({
 }));
 
 const ListContainer: FC<PropsWithChildren> = ({ children }) => {
+  const wrapperRef = useRef<HTMLDivElement | null>(null);
+  const { setListContainerElement } = useAction();
+
+  useEffect(() => {
+    if (wrapperRef.current) {
+      setListContainerElement(wrapperRef.current);
+    }
+  }, []);
+
   return (
     <Container>
-      <Wrapper>
+      <Wrapper ref={wrapperRef}>
         <Content>
-          {' '}
           <Box pb="16px">{children}</Box>
         </Content>
       </Wrapper>

@@ -1,5 +1,12 @@
 import { AxiosRequestConfig } from 'axios';
-import { CreateBill, CreateUser, UpdateBill, UpdateUserByAdmin, UpdateUserByUser } from '../lib';
+import {
+  CreateBill,
+  CreateUser,
+  UpdateBill,
+  UpdateUserByAdmin,
+  UpdateUserByUser,
+  ListParams,
+} from '../lib';
 
 export enum Apis {
   CREATE_USER = 'CREATE_USER',
@@ -64,15 +71,15 @@ export const apis = {
       },
     };
   },
-  [Apis.USERS](): AxiosRequestConfig {
+  [Apis.USERS]<T>(params: ListParams<T>): AxiosRequestConfig {
     return {
-      url: '/user/all',
+      url: `/user/all?page=${params.page}&take=${params.take}`,
       method: 'get',
     };
   },
-  [Apis.BILLS](): AxiosRequestConfig {
+  [Apis.BILLS]<T>(params: ListParams<T>): AxiosRequestConfig {
     return {
-      url: '/bank/bills',
+      url: `/bank/bills?page=${params.page}&take=${params.take}`,
       method: 'get',
     };
   },

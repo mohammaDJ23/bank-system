@@ -12,6 +12,7 @@ import {
   ParseIntPipe,
   Header,
   StreamableFile,
+  Query,
 } from '@nestjs/common';
 import {
   ApiBody,
@@ -196,10 +197,11 @@ export class GatewayController {
   @ApiResponse({ status: HttpStatus.UNAUTHORIZED, type: ErrorDto })
   @ApiResponse({ status: HttpStatus.INTERNAL_SERVER_ERROR, type: ErrorDto })
   findAllBills(
-    @Body() body: ListDto,
+    @Query('page') page: number,
+    @Query('take') take: number,
     @CurrentUser() user: User,
   ): Promise<[Bill[], number]> {
-    return this.billService.findAll(body, user);
+    return this.billService.findAll(page, take, user);
   }
 
   @Get('bill/:id')

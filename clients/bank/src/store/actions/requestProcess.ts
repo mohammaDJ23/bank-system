@@ -21,7 +21,11 @@ export interface ErrorAction {
   payload: { name: string };
 }
 
-export type RequestProcessActions = LoadingAction | SuccessAction | ErrorAction;
+export interface CleanAction {
+  type: RequestProcess.CLEAN;
+}
+
+export type RequestProcessActions = LoadingAction | SuccessAction | ErrorAction | CleanAction;
 
 export function loading(name: Apis) {
   return {
@@ -41,6 +45,12 @@ export function error(name: Apis) {
   return {
     type: RequestProcess.ERROR,
     payload: { name },
+  };
+}
+
+export function cleanRequestProcess() {
+  return {
+    type: RequestProcess.CLEAN,
   };
 }
 

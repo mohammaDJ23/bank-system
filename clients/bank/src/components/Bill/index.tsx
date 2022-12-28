@@ -2,33 +2,36 @@ import { Box, Typography, Menu, MenuItem, IconButton } from '@mui/material';
 import { MoreVert } from '@mui/icons-material';
 import moment from 'moment';
 import DefaultContainer from '../../layout/DefaultContainer';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { Button } from 'element-react';
 import { useAction, useSelector } from '../../hooks';
 import Modal from '../Modal';
 import { ModalNames } from '../../store';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Skeleton from '../Skeleton';
+import { Apis, apis, ResetApi } from '../../apis';
+import { BillObj } from '../../lib';
 
 const BillContent = () => {
-  const bill = {
-    id: 1,
-    amount: '2342344',
-    receiver: 'Mohammad nowresideh',
-    description:
-      'descosidjafoai;sd oasdijf;aosijdf ijidosj foiasdjfoia jsdiofjaiosdjfoiajsdifj aoisjdio fjaiosjdif iasdjfij aiosdjf',
-    date: new Date().toISOString(),
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date(new Date().getTime() + 1000).toISOString(),
-    userId: 1,
-  };
-  const options = [{ label: 'Update', path: `/bank/update-user/${bill.id}` }];
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const [bill, setBill] = useState<BillObj | null>(null);
   const open = Boolean(anchorEl);
   const navigate = useNavigate();
-  const { showModal, hideModal } = useAction();
-  const { modals } = useSelector();
-  const isBillProcessing = false;
+  const params = useParams();
+  const { showModal, hideModal, asyncOp } = useAction();
+  const { modals, loadings } = useSelector();
+  const isBillProcessing = loadings[Apis.BILL] === undefined || loadings[Apis.BILL];
+  const options = bill ? [{ label: 'Update', path: `/bank/update-user/${bill.id}` }] : [];
+
+  useEffect(() => {
+    const billId = params.id;
+    if (billId) {
+      asyncOp(async () => {
+        const response = await ResetApi.req<BillObj>(apis[Apis.BILL](+billId));
+        setBill(response.data);
+      }, Apis.BILL);
+    }
+  }, [params, asyncOp]);
 
   function onMenuOpen(event: React.MouseEvent<HTMLElement>) {
     setAnchorEl(event.currentTarget);
@@ -83,7 +86,7 @@ const BillContent = () => {
     );
   }
 
-  function billDetails() {
+  function billDetails(bill: BillObj) {
     return (
       <>
         <Box width="100%" display="flex" flexDirection="column" alignItems="start" gap="8px">
@@ -165,7 +168,7 @@ const BillContent = () => {
 
   return (
     <DefaultContainer>
-      {isBillProcessing ? skeleton() : bill ? billDetails() : notFound()}
+      {isBillProcessing ? skeleton() : bill ? billDetails(bill) : notFound()}
     </DefaultContainer>
   );
 };
