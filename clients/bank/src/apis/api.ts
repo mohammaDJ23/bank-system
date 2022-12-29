@@ -9,6 +9,7 @@ import {
 } from '../lib';
 
 export enum Apis {
+  DEFAULT = 'DEFAULT',
   CREATE_USER = 'CREATE_USER',
   CREATE_BILL = 'CREATE_BILL',
   UPDATE_USER_BY_ADMIN = 'UPDATE_USER_BY_ADMIN',
@@ -22,6 +23,9 @@ export enum Apis {
 }
 
 export const apis = {
+  [Apis.DEFAULT]() {
+    return {};
+  },
   [Apis.CREATE_USER](data: CreateUser): AxiosRequestConfig {
     return {
       url: '/user/create',
