@@ -1,4 +1,6 @@
-import { DefineRules, DefineVal } from '../decorators';
+import { Notification } from 'element-react';
+import {} from 'react-router-dom';
+import { AfterSubmition, DefineRules, DefineVal } from '../decorators';
 import { isReceiver, isAmount, isDescription, isDate } from '../validations';
 import { Form } from './formConstructor';
 
@@ -47,5 +49,10 @@ export class UpdateBill extends Form {
     this.receiver = receiver;
     this.description = description;
     this.date = date;
+  }
+
+  @AfterSubmition()
+  afterUpdating() {
+    Notification('You have updated the bill successfully.', 'success');
   }
 }
