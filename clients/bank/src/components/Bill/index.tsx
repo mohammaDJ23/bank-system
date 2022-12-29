@@ -21,7 +21,7 @@ const BillContent = () => {
   const { showModal, hideModal, asyncOp } = useAction();
   const { modals, loadings } = useSelector();
   const isBillProcessing = loadings[Apis.BILL] === undefined || loadings[Apis.BILL];
-  const options = bill ? [{ label: 'Update', path: `/bank/update-user/${bill.id}` }] : [];
+  const options = bill ? [{ label: 'Update', path: `/bank/update-bill/${bill.id}` }] : [];
 
   useEffect(() => {
     const billId = params.id;
