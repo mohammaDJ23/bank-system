@@ -3,8 +3,8 @@ import { useState, useRef, useCallback } from 'react';
 import { copyConstructor, Form as FormConstructor } from '../lib';
 import { ModalNames } from '../store';
 import { useAction } from './useActions';
-import { useSelector } from '../hooks';
-import { apis, Apis, ResetApi } from '../apis';
+import { useRequest, useSelector } from '../hooks';
+import { Apis, Req } from '../apis';
 import { CreateAxiosDefaults } from 'axios';
 
 interface FormInstance extends FormConstructor {}
@@ -15,8 +15,7 @@ export function useForm<T extends FormInstance>(initialForm: T) {
   const rules = form.getRules();
   const { showModal, hideModal } = useAction();
   const { modals } = useSelector();
-  const { asyncOp } = useAction();
-  const { loadings } = useSelector();
+  const { request, isApiProcessing } = useRequest();
 
   const onChange = useCallback((name: string, value: any) => {
     setForm(prevState => {
@@ -29,9 +28,9 @@ export function useForm<T extends FormInstance>(initialForm: T) {
 
   const isFormProcessing = useCallback(
     (apiName: Apis) => {
-      return !!loadings[apiName];
+      return isApiProcessing(apiName);
     },
-    [loadings]
+    [isApiProcessing]
   );
 
   const resetForm = useCallback(
@@ -60,19 +59,24 @@ export function useForm<T extends FormInstance>(initialForm: T) {
 
       formRef.current.validate(valid => {
         if (valid) {
-          asyncOp(async (dispatch, store) => {
-            form.beforeSubmition(dispatch, store);
-            await ResetApi.req(apis[apiName](form as T as any), config);
-            form.afterSubmition(dispatch, store);
-            resetForm(apiName);
-            if (isConfirmationModalActive()) {
-              hideModal(ModalNames.CONFIRMATION);
-            }
-          }, apiName);
+          request<T, T>(
+            new Req({
+              data: form,
+              apiName,
+              beforeRequest(dispatch, store) {
+                form.beforeSubmition(dispatch, store);
+              },
+              afterRequest(response, dispatch, store) {
+                form.afterSubmition(dispatch, store);
+                resetForm(apiName);
+                if (isConfirmationModalActive()) hideModal(ModalNames.CONFIRMATION);
+              },
+            })
+          );
         }
       });
     },
-    [isFormProcessing, resetForm, asyncOp, isConfirmationModalActive, hideModal, form]
+    [isFormProcessing, resetForm, isConfirmationModalActive, hideModal, request, form]
   );
 
   const onSubmitWithConfirmation = useCallback(() => {

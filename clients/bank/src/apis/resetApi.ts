@@ -22,8 +22,8 @@ export class Req<R = any, D = any> {
   public readonly apiName: Apis;
   public readonly data: D;
   public readonly config: CreateAxiosDefaults<D>;
-  public readonly beforeSubmition: (dispatch: Dispatch<RootActions>, store: RootState) => void;
-  public readonly afterSubmition: (
+  public readonly beforeRequest: (dispatch: Dispatch<RootActions>, store: RootState) => void;
+  public readonly afterRequest: (
     response: R,
     dispatch: Dispatch<RootActions>,
     store: RootState
@@ -37,14 +37,14 @@ export class Req<R = any, D = any> {
       timeout: 5000,
       headers: { Authorization: `Bearer ${getToken()}` },
     },
-    beforeSubmition = (dispatch, store) => {},
-    afterSubmition = (response, dispatch, store) => {},
+    beforeRequest = (dispatch, store) => {},
+    afterRequest = (response, dispatch, store) => {},
   }: Partial<Req> = {}) {
     this.apiName = apiName;
     this.data = data;
     this.config = config;
-    this.beforeSubmition = beforeSubmition;
-    this.afterSubmition = afterSubmition;
+    this.beforeRequest = beforeRequest;
+    this.afterRequest = afterRequest;
   }
 }
 
