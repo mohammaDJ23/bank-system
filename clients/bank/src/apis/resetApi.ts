@@ -18,7 +18,7 @@ export interface ErrorObj {
   path: string;
 }
 
-class Req<R = any, D = any> {
+export class Req<R = any, D = any> {
   public readonly apiName: Apis;
   public readonly data: D;
   public readonly config: CreateAxiosDefaults<D>;
