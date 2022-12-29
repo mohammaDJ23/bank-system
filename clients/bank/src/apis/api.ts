@@ -18,6 +18,7 @@ export enum Apis {
   BILLS = 'BILLS',
   USER = 'USER',
   BILL = 'BILL',
+  DELETE_BILL = 'DELETE_BILL',
 }
 
 export const apis = {
@@ -93,6 +94,13 @@ export const apis = {
     return {
       url: `/bank/bill/${id}`,
       method: 'get',
+    };
+  },
+  [Apis.DELETE_BILL](id: number): AxiosRequestConfig {
+    return {
+      url: `/bank/bill/delete`,
+      method: 'delete',
+      data: { id },
     };
   },
 };

@@ -36,12 +36,17 @@ const Modal: FC<ModalImportation> = ({
       {/**@ts-ignore */}
       <Dialog.Footer className="dialog-footer">
         {/**@ts-ignore */}
-        <Button disabled={isLoading} onClick={isLoading ? () => {} : onCancel}>
+        <Button loading={isLoading} disabled={isLoading} onClick={isLoading ? () => {} : onCancel}>
           Cancel
         </Button>
 
         {/**@ts-ignore */}
-        <Button type="primary" disabled={isLoading} onClick={isLoading ? () => {} : onConfirm}>
+        <Button
+          type="primary"
+          loading={isLoading}
+          disabled={isLoading}
+          onClick={isLoading ? () => {} : onConfirm}
+        >
           Confirm
         </Button>
       </Dialog.Footer>
