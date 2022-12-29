@@ -1,33 +1,39 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import moment from 'moment';
 import { Box, Typography, IconButton, Menu, MenuItem } from '@mui/material';
 import { MoreVert } from '@mui/icons-material';
 import DefaultContainer from '../../layout/DefaultContainer';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { Button } from 'element-react';
 import { useAction, useSelector } from '../../hooks';
 import Modal from '../Modal';
 import { ModalNames } from '../../store';
 import Skeleton from '../Skeleton';
+import { UserObj } from '../../lib';
+import { Apis, apis, ResetApi } from '../../apis';
 
 const UserContent = () => {
-  const user = {
-    id: 1,
-    firstName: 'Mohammad',
-    lastName: 'Nowresideh',
-    email: 'mohammad.nowresideh@gmail.com',
-    phone: '09174163042',
-    role: 'admin',
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-  };
-  const options = [{ label: 'Update', path: `/bank/update-user/${user.id}` }];
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const [user, setUser] = useState<UserObj | null>(null);
   const open = Boolean(anchorEl);
   const navigate = useNavigate();
-  const { showModal, hideModal } = useAction();
-  const { modals } = useSelector();
-  const isUserProcessing = false;
+  const { showModal, hideModal, asyncOp } = useAction();
+  const { modals, loadings } = useSelector();
+  const params = useParams();
+  const isUserProcessing = loadings[Apis.USER] === undefined || loadings[Apis.USER];
+  const options = user ? [{ label: 'Update', path: `/bank/update-user/${user.id}` }] : [];
+
+  useEffect(() => {
+    const userId = params.id;
+    if (userId) {
+      asyncOp(async () => {
+        const response = await ResetApi.req<UserObj>(apis[Apis.USER](+userId), {
+          baseURL: process.env.USER_SERVICE,
+        });
+        setUser(response.data);
+      }, Apis.USER);
+    }
+  }, [params, asyncOp]);
 
   function onMenuOpen(event: React.MouseEvent<HTMLElement>) {
     setAnchorEl(event.currentTarget);
@@ -82,7 +88,7 @@ const UserContent = () => {
     );
   }
 
-  function userDetails() {
+  function userDetails(user: UserObj) {
     return (
       <>
         <Box width="100%" display="flex" flexDirection="column" alignItems="start" gap="8px">
@@ -165,7 +171,7 @@ const UserContent = () => {
 
   return (
     <DefaultContainer>
-      {isUserProcessing ? skeleton() : user ? userDetails() : notFound()}
+      {isUserProcessing ? skeleton() : user ? userDetails(user) : notFound()}
     </DefaultContainer>
   );
 };
