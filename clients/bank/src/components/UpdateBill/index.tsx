@@ -20,6 +20,7 @@ const UpdateBillContent = () => {
     form,
     onChange,
     onSubmitWithConfirmation,
+    onSubmit,
     resetForm,
     isConfirmationModalActive,
     initializeForm,
@@ -158,7 +159,7 @@ const UpdateBillContent = () => {
         isLoading={isFormProcessing}
         isActive={isConfirmationModalActive()}
         onCancel={() => hideModal(ModalNames.CONFIRMATION)}
-        onConfirm={() => console.log('submit')}
+        onConfirm={() => onSubmit(Apis.UPDATE_BILL)}
       />
     </>
   );

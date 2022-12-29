@@ -13,7 +13,7 @@ export function useForm<T extends FormInstance>(initialForm: T) {
   const [form, setForm] = useState<T>(initialForm);
   const formRef = useRef<Form | null>(null);
   const rules = form.getRules();
-  const { showModal } = useAction();
+  const { showModal, hideModal } = useAction();
   const { modals } = useSelector();
   const { asyncOp } = useAction();
   const { loadings } = useSelector();
@@ -50,6 +50,10 @@ export function useForm<T extends FormInstance>(initialForm: T) {
     [isFormProcessing]
   );
 
+  const isConfirmationModalActive = useCallback(() => {
+    return !!modals[ModalNames.CONFIRMATION];
+  }, [modals]);
+
   const onSubmit = useCallback(
     (apiName: Apis, config?: CreateAxiosDefaults) => {
       if (!formRef.current || isFormProcessing(apiName)) return;
@@ -61,11 +65,14 @@ export function useForm<T extends FormInstance>(initialForm: T) {
             await ResetApi.req(apis[apiName](form as T as any), config);
             form.afterSubmition(dispatch, store);
             resetForm(apiName);
+            if (isConfirmationModalActive()) {
+              hideModal(ModalNames.CONFIRMATION);
+            }
           }, apiName);
         }
       });
     },
-    [isFormProcessing, resetForm, asyncOp, form]
+    [isFormProcessing, resetForm, asyncOp, isConfirmationModalActive, hideModal, form]
   );
 
   const onSubmitWithConfirmation = useCallback(() => {
@@ -81,10 +88,6 @@ export function useForm<T extends FormInstance>(initialForm: T) {
   const initializeForm = useCallback((form: T) => {
     setForm(form);
   }, []);
-
-  const isConfirmationModalActive = useCallback(() => {
-    return !!modals[ModalNames.CONFIRMATION];
-  }, [modals]);
 
   return {
     resetForm,
