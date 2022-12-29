@@ -1,32 +1,34 @@
-import { CreateAxiosDefaults } from 'axios';
+import { AxiosResponse, CreateAxiosDefaults } from 'axios';
 import { useCallback } from 'react';
 import { apis, Apis, ResetApi } from '../apis';
-import { asyncOp } from '../store/actions';
+import { useAction } from './useActions';
 import { useSelector } from './useSelector';
 
 interface RequestOptions<D = any, R = any> {
   data: D;
   config: CreateAxiosDefaults<D>;
-  callback: (response: R) => void;
+  callback: (response: AxiosResponse<R, D>) => void;
 }
 
 export function useRequest() {
   const { loadings } = useSelector();
+  const { asyncOp } = useAction();
 
   const request = useCallback(
     <D = any, R = any>(
       apiName: Apis,
-      options: RequestOptions<D, R> = { data: null as D, config: {}, callback<R>(response: R) {} }
+      {
+        data = null as D,
+        config = undefined,
+        callback = function () {},
+      }: Partial<RequestOptions<D, R>> = {}
     ) => {
       asyncOp(async (dispatch, store) => {
-        const response = await ResetApi.req<D, R>(
-          apis[apiName](options.data as D as any),
-          options.config
-        );
-        options.callback.call({}, response as R);
+        const response = await ResetApi.req<D, R>(apis[apiName](data as D as any), config);
+        callback.call({}, response);
       }, apiName);
     },
-    []
+    [asyncOp]
   );
 
   const isApiProcessing = useCallback(

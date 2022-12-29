@@ -4,12 +4,12 @@ import moment from 'moment';
 import DefaultContainer from '../../layout/DefaultContainer';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Button } from 'element-react';
-import { useAction, useSelector } from '../../hooks';
+import { useAction, useRequest, useSelector } from '../../hooks';
 import Modal from '../Modal';
 import { ModalNames } from '../../store';
 import { useEffect, useState } from 'react';
 import Skeleton from '../Skeleton';
-import { Apis, apis, ResetApi } from '../../apis';
+import { Apis } from '../../apis';
 import { BillObj } from '../../lib';
 
 const BillContent = () => {
@@ -18,21 +18,24 @@ const BillContent = () => {
   const open = Boolean(anchorEl);
   const navigate = useNavigate();
   const params = useParams();
-  const { showModal, hideModal, asyncOp } = useAction();
-  const { modals, loadings } = useSelector();
-  const isBillProcessing = loadings[Apis.BILL] === undefined || loadings[Apis.BILL];
-  const isDeleteBillProcessing = loadings[Apis.DELETE_BILL];
+  const { showModal, hideModal } = useAction();
+  const { modals } = useSelector();
+  const { isInitialApiProcessing, isApiProcessing, request } = useRequest();
+  const isBillProcessing = isInitialApiProcessing(Apis.BILL);
+  const isDeleteBillProcessing = isApiProcessing(Apis.DELETE_BILL);
   const options = bill ? [{ label: 'Update', path: `/bank/update-bill/${bill.id}` }] : [];
   const billId = params.id;
 
   useEffect(() => {
     if (billId) {
-      asyncOp(async () => {
-        const response = await ResetApi.req<BillObj>(apis[Apis.BILL](+billId));
-        setBill(response.data);
-      }, Apis.BILL);
+      request<number, BillObj>(Apis.BILL, {
+        data: +billId,
+        callback(response) {
+          setBill(response.data);
+        },
+      });
     }
-  }, [params, asyncOp, billId]);
+  }, [request, billId]);
 
   function onMenuOpen(event: React.MouseEvent<HTMLElement>) {
     setAnchorEl(event.currentTarget);
@@ -55,11 +58,13 @@ const BillContent = () => {
 
   function deleteBill() {
     if (billId) {
-      asyncOp(async () => {
-        await ResetApi.req(apis[Apis.DELETE_BILL](+billId));
-        hideModal(ModalNames.CONFIRMATION);
-        navigate('/bank/bills');
-      }, Apis.DELETE_BILL);
+      request(Apis.DELETE_BILL, {
+        data: +billId,
+        callback() {
+          hideModal(ModalNames.CONFIRMATION);
+          navigate('/bank/bills');
+        },
+      });
     }
   }
 
