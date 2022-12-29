@@ -22,15 +22,7 @@ const UpdateBillContent = () => {
     onSubmitWithConfirmation,
     resetForm,
     isConfirmationModalActive,
-  } = useForm(
-    new UpdateBill({
-      id: 0,
-      amount: '',
-      description: '',
-      receiver: '',
-      date: new Date(),
-    })
-  );
+  } = useForm(new UpdateBill());
 
   useEffect(() => {
     const billId = params.id;

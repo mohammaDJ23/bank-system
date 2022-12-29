@@ -65,6 +65,10 @@ export function useForm<T extends FormInstance>(initialForm: T) {
     });
   }
 
+  function initializeForm(form: T) {
+    setForm(form);
+  }
+
   function isConfirmationModalActive() {
     return !!modals[ModalNames.CONFIRMATION];
   }
@@ -80,6 +84,7 @@ export function useForm<T extends FormInstance>(initialForm: T) {
     onSubmitWithConfirmation,
     isConfirmationModalActive,
     isFormProcessing,
+    initializeForm,
     form,
     formRef,
     rules,
