@@ -55,11 +55,12 @@ export function cleanRequestProcess() {
 }
 
 export function asyncOp(
-  cb: (dispatch: Dispatch<RootActions>, store: Store<RootState>) => Promise<any> | any,
+  cb: (dispatch: Dispatch<RootActions>, store: RootState) => Promise<any> | any,
   apiName: Apis
 ) {
-  return async function (dispatch: Dispatch<RootActions>, store: Store<RootState>) {
+  return async function (dispatch: Dispatch<RootActions>, getStore: () => RootState) {
     try {
+      const store = getStore();
       dispatch(loading(apiName));
       await cb.call({ dispatch, store }, dispatch, store);
       dispatch(success(apiName));
