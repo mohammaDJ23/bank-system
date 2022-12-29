@@ -12,7 +12,6 @@ const UpdateBillContent = () => {
   const params = useParams();
   const { hideModal, asyncOp } = useAction();
   const { modals, loadings } = useSelector();
-  const [bill, setBill] = useState<BillObj | null>(null);
 
   const {
     formRef,
@@ -22,6 +21,7 @@ const UpdateBillContent = () => {
     onSubmitWithConfirmation,
     resetForm,
     isConfirmationModalActive,
+    initializeForm,
   } = useForm(new UpdateBill());
 
   useEffect(() => {
@@ -29,7 +29,15 @@ const UpdateBillContent = () => {
     if (billId) {
       asyncOp(async () => {
         const response = await ResetApi.req<BillObj>(apis[Apis.BILL](+billId));
-        setBill(response.data);
+        initializeForm(
+          new UpdateBill({
+            id: response.data.id,
+            amount: response.data.amount,
+            receiver: response.data.receiver,
+            description: response.data.description,
+            date: response.data.date,
+          })
+        );
       }, Apis.BILL);
     }
   }, [params, asyncOp]);

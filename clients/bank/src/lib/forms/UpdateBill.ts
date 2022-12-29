@@ -42,10 +42,10 @@ export class UpdateBill extends Form {
     date = new Date(),
   }: Partial<Omit<UpdateBill, keyof Form>> = {}) {
     super();
-    this.id = id || this.getCachedInput('id');
-    this.amount = amount || this.getCachedInput('amount');
-    this.receiver = receiver || this.getCachedInput('receiver');
-    this.description = description || this.getCachedInput('description');
-    this.date = date || this.getCachedInput('date');
+    this.id = id;
+    this.amount = amount;
+    this.receiver = receiver;
+    this.description = description;
+    this.date = date;
   }
 }
