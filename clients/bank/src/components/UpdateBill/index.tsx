@@ -1,11 +1,19 @@
 import FormContainer from '../../layout/FormContainer';
 import { Input, Form, Button } from 'element-react';
-import { UpdateBill } from '../../lib';
-import { useAction, useForm } from '../../hooks';
+import { BillObj, UpdateBill } from '../../lib';
+import { useAction, useForm, useSelector } from '../../hooks';
 import Modal from '../Modal';
 import { ModalNames } from '../../store';
+import { useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
+import { Apis, apis, ResetApi } from '../../apis';
 
 const UpdateBillContent = () => {
+  const params = useParams();
+  const { hideModal, asyncOp } = useAction();
+  const { modals, loadings } = useSelector();
+  const [bill, setBill] = useState<BillObj | null>(null);
+
   const {
     formRef,
     rules,
@@ -23,7 +31,16 @@ const UpdateBillContent = () => {
       date: new Date(),
     })
   );
-  const { hideModal } = useAction();
+
+  useEffect(() => {
+    const billId = params.id;
+    if (billId) {
+      asyncOp(async () => {
+        const response = await ResetApi.req<BillObj>(apis[Apis.BILL](+billId));
+        setBill(response.data);
+      }, Apis.BILL);
+    }
+  }, [params, asyncOp]);
 
   return (
     <>
