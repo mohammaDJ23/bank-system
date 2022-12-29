@@ -25,7 +25,7 @@ export class ResetApi {
 
   async build<T extends any = any, K extends any = any>(
     config: AxiosRequestConfig<T>
-  ): Promise<AxiosResponse<T, K>> {
+  ): Promise<AxiosResponse<K, T>> {
     try {
       return this.axiosInstance.request(config);
     } catch (error) {
@@ -37,7 +37,7 @@ export class ResetApi {
   static req<T = any, K = any>(
     req: AxiosRequestConfig<T>,
     config?: CreateAxiosDefaults<T>
-  ): Promise<AxiosResponse<T, K>> {
+  ): Promise<AxiosResponse<K, T>> {
     const restApi = new ResetApi(config);
     return restApi.build<T, K>(req);
   }
