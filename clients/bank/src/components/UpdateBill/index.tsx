@@ -8,6 +8,7 @@ import { useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { Apis, apis, ResetApi } from '../../apis';
 import { Box } from '@mui/material';
+import Skeleton from '../Skeleton';
 
 const UpdateBillContent = () => {
   const params = useParams();
@@ -45,7 +46,42 @@ const UpdateBillContent = () => {
   }, [params, asyncOp, initializeForm]);
 
   function skeleton() {
-    return <Box></Box>;
+    return (
+      <Box width="100%" display="flex" alignItems="start" gap="40px" flexDirection="column">
+        <Box width="100%" display="flex" alignItems="start" gap="15px" flexDirection="column">
+          <Box maxWidth="100px" width="100%" height="16px">
+            <Skeleton width="100%" height="100%" />
+          </Box>
+          <Box width="100%" height="30px">
+            <Skeleton width="100%" height="100%" />
+          </Box>
+        </Box>
+        <Box width="100%" display="flex" alignItems="start" gap="15px" flexDirection="column">
+          <Box maxWidth="100px" width="100%" height="16px">
+            <Skeleton width="100%" height="100%" />
+          </Box>
+          <Box width="100%" height="30px">
+            <Skeleton width="100%" height="100%" />
+          </Box>
+        </Box>
+        <Box width="100%" display="flex" alignItems="start" gap="15px" flexDirection="column">
+          <Box maxWidth="100px" width="100%" height="16px">
+            <Skeleton width="100%" height="100%" />
+          </Box>
+          <Box width="100%" height="30px">
+            <Skeleton width="100%" height="100%" />
+          </Box>
+        </Box>
+        <Box width="100%" display="flex" alignItems="start" gap="15px" flexDirection="column">
+          <Box maxWidth="100px" width="100%" height="16px">
+            <Skeleton width="100%" height="100%" />
+          </Box>
+          <Box width="100%" height="30px">
+            <Skeleton width="100%" height="100%" />
+          </Box>
+        </Box>
+      </Box>
+    );
   }
 
   function updateBillForm() {
