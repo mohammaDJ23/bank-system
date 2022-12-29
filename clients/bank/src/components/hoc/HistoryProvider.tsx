@@ -1,11 +1,11 @@
 import { FC, PropsWithChildren, Fragment } from 'react';
 import { BrowserHistory, MemoryHistory } from 'history';
 
-interface HistoryRouterImportation {
+interface HistoryProviderImportation {
   history: BrowserHistory | MemoryHistory;
 }
 
-const HistoryProvider: FC<PropsWithChildren<HistoryRouterImportation>> = ({
+const HistoryProvider: FC<PropsWithChildren<HistoryProviderImportation>> = ({
   children,
   history,
 }) => {
