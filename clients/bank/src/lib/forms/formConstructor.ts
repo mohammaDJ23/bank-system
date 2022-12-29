@@ -51,10 +51,12 @@ export abstract class Form {
   }
 
   cachInput(key: string, value: any): void {
-    const constructorName = this.getConstructorName();
-    const cachedForm = LocalStorage.getItem(constructorName) || {};
-    const newCachedForm = Object.assign(cachedForm, { [key]: value });
-    LocalStorage.setItem(constructorName, newCachedForm);
+    if (this.shouldCachInput) {
+      const constructorName = this.getConstructorName();
+      const cachedForm = LocalStorage.getItem(constructorName) || {};
+      const newCachedForm = Object.assign(cachedForm, { [key]: value });
+      LocalStorage.setItem(constructorName, newCachedForm);
+    }
   }
 
   getCachedInput(name: keyof this): any {
