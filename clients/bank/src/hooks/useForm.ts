@@ -1,5 +1,5 @@
 import { Form } from 'element-react';
-import { useState, useRef } from 'react';
+import { useState, useRef, useCallback } from 'react';
 import { copyConstructor, Form as FormConstructor } from '../lib';
 import { ModalNames } from '../store';
 import { useAction } from './useActions';
@@ -18,31 +18,57 @@ export function useForm<T extends FormInstance>(initialForm: T) {
   const { asyncOp } = useAction();
   const { loadings } = useSelector();
 
-  function onChange(name: string, value: any) {
+  const onChange = useCallback((name: string, value: any) => {
     setForm(prevState => {
       const constructedForm = copyConstructor<T>(prevState);
       const newState = Object.assign(constructedForm, { [name]: value });
       constructedForm.cachInput(name, value);
       return newState;
     });
-  }
+  }, []);
 
-  function onSubmit(apiName: Apis, config?: CreateAxiosDefaults) {
-    if (!formRef.current || isFormProcessing(apiName)) return;
+  const isFormProcessing = useCallback(
+    (apiName: Apis) => {
+      return !!loadings[apiName];
+    },
+    [loadings]
+  );
 
-    formRef.current.validate(valid => {
-      if (valid) {
-        asyncOp(async (dispatch, store) => {
-          form.beforeSubmition(dispatch, store);
-          await ResetApi.req(apis[apiName](form as T as any), config);
-          form.afterSubmition(dispatch, store);
-          resetForm(apiName);
-        }, apiName);
-      }
-    });
-  }
+  const resetForm = useCallback(
+    (apiName: Apis) => {
+      if (!formRef.current || isFormProcessing(apiName)) return;
 
-  function onSubmitWithConfirmation() {
+      formRef.current.resetFields();
+
+      setForm(prevState => {
+        const constructedForm = copyConstructor<T>(prevState);
+        const resetedForm = constructedForm.resetCach<T>();
+        const newState = Object.assign(constructedForm, resetedForm);
+        return newState;
+      });
+    },
+    [isFormProcessing]
+  );
+
+  const onSubmit = useCallback(
+    (apiName: Apis, config?: CreateAxiosDefaults) => {
+      if (!formRef.current || isFormProcessing(apiName)) return;
+
+      formRef.current.validate(valid => {
+        if (valid) {
+          asyncOp(async (dispatch, store) => {
+            form.beforeSubmition(dispatch, store);
+            await ResetApi.req(apis[apiName](form as T as any), config);
+            form.afterSubmition(dispatch, store);
+            resetForm(apiName);
+          }, apiName);
+        }
+      });
+    },
+    [isFormProcessing, resetForm, asyncOp, form]
+  );
+
+  const onSubmitWithConfirmation = useCallback(() => {
     if (!formRef.current) return;
 
     formRef.current.validate(valid => {
@@ -50,32 +76,15 @@ export function useForm<T extends FormInstance>(initialForm: T) {
         showModal(ModalNames.CONFIRMATION);
       }
     });
-  }
+  }, [showModal]);
 
-  function resetForm(apiName: Apis) {
-    if (!formRef.current || isFormProcessing(apiName)) return;
-
-    formRef.current.resetFields();
-
-    setForm(prevState => {
-      const constructedForm = copyConstructor<T>(prevState);
-      const resetedForm = constructedForm.resetCach<T>();
-      const newState = Object.assign(constructedForm, resetedForm);
-      return newState;
-    });
-  }
-
-  function initializeForm(form: T) {
+  const initializeForm = useCallback((form: T) => {
     setForm(form);
-  }
+  }, []);
 
-  function isConfirmationModalActive() {
+  const isConfirmationModalActive = useCallback(() => {
     return !!modals[ModalNames.CONFIRMATION];
-  }
-
-  function isFormProcessing(apiName: Apis) {
-    return !!loadings[apiName];
-  }
+  }, [modals]);
 
   return {
     resetForm,

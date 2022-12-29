@@ -40,7 +40,7 @@ const UpdateBillContent = () => {
         );
       }, Apis.BILL);
     }
-  }, [params, asyncOp]);
+  }, [params, asyncOp, initializeForm]);
 
   return (
     <>
