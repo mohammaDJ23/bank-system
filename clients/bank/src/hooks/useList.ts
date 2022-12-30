@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
-import { Apis } from '../apis';
+import { apis, Apis } from '../apis';
 import { Constructor, copyConstructor, DefaultList, ListInstance, ListResponse } from '../lib';
 import { useSelector } from './useSelector';
 import { useRequest } from './';
@@ -69,11 +69,12 @@ export function useList<
   useEffect(() => {
     if (Array.isArray(entireList[page])) return;
 
-    request<any, ListResponse<K>>(apiName, {
-      data: { page, take },
+    request<ListResponse<K>>({
+      apiName,
+      data: apis[apiName]({ page, take } as any),
       config,
-      callback(response) {
-        const [list, total]: ListResponse<K> = response.data;
+      afterRequest(response, dispatch, store) {
+        const [list, total] = response.data;
         const billList = new (createdList.constructor as Constructor)() as T;
         billList.list = Object.assign(entireList, { [page]: list });
         billList.page = page;

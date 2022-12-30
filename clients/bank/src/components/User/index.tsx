@@ -5,12 +5,12 @@ import { MoreVert } from '@mui/icons-material';
 import DefaultContainer from '../../layout/DefaultContainer';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Button } from 'element-react';
-import { useAction, useSelector } from '../../hooks';
+import { useAction, useRequest, useSelector } from '../../hooks';
 import Modal from '../Modal';
 import { ModalNames } from '../../store';
 import Skeleton from '../Skeleton';
 import { UserObj } from '../../lib';
-import { Apis, apis, ResetApi } from '../../apis';
+import { Apis, apis } from '../../apis';
 
 const UserContent = () => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
@@ -18,22 +18,28 @@ const UserContent = () => {
   const open = Boolean(anchorEl);
   const navigate = useNavigate();
   const { showModal, hideModal, asyncOp } = useAction();
-  const { modals, loadings } = useSelector();
+  const { request, isInitialApiProcessing, isApiProcessing } = useRequest();
+  const { modals } = useSelector();
   const params = useParams();
-  const isUserProcessing = loadings[Apis.USER] === undefined || loadings[Apis.USER];
+  const isUserProcessing = isInitialApiProcessing(Apis.USER);
+  const isUserDeletingProcessing = isApiProcessing(Apis.DELETE_USER);
   const options = user ? [{ label: 'Update', path: `/bank/update-user/${user.id}` }] : [];
+  const userId = params.id;
 
   useEffect(() => {
-    const userId = params.id;
     if (userId) {
-      asyncOp(async () => {
-        const response = await ResetApi.req<UserObj>(apis[Apis.USER](+userId), {
+      request<UserObj, number>({
+        apiName: Apis.USER,
+        data: apis[Apis.USER](+userId),
+        config: {
           baseURL: process.env.USER_SERVICE,
-        });
-        setUser(response.data);
-      }, Apis.USER);
+        },
+        afterRequest(response) {
+          setUser(response.data);
+        },
+      });
     }
-  }, [params, asyncOp]);
+  }, []);
 
   function onMenuOpen(event: React.MouseEvent<HTMLElement>) {
     setAnchorEl(event.currentTarget);
@@ -52,6 +58,20 @@ const UserContent = () => {
 
   function onDeleteAccount() {
     showModal(ModalNames.CONFIRMATION);
+  }
+
+  function deleteUser() {
+    if (userId) {
+      request({
+        apiName: Apis.DELETE_USER,
+        data: apis[Apis.DELETE_USER](+userId),
+        config: { baseURL: process.env.USER_SERVICE },
+        afterRequest() {
+          hideModal(ModalNames.CONFIRMATION);
+          navigate('/bank/users');
+        },
+      });
+    }
   }
 
   function skeleton() {
@@ -133,7 +153,12 @@ const UserContent = () => {
           )}
           <Box mt="30px">
             {/**@ts-ignore */}
-            <Button onClick={onDeleteAccount} type="danger">
+            <Button
+              disabled={isUserDeletingProcessing}
+              loading={isUserDeletingProcessing}
+              onClick={onDeleteAccount}
+              type="danger"
+            >
               Deleting the account
             </Button>
           </Box>
@@ -142,9 +167,10 @@ const UserContent = () => {
         <Modal
           title="Deleting the Account"
           body="Are you sure do delete the user account?"
+          isLoading={isUserDeletingProcessing}
           isActive={modals[ModalNames.CONFIRMATION]}
           onCancel={() => hideModal(ModalNames.CONFIRMATION)}
-          onConfirm={() => console.log('submit')}
+          onConfirm={() => deleteUser()}
         />
       </>
     );

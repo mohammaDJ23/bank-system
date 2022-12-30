@@ -1,5 +1,5 @@
 import { useCallback } from 'react';
-import { apis, Apis, Req, ResetApi } from '../apis';
+import { Apis, Request } from '../apis';
 import { useAction } from './useActions';
 import { useSelector } from './useSelector';
 
@@ -8,15 +8,13 @@ export function useRequest() {
   const { asyncOp } = useAction();
 
   const request = useCallback(
-    <D = any, R = any>(req: Req<R, D>) => {
+    <R = any, D = any>(req: Partial<Request<R, D>>) => {
       asyncOp(async (dispatch, store) => {
-        req.beforeSubmition(dispatch, store);
-        const response = await ResetApi.req<D, R>(
-          apis[req.apiName](req.data as D as any),
-          req.config
-        );
-        req.afterSubmition(response as R, dispatch, store);
-      }, req.apiName);
+        if (req.beforeRequest) req.beforeRequest(dispatch, store);
+        const request = new Request<R, D>(req);
+        const response = await request.build();
+        if (req.afterRequest) req.afterRequest(response, dispatch, store);
+      }, req.apiName || Apis.DEFAULT);
     },
     [asyncOp]
   );

@@ -1,19 +1,19 @@
 import FormContainer from '../../layout/FormContainer';
 import { Input, Form, Button } from 'element-react';
 import { BillObj, UpdateBill } from '../../lib';
-import { useAction, useForm, useSelector } from '../../hooks';
+import { useAction, useForm, useRequest } from '../../hooks';
 import Modal from '../Modal';
 import { ModalNames } from '../../store';
 import { useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import { Apis, apis, ResetApi } from '../../apis';
+import { Apis, apis } from '../../apis';
 import { Box } from '@mui/material';
 import Skeleton from '../Skeleton';
 
 const UpdateBillContent = () => {
   const params = useParams();
-  const { hideModal, asyncOp } = useAction();
-  const { loadings } = useSelector();
+  const { hideModal } = useAction();
+  const { request, isApiProcessing, isInitialApiProcessing } = useRequest();
   const {
     formRef,
     rules,
@@ -25,26 +25,29 @@ const UpdateBillContent = () => {
     isConfirmationModalActive,
     initializeForm,
   } = useForm(new UpdateBill());
-  const isFormProcessing = loadings[Apis.UPDATE_BILL];
-  const isBillProcessing = loadings[Apis.BILL] === undefined || loadings[Apis.BILL];
+  const isFormProcessing = isApiProcessing(Apis.UPDATE_BILL);
+  const isBillProcessing = isInitialApiProcessing(Apis.BILL);
 
   useEffect(() => {
     const billId = params.id;
     if (billId) {
-      asyncOp(async () => {
-        const response = await ResetApi.req<BillObj>(apis[Apis.BILL](+billId));
-        initializeForm(
-          new UpdateBill({
-            id: response.data.id,
-            amount: response.data.amount,
-            receiver: response.data.receiver,
-            description: response.data.description,
-            date: response.data.date,
-          })
-        );
-      }, Apis.BILL);
+      request<BillObj, number>({
+        apiName: Apis.BILL,
+        data: apis[Apis.BILL](+billId),
+        afterRequest(response) {
+          initializeForm(
+            new UpdateBill({
+              id: response.data.id,
+              amount: response.data.amount,
+              receiver: response.data.receiver,
+              description: response.data.description,
+              date: response.data.date,
+            })
+          );
+        },
+      });
     }
-  }, [params, asyncOp, initializeForm]);
+  }, []);
 
   function skeleton() {
     return (

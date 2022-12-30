@@ -9,7 +9,7 @@ import Modal from '../Modal';
 import { ModalNames } from '../../store';
 import { useEffect, useState } from 'react';
 import Skeleton from '../Skeleton';
-import { Apis } from '../../apis';
+import { apis, Apis } from '../../apis';
 import { BillObj } from '../../lib';
 
 const BillContent = () => {
@@ -28,9 +28,10 @@ const BillContent = () => {
 
   useEffect(() => {
     if (billId) {
-      request<number, BillObj>(Apis.BILL, {
-        data: +billId,
-        callback(response) {
+      request<BillObj, number>({
+        apiName: Apis.BILL,
+        data: apis[Apis.BILL](+billId),
+        afterRequest(response) {
           setBill(response.data);
         },
       });
@@ -58,9 +59,10 @@ const BillContent = () => {
 
   function deleteBill() {
     if (billId) {
-      request(Apis.DELETE_BILL, {
-        data: +billId,
-        callback() {
+      request({
+        apiName: Apis.DELETE_BILL,
+        data: apis[Apis.DELETE_BILL](+billId),
+        afterRequest() {
           hideModal(ModalNames.CONFIRMATION);
           navigate('/bank/bills');
         },
