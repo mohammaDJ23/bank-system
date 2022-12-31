@@ -9,6 +9,7 @@ import {
 } from '../lib';
 
 export enum Apis {
+  DEFAULT = 'DEFAULT',
   CREATE_USER = 'CREATE_USER',
   CREATE_BILL = 'CREATE_BILL',
   UPDATE_USER_BY_ADMIN = 'UPDATE_USER_BY_ADMIN',
@@ -18,9 +19,14 @@ export enum Apis {
   BILLS = 'BILLS',
   USER = 'USER',
   BILL = 'BILL',
+  DELETE_BILL = 'DELETE_BILL',
+  DELETE_USER = 'DELETE_USER',
 }
 
 export const apis = {
+  [Apis.DEFAULT]() {
+    return {};
+  },
   [Apis.CREATE_USER](data: CreateUser): AxiosRequestConfig {
     return {
       url: '/user/create',
@@ -93,6 +99,20 @@ export const apis = {
     return {
       url: `/bank/bill/${id}`,
       method: 'get',
+    };
+  },
+  [Apis.DELETE_BILL](id: number): AxiosRequestConfig {
+    return {
+      url: `/bank/bill/delete`,
+      method: 'delete',
+      data: { id },
+    };
+  },
+  [Apis.DELETE_USER](id: number): AxiosRequestConfig {
+    return {
+      url: `/user/delete`,
+      method: 'delete',
+      data: { id },
     };
   },
 };

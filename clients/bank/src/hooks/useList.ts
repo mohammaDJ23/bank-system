@@ -1,8 +1,8 @@
 import { useCallback, useEffect, useState } from 'react';
-import { apis, Apis, ResetApi } from '../apis';
+import { apis, Apis } from '../apis';
 import { Constructor, copyConstructor, DefaultList, ListInstance, ListResponse } from '../lib';
 import { useSelector } from './useSelector';
-import { useAction } from './';
+import { useRequest } from './';
 import { AxiosRequestConfig } from 'axios';
 
 export interface UseListOptions<T extends object = object> {
@@ -16,8 +16,8 @@ export function useList<
   T extends UseListOptions<K>['initialList'] = UseListOptions<K>['initialList']
 >({ initialList = new DefaultList(), apiName, config }: UseListOptions<K>) {
   const [createdList, setCreatedList] = useState<T>(initialList as T);
-  const { loadings, listContainer } = useSelector();
-  const { asyncOp } = useAction();
+  const { listContainer } = useSelector();
+  const { request, isInitialApiProcessing } = useRequest();
   const page = createdList.page;
   const entireList = createdList.list;
   const list = createdList.list[page] || [];
@@ -27,8 +27,8 @@ export function useList<
   const count = Math.ceil(total / take);
 
   const isListProcessing = useCallback(() => {
-    return loadings[apiName] === undefined || loadings[apiName];
-  }, [loadings, apiName]);
+    return isInitialApiProcessing(apiName);
+  }, [isInitialApiProcessing, apiName]);
 
   const onPageChange = useCallback(
     (newPage: number) => {
@@ -62,30 +62,27 @@ export function useList<
     });
   }, []);
 
-  const onChange = useCallback(
-    <T extends any>(list: T[], page: number) => {
-      onListChange(list, page);
-      onPageChange(page);
-    },
-    [onListChange, onPageChange]
-  );
-
   const initializeList = useCallback((list: T) => {
     setCreatedList(list);
   }, []);
 
   useEffect(() => {
-    asyncOp(async () => {
-      if (Array.isArray(entireList[page])) return;
-      const response = await ResetApi.req(apis[apiName]<K>({ page, take } as any), config);
-      const [list, total]: ListResponse<K> = response.data;
-      const billList = new (createdList.constructor as Constructor)() as T;
-      billList.list = Object.assign(entireList, { [page]: list });
-      billList.page = page;
-      billList.total = total;
-      initializeList(billList);
-    }, apiName);
-  }, [page, take, entireList, apiName, createdList, initializeList, asyncOp]);
+    if (Array.isArray(entireList[page])) return;
+
+    request<ListResponse<K>>({
+      apiName,
+      data: apis[apiName]({ page, take } as any),
+      config,
+      afterRequest(response, dispatch, store) {
+        const [list, total] = response.data;
+        const billList = new (createdList.constructor as Constructor)() as T;
+        billList.list = Object.assign(entireList, { [page]: list });
+        billList.page = page;
+        billList.total = total;
+        initializeList(billList);
+      },
+    });
+  }, [page, take, entireList, apiName, createdList]);
 
   return {
     list,
@@ -97,7 +94,6 @@ export function useList<
     entireList,
     onPageChange,
     onListChange,
-    onChange,
     onTakeChange,
     initializeList,
     isListProcessing,

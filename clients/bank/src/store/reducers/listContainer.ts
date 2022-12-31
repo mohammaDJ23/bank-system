@@ -22,7 +22,7 @@ function setListContainerElement(
   };
 }
 
-export function ListContainerReducer(
+export function listContainerReducer(
   state: ListContainerState = initialState,
   actions: RootActions
 ): ListContainerState {

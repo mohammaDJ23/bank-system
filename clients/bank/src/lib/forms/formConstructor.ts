@@ -1,11 +1,25 @@
 import { Dispatch } from 'react';
 import { matchPath, PathMatch } from 'react-router-dom';
-import { Store } from 'redux';
 import { Constructor, FormMetadataTypes, LocalStorage, routes, Rule, Rules } from '../';
 import { RootState } from '../../store';
 import { RootActions } from '../../store/actions';
 
-export class Form {
+interface FormOptions {
+  shouldCachInput: boolean;
+}
+
+export abstract class Form {
+  private readonly shouldCachInput: boolean;
+
+  constructor(options: FormOptions = { shouldCachInput: true }) {
+    this.shouldCachInput = options.shouldCachInput;
+    const target = Object.assign<this, this>(Object.create(this, {}), this);
+    Object.keys(target).forEach(prop => {
+      delete target[prop as keyof this];
+    });
+    return new Proxy<this>(target, {});
+  }
+
   getPrototype(): object {
     return this.constructor.prototype;
   }
@@ -36,10 +50,12 @@ export class Form {
   }
 
   cachInput(key: string, value: any): void {
-    const constructorName = this.getConstructorName();
-    const cachedForm = LocalStorage.getItem(constructorName) || {};
-    const newCachedForm = Object.assign(cachedForm, { [key]: value });
-    LocalStorage.setItem(constructorName, newCachedForm);
+    if (this.shouldCachInput) {
+      const constructorName = this.getConstructorName();
+      const cachedForm = LocalStorage.getItem(constructorName) || {};
+      const newCachedForm = Object.assign(cachedForm, { [key]: value });
+      LocalStorage.setItem(constructorName, newCachedForm);
+    }
   }
 
   getCachedInput(name: keyof this): any {
@@ -54,20 +70,14 @@ export class Form {
     return new (this.constructor as Constructor)() as T;
   }
 
-  beforeSubmition(dispatch: Dispatch<RootActions>, store: Store<RootState>) {
-    const beforeSubmitionAction: ((
-      dispatch: Dispatch<RootActions>,
-      store: Store<RootState>
-    ) => void)[] =
+  beforeSubmition(dispatch: Dispatch<RootActions>, store: RootState) {
+    const beforeSubmitionAction: ((dispatch: Dispatch<RootActions>, store: RootState) => void)[] =
       Reflect.getMetadata(FormMetadataTypes.BEFORE_SUBMITION, this.getPrototype()) || [];
     beforeSubmitionAction.forEach(fn => fn.call(this, dispatch, store));
   }
 
-  afterSubmition(dispatch: Dispatch<RootActions>, store: Store<RootState>) {
-    const afterSubmitionFns: ((
-      dispatch: Dispatch<RootActions>,
-      store: Store<RootState>
-    ) => void)[] =
+  afterSubmition(dispatch: Dispatch<RootActions>, store: RootState) {
+    const afterSubmitionFns: ((dispatch: Dispatch<RootActions>, store: RootState) => void)[] =
       Reflect.getMetadata(FormMetadataTypes.AFTER_SUBMITION, this.getPrototype()) || [];
     afterSubmitionFns.forEach(fn => fn.call(this, dispatch, store));
   }

@@ -4,12 +4,12 @@ import moment from 'moment';
 import DefaultContainer from '../../layout/DefaultContainer';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Button } from 'element-react';
-import { useAction, useSelector } from '../../hooks';
+import { useAction, useRequest, useSelector } from '../../hooks';
 import Modal from '../Modal';
 import { ModalNames } from '../../store';
 import { useEffect, useState } from 'react';
 import Skeleton from '../Skeleton';
-import { Apis, apis, ResetApi } from '../../apis';
+import { apis, Apis } from '../../apis';
 import { BillObj } from '../../lib';
 
 const BillContent = () => {
@@ -18,20 +18,25 @@ const BillContent = () => {
   const open = Boolean(anchorEl);
   const navigate = useNavigate();
   const params = useParams();
-  const { showModal, hideModal, asyncOp } = useAction();
-  const { modals, loadings } = useSelector();
-  const isBillProcessing = loadings[Apis.BILL] === undefined || loadings[Apis.BILL];
-  const options = bill ? [{ label: 'Update', path: `/bank/update-user/${bill.id}` }] : [];
+  const { showModal, hideModal } = useAction();
+  const { modals } = useSelector();
+  const { isInitialApiProcessing, isApiProcessing, request } = useRequest();
+  const isBillProcessing = isInitialApiProcessing(Apis.BILL);
+  const isDeleteBillProcessing = isApiProcessing(Apis.DELETE_BILL);
+  const options = bill ? [{ label: 'Update', path: `/bank/update-bill/${bill.id}` }] : [];
+  const billId = params.id;
 
   useEffect(() => {
-    const billId = params.id;
     if (billId) {
-      asyncOp(async () => {
-        const response = await ResetApi.req<BillObj>(apis[Apis.BILL](+billId));
-        setBill(response.data);
-      }, Apis.BILL);
+      request<BillObj, number>({
+        apiName: Apis.BILL,
+        data: apis[Apis.BILL](+billId),
+        afterRequest(response) {
+          setBill(response.data);
+        },
+      });
     }
-  }, [params, asyncOp]);
+  }, [request, billId]);
 
   function onMenuOpen(event: React.MouseEvent<HTMLElement>) {
     setAnchorEl(event.currentTarget);
@@ -50,6 +55,19 @@ const BillContent = () => {
 
   function onDeleteBill() {
     showModal(ModalNames.CONFIRMATION);
+  }
+
+  function deleteBill() {
+    if (billId) {
+      request({
+        apiName: Apis.DELETE_BILL,
+        data: apis[Apis.DELETE_BILL](+billId),
+        afterRequest() {
+          hideModal(ModalNames.CONFIRMATION);
+          navigate('/bank/bills');
+        },
+      });
+    }
   }
 
   function skeleton() {
@@ -131,7 +149,12 @@ const BillContent = () => {
           )}
           <Box mt="30px">
             {/**@ts-ignore */}
-            <Button onClick={onDeleteBill} type="danger">
+            <Button
+              disabled={isDeleteBillProcessing}
+              loading={isDeleteBillProcessing}
+              onClick={onDeleteBill}
+              type="danger"
+            >
               Deleting the bill
             </Button>
           </Box>
@@ -139,9 +162,10 @@ const BillContent = () => {
         <Modal
           title="Deleting the Bill"
           body="Are you sure do delete the bill?"
+          isLoading={isDeleteBillProcessing}
           isActive={modals[ModalNames.CONFIRMATION]}
           onCancel={() => hideModal(ModalNames.CONFIRMATION)}
-          onConfirm={() => console.log('submit')}
+          onConfirm={() => deleteBill()}
         />
       </>
     );
