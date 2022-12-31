@@ -10,16 +10,7 @@ const UpdateUserContent = () => {
   const { hideModal } = useAction();
   const { isAdmin, getUserRoles } = useAuth();
   const isUserAdmin = isAdmin();
-  const currentForm = isUserAdmin
-    ? new UpdateUserByAdmin({
-        id: 0,
-        firstName: '',
-        lastName: '',
-        email: '',
-        phone: '',
-        role: UserRoles.USER,
-      })
-    : new UpdateUserByUser({ id: 0, firstName: '', lastName: '', email: '', phone: '' });
+  const currentForm = isUserAdmin ? new UpdateUserByAdmin() : new UpdateUserByUser();
   const {
     formRef,
     rules,
