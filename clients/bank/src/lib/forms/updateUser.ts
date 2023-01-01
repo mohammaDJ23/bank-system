@@ -69,35 +69,35 @@ export class UpdateUserByAdmin extends Form {
 
 export class UpdateUserByUser extends Form {
   @DefineVal()
-  id: number;
+  id: number = 0;
 
   @DefineRules([
     { validator: isFirstName, trigger: 'blur' },
     { validator: isFirstName, trigger: 'change' },
   ])
   @DefineVal()
-  firstName: string;
+  firstName: string = '';
 
   @DefineRules([
     { validator: isLastName, trigger: 'blur' },
     { validator: isLastName, trigger: 'change' },
   ])
   @DefineVal()
-  lastName: string;
+  lastName: string = '';
 
   @DefineRules([
     { validator: isEmail, trigger: 'blur' },
     { validator: isEmail, trigger: 'change' },
   ])
   @DefineVal()
-  email: string;
+  email: string = '';
 
   @DefineRules([
     { validator: isPhone, trigger: 'blur' },
     { validator: isPhone, trigger: 'change' },
   ])
   @DefineVal()
-  phone: string;
+  phone: string = '';
 
   constructor({
     id = 0,
