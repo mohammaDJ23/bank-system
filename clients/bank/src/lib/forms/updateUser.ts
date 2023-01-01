@@ -1,4 +1,7 @@
+import { Notification } from 'element-react';
+import type { Dispatch } from 'redux';
 import {
+  AfterSubmition,
   DefineRules,
   DefineVal,
   isEmail,
@@ -8,6 +11,8 @@ import {
   isRole,
   UserRoles,
 } from '../';
+import type { RootState } from '../../store';
+import type { RootActions } from '../../store/actions';
 import { Form } from './formConstructor';
 
 export class UpdateUserByAdmin extends Form {
@@ -65,6 +70,12 @@ export class UpdateUserByAdmin extends Form {
     this.phone = phone;
     this.role = role;
   }
+
+  @AfterSubmition()
+  afterUpdating(dispatch: Dispatch<RootActions>, store: RootState) {
+    Notification('You have updated the user successfully.', 'success');
+    if (store.history) store.history.push(`/bank/users/${this.id}`);
+  }
 }
 
 export class UpdateUserByUser extends Form {
@@ -112,5 +123,11 @@ export class UpdateUserByUser extends Form {
     this.lastName = lastName;
     this.email = email;
     this.phone = phone;
+  }
+
+  @AfterSubmition()
+  afterUpdating(dispatch: Dispatch<RootActions>, store: RootState) {
+    Notification('You have updated the user successfully.', 'success');
+    if (store.history) store.history.push(`/bank/users/${this.id}`);
   }
 }
