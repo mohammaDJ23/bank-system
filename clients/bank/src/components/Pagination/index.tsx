@@ -13,8 +13,8 @@ interface PaginationImportation {
 const Pagination: FC<PaginationImportation> = ({
   count,
   page,
-  paginationProps,
-  stackProps,
+  paginationProps = {},
+  stackProps = {},
   onPageChange,
 }) => {
   return (

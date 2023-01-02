@@ -1,83 +1,133 @@
-import { DefineRules, isEmail, isFirstName, isLastName, isPhone, isRole } from '../';
+import { Notification } from 'element-react';
+import type { Dispatch } from 'redux';
+import {
+  AfterSubmition,
+  DefineRules,
+  DefineVal,
+  isEmail,
+  isFirstName,
+  isLastName,
+  isPhone,
+  isRole,
+  UserRoles,
+} from '../';
+import type { RootState } from '../../store';
+import type { RootActions } from '../../store/actions';
 import { Form } from './formConstructor';
 
 export class UpdateUserByAdmin extends Form {
-  id: number;
+  @DefineVal()
+  id: number = 0;
 
   @DefineRules([
     { validator: isFirstName, trigger: 'blur' },
     { validator: isFirstName, trigger: 'change' },
   ])
-  firstName: string;
+  @DefineVal()
+  firstName: string = '';
 
   @DefineRules([
     { validator: isLastName, trigger: 'blur' },
     { validator: isLastName, trigger: 'change' },
   ])
-  lastName: string;
+  @DefineVal()
+  lastName: string = '';
 
   @DefineRules([
     { validator: isEmail, trigger: 'blur' },
     { validator: isEmail, trigger: 'change' },
   ])
-  email: string;
+  @DefineVal()
+  email: string = '';
 
   @DefineRules([
     { validator: isPhone, trigger: 'blur' },
     { validator: isPhone, trigger: 'change' },
   ])
-  phone: string;
+  @DefineVal()
+  phone: string = '';
 
   @DefineRules([
     { validator: isRole, trigger: 'blur' },
     { validator: isRole, trigger: 'change' },
   ])
-  role: string;
+  @DefineVal()
+  role: UserRoles = UserRoles.USER;
 
-  constructor(arg: Omit<UpdateUserByAdmin, keyof Form>) {
+  constructor({
+    id = 0,
+    firstName = '',
+    lastName = '',
+    email = '',
+    phone = '',
+    role = UserRoles.USER,
+  }: Partial<Omit<UpdateUserByAdmin, keyof Form>> = {}) {
     super();
-    this.id = arg.id;
-    this.firstName = arg.firstName;
-    this.lastName = arg.lastName;
-    this.email = arg.email;
-    this.phone = arg.phone;
-    this.role = arg.role;
+    this.id = id;
+    this.firstName = firstName;
+    this.lastName = lastName;
+    this.email = email;
+    this.phone = phone;
+    this.role = role;
+  }
+
+  @AfterSubmition()
+  afterUpdating(dispatch: Dispatch<RootActions>, store: RootState) {
+    Notification('You have updated the user successfully.', 'success');
+    if (store.history) store.history.push(`/bank/users/${this.id}`);
   }
 }
 
 export class UpdateUserByUser extends Form {
-  id: number;
+  @DefineVal()
+  id: number = 0;
 
   @DefineRules([
     { validator: isFirstName, trigger: 'blur' },
     { validator: isFirstName, trigger: 'change' },
   ])
-  firstName: string;
+  @DefineVal()
+  firstName: string = '';
 
   @DefineRules([
     { validator: isLastName, trigger: 'blur' },
     { validator: isLastName, trigger: 'change' },
   ])
-  lastName: string;
+  @DefineVal()
+  lastName: string = '';
 
   @DefineRules([
     { validator: isEmail, trigger: 'blur' },
     { validator: isEmail, trigger: 'change' },
   ])
-  email: string;
+  @DefineVal()
+  email: string = '';
 
   @DefineRules([
     { validator: isPhone, trigger: 'blur' },
     { validator: isPhone, trigger: 'change' },
   ])
-  phone: string;
+  @DefineVal()
+  phone: string = '';
 
-  constructor(arg: Omit<UpdateUserByUser, keyof Form>) {
+  constructor({
+    id = 0,
+    firstName = '',
+    lastName = '',
+    email = '',
+    phone = '',
+  }: Partial<Omit<UpdateUserByUser, keyof Form>> = {}) {
     super();
-    this.id = arg.id;
-    this.firstName = arg.firstName;
-    this.lastName = arg.lastName;
-    this.email = arg.email;
-    this.phone = arg.phone;
+    this.id = id;
+    this.firstName = firstName;
+    this.lastName = lastName;
+    this.email = email;
+    this.phone = phone;
+  }
+
+  @AfterSubmition()
+  afterUpdating(dispatch: Dispatch<RootActions>, store: RootState) {
+    Notification('You have updated the user successfully.', 'success');
+    if (store.history) store.history.push(`/bank/users/${this.id}`);
   }
 }

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useId, useState } from 'react';
 import moment from 'moment';
 import { Box, Typography, IconButton, Menu, MenuItem } from '@mui/material';
 import { MoreVert } from '@mui/icons-material';
@@ -17,7 +17,7 @@ const UserContent = () => {
   const [user, setUser] = useState<UserObj | null>(null);
   const open = Boolean(anchorEl);
   const navigate = useNavigate();
-  const { showModal, hideModal, asyncOp } = useAction();
+  const { showModal, hideModal } = useAction();
   const { request, isInitialApiProcessing, isApiProcessing } = useRequest();
   const { modals } = useSelector();
   const params = useParams();
@@ -41,26 +41,29 @@ const UserContent = () => {
     }
   }, []);
 
-  function onMenuOpen(event: React.MouseEvent<HTMLElement>) {
+  const onMenuOpen = useCallback((event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
-  }
+  }, []);
 
-  function onMenuClose() {
+  const onMenuClose = useCallback(() => {
     setAnchorEl(null);
-  }
+  }, []);
 
-  function onMenuClick(option: typeof options[number]) {
-    return function () {
-      onMenuClose();
-      navigate(option.path);
-    };
-  }
+  const onMenuClick = useCallback(
+    (option: typeof options[number]) => {
+      return function () {
+        onMenuClose();
+        navigate(option.path);
+      };
+    },
+    [onMenuClose, navigate]
+  );
 
-  function onDeleteAccount() {
+  const onDeleteAccount = useCallback(() => {
     showModal(ModalNames.CONFIRMATION);
-  }
+  }, [showModal]);
 
-  function deleteUser() {
+  const deleteUser = useCallback(() => {
     if (userId) {
       request({
         apiName: Apis.DELETE_USER,
@@ -72,7 +75,7 @@ const UserContent = () => {
         },
       });
     }
-  }
+  }, [userId, request, hideModal, navigate]);
 
   function skeleton() {
     return (

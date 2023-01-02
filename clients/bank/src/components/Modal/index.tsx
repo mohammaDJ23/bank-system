@@ -2,15 +2,15 @@ import { FC } from 'react';
 import { Button, Dialog } from 'element-react';
 
 interface ModalImportation {
-  title?: string | JSX.Element;
-  isActive?: boolean;
-  body?: string | JSX.Element;
-  isLoading?: boolean;
-  onCancel?(): void;
-  onConfirm?(): void;
+  title: string | JSX.Element;
+  isActive: boolean;
+  body: string | JSX.Element;
+  isLoading: boolean;
+  onCancel(): void;
+  onConfirm(): void;
 }
 
-const Modal: FC<ModalImportation> = ({
+const Modal: FC<Partial<ModalImportation>> = ({
   title = 'Confirmation',
   isActive = false,
   body = 'Are you sure to do the process?',
