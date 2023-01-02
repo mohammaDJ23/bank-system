@@ -7,7 +7,7 @@ import { Button } from 'element-react';
 import { useAction, useRequest, useSelector } from '../../hooks';
 import Modal from '../Modal';
 import { ModalNames } from '../../store';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import Skeleton from '../Skeleton';
 import { apis, Apis } from '../../apis';
 import { BillObj } from '../../lib';
@@ -38,26 +38,29 @@ const BillContent = () => {
     }
   }, [request, billId]);
 
-  function onMenuOpen(event: React.MouseEvent<HTMLElement>) {
+  const onMenuOpen = useCallback((event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
-  }
+  }, []);
 
-  function onMenuClose() {
+  const onMenuClose = useCallback(() => {
     setAnchorEl(null);
-  }
+  }, []);
 
-  function onMenuClick(option: typeof options[number]) {
-    return function () {
-      onMenuClose();
-      navigate(option.path);
-    };
-  }
+  const onMenuClick = useCallback(
+    (option: typeof options[number]) => {
+      return function () {
+        onMenuClose();
+        navigate(option.path);
+      };
+    },
+    [onMenuClose, navigate]
+  );
 
-  function onDeleteBill() {
+  const onDeleteBill = useCallback(() => {
     showModal(ModalNames.CONFIRMATION);
-  }
+  }, [showModal]);
 
-  function deleteBill() {
+  const deleteBill = useCallback(() => {
     if (billId) {
       request({
         apiName: Apis.DELETE_BILL,
@@ -68,7 +71,7 @@ const BillContent = () => {
         },
       });
     }
-  }
+  }, [billId, request, hideModal, navigate]);
 
   function skeleton() {
     return (
