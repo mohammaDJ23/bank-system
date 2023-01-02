@@ -32,7 +32,7 @@ export class UserService {
   async update(payload: User, context: RmqContext): Promise<void> {
     try {
       payload = this.userService.create(payload);
-      await this.userService.save(payload);
+      await this.userService.update({ email: payload.email }, payload);
       this.rabbitmqService.applyAcknowledgment(context);
     } catch (error) {
       throw error;
