@@ -1,5 +1,5 @@
 import FormContainer from '../../layout/FormContainer';
-import { Input, Form, Button } from 'element-react';
+import Form from './Form';
 import { BillObj, UpdateBill } from '../../lib';
 import { useAction, useForm, useRequest } from '../../hooks';
 import Modal from '../Modal';
@@ -7,8 +7,7 @@ import { ModalNames } from '../../store';
 import { useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { Apis, apis } from '../../apis';
-import { Box } from '@mui/material';
-import Skeleton from '../Skeleton';
+import Skeleton from './Skeleton';
 
 const UpdateBillContent = () => {
   const params = useParams();
@@ -49,115 +48,23 @@ const UpdateBillContent = () => {
     }
   }, []);
 
-  function skeleton() {
-    return (
-      <Box width="100%" display="flex" alignItems="start" gap="40px" flexDirection="column">
-        <Box width="100%" display="flex" alignItems="start" gap="15px" flexDirection="column">
-          <Box maxWidth="100px" width="100%" height="16px">
-            <Skeleton width="100%" height="100%" />
-          </Box>
-          <Box width="100%" height="30px">
-            <Skeleton width="100%" height="100%" />
-          </Box>
-        </Box>
-        <Box width="100%" display="flex" alignItems="start" gap="15px" flexDirection="column">
-          <Box maxWidth="100px" width="100%" height="16px">
-            <Skeleton width="100%" height="100%" />
-          </Box>
-          <Box width="100%" height="30px">
-            <Skeleton width="100%" height="100%" />
-          </Box>
-        </Box>
-        <Box width="100%" display="flex" alignItems="start" gap="15px" flexDirection="column">
-          <Box maxWidth="100px" width="100%" height="16px">
-            <Skeleton width="100%" height="100%" />
-          </Box>
-          <Box width="100%" height="30px">
-            <Skeleton width="100%" height="100%" />
-          </Box>
-        </Box>
-        <Box width="100%" display="flex" alignItems="start" gap="15px" flexDirection="column">
-          <Box maxWidth="100px" width="100%" height="16px">
-            <Skeleton width="100%" height="100%" />
-          </Box>
-          <Box width="100%" height="30px">
-            <Skeleton width="100%" height="100%" />
-          </Box>
-        </Box>
-      </Box>
-    );
-  }
-
-  function updateBillForm() {
-    return (
-      <>
-        {/**@ts-ignore */}
-        <Form ref={formRef} model={form} rules={rules} labelPosition="top" labelWidth="120">
-          {/**@ts-ignore */}
-          <Form.Item style={{ marginBottom: '32px' }} label="Amount" prop="amount">
-            <Input
-              type="number"
-              onChange={value => onChange('amount', value)}
-              value={form.amount}
-              disabled={isFormProcessing}
-            ></Input>
-          </Form.Item>
-
-          {/**@ts-ignore */}
-          <Form.Item style={{ marginBottom: '32px' }} label="Receiver" prop="receiver">
-            <Input
-              type="text"
-              onChange={value => onChange('receiver', value)}
-              value={form.receiver}
-              disabled={isFormProcessing}
-            ></Input>
-          </Form.Item>
-
-          {/**@ts-ignore */}
-          <Form.Item style={{ marginBottom: '32px' }} label="Date" prop="date">
-            <Input
-              type="date"
-              onChange={value => onChange('date', value)}
-              value={form.date}
-              disabled={isFormProcessing}
-            ></Input>
-          </Form.Item>
-
-          {/**@ts-ignore */}
-          <Form.Item style={{ marginBottom: '32px' }} label="Description" prop="description">
-            <Input
-              type="textarea"
-              autosize={{ minRows: 5 }}
-              onChange={value => onChange('description', value)}
-              value={form.description}
-              disabled={isFormProcessing}
-            ></Input>
-          </Form.Item>
-
-          {/**@ts-ignore */}
-          <Form.Item style={{ marginBottom: '32px' }}>
-            {/**@ts-ignore */}
-            <Button
-              type="primary"
-              onClick={() => onSubmitWithConfirmation()}
-              disabled={isFormProcessing}
-            >
-              Update
-            </Button>
-
-            {/**@ts-ignore */}
-            <Button onClick={() => resetForm()} disabled={isFormProcessing}>
-              Reset
-            </Button>
-          </Form.Item>
-        </Form>
-      </>
-    );
-  }
-
   return (
     <>
-      <FormContainer>{isBillProcessing ? skeleton() : updateBillForm()}</FormContainer>
+      <FormContainer>
+        {isBillProcessing ? (
+          <Skeleton />
+        ) : (
+          <Form
+            onChange={onChange}
+            onSubmitWithConfirmation={onSubmitWithConfirmation}
+            resetForm={resetForm}
+            form={form}
+            isFormProcessing={isFormProcessing}
+            formRef={formRef}
+            rules={rules}
+          />
+        )}
+      </FormContainer>
       <Modal
         isLoading={isFormProcessing}
         isActive={isConfirmationModalActive()}
