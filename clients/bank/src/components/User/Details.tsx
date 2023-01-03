@@ -76,16 +76,20 @@ const Details: FC<DetailsImporation> = ({ user }) => {
           <Typography fontWeight="700" fontSize="16px">
             {user.firstName} {user.lastName}
           </Typography>
-          <IconButton onClick={onMenuOpen}>
-            <MoreVert />
-          </IconButton>
-          <Menu anchorEl={anchorEl} open={open} onClick={onMenuClose}>
-            {options.map(option => (
-              <MenuItem key={option.path} onClick={onMenuClick(option)}>
-                {option.label}
-              </MenuItem>
-            ))}
-          </Menu>
+          {options.length > 0 && (
+            <>
+              <IconButton onClick={onMenuOpen}>
+                <MoreVert />
+              </IconButton>
+              <Menu anchorEl={anchorEl} open={open} onClick={onMenuClose}>
+                {options.map(option => (
+                  <MenuItem key={option.path} onClick={onMenuClick(option)}>
+                    {option.label}
+                  </MenuItem>
+                ))}
+              </Menu>
+            </>
+          )}
         </Box>
         <Typography fontSize="12px" color="">
           email: {user.email}

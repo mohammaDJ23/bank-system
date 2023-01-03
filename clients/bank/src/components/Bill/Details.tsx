@@ -75,17 +75,19 @@ const Details: FC<DetailsImporation> = ({ bill }) => {
           <Typography fontWeight="700" fontSize="14px">
             {bill.amount}
           </Typography>
-          <IconButton onClick={onMenuOpen}>
-            <MoreVert />
-          </IconButton>
           {options.length > 0 && (
-            <Menu anchorEl={anchorEl} open={open} onClick={onMenuClose}>
-              {options.map(option => (
-                <MenuItem key={option.path} onClick={onMenuClick(option)}>
-                  {option.label}
-                </MenuItem>
-              ))}
-            </Menu>
+            <>
+              <IconButton onClick={onMenuOpen}>
+                <MoreVert />
+              </IconButton>
+              <Menu anchorEl={anchorEl} open={open} onClick={onMenuClose}>
+                {options.map(option => (
+                  <MenuItem key={option.path} onClick={onMenuClick(option)}>
+                    {option.label}
+                  </MenuItem>
+                ))}
+              </Menu>
+            </>
           )}
         </Box>
         <Typography fontSize="12px" color="">
