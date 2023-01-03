@@ -30,6 +30,10 @@ const UserContent: FC = () => {
         },
       });
     }
+
+    return () => {
+      setSpecificDetails('user', null);
+    };
   }, []);
 
   return (

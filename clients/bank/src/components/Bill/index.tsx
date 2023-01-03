@@ -27,6 +27,10 @@ const BillContent: FC = () => {
         },
       });
     }
+
+    return () => {
+      setSpecificDetails('bill', null);
+    };
   }, []);
 
   return (
