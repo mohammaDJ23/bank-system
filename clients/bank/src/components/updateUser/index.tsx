@@ -3,12 +3,12 @@ import Form from './Form';
 import { UpdateUserByAdmin, UpdateUserByUser, UserObj } from '../../lib';
 import { useAction, useForm, useRequest } from '../../hooks';
 import { useAuth } from '../../hooks';
-import { useEffect } from 'react';
+import { useEffect, FC } from 'react';
 import { useParams } from 'react-router-dom';
 import { apis, Apis } from '../../apis';
 import Skeleton from './Skeleton';
 
-const UpdateUserContent = () => {
+const UpdateUserContent: FC = () => {
   const params = useParams();
   const { hideModal } = useAction();
   const { isAdmin } = useAuth();

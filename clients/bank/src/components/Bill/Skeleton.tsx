@@ -1,7 +1,8 @@
 import { Box } from '@mui/material';
 import CustomSkeleton from '../Skeleton';
+import { FC } from 'react';
 
-const Skeleton = () => {
+const Skeleton: FC = () => {
   return (
     <Box width="100%" display="flex" alignItems="start" gap="12px" flexDirection="column">
       <Box

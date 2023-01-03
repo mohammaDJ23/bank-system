@@ -1,14 +1,14 @@
 import DefaultContainer from '../../layout/DefaultContainer';
 import { useParams } from 'react-router-dom';
 import { useRequest } from '../../hooks';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, FC } from 'react';
 import Skeleton from './Skeleton';
 import { apis, Apis } from '../../apis';
 import { BillObj } from '../../lib';
 import NotFound from './NotFound';
 import Details from './Details';
 
-const BillContent = () => {
+const BillContent: FC = () => {
   const [bill, setBill] = useState<BillObj | null>(null);
   const params = useParams();
   const { isInitialApiProcessing, request } = useRequest();

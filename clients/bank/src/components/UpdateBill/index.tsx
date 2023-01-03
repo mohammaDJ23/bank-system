@@ -4,12 +4,12 @@ import { BillObj, UpdateBill } from '../../lib';
 import { useAction, useForm, useRequest } from '../../hooks';
 import Modal from '../Modal';
 import { ModalNames } from '../../store';
-import { useEffect } from 'react';
+import { useEffect, FC } from 'react';
 import { useParams } from 'react-router-dom';
 import { Apis, apis } from '../../apis';
 import Skeleton from './Skeleton';
 
-const UpdateBillContent = () => {
+const UpdateBillContent: FC = () => {
   const params = useParams();
   const { hideModal } = useAction();
   const { request, isApiProcessing, isInitialApiProcessing } = useRequest();

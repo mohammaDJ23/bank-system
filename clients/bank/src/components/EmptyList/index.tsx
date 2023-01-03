@@ -1,6 +1,7 @@
 import { Box, Typography } from '@mui/material';
+import { FC } from 'react';
 
-const EmptyList = () => {
+const EmptyList: FC = () => {
   return (
     <Box textAlign="center" pt="30px">
       <Typography>Empty List</Typography>

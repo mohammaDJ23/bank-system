@@ -3,8 +3,9 @@ import { Input, Form, Button, Select } from 'element-react';
 import { CreateUser } from '../../lib';
 import { useAuth, useForm } from '../../hooks';
 import { Apis } from '../../apis';
+import { FC } from 'react';
 
-const CreateUserContent = () => {
+const CreateUserContent: FC = () => {
   const { getUserRoles } = useAuth();
   const { formRef, rules, form, onChange, onSubmit, resetForm, isFormProcessing } = useForm(
     new CreateUser()

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, FC } from 'react';
 import DefaultContainer from '../../layout/DefaultContainer';
 import { useParams } from 'react-router-dom';
 import { useRequest } from '../../hooks';
@@ -8,7 +8,7 @@ import { Apis, apis } from '../../apis';
 import NotFound from './NotFound';
 import Details from './Details';
 
-const UserContent = () => {
+const UserContent: FC = () => {
   const [user, setUser] = useState<UserObj | null>(null);
   const { request, isInitialApiProcessing } = useRequest();
   const params = useParams();

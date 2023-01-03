@@ -5,8 +5,9 @@ import EmptyList from '../EmptyList';
 import Skeleton from './Skeleton';
 import { Apis } from '../../apis';
 import List from './List';
+import { FC } from 'react';
 
-const BillsContent = () => {
+const BillsContent: FC = () => {
   const { list, take, count, page, isEmptyList, isListProcessing, onPageChange } = useList<BillObj>(
     { initialList: new BillList(), apiName: Apis.BILLS }
   );

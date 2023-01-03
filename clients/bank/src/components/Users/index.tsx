@@ -5,8 +5,9 @@ import { UserList, UserObj } from '../../lib';
 import EmptyList from '../EmptyList';
 import List from './List';
 import Skeleton from './Skeleton';
+import { FC } from 'react';
 
-const UsersContent = () => {
+const UsersContent: FC = () => {
   const { list, take, count, page, isEmptyList, isListProcessing, onPageChange } = useList<UserObj>(
     {
       initialList: new UserList(),
