@@ -5,6 +5,7 @@ import {
   listContainerReducer,
   modalReducer,
   requsetProcessReducer,
+  specificDetailsReducer,
 } from './reducers';
 
 const reducers = combineReducers({
@@ -12,6 +13,7 @@ const reducers = combineReducers({
   loadings: requsetProcessReducer,
   listContainer: listContainerReducer,
   history: historyReducer,
+  specificDetails: specificDetailsReducer,
 });
 
 export const store = createStore(reducers, {}, applyMiddleware(thunk));
