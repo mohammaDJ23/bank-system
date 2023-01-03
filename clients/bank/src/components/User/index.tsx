@@ -1,7 +1,7 @@
-import { useEffect, useState, FC } from 'react';
+import { useEffect, FC } from 'react';
 import DefaultContainer from '../../layout/DefaultContainer';
 import { useParams } from 'react-router-dom';
-import { useRequest } from '../../hooks';
+import { useAction, useRequest, useSelector } from '../../hooks';
 import Skeleton from './Skeleton';
 import { UserObj } from '../../lib';
 import { Apis, apis } from '../../apis';
@@ -9,11 +9,13 @@ import NotFound from './NotFound';
 import Details from './Details';
 
 const UserContent: FC = () => {
-  const [user, setUser] = useState<UserObj | null>(null);
   const { request, isInitialApiProcessing } = useRequest();
   const params = useParams();
+  const { setSpecificDetails } = useAction();
+  const { specificDetails } = useSelector();
   const isUserProcessing = isInitialApiProcessing(Apis.USER);
   const userId = params.id;
+  const user = specificDetails.user;
 
   useEffect(() => {
     if (userId) {
@@ -24,7 +26,7 @@ const UserContent: FC = () => {
           baseURL: process.env.USER_SERVICE,
         },
         afterRequest(response) {
-          setUser(response.data);
+          setSpecificDetails('user', response.data);
         },
       });
     }
