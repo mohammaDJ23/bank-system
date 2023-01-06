@@ -4,7 +4,7 @@ import { useAction } from './useActions';
 import { useSelector } from './useSelector';
 
 export function useRequest() {
-  const { loadings } = useSelector();
+  const { requestProcess } = useSelector();
   const { asyncOp } = useAction();
 
   const request = useCallback(
@@ -19,18 +19,45 @@ export function useRequest() {
     [asyncOp]
   );
 
+  const isRequestProccessing = useCallback(
+    (apiName: Apis) => {
+      return requestProcess.loadings[apiName];
+    },
+    [requestProcess]
+  );
+
+  const isRequestSuccess = useCallback(
+    (apiName: Apis) => {
+      return requestProcess.successes[apiName];
+    },
+    [requestProcess]
+  );
+
+  const isRequestFailed = useCallback(
+    (apiName: Apis) => {
+      return requestProcess.errors[apiName];
+    },
+    [requestProcess]
+  );
+
   const isApiProcessing = useCallback(
     (apiName: Apis) => {
-      return loadings[apiName];
+      return (
+        isRequestProccessing(apiName) && !isRequestFailed(apiName) && !isRequestSuccess(apiName)
+      );
     },
-    [loadings]
+    [isRequestProccessing, isRequestFailed, isRequestSuccess]
   );
 
   const isInitialApiProcessing = useCallback(
     (apiName: Apis) => {
-      return loadings[apiName] === undefined || loadings[apiName];
+      const proccessingRequest = isRequestProccessing(apiName);
+      return (
+        (!proccessingRequest && !isRequestFailed(apiName) && !isRequestSuccess(apiName)) ||
+        proccessingRequest
+      );
     },
-    [loadings]
+    [isRequestProccessing, isRequestFailed, isRequestSuccess]
   );
 
   return { request, isApiProcessing, isInitialApiProcessing };

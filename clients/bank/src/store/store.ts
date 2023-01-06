@@ -10,7 +10,7 @@ import {
 
 const reducers = combineReducers({
   modals: modalReducer,
-  loadings: requsetProcessReducer,
+  requestProcess: requsetProcessReducer,
   listContainer: listContainerReducer,
   history: historyReducer,
   specificDetails: specificDetailsReducer,
