@@ -1,4 +1,4 @@
-import { ListInstance } from '../../lib';
+import { copyConstructor, ListInstance } from '../../lib';
 import {
   ChangePaginationListPageAction,
   PaginationListActions,
@@ -33,7 +33,9 @@ function changePage(
 ): PaginationListState {
   const { list: ListInstance, page: listInstancePage } = action.payload;
   const page = Math.sign(listInstancePage) <= 0 ? 1 : listInstancePage;
+  const copiedList = copyConstructor(state[ListInstance.name]);
   const newState = Object.assign<object, PaginationListState>({}, state);
+  newState[ListInstance.name] = copiedList;
   newState[ListInstance.name].page = page;
   return newState;
 }
