@@ -3,7 +3,7 @@ import { Apis } from '../apis';
 import { useAction, useRequest } from './';
 
 export function usePaginationList() {
-  const { setPaginationList } = useAction();
+  const { setPaginationList, changePaginationListPage } = useAction();
   const { isInitialApiProcessing } = useRequest();
 
   const setLists = useCallback(
@@ -13,6 +13,14 @@ export function usePaginationList() {
     [setPaginationList]
   );
 
+  const changePage = useCallback(
+    (...args: Parameters<typeof changePaginationListPage>) => {
+      const [ListInstance, page] = args;
+      changePaginationListPage(ListInstance, page);
+    },
+    [changePaginationListPage]
+  );
+
   const isListProcessing = useCallback(
     (apiName: Apis) => {
       return isInitialApiProcessing(apiName);
@@ -20,5 +28,5 @@ export function usePaginationList() {
     [isInitialApiProcessing]
   );
 
-  return { isListProcessing, setLists };
+  return { isListProcessing, setLists, changePage };
 }
