@@ -1,11 +1,11 @@
-import { useCallback } from 'react';
+import { useCallback, useEffect } from 'react';
 import { Apis, Request } from '../apis';
 import { useAction } from './useActions';
 import { useSelector } from './useSelector';
 
 export function useRequest() {
   const { requestProcess } = useSelector();
-  const { asyncOp } = useAction();
+  const { asyncOp, cleanRequestProcess } = useAction();
 
   const request = useCallback(
     <R = any, D = any>(req: Partial<Request<R, D>>) => {
@@ -59,6 +59,17 @@ export function useRequest() {
     },
     [isRequestProccessing, isRequestFailed, isRequestSuccess]
   );
+
+  useEffect(() => {
+    function cleanupRequestProccess() {
+      cleanRequestProcess();
+    }
+    window.addEventListener('popstate', cleanupRequestProccess);
+    return () => {
+      window.removeEventListener('popstate', cleanupRequestProccess);
+      cleanRequestProcess();
+    };
+  }, []);
 
   return { request, isApiProcessing, isInitialApiProcessing };
 }
