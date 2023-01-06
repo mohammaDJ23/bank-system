@@ -10,11 +10,26 @@ export interface SetPaginationListAction {
   payload: { lists: PaginationListObj[] };
 }
 
-export type PaginationListActions = SetPaginationListAction;
+export interface ChangePaginationListPageAction {
+  type: PaginationList.CHANGE_PAGE;
+  payload: { page: number; list: PaginationListObj };
+}
+
+export type PaginationListActions = SetPaginationListAction | ChangePaginationListPageAction;
 
 export function setPaginationList(...lists: PaginationListObj[]): SetPaginationListAction {
   return {
     type: PaginationList.SET_LISTS,
     payload: { lists },
+  };
+}
+
+export function changePaginationListPage(
+  list: PaginationListObj,
+  page: number
+): ChangePaginationListPageAction {
+  return {
+    type: PaginationList.CHANGE_PAGE,
+    payload: { list, page },
   };
 }

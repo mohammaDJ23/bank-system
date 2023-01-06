@@ -1,5 +1,9 @@
 import { ListInstance } from '../../lib';
-import { PaginationListActions, SetPaginationListAction } from '../actions';
+import {
+  ChangePaginationListPageAction,
+  PaginationListActions,
+  SetPaginationListAction,
+} from '../actions';
 
 export enum PaginationList {
   SET_LISTS = 'SET_LISTS',
@@ -23,6 +27,17 @@ function setLists(
   return newState;
 }
 
+function changePage(
+  state: PaginationListState,
+  action: ChangePaginationListPageAction
+): PaginationListState {
+  const { list: ListInstance, page: listInstancePage } = action.payload;
+  const page = Math.sign(listInstancePage) <= 0 ? 1 : listInstancePage;
+  const newState = Object.assign<object, PaginationListState>({}, state);
+  newState[ListInstance.name].page = page;
+  return newState;
+}
+
 export function paginationListReducer(
   state: PaginationListState = initialState,
   actions: PaginationListActions
@@ -30,6 +45,9 @@ export function paginationListReducer(
   switch (actions.type) {
     case PaginationList.SET_LISTS:
       return setLists(state, actions);
+
+    case PaginationList.CHANGE_PAGE:
+      return changePage(state, actions);
 
     default:
       return state;
