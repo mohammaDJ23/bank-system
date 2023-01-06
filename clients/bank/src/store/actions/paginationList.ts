@@ -15,7 +15,15 @@ export interface ChangePaginationListPageAction {
   payload: { page: number; list: PaginationListObj };
 }
 
-export type PaginationListActions = SetPaginationListAction | ChangePaginationListPageAction;
+export interface AddPaginationListAction<T = any> {
+  type: PaginationList.ADD_LIST;
+  payload: { lists: T[]; list: PaginationListObj };
+}
+
+export type PaginationListActions =
+  | SetPaginationListAction
+  | ChangePaginationListPageAction
+  | AddPaginationListAction;
 
 export function setPaginationList(...lists: PaginationListObj[]): SetPaginationListAction {
   return {
@@ -31,5 +39,15 @@ export function changePaginationListPage(
   return {
     type: PaginationList.CHANGE_PAGE,
     payload: { list, page },
+  };
+}
+
+export function addPaginationListAction<T = any>(
+  list: PaginationListObj,
+  lists: T[]
+): AddPaginationListAction<T> {
+  return {
+    type: PaginationList.ADD_LIST,
+    payload: { list, lists },
   };
 }

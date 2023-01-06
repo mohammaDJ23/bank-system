@@ -1,5 +1,6 @@
 import { copyConstructor, ListInstance } from '../../lib';
 import {
+  AddPaginationListAction,
   ChangePaginationListPageAction,
   PaginationListActions,
   SetPaginationListAction,
@@ -8,7 +9,7 @@ import {
 export enum PaginationList {
   SET_LISTS = 'SET_LISTS',
   CHANGE_PAGE = 'CHANGE_PAGE',
-  CHANGE_LIST = 'CHANGE_LIST',
+  ADD_LIST = 'ADD_LIST',
   CHANGE_TAKE = 'CHANGE_TAKE',
 }
 
@@ -40,6 +41,15 @@ function changePage(
   return newState;
 }
 
+function addList(state: PaginationListState, action: AddPaginationListAction): PaginationListState {
+  const { list: ListInstance, lists } = action.payload;
+  const copiedList = copyConstructor(state[ListInstance.name]);
+  const newState = Object.assign<object, PaginationListState>({}, state);
+  newState[ListInstance.name] = copiedList;
+  newState[ListInstance.name].list[newState[ListInstance.name].page] = lists;
+  return newState;
+}
+
 export function paginationListReducer(
   state: PaginationListState = initialState,
   actions: PaginationListActions
@@ -50,6 +60,9 @@ export function paginationListReducer(
 
     case PaginationList.CHANGE_PAGE:
       return changePage(state, actions);
+
+    case PaginationList.ADD_LIST:
+      return addList(state, actions);
 
     default:
       return state;
