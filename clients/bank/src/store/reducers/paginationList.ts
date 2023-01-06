@@ -10,7 +10,6 @@ export enum PaginationList {
   SET_LISTS = 'SET_LISTS',
   CHANGE_PAGE = 'CHANGE_PAGE',
   ADD_LIST = 'ADD_LIST',
-  CHANGE_TAKE = 'CHANGE_TAKE',
 }
 
 interface PaginationListState {
