@@ -1,10 +1,20 @@
+import { AxiosRequestConfig, CreateAxiosDefaults } from 'axios';
 import { useCallback } from 'react';
 import { Apis } from '../apis';
-import { useAction, useRequest } from './';
+import { ListInstance } from '../lib';
+import { useAction, useRequest, useSelector } from './';
 
-export function usePaginationList() {
+interface UsePaginationImportation {
+  listInstance: ListInstance;
+  apiName: Apis;
+  data: AxiosRequestConfig;
+  config?: CreateAxiosDefaults<UsePaginationImportation>;
+}
+
+export function usePaginationList(...lists: UsePaginationImportation[]) {
   const { setPaginationList, changePaginationListPage } = useAction();
   const { isInitialApiProcessing } = useRequest();
+  const { listContainer } = useSelector();
 
   const setLists = useCallback(
     (...lists: Parameters<typeof setPaginationList>) => {
@@ -17,8 +27,11 @@ export function usePaginationList() {
     (...args: Parameters<typeof changePaginationListPage>) => {
       const [ListInstance, page] = args;
       changePaginationListPage(ListInstance, page);
+      if (listContainer.element) {
+        listContainer.element.scrollTo({ behavior: 'smooth', top: 0 });
+      }
     },
-    [changePaginationListPage]
+    [changePaginationListPage, listContainer]
   );
 
   const isListProcessing = useCallback(
