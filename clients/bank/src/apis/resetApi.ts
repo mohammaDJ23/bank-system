@@ -18,7 +18,9 @@ export interface ErrorObj {
   path: string;
 }
 
-export type RequestParametersType<R, D> = ConstructorParameters<typeof Request<R, D>>[0];
+export type RequestParametersType<R = any, D = any> = ConstructorParameters<
+  typeof Request<R, D>
+>[0];
 
 export class Request<R = any, D = any> {
   private readonly axiosInstance: AxiosInstance;

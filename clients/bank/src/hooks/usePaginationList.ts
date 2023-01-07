@@ -1,17 +1,8 @@
-import { AxiosRequestConfig, CreateAxiosDefaults } from 'axios';
 import { useCallback } from 'react';
 import { Apis } from '../apis';
-import { ListInstance } from '../lib';
 import { useAction, useRequest, useSelector } from './';
 
-interface UsePaginationImportation {
-  listInstance: ListInstance;
-  apiName: Apis;
-  data: AxiosRequestConfig;
-  config?: CreateAxiosDefaults<UsePaginationImportation>;
-}
-
-export function usePaginationList(...lists: UsePaginationImportation[]) {
+export function usePaginationList() {
   const { setPaginationList, changePaginationListPage } = useAction();
   const { isInitialApiProcessing } = useRequest();
   const { listContainer } = useSelector();
