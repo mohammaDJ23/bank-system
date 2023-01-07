@@ -22,21 +22,21 @@ export class Request<R = any, D = any> {
   private readonly axiosInstance: AxiosInstance;
   public readonly apiName: Apis;
   public readonly data: AxiosRequestConfig<D>;
-  public readonly config: CreateAxiosDefaults<D>;
-  public readonly beforeRequest: (dispatch: Dispatch<RootActions>, store: RootState) => void;
-  public readonly afterRequest: (
+  public readonly config?: CreateAxiosDefaults<D>;
+  public readonly beforeRequest?: (dispatch: Dispatch<RootActions>, store: RootState) => void;
+  public readonly afterRequest?: (
     response: AxiosResponse<R, D>,
     dispatch: Dispatch<RootActions>,
     store: RootState
   ) => void;
 
   constructor({
-    apiName = Apis.DEFAULT,
-    data = {},
+    apiName,
+    data,
     config = {},
     beforeRequest = (dispatch, store) => {},
     afterRequest = (response, dispatch, store) => {},
-  }: Partial<Request> = {}) {
+  }: Omit<Request, 'axiosInstance' | 'build'>) {
     this.apiName = apiName;
     this.data = data;
     this.config = {
