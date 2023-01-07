@@ -2,7 +2,7 @@ import { AxiosError, AxiosResponse } from 'axios';
 import { Notification } from 'element-react';
 import { useCallback, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
-import { Apis, ErrorObj, Request } from '../apis';
+import { Apis, ErrorObj, Request, RequestParametersType } from '../apis';
 import { useAction } from './useActions';
 import { useSelector } from './useSelector';
 
@@ -14,7 +14,7 @@ export function useRequest() {
 
   const request = useCallback(
     async <R = any, D = any>(
-      req: ConstructorParameters<typeof Request<R, D>>[0]
+      req: RequestParametersType<R, D>
     ): Promise<AxiosResponse<R, D> | AxiosError<ErrorObj> | Error> => {
       try {
         loading(req.apiName);
