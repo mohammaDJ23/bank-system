@@ -33,7 +33,7 @@ export function usePaginationList() {
     [isInitialApiProcessing]
   );
 
-  const getList = useCallback(
+  const getListInfo = useCallback(
     <T>(
       listInstance: ListInstanceConstructor<ListInstance<T>>
     ): InstanceType<ListInstanceConstructor<ListInstance<T>>> => {
@@ -50,5 +50,5 @@ export function usePaginationList() {
     [paginationList]
   );
 
-  return { isListProcessing, setLists, onPageChange, getList, isListEmpty };
+  return { isListProcessing, setLists, onPageChange, getListInfo, isListEmpty };
 }

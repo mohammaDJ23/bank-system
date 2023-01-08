@@ -9,7 +9,8 @@ import { FC, useEffect } from 'react';
 
 const BillsContent: FC = () => {
   const { request } = useRequest();
-  const { setLists, isListProcessing, getList, onPageChange, isListEmpty } = usePaginationList();
+  const { setLists, isListProcessing, getListInfo, onPageChange, isListEmpty } =
+    usePaginationList();
 
   useEffect(() => {
     request<[BillObj[], number]>({
