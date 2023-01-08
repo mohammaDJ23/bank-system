@@ -23,7 +23,7 @@ function setLists(
   action: SetPaginationListAction
 ): PaginationListState {
   const newState = Object.assign<object, PaginationListState>({}, state);
-  for (const ListInstance of action.payload.lists) newState[ListInstance.name] = new ListInstance();
+  for (const list of action.payload.lists) newState[list.constructor.name] = list;
   return newState;
 }
 

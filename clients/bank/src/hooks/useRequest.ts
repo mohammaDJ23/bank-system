@@ -13,9 +13,7 @@ export function useRequest() {
   const state = useSelector();
 
   const request = useCallback(
-    async <R = any, D = any>(
-      req: RequestParametersType<R, D>
-    ): Promise<AxiosResponse<R, D> | AxiosError<ErrorObj> | Error> => {
+    async <R = any, D = any>(req: RequestParametersType<R, D>): Promise<AxiosResponse<R, D>> => {
       try {
         loading(req.apiName);
         if (req.beforeRequest) req.beforeRequest(dispatch, state);
@@ -35,7 +33,7 @@ export function useRequest() {
         message = Array.isArray(message) ? message.join(' - ') : message;
         Notification(message, 'error');
         error(req.apiName);
-        return err;
+        throw err;
       }
     },
     [loading, success, error, dispatch, state]

@@ -7,7 +7,7 @@ export interface PaginationListObj {
 
 export interface SetPaginationListAction {
   type: PaginationList.SET_LISTS;
-  payload: { lists: PaginationListObj[] };
+  payload: { lists: ListInstance[] };
 }
 
 export interface ChangePaginationListPageAction {
@@ -25,7 +25,7 @@ export type PaginationListActions =
   | ChangePaginationListPageAction
   | AddPaginationListAction;
 
-export function setPaginationList(...lists: PaginationListObj[]): SetPaginationListAction {
+export function setPaginationList(...lists: ListInstance[]): SetPaginationListAction {
   return {
     type: PaginationList.SET_LISTS,
     payload: { lists },
