@@ -8,13 +8,8 @@ import List from './List';
 import { FC, useEffect } from 'react';
 
 const BillsContent: FC = () => {
-  const { list, take, count, page, isEmptyList, onPageChange } = useList<BillObj>({
-    initialList: new BillList(),
-    apiName: Apis.BILLS,
-  });
-  const { setLists, isListProcessing } = usePaginationList();
   const { request } = useRequest();
-  const isLoading = isListProcessing(Apis.BILLS);
+  const { setLists, isListProcessing, getList, onPageChange, isListEmpty } = usePaginationList();
 
   useEffect(() => {
     request<[BillObj[], number]>({
@@ -31,13 +26,13 @@ const BillsContent: FC = () => {
 
   return (
     <ListContainer>
-      {isLoading ? (
+      {/* {isLoading ? (
         <Skeleton take={take} />
       ) : isEmptyList ? (
         <EmptyList />
       ) : (
         <List list={list} take={take} count={count} page={page} onPageChange={onPageChange} />
-      )}
+      )} */}
     </ListContainer>
   );
 };

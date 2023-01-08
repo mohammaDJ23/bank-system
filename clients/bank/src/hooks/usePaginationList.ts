@@ -1,11 +1,12 @@
 import { useCallback } from 'react';
 import { Apis } from '../apis';
+import { ListInstance, ListInstanceConstructor } from '../lib';
 import { useAction, useRequest, useSelector } from './';
 
 export function usePaginationList() {
   const { setPaginationList, changePaginationListPage } = useAction();
   const { isInitialApiProcessing } = useRequest();
-  const { listContainer } = useSelector();
+  const { listContainer, paginationList } = useSelector();
 
   const setLists = useCallback(
     (...lists: Parameters<typeof setPaginationList>) => {
@@ -14,7 +15,7 @@ export function usePaginationList() {
     [setPaginationList]
   );
 
-  const changePage = useCallback(
+  const onPageChange = useCallback(
     (...args: Parameters<typeof changePaginationListPage>) => {
       const [ListInstance, page] = args;
       changePaginationListPage(ListInstance, page);
@@ -32,5 +33,22 @@ export function usePaginationList() {
     [isInitialApiProcessing]
   );
 
-  return { isListProcessing, setLists, changePage };
+  const getList = useCallback(
+    <T>(
+      listInstance: ListInstanceConstructor<ListInstance<T>>
+    ): InstanceType<ListInstanceConstructor<ListInstance<T>>> => {
+      return paginationList[listInstance.constructor.name];
+    },
+    [paginationList]
+  );
+
+  const isListEmpty = useCallback(
+    <T>(listInstance: ListInstanceConstructor<ListInstance<T>>): boolean => {
+      const listInfo = paginationList[listInstance.constructor.name];
+      return listInfo.list[listInfo.page].length <= 0;
+    },
+    [paginationList]
+  );
+
+  return { isListProcessing, setLists, onPageChange, getList, isListEmpty };
 }
