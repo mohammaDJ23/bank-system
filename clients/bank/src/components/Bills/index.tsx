@@ -1,4 +1,4 @@
-import { useList, usePaginationList, useRequest } from '../../hooks';
+import { usePaginationList, useRequest } from '../../hooks';
 import ListContainer from '../../layout/ListContainer';
 import { BillList, BillObj } from '../../lib';
 import EmptyList from '../EmptyList';
@@ -9,8 +9,17 @@ import { FC, useEffect } from 'react';
 
 const BillsContent: FC = () => {
   const { request } = useRequest();
-  const { setLists, isListProcessing, getListInfo, onPageChange, isListEmpty } =
-    usePaginationList();
+  const listMaker = usePaginationList();
+  const {
+    setList,
+    isListEmpty,
+    isListProcessing,
+    onPageChange,
+    getCurrentList,
+    getCount,
+    getPage,
+    getTake,
+  } = listMaker(BillList);
 
   useEffect(() => {
     request<[BillObj[], number]>({
@@ -21,19 +30,25 @@ const BillsContent: FC = () => {
       const constructedBilllist = new BillList();
       constructedBilllist.list[constructedBilllist.page] = billlist;
       constructedBilllist.total = total;
-      setLists(constructedBilllist);
+      setList(constructedBilllist);
     });
   }, []);
 
   return (
     <ListContainer>
-      {/* {isLoading ? (
-        <Skeleton take={take} />
-      ) : isEmptyList ? (
+      {isListProcessing(Apis.BILLS) ? (
+        <Skeleton take={getTake()} />
+      ) : isListEmpty() ? (
         <EmptyList />
       ) : (
-        <List list={list} take={take} count={count} page={page} onPageChange={onPageChange} />
-      )} */}
+        <List
+          list={getCurrentList()}
+          take={getTake()}
+          count={getCount()}
+          page={getPage()}
+          onPageChange={onPageChange}
+        />
+      )}
     </ListContainer>
   );
 };

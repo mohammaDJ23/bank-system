@@ -1,4 +1,4 @@
-import { copyConstructor, ListInstance } from '../../lib';
+import { copyConstructor, ListInstance, lists } from '../../lib';
 import {
   AddPaginationListAction,
   ChangePaginationListPageAction,
@@ -16,14 +16,18 @@ interface PaginationListState {
   [key: string]: ListInstance;
 }
 
-export const initialState: PaginationListState = {};
+function makeListState() {
+  let state: PaginationListState = {};
+  for (let list in lists) state[list] = new lists[list as keyof typeof lists]();
+  return state;
+}
 
-function setLists(
-  state: PaginationListState,
-  action: SetPaginationListAction
-): PaginationListState {
+export const initialState: PaginationListState = makeListState();
+
+function setList(state: PaginationListState, action: SetPaginationListAction): PaginationListState {
   const newState = Object.assign<object, PaginationListState>({}, state);
-  for (const list of action.payload.lists) newState[list.constructor.name] = list;
+  const list = action.payload.list;
+  newState[list.constructor.name] = list;
   return newState;
 }
 
@@ -55,7 +59,7 @@ export function paginationListReducer(
 ) {
   switch (actions.type) {
     case PaginationList.SET_LISTS:
-      return setLists(state, actions);
+      return setList(state, actions);
 
     case PaginationList.CHANGE_PAGE:
       return changePage(state, actions);

@@ -34,9 +34,3 @@ export class DefaultList implements ListInstance {
     this.total = total;
   }
 }
-
-class MyClass<T> {}
-
-type GetMyClassT<C extends MyClass<any>> = C extends MyClass<infer T> ? T : unknown;
-const myInstance = new MyClass<'hello'>();
-let x: GetMyClassT<typeof myInstance>; // x: "hello"
