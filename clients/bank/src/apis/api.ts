@@ -1,4 +1,4 @@
-import { AxiosRequestConfig } from 'axios';
+import { AxiosRequestConfig, CreateAxiosDefaults } from 'axios';
 import {
   CreateBill,
   CreateUser,
@@ -27,22 +27,36 @@ interface IdReq {
   id: number;
 }
 
-abstract class RootApi<D = any> {
-  constructor(arg: AxiosRequestConfig<D>) {
-    return Object.assign<this, AxiosRequestConfig<D>>(this, arg);
+interface RootApiObj<D = any> {
+  readonly api: AxiosRequestConfig<D>;
+  readonly config?: CreateAxiosDefaults<D>;
+}
+
+abstract class RootApi<
+  D = any,
+  A extends AxiosRequestConfig<D> = AxiosRequestConfig<D>,
+  C extends CreateAxiosDefaults<D> = CreateAxiosDefaults<D>
+> implements RootApiObj<D>
+{
+  constructor(public readonly api: A, public readonly config?: C) {
+    this.api = api;
+    this.config = config;
   }
 }
 
 export class CreateUserApi extends RootApi<CreateUser> {
   constructor(data: CreateUser) {
-    super({
-      url: '/user/create',
-      method: 'post',
-      data,
-      headers: {
-        'Content-type': 'application/json',
+    super(
+      {
+        url: '/user/create',
+        method: 'post',
+        data,
+        headers: {
+          'Content-type': 'application/json',
+        },
       },
-    });
+      { baseURL: process.env.USER_SERVICE }
+    );
   }
 }
 
@@ -61,27 +75,33 @@ export class CreateBillApi extends RootApi<CreateBill> {
 
 export class UpdateUserByAdminApi extends RootApi<UpdateUserByAdmin> {
   constructor(data: UpdateUserByAdmin) {
-    super({
-      url: '/user/update/admin',
-      method: 'put',
-      data,
-      headers: {
-        'Content-type': 'application/json',
+    super(
+      {
+        url: '/user/update/admin',
+        method: 'put',
+        data,
+        headers: {
+          'Content-type': 'application/json',
+        },
       },
-    });
+      { baseURL: process.env.USER_SERVICE }
+    );
   }
 }
 
 export class UpdateUserByUserApi extends RootApi<UpdateUserByUser> {
   constructor(data: UpdateUserByUser) {
-    super({
-      url: '/user/update',
-      method: 'put',
-      data,
-      headers: {
-        'Content-type': 'application/json',
+    super(
+      {
+        url: '/user/update',
+        method: 'put',
+        data,
+        headers: {
+          'Content-type': 'application/json',
+        },
       },
-    });
+      { baseURL: process.env.USER_SERVICE }
+    );
   }
 }
 
@@ -100,10 +120,13 @@ export class UpdateBillApi extends RootApi<UpdateBill> {
 
 export class UsersApi<T = any> extends RootApi {
   constructor(data: ListParams<T>) {
-    super({
-      url: `/user/all?page=${data.page}&take=${data.take}`,
-      method: 'get',
-    });
+    super(
+      {
+        url: `/user/all?page=${data.page}&take=${data.take}`,
+        method: 'get',
+      },
+      { baseURL: process.env.USER_SERVICE }
+    );
   }
 }
 
@@ -118,10 +141,13 @@ export class BillsApi<T = any> extends RootApi {
 
 export class UserApi extends RootApi {
   constructor(id: number) {
-    super({
-      url: `/user/${id}`,
-      method: 'get',
-    });
+    super(
+      {
+        url: `/user/${id}`,
+        method: 'get',
+      },
+      { baseURL: process.env.USER_SERVICE }
+    );
   }
 }
 
@@ -146,11 +172,14 @@ export class DeleteBillApi extends RootApi<IdReq> {
 
 export class DeleteUserApi extends RootApi<IdReq> {
   constructor(id: number) {
-    super({
-      url: `/user/delete`,
-      method: 'delete',
-      data: { id },
-    });
+    super(
+      {
+        url: `/user/delete`,
+        method: 'delete',
+        data: { id },
+      },
+      { baseURL: process.env.USER_SERVICE }
+    );
   }
 }
 
