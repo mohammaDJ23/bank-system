@@ -81,6 +81,19 @@ export class UpdateUserByUserApi extends RootApi<UpdateUserByUser> {
   }
 }
 
+export class UpdateBillApi extends RootApi<UpdateBill> {
+  constructor(data: UpdateBill) {
+    super({
+      url: '/bank/bill/update',
+      method: 'put',
+      data,
+      headers: {
+        'Content-type': 'application/json',
+      },
+    });
+  }
+}
+
 export const apis = {
   [Apis.DEFAULT]() {
     return {};
