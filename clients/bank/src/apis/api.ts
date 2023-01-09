@@ -112,6 +112,15 @@ export class BillsApi<T = any> extends RootApi<ListParams<T>> {
   }
 }
 
+export class UserApi extends RootApi<number> {
+  constructor(id: number) {
+    super({
+      url: `/user/${id}`,
+      method: 'get',
+    });
+  }
+}
+
 export const apis = {
   [Apis.DEFAULT]() {
     return {};
