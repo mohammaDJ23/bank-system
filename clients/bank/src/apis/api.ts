@@ -94,6 +94,15 @@ export class UpdateBillApi extends RootApi<UpdateBill> {
   }
 }
 
+export class UsersApi<T = any> extends RootApi<ListParams<T>> {
+  constructor(data: ListParams<T>) {
+    super({
+      url: `/user/all?page=${data.page}&take=${data.take}`,
+      method: 'get',
+    });
+  }
+}
+
 export const apis = {
   [Apis.DEFAULT]() {
     return {};
