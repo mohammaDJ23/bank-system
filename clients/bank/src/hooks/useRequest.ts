@@ -1,37 +1,95 @@
-import { useCallback } from 'react';
-import { Apis, Request } from '../apis';
+import { AxiosError, AxiosResponse } from 'axios';
+import { Notification } from 'element-react';
+import { useCallback, useEffect } from 'react';
+import { useDispatch } from 'react-redux';
+import { Apis, ErrorObj, Request, RequestParametersType } from '../apis';
 import { useAction } from './useActions';
 import { useSelector } from './useSelector';
 
 export function useRequest() {
-  const { loadings } = useSelector();
-  const { asyncOp } = useAction();
+  const { requestProcess } = useSelector();
+  const { cleanRequestProcess, loading, success, error } = useAction();
+  const dispatch = useDispatch();
+  const state = useSelector();
 
   const request = useCallback(
-    <R = any, D = any>(req: Partial<Request<R, D>>) => {
-      asyncOp(async (dispatch, store) => {
-        if (req.beforeRequest) req.beforeRequest(dispatch, store);
+    async <R = any, D = any>(req: RequestParametersType<R, D>): Promise<AxiosResponse<R, D>> => {
+      try {
+        loading(req.apiName);
+        if (req.beforeRequest) req.beforeRequest(dispatch, state);
         const request = new Request<R, D>(req);
         const response = await request.build();
-        if (req.afterRequest) req.afterRequest(response, dispatch, store);
-      }, req.apiName || Apis.DEFAULT);
+        if (req.afterRequest) req.afterRequest(response, dispatch, state);
+        success(req.apiName);
+        return response;
+      } catch (e) {
+        const err = e as AxiosError<ErrorObj> | Error;
+        let message =
+          err instanceof AxiosError<ErrorObj>
+            ? err.response?.data?.message || err.response?.statusText || err.message
+            : err instanceof Error
+            ? err.message
+            : 'Something went wrong';
+        message = Array.isArray(message) ? message.join(' - ') : message;
+        Notification(message, 'error');
+        error(req.apiName);
+        throw err;
+      }
     },
-    [asyncOp]
+    [loading, success, error, dispatch, state]
+  );
+
+  const isRequestProccessing = useCallback(
+    (apiName: Apis) => {
+      return requestProcess.loadings[apiName];
+    },
+    [requestProcess]
+  );
+
+  const isRequestSuccess = useCallback(
+    (apiName: Apis) => {
+      return requestProcess.successes[apiName];
+    },
+    [requestProcess]
+  );
+
+  const isRequestFailed = useCallback(
+    (apiName: Apis) => {
+      return requestProcess.errors[apiName];
+    },
+    [requestProcess]
   );
 
   const isApiProcessing = useCallback(
     (apiName: Apis) => {
-      return loadings[apiName];
+      return (
+        isRequestProccessing(apiName) && !isRequestFailed(apiName) && !isRequestSuccess(apiName)
+      );
     },
-    [loadings]
+    [isRequestProccessing, isRequestFailed, isRequestSuccess]
   );
 
   const isInitialApiProcessing = useCallback(
     (apiName: Apis) => {
-      return loadings[apiName] === undefined || loadings[apiName];
+      const proccessingRequest = isRequestProccessing(apiName);
+      return (
+        (!proccessingRequest && !isRequestFailed(apiName) && !isRequestSuccess(apiName)) ||
+        proccessingRequest
+      );
     },
-    [loadings]
+    [isRequestProccessing, isRequestFailed, isRequestSuccess]
   );
+
+  useEffect(() => {
+    function cleanupRequestProccess() {
+      cleanRequestProcess();
+    }
+    window.addEventListener('popstate', cleanupRequestProccess);
+    return () => {
+      window.removeEventListener('popstate', cleanupRequestProccess);
+      cleanRequestProcess();
+    };
+  }, []);
 
   return { request, isApiProcessing, isInitialApiProcessing };
 }

@@ -8,26 +8,55 @@ export enum RequestProcess {
   CLEAN = 'CLEAN',
 }
 
-export interface RequestProcessState {
-  [key: string]: boolean;
+interface Process<T = boolean> {
+  [key: string]: T;
 }
 
-const initialState: RequestProcessState = {};
+export interface RequestProcessState {
+  loadings: Process;
+  errors: Process;
+  successes: Process;
+}
+
+const initialState: RequestProcessState = {
+  loadings: {},
+  errors: {},
+  successes: {},
+};
 
 function loading(state: RequestProcessState, action: LoadingAction): RequestProcessState {
-  return Object.assign({}, state, { [action.payload.name]: true });
+  const requestName = action.payload.name;
+  const newState = Object.assign<object, RequestProcessState>({}, state);
+  delete newState.errors[requestName];
+  delete newState.successes[requestName];
+  newState.loadings = Object.assign<Process, Process>(newState.loadings, { [requestName]: true });
+  return newState;
 }
 
 function success(state: RequestProcessState, action: SuccessAction): RequestProcessState {
-  return Object.assign({}, state, { [action.payload.name]: false });
+  const requestName = action.payload.name;
+  const newState = Object.assign<object, RequestProcessState>({}, state);
+  delete newState.loadings[requestName];
+  delete newState.errors[requestName];
+  newState.successes = Object.assign<Process, Process>(newState.successes, { [requestName]: true });
+  return newState;
 }
 
 function error(state: RequestProcessState, action: ErrorAction): RequestProcessState {
-  return Object.assign({}, state, { [action.payload.name]: false });
+  const requestName = action.payload.name;
+  const newState = Object.assign<object, RequestProcessState>({}, state);
+  delete newState.loadings[requestName];
+  delete newState.successes[requestName];
+  newState.errors = Object.assign<Process, Process>(newState.errors, { [requestName]: true });
+  return newState;
 }
 
-function clean() {
-  return Object.assign({});
+function clean(state: RequestProcessState) {
+  return Object.assign<RequestProcessState, Partial<RequestProcessState>>(state, {
+    loadings: {},
+    errors: {},
+    successes: {},
+  });
 }
 
 export function requsetProcessReducer(
@@ -45,7 +74,7 @@ export function requsetProcessReducer(
       return error(state, actions);
 
     case RequestProcess.CLEAN:
-      return clean();
+      return clean(state);
 
     default:
       return state;

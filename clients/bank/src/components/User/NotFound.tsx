@@ -15,10 +15,10 @@ const NotFound: FC = () => {
       gap="12px"
       mt="20px"
     >
-      <Typography>Not found the bill</Typography>
+      <Typography>Not found the user</Typography>
       {/**@ts-ignore */}
-      <Button onClick={() => navigate('/bank/bills')} type="primary">
-        Back to the bill list
+      <Button onClick={() => navigate('/bank/users')} type="primary">
+        Back to the user list
       </Button>
     </Box>
   );

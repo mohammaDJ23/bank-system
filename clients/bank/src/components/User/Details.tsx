@@ -7,14 +7,14 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { FC, useCallback, useState } from 'react';
 import { useAction, useRequest, useSelector } from '../../hooks';
 import { apis, Apis } from '../../apis';
-import { BillObj } from '../../lib';
+import { UserObj } from '../../lib';
 import { ModalNames } from '../../store';
 
 interface DetailsImporation {
-  bill: BillObj;
+  user: UserObj;
 }
 
-const Details: FC<DetailsImporation> = ({ bill }) => {
+const Details: FC<DetailsImporation> = ({ user }) => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
   const navigate = useNavigate();
@@ -22,9 +22,9 @@ const Details: FC<DetailsImporation> = ({ bill }) => {
   const { showModal, hideModal } = useAction();
   const { modals } = useSelector();
   const { isApiProcessing, request } = useRequest();
-  const isDeleteBillProcessing = isApiProcessing(Apis.DELETE_BILL);
-  const options = bill ? [{ label: 'Update', path: `/bank/update-bill/${bill.id}` }] : [];
-  const billId = params.id;
+  const isDeletingUserProcessing = isApiProcessing(Apis.DELETE_USER);
+  const options = user ? [{ label: 'Update', path: `/bank/update-user/${user.id}` }] : [];
+  const userId = params.id;
 
   const onMenuOpen = useCallback((event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
@@ -44,22 +44,23 @@ const Details: FC<DetailsImporation> = ({ bill }) => {
     [onMenuClose, navigate]
   );
 
-  const onDeleteBill = useCallback(() => {
+  const onDeleteAccount = useCallback(() => {
     showModal(ModalNames.CONFIRMATION);
   }, [showModal]);
 
-  const deleteBill = useCallback(() => {
-    if (billId) {
+  const deleteUser = useCallback(() => {
+    if (userId) {
       request({
-        apiName: Apis.DELETE_BILL,
-        data: apis[Apis.DELETE_BILL](+billId),
+        apiName: Apis.DELETE_USER,
+        data: apis[Apis.DELETE_USER](+userId),
+        config: { baseURL: process.env.USER_SERVICE },
         afterRequest() {
           hideModal(ModalNames.CONFIRMATION);
-          navigate('/bank/bills');
+          navigate('/bank/users');
         },
       });
     }
-  }, [billId, request, hideModal, navigate]);
+  }, [userId, request, hideModal, navigate]);
 
   return (
     <>
@@ -72,8 +73,8 @@ const Details: FC<DetailsImporation> = ({ bill }) => {
           justifyContent="space-between"
           alignItems="center"
         >
-          <Typography fontWeight="700" fontSize="14px">
-            {bill.amount}
+          <Typography fontWeight="700" fontSize="16px">
+            {user.firstName} {user.lastName}
           </Typography>
           {options.length > 0 && (
             <>
@@ -91,41 +92,42 @@ const Details: FC<DetailsImporation> = ({ bill }) => {
           )}
         </Box>
         <Typography fontSize="12px" color="">
-          receiver: {bill.receiver}
+          email: {user.email}
         </Typography>
         <Typography fontSize="12px" color="">
-          description: {bill.description}
+          phone: {user.phone}
         </Typography>
         <Typography fontSize="12px" color="">
-          received at: {moment(bill.date).format('LL')}
+          role: {user.role}
         </Typography>
         <Typography fontSize="12px" color="">
-          created at: {moment(bill.createdAt).format('LLLL')}
+          created at: {moment(user.createdAt).format('LLLL')}
         </Typography>
-        {new Date(bill.updatedAt) > new Date(bill.createdAt) && (
+        {new Date(user.updatedAt) > new Date(user.createdAt) && (
           <Typography fontSize="12px" color="">
-            last update: {moment(bill.updatedAt).format('LLLL')}
+            last update: {moment(user.updatedAt).format('LLLL')}
           </Typography>
         )}
         <Box mt="30px">
           {/**@ts-ignore */}
           <Button
-            disabled={isDeleteBillProcessing}
-            loading={isDeleteBillProcessing}
-            onClick={onDeleteBill}
+            disabled={isDeletingUserProcessing}
+            loading={isDeletingUserProcessing}
+            onClick={onDeleteAccount}
             type="danger"
           >
-            Deleting the bill
+            Deleting the account
           </Button>
         </Box>
       </Box>
+
       <Modal
-        title="Deleting the Bill"
-        body="Are you sure do delete the bill?"
-        isLoading={isDeleteBillProcessing}
+        title="Deleting the Account"
+        body="Are you sure do delete the user account?"
+        isLoading={isDeletingUserProcessing}
         isActive={modals[ModalNames.CONFIRMATION]}
         onCancel={() => hideModal(ModalNames.CONFIRMATION)}
-        onConfirm={() => deleteBill()}
+        onConfirm={() => deleteUser()}
       />
     </>
   );

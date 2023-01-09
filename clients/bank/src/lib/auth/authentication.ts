@@ -41,9 +41,9 @@ export function isUserAuthenticated() {
 }
 
 export function isUser(role?: UserRoles) {
-  return role || getTokenInfo()?.role === UserRoles.USER;
+  return (role || getTokenInfo()?.role) === UserRoles.USER;
 }
 
 export function isAdmin(role?: UserRoles) {
-  return role || getTokenInfo()?.role === UserRoles.ADMIN;
+  return (role || getTokenInfo()?.role) === UserRoles.ADMIN;
 }

@@ -5,13 +5,17 @@ import {
   listContainerReducer,
   modalReducer,
   requsetProcessReducer,
+  specificDetailsReducer,
+  paginationListReducer,
 } from './reducers';
 
 const reducers = combineReducers({
   modals: modalReducer,
-  loadings: requsetProcessReducer,
+  requestProcess: requsetProcessReducer,
   listContainer: listContainerReducer,
   history: historyReducer,
+  specificDetails: specificDetailsReducer,
+  paginationList: paginationListReducer,
 });
 
 export const store = createStore(reducers, {}, applyMiddleware(thunk));

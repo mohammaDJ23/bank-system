@@ -3,8 +3,9 @@ import { Input, Form, Button } from 'element-react';
 import { CreateBill } from '../../lib';
 import { useForm } from '../../hooks';
 import { Apis } from '../../apis';
+import { FC } from 'react';
 
-const CreateBillContent = () => {
+const CreateBillContent: FC = () => {
   const { formRef, rules, form, onChange, onSubmit, resetForm, isFormProcessing } = useForm(
     new CreateBill()
   );

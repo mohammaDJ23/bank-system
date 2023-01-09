@@ -1,6 +1,6 @@
+import { FC } from 'react';
 import { Box } from '@mui/material';
 import CustomSkeleton from '../Skeleton';
-import { FC } from 'react';
 
 const Skeleton: FC = () => {
   return (
@@ -20,16 +20,16 @@ const Skeleton: FC = () => {
           <CustomSkeleton width="100%" height="100%" />
         </Box>
       </Box>
-      <Box maxWidth="150px" width="100%" height="12px">
+      <Box maxWidth="180px" width="100%" height="12px">
         <CustomSkeleton width="100%" height="100%" />
       </Box>
-      <Box maxWidth="300px" width="100%" height="12px">
+      <Box maxWidth="280px" width="100%" height="12px">
         <CustomSkeleton width="100%" height="100%" />
       </Box>
       <Box maxWidth="130px" width="100%" height="12px">
         <CustomSkeleton width="100%" height="100%" />
       </Box>
-      <Box maxWidth="140px" width="100%" height="12px">
+      <Box maxWidth="250px" width="100%" height="12px">
         <CustomSkeleton width="100%" height="100%" />
       </Box>
     </Box>
