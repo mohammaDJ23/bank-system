@@ -29,10 +29,23 @@ abstract class RootApi<D = any> {
   }
 }
 
-export class CreateBillApi extends RootApi {
-  constructor(data: CreateBill) {
+export class CreateUserApi extends RootApi<CreateUser> {
+  constructor(data: CreateUser) {
     super({
       url: '/user/create',
+      method: 'post',
+      data,
+      headers: {
+        'Content-type': 'application/json',
+      },
+    });
+  }
+}
+
+export class CreateBillApi extends RootApi<CreateBill> {
+  constructor(data: CreateBill) {
+    super({
+      url: '/bank/bill/create',
       method: 'post',
       data,
       headers: {
