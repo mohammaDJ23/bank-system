@@ -68,6 +68,19 @@ export class UpdateUserByAdminApi extends RootApi<UpdateUserByAdmin> {
   }
 }
 
+export class UpdateUserByUserApi extends RootApi<UpdateUserByUser> {
+  constructor(data: UpdateUserByUser) {
+    super({
+      url: '/user/update',
+      method: 'put',
+      data,
+      headers: {
+        'Content-type': 'application/json',
+      },
+    });
+  }
+}
+
 export const apis = {
   [Apis.DEFAULT]() {
     return {};
