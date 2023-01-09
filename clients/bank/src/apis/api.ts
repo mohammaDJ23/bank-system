@@ -103,6 +103,15 @@ export class UsersApi<T = any> extends RootApi<ListParams<T>> {
   }
 }
 
+export class BillsApi<T = any> extends RootApi<ListParams<T>> {
+  constructor(data: ListParams<T>) {
+    super({
+      url: `/bank/bills?page=${data.page}&take=${data.take}`,
+      method: 'get',
+    });
+  }
+}
+
 export const apis = {
   [Apis.DEFAULT]() {
     return {};
