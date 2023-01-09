@@ -121,6 +121,15 @@ export class UserApi extends RootApi<number> {
   }
 }
 
+export class BillApi extends RootApi<number> {
+  constructor(id: number) {
+    super({
+      url: `/bank/bill/${id}`,
+      method: 'get',
+    });
+  }
+}
+
 export const apis = {
   [Apis.DEFAULT]() {
     return {};
