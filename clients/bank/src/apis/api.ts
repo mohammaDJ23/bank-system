@@ -23,6 +23,25 @@ export enum Apis {
   DELETE_USER = 'DELETE_USER',
 }
 
+abstract class RootApi<D = any> {
+  constructor(arg: AxiosRequestConfig<D>) {
+    return Object.assign<this, AxiosRequestConfig<D>>(this, arg);
+  }
+}
+
+export class CreateBillApi extends RootApi {
+  constructor(data: CreateBill) {
+    super({
+      url: '/user/create',
+      method: 'post',
+      data,
+      headers: {
+        'Content-type': 'application/json',
+      },
+    });
+  }
+}
+
 export const apis = {
   [Apis.DEFAULT]() {
     return {};
