@@ -23,6 +23,10 @@ export enum Apis {
   DELETE_USER = 'DELETE_USER',
 }
 
+interface IdReq {
+  id: number;
+}
+
 abstract class RootApi<D = any> {
   constructor(arg: AxiosRequestConfig<D>) {
     return Object.assign<this, AxiosRequestConfig<D>>(this, arg);
@@ -94,7 +98,7 @@ export class UpdateBillApi extends RootApi<UpdateBill> {
   }
 }
 
-export class UsersApi<T = any> extends RootApi<ListParams<T>> {
+export class UsersApi<T = any> extends RootApi {
   constructor(data: ListParams<T>) {
     super({
       url: `/user/all?page=${data.page}&take=${data.take}`,
@@ -103,7 +107,7 @@ export class UsersApi<T = any> extends RootApi<ListParams<T>> {
   }
 }
 
-export class BillsApi<T = any> extends RootApi<ListParams<T>> {
+export class BillsApi<T = any> extends RootApi {
   constructor(data: ListParams<T>) {
     super({
       url: `/bank/bills?page=${data.page}&take=${data.take}`,
@@ -112,7 +116,7 @@ export class BillsApi<T = any> extends RootApi<ListParams<T>> {
   }
 }
 
-export class UserApi extends RootApi<number> {
+export class UserApi extends RootApi {
   constructor(id: number) {
     super({
       url: `/user/${id}`,
@@ -121,11 +125,21 @@ export class UserApi extends RootApi<number> {
   }
 }
 
-export class BillApi extends RootApi<number> {
+export class BillApi extends RootApi {
   constructor(id: number) {
     super({
       url: `/bank/bill/${id}`,
       method: 'get',
+    });
+  }
+}
+
+export class DeleteBillApi extends RootApi<IdReq> {
+  constructor(id: number) {
+    super({
+      url: `/bank/bill/delete`,
+      method: 'delete',
+      data: { id },
     });
   }
 }
