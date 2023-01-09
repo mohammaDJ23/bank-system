@@ -144,6 +144,16 @@ export class DeleteBillApi extends RootApi<IdReq> {
   }
 }
 
+export class DeleteUserApi extends RootApi<IdReq> {
+  constructor(id: number) {
+    super({
+      url: `/user/delete`,
+      method: 'delete',
+      data: { id },
+    });
+  }
+}
+
 export const apis = {
   [Apis.DEFAULT]() {
     return {};
