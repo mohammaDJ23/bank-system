@@ -21,7 +21,7 @@ export function useForm<T extends FormInstance>(initialForm: T) {
     };
   }, []);
 
-  const onChange = useCallback((name: string, value: any) => {
+  const onChange = useCallback((name: keyof T, value: any) => {
     setForm(prevState => {
       const constructedForm = copyConstructor<T>(prevState);
       const newState = Object.assign(constructedForm, { [name]: value });

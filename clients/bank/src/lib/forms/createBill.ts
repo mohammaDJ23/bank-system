@@ -1,5 +1,4 @@
-import { Notification } from 'element-react';
-import { AfterSubmition, BeforeSubmition, DefineRules, DefineVal } from '../decorators';
+import { DefineRules, DefineVal } from '../decorators';
 import { isReceiver, isAmount, isDescription, isDate } from '../validations';
 import { Form } from './formConstructor';
 
@@ -38,15 +37,5 @@ export class CreateBill extends Form {
     this.receiver = this.getCachedInput('receiver');
     this.description = this.getCachedInput('description');
     this.date = this.getCachedInput('date');
-  }
-
-  @BeforeSubmition()
-  changeDateFormat() {
-    this.date = new Date(this.date);
-  }
-
-  @AfterSubmition()
-  showSuccessfulMessage() {
-    Notification('Your bill was created successfully.', 'success');
   }
 }

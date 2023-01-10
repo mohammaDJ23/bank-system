@@ -1,5 +1,5 @@
 import FormContainer from '../../layout/FormContainer';
-import { Input, Form, Button, Select } from 'element-react';
+import { Input, Form, Button, Select, Notification } from 'element-react';
 import { CreateUser } from '../../lib';
 import { useAuth, useForm, useRequest } from '../../hooks';
 import { CreateUserApi } from '../../apis';
@@ -15,6 +15,7 @@ const CreateUserContent: FC = () => {
     onSubmit(() => {
       request<CreateUser, CreateUser>(new CreateUserApi(form)).then(response => {
         resetForm();
+        Notification('Your have created a new user successfully.', 'success');
       });
     });
   }, [form, resetForm, onSubmit, request]);

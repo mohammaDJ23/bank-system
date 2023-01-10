@@ -49,7 +49,7 @@ export abstract class Form {
     return findedParam;
   }
 
-  cachInput(key: string, value: any): void {
+  cachInput(key: keyof this, value: any): void {
     if (this.shouldCachInput) {
       const constructorName = this.getConstructorName();
       const cachedForm = LocalStorage.getItem(constructorName) || {};

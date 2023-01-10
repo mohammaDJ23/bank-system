@@ -1,5 +1,5 @@
 import FormContainer from '../../layout/FormContainer';
-import { Input, Form, Button } from 'element-react';
+import { Input, Form, Button, Notification } from 'element-react';
 import { CreateBill } from '../../lib';
 import { useForm, useRequest } from '../../hooks';
 import { FC, useCallback } from 'react';
@@ -12,11 +12,13 @@ const CreateBillContent: FC = () => {
 
   const formSubmition = useCallback(() => {
     onSubmit(() => {
+      onChange('date', new Date(form.date));
       request<CreateBill, CreateBill>(new CreateBillApi(form)).then(response => {
         resetForm();
+        Notification('Your bill was created successfully.', 'success');
       });
     });
-  }, [form, resetForm, onSubmit, request]);
+  }, [form, resetForm, onSubmit, request, onChange]);
 
   return (
     <FormContainer>
