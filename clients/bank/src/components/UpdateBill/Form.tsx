@@ -1,5 +1,4 @@
 import { Button, Input, Form as ReactElementForm } from 'element-react';
-import { Apis } from '../../apis';
 import { Rules, UpdateBill } from '../../lib';
 import { FC } from 'react';
 
@@ -10,7 +9,7 @@ interface FormImportation {
   formRef: React.MutableRefObject<ReactElementForm | null>;
   rules: Rules;
   onSubmitWithConfirmation: () => void;
-  resetForm: (apiName: Apis) => void;
+  resetForm: () => void;
 }
 
 const Form: FC<FormImportation> = ({

@@ -1,8 +1,4 @@
-import { Notification } from 'element-react';
-import type { Dispatch } from 'redux';
-import type { RootState } from '../../store';
-import { RootActions } from '../../store/actions';
-import { AfterSubmition, DefineRules, DefineVal } from '../decorators';
+import { DefineRules, DefineVal } from '../decorators';
 import { isReceiver, isAmount, isDescription, isDate } from '../validations';
 import { Form } from './formConstructor';
 
@@ -51,11 +47,5 @@ export class UpdateBill extends Form {
     this.receiver = receiver;
     this.description = description;
     this.date = date;
-  }
-
-  @AfterSubmition()
-  afterUpdating(dispatch: Dispatch<RootActions>, store: RootState) {
-    Notification('You have updated the bill successfully.', 'success');
-    if (store.history) store.history.push(`/bank/bills/${this.id}`);
   }
 }

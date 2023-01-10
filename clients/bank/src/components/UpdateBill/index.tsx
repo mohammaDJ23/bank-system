@@ -1,17 +1,19 @@
 import FormContainer from '../../layout/FormContainer';
 import Form from './Form';
 import { BillObj, UpdateBill } from '../../lib';
-import { useAction, useForm, useRequest } from '../../hooks';
+import { useAction, useForm, useRequest, useSelector } from '../../hooks';
 import Modal from '../Modal';
 import { ModalNames } from '../../store';
-import { useEffect, FC } from 'react';
+import { useEffect, FC, useCallback } from 'react';
 import { useParams } from 'react-router-dom';
-import { Apis, apis } from '../../apis';
+import { Notification } from 'element-react';
 import Skeleton from './Skeleton';
+import { BillApi, UpdateBillApi } from '../../apis';
 
 const UpdateBillContent: FC = () => {
   const params = useParams();
   const { hideModal } = useAction();
+  const { history } = useSelector();
   const { request, isApiProcessing, isInitialApiProcessing } = useRequest();
   const {
     formRef,
@@ -24,29 +26,35 @@ const UpdateBillContent: FC = () => {
     isConfirmationModalActive,
     initializeForm,
   } = useForm(new UpdateBill());
-  const isFormProcessing = isApiProcessing(Apis.UPDATE_BILL);
-  const isBillProcessing = isInitialApiProcessing(Apis.BILL);
+  const isFormProcessing = isApiProcessing(UpdateBillApi);
+  const isBillProcessing = isInitialApiProcessing(BillApi);
 
   useEffect(() => {
     const billId = params.id;
     if (billId) {
-      request<BillObj, number>({
-        apiName: Apis.BILL,
-        data: apis[Apis.BILL](+billId),
-        afterRequest(response) {
-          initializeForm(
-            new UpdateBill({
-              id: response.data.id,
-              amount: response.data.amount,
-              receiver: response.data.receiver,
-              description: response.data.description,
-              date: response.data.date,
-            })
-          );
-        },
+      request<BillObj, number>(new BillApi(+billId)).then(response => {
+        initializeForm(
+          new UpdateBill({
+            id: response.data.id,
+            amount: response.data.amount,
+            receiver: response.data.receiver,
+            description: response.data.description,
+            date: response.data.date,
+          })
+        );
       });
     }
   }, []);
+
+  const formSubmition = useCallback(() => {
+    onSubmit(() => {
+      request<UpdateBill, UpdateBill>(new UpdateBillApi(form)).then(response => {
+        resetForm();
+        Notification('You have updated the bill successfully.', 'success');
+        if (history) history.push(`/bank/bills/${form.id}`);
+      });
+    });
+  }, [form, history, resetForm, onSubmit, request]);
 
   return (
     <>
@@ -69,7 +77,7 @@ const UpdateBillContent: FC = () => {
         isLoading={isFormProcessing}
         isActive={isConfirmationModalActive()}
         onCancel={() => hideModal(ModalNames.CONFIRMATION)}
-        onConfirm={() => onSubmit(Apis.UPDATE_BILL)}
+        onConfirm={formSubmition}
       />
     </>
   );
