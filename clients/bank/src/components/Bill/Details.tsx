@@ -6,9 +6,9 @@ import Modal from '../Modal';
 import { useNavigate, useParams } from 'react-router-dom';
 import { FC, useCallback, useState } from 'react';
 import { useAction, useRequest, useSelector } from '../../hooks';
-import { apis, Apis } from '../../apis';
 import { BillObj } from '../../lib';
 import { ModalNames } from '../../store';
+import { BillApi } from '../../apis';
 
 interface DetailsImporation {
   bill: BillObj;
@@ -22,7 +22,7 @@ const Details: FC<DetailsImporation> = ({ bill }) => {
   const { showModal, hideModal } = useAction();
   const { modals } = useSelector();
   const { isApiProcessing, request } = useRequest();
-  const isDeleteBillProcessing = isApiProcessing(Apis.DELETE_BILL);
+  const isDeleteBillProcessing = isApiProcessing(BillApi);
   const options = bill ? [{ label: 'Update', path: `/bank/update-bill/${bill.id}` }] : [];
   const billId = params.id;
 
@@ -50,13 +50,9 @@ const Details: FC<DetailsImporation> = ({ bill }) => {
 
   const deleteBill = useCallback(() => {
     if (billId) {
-      request({
-        apiName: Apis.DELETE_BILL,
-        data: apis[Apis.DELETE_BILL](+billId),
-        afterRequest() {
-          hideModal(ModalNames.CONFIRMATION);
-          navigate('/bank/bills');
-        },
+      request(new BillApi(+billId)).then(() => {
+        hideModal(ModalNames.CONFIRMATION);
+        navigate('/bank/bills');
       });
     }
   }, [billId, request, hideModal, navigate]);
