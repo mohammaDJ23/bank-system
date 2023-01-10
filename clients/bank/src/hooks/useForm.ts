@@ -4,8 +4,6 @@ import { copyConstructor, Form as FormConstructor } from '../lib';
 import { ModalNames } from '../store';
 import { useAction } from './useActions';
 import { useRequest, useSelector } from '../hooks';
-import { apis, Apis } from '../apis';
-import { CreateAxiosDefaults } from 'axios';
 
 interface FormInstance extends FormConstructor {}
 
@@ -32,12 +30,9 @@ export function useForm<T extends FormInstance>(initialForm: T) {
     });
   }, []);
 
-  const isFormProcessing = useCallback(
-    (apiName: Apis) => {
-      return isApiProcessing(apiName);
-    },
-    [isApiProcessing]
-  );
+  const isFormProcessing = useCallback(() => {
+    // return isApiProcessing(apiName);
+  }, [isApiProcessing]);
 
   const resetForm = useCallback(() => {
     // if (!formRef.current || isFormProcessing(apiName)) return;

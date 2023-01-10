@@ -71,7 +71,7 @@ const CreateBillContent: FC = () => {
           </Button>
 
           {/**@ts-ignore */}
-          <Button onClick={() => resetForm(Apis.CREATE_BILL)} disabled={isLoading}>
+          <Button onClick={() => resetForm()} disabled={isLoading}>
             Reset
           </Button>
         </Form.Item>
