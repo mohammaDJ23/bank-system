@@ -32,13 +32,11 @@ interface RootApiObj<D = any> {
   readonly config?: CreateAxiosDefaults<D>;
 }
 
-abstract class RootApi<
-  D = any,
-  A extends AxiosRequestConfig<D> = AxiosRequestConfig<D>,
-  C extends CreateAxiosDefaults<D> = CreateAxiosDefaults<D>
-> implements RootApiObj<D>
-{
-  constructor(public readonly api: A, public readonly config?: C) {
+abstract class RootApi<D = any> implements RootApiObj<D> {
+  constructor(
+    public readonly api: AxiosRequestConfig<D>,
+    public readonly config: CreateAxiosDefaults<D> = {}
+  ) {
     this.api = api;
     this.config = config;
   }
