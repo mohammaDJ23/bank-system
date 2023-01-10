@@ -10,8 +10,8 @@ import { FC, useEffect } from 'react';
 const BillsContent: FC = () => {
   const { request, isInitialApiProcessing } = useRequest();
   const listMaker = usePaginationList();
-  const { setList, isListEmpty, onPageChange, getCurrentList, getCount, getPage, getTake } =
-    listMaker(BillList);
+  const { setList, onPageChange, getFullInfo } = listMaker(BillList);
+  const { list, isListEmpty, count, page, take } = getFullInfo();
 
   useEffect(() => {
     request<[BillObj[], number]>({
@@ -29,17 +29,11 @@ const BillsContent: FC = () => {
   return (
     <ListContainer>
       {isInitialApiProcessing(Apis.BILLS) ? (
-        <Skeleton take={getTake()} />
-      ) : isListEmpty() ? (
+        <Skeleton take={take} />
+      ) : isListEmpty ? (
         <EmptyList />
       ) : (
-        <List
-          list={getCurrentList()}
-          take={getTake()}
-          count={getCount()}
-          page={getPage()}
-          onPageChange={onPageChange}
-        />
+        <List list={list} take={take} count={count} page={page} onPageChange={onPageChange} />
       )}
     </ListContainer>
   );

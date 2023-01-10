@@ -54,6 +54,18 @@ export function usePaginationList() {
           return listInfo.total;
         }
 
+        function getFullInfo() {
+          return {
+            list: getCurrentList(),
+            page: getPage(),
+            take: getTake(),
+            total: getTotal(),
+            count: getCount(),
+            isListEmpty: isListEmpty(),
+            lists: getListInfo().list,
+          };
+        }
+
         return {
           setList,
           onPageChange,
@@ -64,6 +76,7 @@ export function usePaginationList() {
           getPage,
           getTake,
           getTotal,
+          getFullInfo,
         };
       };
     },
