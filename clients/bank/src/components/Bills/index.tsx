@@ -3,37 +3,48 @@ import ListContainer from '../../layout/ListContainer';
 import { BillList, BillObj } from '../../lib';
 import EmptyList from '../EmptyList';
 import Skeleton from './Skeleton';
-import { apis, Apis } from '../../apis';
+import { BillsApi } from '../../apis';
 import List from './List';
-import { FC, useEffect } from 'react';
+import { FC, useCallback, useEffect } from 'react';
 
 const BillsContent: FC = () => {
   const { request, isInitialApiProcessing } = useRequest();
   const listMaker = usePaginationList();
   const { setList, onPageChange, getFullInfo } = listMaker(BillList);
   const { list, isListEmpty, count, page, take } = getFullInfo();
+  const isLoading = isInitialApiProcessing(BillsApi);
 
-  useEffect(() => {
-    request<[BillObj[], number]>({
-      apiName: Apis.BILLS,
-      data: apis[Apis.BILLS]({ take: 5, page: 1 }),
-    }).then(res => {
+  const getBillsList = useCallback(() => {
+    request<[BillObj[], number]>(new BillsApi<BillObj>({ take, page })).then(res => {
       const [billlist, total] = res.data;
       const constructedBilllist = new BillList();
       constructedBilllist.list[constructedBilllist.page] = billlist;
       constructedBilllist.total = total;
       setList(constructedBilllist);
     });
+  }, [take, page, request, setList]);
+
+  useEffect(() => {
+    getBillsList();
   }, []);
+
+  const changePage = useCallback(
+    (newPage: number) => {
+      if (newPage === page || isLoading) return;
+      onPageChange(newPage);
+      getBillsList();
+    },
+    [page, isLoading, getBillsList, onPageChange]
+  );
 
   return (
     <ListContainer>
-      {isInitialApiProcessing(Apis.BILLS) ? (
+      {isLoading ? (
         <Skeleton take={take} />
       ) : isListEmpty ? (
         <EmptyList />
       ) : (
-        <List list={list} take={take} count={count} page={page} onPageChange={onPageChange} />
+        <List list={list} take={take} count={count} page={page} onPageChange={changePage} />
       )}
     </ListContainer>
   );
