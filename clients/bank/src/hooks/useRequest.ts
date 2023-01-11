@@ -12,7 +12,8 @@ export function useRequest() {
 
   const getRequestConstructorName = useCallback(
     <T extends RootApiObj>(requestInstance: RequestParametersType | Constructor<T>) => {
-      return requestInstance.constructor.name;
+      if (typeof requestInstance === 'function') return requestInstance.name;
+      else return requestInstance.constructor.name;
     },
     []
   );
