@@ -49,12 +49,13 @@ const UpdateBillContent: FC = () => {
   const formSubmition = useCallback(() => {
     onSubmit(() => {
       request<UpdateBill, UpdateBill>(new UpdateBillApi(form)).then(response => {
+        hideModal(ModalNames.CONFIRMATION);
         resetForm();
         Notification('You have updated the bill successfully.', 'success');
         if (history) history.push(`/bank/bills/${form.id}`);
       });
     });
-  }, [form, history, resetForm, onSubmit, request]);
+  }, [form, history, resetForm, onSubmit, request, hideModal]);
 
   return (
     <>

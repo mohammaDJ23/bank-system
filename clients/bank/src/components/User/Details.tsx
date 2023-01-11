@@ -5,7 +5,7 @@ import { Button } from 'element-react';
 import Modal from '../Modal';
 import { useNavigate, useParams } from 'react-router-dom';
 import { FC, useCallback, useState } from 'react';
-import { useAction, useRequest, useSelector } from '../../hooks';
+import { useAction, useAuth, useRequest, useSelector } from '../../hooks';
 import { DeleteUserApi } from '../../apis';
 import { UserObj } from '../../lib';
 import { ModalNames } from '../../store';
@@ -22,8 +22,16 @@ const Details: FC<DetailsImporation> = ({ user }) => {
   const { showModal, hideModal } = useAction();
   const { modals } = useSelector();
   const { isApiProcessing, request } = useRequest();
+  const { isAdmin } = useAuth();
   const isDeletingUserProcessing = isApiProcessing(DeleteUserApi);
-  const options = user ? [{ label: 'Update', path: `/bank/update-user/${user.id}` }] : [];
+  const options = user
+    ? [
+        {
+          label: 'Update',
+          path: isAdmin() ? `/bank/admin/update-user/${user.id}` : `/bank/update-user/${user.id}`,
+        },
+      ]
+    : [];
   const userId = params.id;
 
   const onMenuOpen = useCallback((event: React.MouseEvent<HTMLElement>) => {
