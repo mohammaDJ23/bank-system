@@ -1,5 +1,5 @@
 import ListContainer from '../../layout/ListContainer';
-import { UserList, UserObj } from '../../lib';
+import { Constructor, UserList, UserObj } from '../../lib';
 import EmptyList from '../EmptyList';
 import List from './List';
 import Skeleton from './Skeleton';
@@ -10,19 +10,22 @@ import { UsersApi } from '../../apis';
 const UsersContent: FC = () => {
   const { request, isInitialApiProcessing } = useRequest();
   const listMaker = usePaginationList();
-  const { setList, onPageChange, getFullInfo } = listMaker(UserList);
+  const { setList, onPageChange, getFullInfo, getListInfo } = listMaker(UserList);
   const { list, isListEmpty, count, page, take } = getFullInfo();
   const isLoading = isInitialApiProcessing(UsersApi);
 
   const getUsersList = useCallback(() => {
     request<[UserObj[], number]>(new UsersApi<UserObj>({ take, page })).then(res => {
       const [userList, total] = res.data;
-      const constructedUserList = new UserList();
-      constructedUserList.list[constructedUserList.page] = userList;
+      const createdList = getListInfo();
+      const constructedUserList = new (createdList.constructor as Constructor<UserList>)();
+      constructedUserList.list = Object.assign(constructedUserList.list, {
+        [page]: userList,
+      });
       constructedUserList.total = total;
       setList(constructedUserList);
     });
-  }, [take, page, request, setList]);
+  }, [take, page, request, setList, getListInfo]);
 
   useEffect(() => {
     getUsersList();
@@ -32,10 +35,14 @@ const UsersContent: FC = () => {
   const changePage = useCallback(
     (newPage: number) => {
       if (newPage === page || isLoading) return;
+
       onPageChange(newPage);
-      getUsersList();
+
+      if (!list[newPage]) {
+        getUsersList();
+      }
     },
-    [page, isLoading, getUsersList, onPageChange]
+    [page, isLoading, list, getUsersList, onPageChange]
   );
 
   return (
