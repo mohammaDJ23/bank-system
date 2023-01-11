@@ -1,7 +1,7 @@
 import UpdateUserByAdminContent from '../components/UpdateUserByAdmin';
 
-const UpdateUser = () => {
+const UpdateUserByAdmin = () => {
   return <UpdateUserByAdminContent />;
 };
 
-export default UpdateUser;
+export default UpdateUserByAdmin;
