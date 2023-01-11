@@ -70,12 +70,6 @@ export class UpdateUserByAdmin extends Form {
     this.phone = phone;
     this.role = role;
   }
-
-  @AfterSubmition()
-  afterUpdating(dispatch: Dispatch<RootActions>, store: RootState) {
-    Notification('You have updated the user successfully.', 'success');
-    if (store.history) store.history.push(`/bank/users/${this.id}`);
-  }
 }
 
 export class UpdateUserByUser extends Form {

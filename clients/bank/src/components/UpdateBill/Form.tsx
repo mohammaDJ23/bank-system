@@ -3,7 +3,7 @@ import { Rules, UpdateBill } from '../../lib';
 import { FC } from 'react';
 
 interface FormImportation {
-  onChange: (key: string, value: any) => void;
+  onChange: (key: keyof UpdateBill, value: any) => void;
   form: UpdateBill;
   isFormProcessing: boolean;
   formRef: React.MutableRefObject<ReactElementForm | null>;
