@@ -1,9 +1,9 @@
 import FormContainer from '../../layout/FormContainer';
 import Form from './Form';
 import { UpdateUserByAdmin, UserObj } from '../../lib';
-import { useAction, useForm, useRequest, useSelector } from '../../hooks';
+import { useAction, useForm, useRequest, useSelector, useAuth } from '../../hooks';
 import { useEffect, FC, useCallback } from 'react';
-import { useParams } from 'react-router-dom';
+import { Navigate, useParams } from 'react-router-dom';
 import Skeleton from './Skeleton';
 import { UpdateUserByAdminApi, UserApi } from '../../apis';
 import { Notification } from 'element-react';
@@ -13,6 +13,7 @@ const UpdateUserByAdminContent: FC = () => {
   const params = useParams();
   const { hideModal } = useAction();
   const { history } = useSelector();
+  const { isAdmin } = useAuth();
   const { request, isApiProcessing, isInitialApiProcessing } = useRequest();
   const {
     formRef,
@@ -27,9 +28,9 @@ const UpdateUserByAdminContent: FC = () => {
   } = useForm(new UpdateUserByAdmin());
   const isUserProcessing = isInitialApiProcessing(UserApi);
   const isFormProcessing = isApiProcessing(UpdateUserByAdminApi);
+  const userId = params.id;
 
   useEffect(() => {
-    const userId = params.id;
     if (userId) {
       request<UserObj, number>(new UserApi(+userId)).then(response => {
         initializeForm(
@@ -58,6 +59,10 @@ const UpdateUserByAdminContent: FC = () => {
       );
     });
   }, [form, history, resetForm, onSubmit, request, hideModal]);
+
+  if (!isAdmin()) {
+    return <Navigate to={`/bank/users/${userId}`} />;
+  }
 
   return (
     <FormContainer>
