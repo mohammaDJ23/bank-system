@@ -26,6 +26,7 @@ const BillsContent: FC = () => {
 
   useEffect(() => {
     getBillsList();
+    return () => setList(new BillList());
   }, []);
 
   const changePage = useCallback(

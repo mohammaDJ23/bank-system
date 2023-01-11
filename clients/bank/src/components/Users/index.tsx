@@ -26,6 +26,7 @@ const UsersContent: FC = () => {
 
   useEffect(() => {
     getUsersList();
+    return () => setList(new UserList());
   }, []);
 
   const changePage = useCallback(
