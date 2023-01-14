@@ -118,6 +118,8 @@ export class BillsApi<T = any> extends RootApi {
   }
 }
 
+export type BillsApiConstructorType = ConstructorParameters<typeof BillsApi>[0];
+
 export class UserApi extends RootApi {
   constructor(id: number) {
     super(

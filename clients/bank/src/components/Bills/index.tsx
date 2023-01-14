@@ -3,7 +3,7 @@ import ListContainer from '../../layout/ListContainer';
 import { BillList, BillObj, Constructor } from '../../lib';
 import EmptyList from '../EmptyList';
 import Skeleton from './Skeleton';
-import { BillsApi } from '../../apis';
+import { BillsApi, BillsApiConstructorType } from '../../apis';
 import List from './List';
 import { FC, useCallback, useEffect } from 'react';
 
@@ -11,21 +11,24 @@ const BillsContent: FC = () => {
   const { request, isInitialApiProcessing } = useRequest();
   const listMaker = usePaginationList();
   const { setList, onPageChange, getFullInfo, getListInfo } = listMaker(BillList);
-  const { list, isListEmpty, count, page, take } = getFullInfo();
+  const { list, isListEmpty, count, page, take, lists } = getFullInfo();
   const isLoading = isInitialApiProcessing(BillsApi);
 
-  const getBillsList = useCallback(() => {
-    request<[BillObj[], number]>(new BillsApi<BillObj>({ take, page })).then(res => {
-      const [billlist, total] = res.data;
-      const createdList = getListInfo();
-      const constructedBilllist = new (createdList.constructor as Constructor<BillList>)();
-      constructedBilllist.list = Object.assign(constructedBilllist.list, {
-        [page]: billlist,
+  const getBillsList = useCallback(
+    (options: Partial<BillsApiConstructorType> = {}) => {
+      const apiData = { take, page, ...options };
+      request<[BillObj[], number]>(new BillsApi<BillObj>(apiData)).then(res => {
+        const [billList, total] = res.data;
+        const createdList = getListInfo();
+        const constructedBilllist = new (createdList.constructor as Constructor<BillList>)();
+        constructedBilllist.list = Object.assign(lists, { [apiData.page]: billList });
+        constructedBilllist.total = total;
+        constructedBilllist.page = apiData.page;
+        setList(constructedBilllist);
       });
-      constructedBilllist.total = total;
-      setList(constructedBilllist);
-    });
-  }, [take, page, request, setList, getListInfo]);
+    },
+    [take, page, lists, request, setList, getListInfo]
+  );
 
   useEffect(() => {
     getBillsList();
@@ -38,11 +41,11 @@ const BillsContent: FC = () => {
 
       onPageChange(newPage);
 
-      if (!list[newPage]) {
-        getBillsList();
+      if (!lists[newPage]) {
+        getBillsList({ page: newPage });
       }
     },
-    [page, isLoading, list, getBillsList, onPageChange]
+    [page, isLoading, lists, getBillsList, onPageChange]
   );
 
   return (
