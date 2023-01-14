@@ -5,27 +5,30 @@ import List from './List';
 import Skeleton from './Skeleton';
 import { FC, useCallback, useEffect } from 'react';
 import { usePaginationList, useRequest } from '../../hooks';
-import { UsersApi } from '../../apis';
+import { UsersApi, UsersApiConstructorType } from '../../apis';
 
 const UsersContent: FC = () => {
   const { request, isInitialApiProcessing } = useRequest();
   const listMaker = usePaginationList();
   const { setList, onPageChange, getFullInfo, getListInfo } = listMaker(UserList);
-  const { list, isListEmpty, count, page, take } = getFullInfo();
+  const { list, isListEmpty, count, page, take, lists } = getFullInfo();
   const isLoading = isInitialApiProcessing(UsersApi);
 
-  const getUsersList = useCallback(() => {
-    request<[UserObj[], number]>(new UsersApi<UserObj>({ take, page })).then(res => {
-      const [userList, total] = res.data;
-      const createdList = getListInfo();
-      const constructedUserList = new (createdList.constructor as Constructor<UserList>)();
-      constructedUserList.list = Object.assign(constructedUserList.list, {
-        [page]: userList,
+  const getUsersList = useCallback(
+    (options: Partial<UsersApiConstructorType> = {}) => {
+      const apiData = { take, page, ...options };
+      request<[UserObj[], number]>(new UsersApi<UserObj>(apiData)).then(res => {
+        const [userList, total] = res.data;
+        const createdList = getListInfo();
+        const constructedUserList = new (createdList.constructor as Constructor<UserList>)();
+        constructedUserList.list = Object.assign(lists, { [apiData.page]: userList });
+        constructedUserList.total = total;
+        constructedUserList.page = page;
+        setList(constructedUserList);
       });
-      constructedUserList.total = total;
-      setList(constructedUserList);
-    });
-  }, [take, page, request, setList, getListInfo]);
+    },
+    [take, page, lists, request, setList, getListInfo]
+  );
 
   useEffect(() => {
     getUsersList();
@@ -39,7 +42,7 @@ const UsersContent: FC = () => {
       onPageChange(newPage);
 
       if (!list[newPage]) {
-        getUsersList();
+        getUsersList({ page: newPage });
       }
     },
     [page, isLoading, list, getUsersList, onPageChange]
