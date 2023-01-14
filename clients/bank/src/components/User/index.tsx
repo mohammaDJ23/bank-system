@@ -4,7 +4,7 @@ import { useParams } from 'react-router-dom';
 import { useAction, useRequest, useSelector } from '../../hooks';
 import Skeleton from './Skeleton';
 import { UserObj } from '../../lib';
-import { Apis, apis } from '../../apis';
+import { UserApi } from '../../apis';
 import NotFound from './NotFound';
 import Details from './Details';
 
@@ -13,21 +13,14 @@ const UserContent: FC = () => {
   const params = useParams();
   const { setSpecificDetails } = useAction();
   const { specificDetails } = useSelector();
-  const isUserProcessing = isInitialApiProcessing(Apis.USER);
+  const isUserProcessing = isInitialApiProcessing(UserApi);
   const userId = params.id;
   const user = specificDetails.user;
 
   useEffect(() => {
     if (userId) {
-      request<UserObj, number>({
-        apiName: Apis.USER,
-        data: apis[Apis.USER](+userId),
-        config: {
-          baseURL: process.env.USER_SERVICE,
-        },
-        afterRequest(response) {
-          setSpecificDetails('user', response.data);
-        },
+      request<UserObj, number>(new UserApi(+userId)).then(response => {
+        setSpecificDetails('user', response.data);
       });
     }
 

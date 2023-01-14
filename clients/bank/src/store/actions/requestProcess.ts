@@ -1,4 +1,3 @@
-import { Apis } from '../../apis';
 import { RequestProcess } from '../reducers';
 
 export interface LoadingAction {
@@ -22,21 +21,21 @@ export interface CleanAction {
 
 export type RequestProcessActions = LoadingAction | SuccessAction | ErrorAction | CleanAction;
 
-export function loading(name: Apis) {
+export function loading(name: string) {
   return {
     type: RequestProcess.LOADING,
     payload: { name },
   };
 }
 
-export function success(name: Apis) {
+export function success(name: string) {
   return {
     type: RequestProcess.SUCCESS,
     payload: { name },
   };
 }
 
-export function error(name: Apis) {
+export function error(name: string) {
   return {
     type: RequestProcess.ERROR,
     payload: { name },

@@ -1,16 +1,15 @@
 import { Button, Input, Form as ReactElementForm } from 'element-react';
-import { Apis } from '../../apis';
 import { Rules, UpdateBill } from '../../lib';
 import { FC } from 'react';
 
 interface FormImportation {
-  onChange: (key: string, value: any) => void;
+  onChange: (key: keyof UpdateBill, value: any) => void;
   form: UpdateBill;
   isFormProcessing: boolean;
   formRef: React.MutableRefObject<ReactElementForm | null>;
   rules: Rules;
   onSubmitWithConfirmation: () => void;
-  resetForm: (apiName: Apis) => void;
+  resetForm: () => void;
 }
 
 const Form: FC<FormImportation> = ({

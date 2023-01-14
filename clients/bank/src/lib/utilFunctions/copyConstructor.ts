@@ -1,5 +1,5 @@
-export interface Constructor {
-  new (...args: any[]): {};
+export interface Constructor<T = {}> {
+  new (...args: any[]): T;
 }
 
 export function copyConstructor<T extends object>(instance: T) {

@@ -4,8 +4,6 @@ import { copyConstructor, Form as FormConstructor } from '../lib';
 import { ModalNames } from '../store';
 import { useAction } from './useActions';
 import { useRequest, useSelector } from '../hooks';
-import { apis, Apis } from '../apis';
-import { CreateAxiosDefaults } from 'axios';
 
 interface FormInstance extends FormConstructor {}
 
@@ -23,7 +21,7 @@ export function useForm<T extends FormInstance>(initialForm: T) {
     };
   }, []);
 
-  const onChange = useCallback((name: string, value: any) => {
+  const onChange = useCallback((name: keyof T, value: any) => {
     setForm(prevState => {
       const constructedForm = copyConstructor<T>(prevState);
       const newState = Object.assign(constructedForm, { [name]: value });
@@ -32,52 +30,49 @@ export function useForm<T extends FormInstance>(initialForm: T) {
     });
   }, []);
 
-  const isFormProcessing = useCallback(
-    (apiName: Apis) => {
-      return isApiProcessing(apiName);
-    },
-    [isApiProcessing]
-  );
+  const isFormProcessing = useCallback(() => {
+    // return isApiProcessing(apiName);
+  }, [isApiProcessing]);
 
-  const resetForm = useCallback(
-    (apiName: Apis) => {
-      if (!formRef.current || isFormProcessing(apiName)) return;
+  const resetForm = useCallback(() => {
+    // if (!formRef.current || isFormProcessing(apiName)) return;
+    if (!formRef.current) return;
 
-      formRef.current.resetFields();
+    formRef.current.resetFields();
 
-      setForm(prevState => {
-        const constructedForm = copyConstructor<T>(prevState);
-        const resetedForm = constructedForm.resetCach<T>();
-        const newState = Object.assign(constructedForm, resetedForm);
-        return newState;
-      });
-    },
-    [isFormProcessing]
-  );
+    setForm(prevState => {
+      const constructedForm = copyConstructor<T>(prevState);
+      const resetedForm = constructedForm.resetCach<T>();
+      const newState = Object.assign(constructedForm, resetedForm);
+      return newState;
+    });
+  }, [isFormProcessing]);
 
   const isConfirmationModalActive = useCallback(() => {
     return !!modals[ModalNames.CONFIRMATION];
   }, [modals]);
 
   const onSubmit = useCallback(
-    (apiName: Apis, config?: CreateAxiosDefaults) => {
-      if (!formRef.current || isFormProcessing(apiName)) return;
+    (cb: () => Promise<void> | void) => {
+      // if (!formRef.current || isFormProcessing(apiName)) return;
+      if (!formRef.current) return;
 
       formRef.current.validate(valid => {
         if (valid) {
-          request<T, T>({
-            data: apis[apiName](form as T as any),
-            apiName,
-            config,
-            beforeRequest(dispatch, store) {
-              form.beforeSubmition(dispatch, store);
-            },
-            afterRequest(response, dispatch, store) {
-              form.afterSubmition(dispatch, store);
-              resetForm(apiName);
-              if (isConfirmationModalActive()) hideModal(ModalNames.CONFIRMATION);
-            },
-          });
+          cb.call({});
+          // request<T, T>({
+          //   data: apis[apiName](form as T as any),
+          //   apiName,
+          //   config,
+          //   beforeRequest(dispatch, store) {
+          //     form.beforeSubmition(dispatch, store);
+          //   },
+          //   afterRequest(response, dispatch, store) {
+          //     form.afterSubmition(dispatch, store);
+          //     resetForm(apiName);
+          //     if (isConfirmationModalActive()) hideModal(ModalNames.CONFIRMATION);
+          //   },
+          // });
         }
       });
     },

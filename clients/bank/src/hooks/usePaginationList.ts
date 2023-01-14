@@ -1,11 +1,9 @@
 import { useMemo } from 'react';
-import { Apis } from '../apis';
 import { ListInstance, ListInstanceConstructor } from '../lib';
-import { useAction, useRequest, useSelector } from './';
+import { useAction, useSelector } from './';
 
 export function usePaginationList() {
   const { setPaginationList, changePaginationListPage } = useAction();
-  const { isInitialApiProcessing } = useRequest();
   const { listContainer, paginationList } = useSelector();
 
   return useMemo(
@@ -20,10 +18,6 @@ export function usePaginationList() {
           if (listContainer.element) {
             listContainer.element.scrollTo({ behavior: 'smooth', top: 0 });
           }
-        }
-
-        function isListProcessing(apiName: Apis) {
-          return isInitialApiProcessing(apiName);
         }
 
         function getListInfo(): InstanceType<typeof listInstance> {
@@ -60,8 +54,19 @@ export function usePaginationList() {
           return listInfo.total;
         }
 
+        function getFullInfo() {
+          return {
+            list: getCurrentList(),
+            page: getPage(),
+            take: getTake(),
+            total: getTotal(),
+            count: getCount(),
+            isListEmpty: isListEmpty(),
+            lists: getListInfo().list,
+          };
+        }
+
         return {
-          isListProcessing,
           setList,
           onPageChange,
           getListInfo,
@@ -71,15 +76,10 @@ export function usePaginationList() {
           getPage,
           getTake,
           getTotal,
+          getFullInfo,
         };
       };
     },
-    [
-      listContainer,
-      paginationList,
-      setPaginationList,
-      changePaginationListPage,
-      isInitialApiProcessing,
-    ]
+    [listContainer, paginationList, setPaginationList, changePaginationListPage]
   );
 }

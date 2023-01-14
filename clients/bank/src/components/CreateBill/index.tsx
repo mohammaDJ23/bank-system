@@ -1,15 +1,24 @@
 import FormContainer from '../../layout/FormContainer';
-import { Input, Form, Button } from 'element-react';
+import { Input, Form, Button, Notification } from 'element-react';
 import { CreateBill } from '../../lib';
-import { useForm } from '../../hooks';
-import { Apis } from '../../apis';
-import { FC } from 'react';
+import { useForm, useRequest } from '../../hooks';
+import { FC, useCallback } from 'react';
+import { CreateBillApi } from '../../apis';
 
 const CreateBillContent: FC = () => {
-  const { formRef, rules, form, onChange, onSubmit, resetForm, isFormProcessing } = useForm(
-    new CreateBill()
-  );
-  const isLoading = isFormProcessing(Apis.CREATE_BILL);
+  const { formRef, rules, form, onChange, onSubmit, resetForm } = useForm(new CreateBill());
+  const { isApiProcessing, request } = useRequest();
+  const isLoading = isApiProcessing(CreateBillApi);
+
+  const formSubmition = useCallback(() => {
+    onSubmit(() => {
+      onChange('date', new Date(form.date));
+      request<CreateBill, CreateBill>(new CreateBillApi(form)).then(response => {
+        resetForm();
+        Notification('Your bill was created successfully.', 'success');
+      });
+    });
+  }, [form, resetForm, onSubmit, request, onChange]);
 
   return (
     <FormContainer>
@@ -59,12 +68,12 @@ const CreateBillContent: FC = () => {
         {/**@ts-ignore */}
         <Form.Item style={{ marginBottom: '32px' }}>
           {/**@ts-ignore */}
-          <Button type="primary" onClick={() => onSubmit(Apis.CREATE_BILL)} disabled={isLoading}>
+          <Button type="primary" onClick={formSubmition} disabled={isLoading}>
             Create
           </Button>
 
           {/**@ts-ignore */}
-          <Button onClick={() => resetForm(Apis.CREATE_BILL)} disabled={isLoading}>
+          <Button onClick={() => resetForm()} disabled={isLoading}>
             Reset
           </Button>
         </Form.Item>

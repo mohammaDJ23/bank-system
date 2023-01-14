@@ -1,24 +1,20 @@
 import React, { FC } from 'react';
-import { Button, Form as ReactElementForm, Input, Select } from 'element-react';
-import { getUserRoles, Rules, UpdateUserByAdmin, UpdateUserByUser } from '../../lib';
-import { Apis } from '../../apis';
+import { Button, Form as ReactElementForm, Input } from 'element-react';
+import { Rules, UpdateUserByUser } from '../../lib';
 import Modal from '../Modal';
 import { ModalNames } from '../../store';
-import { CreateAxiosDefaults } from 'axios';
 
 interface FormImportation {
-  onChange: (key: string, value: any) => void;
-  form: UpdateUserByUser | UpdateUserByAdmin;
+  onChange: (key: keyof UpdateUserByUser, value: any) => void;
+  form: UpdateUserByUser;
   isFormProcessing: boolean;
   formRef: React.MutableRefObject<ReactElementForm | null>;
   rules: Rules;
-  isUserAdmin: boolean;
-  currentApi: Apis;
   onSubmitWithConfirmation: () => void;
-  resetForm: (apiName: Apis) => void;
+  resetForm: () => void;
   isConfirmationModalActive: () => boolean;
   hideModal: (name: ModalNames) => void;
-  onSubmit: (currentApi: Apis, config?: CreateAxiosDefaults) => void;
+  onSubmit: () => void;
 }
 
 const Form: FC<FormImportation> = ({
@@ -26,8 +22,6 @@ const Form: FC<FormImportation> = ({
   isFormProcessing,
   formRef,
   rules,
-  isUserAdmin,
-  currentApi,
   onChange,
   onSubmitWithConfirmation,
   resetForm,
@@ -84,25 +78,6 @@ const Form: FC<FormImportation> = ({
           ></Input>
         </ReactElementForm.Item>
 
-        {isUserAdmin && (
-          /**@ts-ignore */
-          <ReactElementForm.Item style={{ marginBottom: '32px' }} label="Role" prop="role">
-            {/**@ts-ignore */}
-            <Select
-              placeholder="Select a role"
-              value={(form as UpdateUserByAdmin).role}
-              clearable
-              onChange={value => onChange('role', value)}
-              style={{ width: '100%' }}
-              disabled={isFormProcessing}
-            >
-              {getUserRoles().map(el => (
-                <Select.Option key={el.value} label={el.label} value={el.value} />
-              ))}
-            </Select>
-          </ReactElementForm.Item>
-        )}
-
         {/**@ts-ignore */}
         <ReactElementForm.Item style={{ marginBottom: '32px' }}>
           {/**@ts-ignore */}
@@ -119,7 +94,7 @@ const Form: FC<FormImportation> = ({
           <Button
             loading={isFormProcessing}
             disabled={isFormProcessing}
-            onClick={() => resetForm(currentApi)}
+            onClick={() => resetForm()}
           >
             Reset
           </Button>
@@ -130,7 +105,7 @@ const Form: FC<FormImportation> = ({
         isLoading={isFormProcessing}
         isActive={isConfirmationModalActive()}
         onCancel={() => hideModal(ModalNames.CONFIRMATION)}
-        onConfirm={() => onSubmit(currentApi, { baseURL: process.env.USER_SERVICE })}
+        onConfirm={() => onSubmit()}
       />
     </>
   );

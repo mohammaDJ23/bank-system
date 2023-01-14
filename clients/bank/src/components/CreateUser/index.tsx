@@ -1,16 +1,24 @@
 import FormContainer from '../../layout/FormContainer';
-import { Input, Form, Button, Select } from 'element-react';
+import { Input, Form, Button, Select, Notification } from 'element-react';
 import { CreateUser } from '../../lib';
-import { useAuth, useForm } from '../../hooks';
-import { Apis } from '../../apis';
-import { FC } from 'react';
+import { useAuth, useForm, useRequest } from '../../hooks';
+import { CreateUserApi } from '../../apis';
+import { FC, useCallback } from 'react';
 
 const CreateUserContent: FC = () => {
   const { getUserRoles } = useAuth();
-  const { formRef, rules, form, onChange, onSubmit, resetForm, isFormProcessing } = useForm(
-    new CreateUser()
-  );
-  const isLoading = isFormProcessing(Apis.CREATE_USER);
+  const { formRef, rules, form, onChange, onSubmit, resetForm } = useForm(new CreateUser());
+  const { isApiProcessing, request } = useRequest();
+  const isLoading = isApiProcessing(CreateUserApi);
+
+  const formSubmition = useCallback(() => {
+    onSubmit(() => {
+      request<CreateUser, CreateUser>(new CreateUserApi(form)).then(response => {
+        resetForm();
+        Notification('Your have created a new user successfully.', 'success');
+      });
+    });
+  }, [form, resetForm, onSubmit, request]);
 
   return (
     <>
@@ -86,21 +94,12 @@ const CreateUserContent: FC = () => {
           {/**@ts-ignore */}
           <Form.Item style={{ marginBottom: '32px' }}>
             {/**@ts-ignore */}
-            <Button
-              type="primary"
-              disabled={isLoading}
-              loading={isLoading}
-              onClick={() => onSubmit(Apis.CREATE_USER, { baseURL: process.env.USER_SERVICE })}
-            >
+            <Button type="primary" disabled={isLoading} loading={isLoading} onClick={formSubmition}>
               Create
             </Button>
 
             {/**@ts-ignore */}
-            <Button
-              onClick={() => resetForm(Apis.CREATE_USER)}
-              disabled={isLoading}
-              loading={isLoading}
-            >
+            <Button onClick={() => resetForm()} disabled={isLoading} loading={isLoading}>
               Reset
             </Button>
           </Form.Item>
