@@ -1,7 +1,7 @@
 import FormContainer from '../../layout/FormContainer';
 import Form from './Form';
 import { UpdateUserByAdmin, UserObj } from '../../lib';
-import { useAction, useForm, useRequest, useSelector, useAuth } from '../../hooks';
+import { useAction, useForm, useRequest, useSelector } from '../../hooks';
 import { useEffect, FC, useCallback } from 'react';
 import { useParams } from 'react-router-dom';
 import Skeleton from './Skeleton';
