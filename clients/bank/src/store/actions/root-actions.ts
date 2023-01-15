@@ -5,6 +5,7 @@ import {
   SpecificDetailsActions,
   PaginationListActions,
   RequestProcessActions,
+  FormActions,
 } from './';
 
 export type RootActions =
@@ -13,4 +14,5 @@ export type RootActions =
   | ListContainerActions
   | HistoryActions
   | SpecificDetailsActions
-  | PaginationListActions;
+  | PaginationListActions
+  | FormActions;
