@@ -1,108 +1,97 @@
 import { Form } from 'element-react';
-import { useState, useRef, useCallback, useEffect } from 'react';
-import { copyConstructor, Form as FormConstructor } from '../lib';
+import { useRef, useMemo } from 'react';
+import { Constructor, Form as FormConstructor } from '../lib';
 import { ModalNames } from '../store';
 import { useAction } from './useActions';
-import { useRequest, useSelector } from '../hooks';
+import { useSelector } from '../hooks';
 
 interface FormInstance extends FormConstructor {}
 
-export function useForm<T extends FormInstance>(initialForm: T) {
-  const [form, setForm] = useState<T>(initialForm);
-  const formRef = useRef<Form | null>(null);
-  const rules = form.getRules();
-  const { showModal, hideModal } = useAction();
-  const { modals } = useSelector();
-  const { request, isApiProcessing } = useRequest();
+interface FormRef {
+  [key: string]: Form;
+}
 
-  useEffect(() => {
-    return () => {
-      form.resetCach();
-    };
-  }, []);
+export function useForm() {
+  const formRef = useRef<FormRef>({});
+  const { showModal, setForm, onChange: changeInput, resetForm: resettingForm } = useAction();
+  const { modals, forms } = useSelector();
 
-  const onChange = useCallback((name: keyof T, value: any) => {
-    setForm(prevState => {
-      const constructedForm = copyConstructor<T>(prevState);
-      const newState = Object.assign(constructedForm, { [name]: value });
-      constructedForm.cachInput(name, value);
-      return newState;
-    });
-  }, []);
-
-  const isFormProcessing = useCallback(() => {
-    // return isApiProcessing(apiName);
-  }, [isApiProcessing]);
-
-  const resetForm = useCallback(() => {
-    // if (!formRef.current || isFormProcessing(apiName)) return;
-    if (!formRef.current) return;
-
-    formRef.current.resetFields();
-
-    setForm(prevState => {
-      const constructedForm = copyConstructor<T>(prevState);
-      const resetedForm = constructedForm.resetCach<T>();
-      const newState = Object.assign(constructedForm, resetedForm);
-      return newState;
-    });
-  }, [isFormProcessing]);
-
-  const isConfirmationModalActive = useCallback(() => {
-    return !!modals[ModalNames.CONFIRMATION];
-  }, [modals]);
-
-  const onSubmit = useCallback(
-    (cb: () => Promise<void> | void) => {
-      // if (!formRef.current || isFormProcessing(apiName)) return;
-      if (!formRef.current) return;
-
-      formRef.current.validate(valid => {
-        if (valid) {
-          cb.call({});
-          // request<T, T>({
-          //   data: apis[apiName](form as T as any),
-          //   apiName,
-          //   config,
-          //   beforeRequest(dispatch, store) {
-          //     form.beforeSubmition(dispatch, store);
-          //   },
-          //   afterRequest(response, dispatch, store) {
-          //     form.afterSubmition(dispatch, store);
-          //     resetForm(apiName);
-          //     if (isConfirmationModalActive()) hideModal(ModalNames.CONFIRMATION);
-          //   },
-          // });
+  return useMemo(
+    function () {
+      return function <T extends FormInstance>(initialForm: Constructor<T>) {
+        function getFormName() {
+          return initialForm.name;
         }
-      });
+
+        function getForm() {
+          return forms[getFormName()];
+        }
+
+        function getFormRef(): Form | null {
+          return formRef.current[getFormName()] || null;
+        }
+
+        function initializeForm(form: T) {
+          setForm<T>(form);
+        }
+
+        function onChange(key: keyof T, value: any) {
+          changeInput({ form: initialForm, key, value });
+        }
+
+        function resetForm() {
+          const formRef = getFormRef();
+          if (formRef) {
+            formRef.resetFields();
+            resettingForm(initialForm);
+          }
+        }
+
+        function getRules() {
+          return getForm().getRules();
+        }
+
+        function resetCach() {
+          return getForm().resetCach();
+        }
+
+        function setFormRef(el: Form) {
+          formRef.current[getFormName()] = el;
+        }
+
+        function confirmation() {
+          const formRef = getFormRef();
+          if (formRef)
+            formRef.validate(valid => {
+              if (valid) showModal(ModalNames.CONFIRMATION);
+            });
+        }
+
+        function onSubmit(cb: () => Promise<void> | void) {
+          const formRef = getFormRef();
+          if (formRef)
+            formRef.validate(valid => {
+              if (valid) cb.call({});
+            });
+        }
+
+        function isConfirmationActive() {
+          return !!modals[ModalNames.CONFIRMATION];
+        }
+
+        return {
+          initializeForm,
+          onChange,
+          resetForm,
+          setFormRef,
+          resetCach,
+          getRules,
+          confirmation,
+          onSubmit,
+          isConfirmationActive,
+        };
+      };
     },
-    [isFormProcessing, resetForm, isConfirmationModalActive, hideModal, request, form]
+    [modals, forms, showModal, resettingForm, changeInput, setForm]
   );
-
-  const onSubmitWithConfirmation = useCallback(() => {
-    if (!formRef.current) return;
-
-    formRef.current.validate(valid => {
-      if (valid) {
-        showModal(ModalNames.CONFIRMATION);
-      }
-    });
-  }, [showModal]);
-
-  const initializeForm = useCallback((form: T) => {
-    setForm(form);
-  }, []);
-
-  return {
-    resetForm,
-    onChange,
-    onSubmit,
-    onSubmitWithConfirmation,
-    isConfirmationModalActive,
-    isFormProcessing,
-    initializeForm,
-    form,
-    formRef,
-    rules,
-  };
 }

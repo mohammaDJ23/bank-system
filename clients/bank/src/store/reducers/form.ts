@@ -30,10 +30,11 @@ function setForm(state: FormState, action: SetFormAction): FormState {
 
 function onChange(state: FormState, action: OnChangeAction): FormState {
   const newState = Object.assign<object, FormState>({}, state);
-  const { form, inputName, value } = action.payload;
-  const copiedForm = copyConstructor(form);
-  copiedForm[inputName] = value;
-  newState[form.getConstructorName()] = copiedForm;
+  const { form, key, value } = action.payload;
+  const copiedForm = copyConstructor(newState[form.name]);
+  copiedForm[key] = value;
+  newState[copiedForm.getConstructorName()] = copiedForm;
+  copiedForm.cachInput(key, value);
   return newState;
 }
 
@@ -41,6 +42,7 @@ function resetForm(state: FormState, action: ResetFormAction): FormState {
   const newState = Object.assign<object, FormState>({}, state);
   const { form } = action.payload;
   const constructedForm = new form();
+  constructedForm.resetCach();
   newState[form.name] = constructedForm;
   return newState;
 }

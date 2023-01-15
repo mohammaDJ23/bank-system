@@ -17,7 +17,7 @@ const reducers = combineReducers({
   history: historyReducer,
   specificDetails: specificDetailsReducer,
   paginationList: paginationListReducer,
-  form: FormReducer,
+  forms: FormReducer,
 });
 
 export const store = createStore(reducers, {}, applyMiddleware(thunk));

@@ -8,7 +8,7 @@ export interface SetFormAction<T = {}> {
 
 export interface OnChangeAction<T = {}> {
   type: Form.ON_CHANGE;
-  payload: { form: FormType<T>; inputName: keyof FormType<T>; value: any };
+  payload: { form: Constructor<FormType<T>>; key: keyof FormType<T>; value: any };
 }
 
 export interface ResetFormAction<T = {}> {
@@ -25,14 +25,10 @@ export function setForm<T>(form: SetFormAction<T>['payload']['form']): SetFormAc
   };
 }
 
-export function onChange<T>({
-  form,
-  inputName,
-  value,
-}: OnChangeAction<T>['payload']): OnChangeAction<T> {
+export function onChange<T>({ form, key, value }: OnChangeAction<T>['payload']): OnChangeAction<T> {
   return {
     type: Form.ON_CHANGE,
-    payload: { form, inputName, value },
+    payload: { form, key, value },
   };
 }
 
