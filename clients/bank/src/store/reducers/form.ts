@@ -1,4 +1,4 @@
-import { copyConstructor, Form as FormConstructor } from '../../lib';
+import { copyConstructor, Form as FormConstructor, forms } from '../../lib';
 import { FormActions, OnChangeAction, ResetFormAction, SetFormAction } from '../actions/form';
 
 export enum Form {
@@ -13,7 +13,13 @@ interface FormState<T = {}> {
   [key: string]: FormType<T>;
 }
 
-const initialState: FormState = {};
+function makeFormsState(): FormState {
+  let state: FormState = {};
+  for (const formName in forms) state[formName] = new forms[formName as keyof typeof forms]();
+  return state;
+}
+
+const initialState: FormState = makeFormsState();
 
 function setForm(state: FormState, action: SetFormAction): FormState {
   const newState = Object.assign<object, FormState>({}, state);
