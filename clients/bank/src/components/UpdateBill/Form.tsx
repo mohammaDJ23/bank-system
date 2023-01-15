@@ -1,12 +1,13 @@
 import { Button, Input, Form as ReactElementForm } from 'element-react';
 import { Rules, UpdateBill } from '../../lib';
 import { FC } from 'react';
+import { UseFormCallbackExportation } from '../../hooks';
 
 interface FormImportation {
   onChange: (key: keyof UpdateBill, value: any) => void;
   form: UpdateBill;
   isFormProcessing: boolean;
-  formRef: React.MutableRefObject<ReactElementForm | null>;
+  formRef: UseFormCallbackExportation['setFormRef'];
   rules: Rules;
   onSubmitWithConfirmation: () => void;
   resetForm: () => void;

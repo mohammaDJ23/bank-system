@@ -11,6 +11,9 @@ interface FormRef {
   [key: string]: Form;
 }
 
+export type UseFormExportation = ReturnType<typeof useForm>;
+export type UseFormCallbackExportation = ReturnType<UseFormExportation>;
+
 export function useForm() {
   const formRef = useRef<FormRef>({});
   const { showModal, setForm, onChange: changeInput, resetForm: resettingForm } = useAction();
