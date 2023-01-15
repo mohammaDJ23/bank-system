@@ -29,6 +29,9 @@ export class User {
   @Column()
   phone: string;
 
+  @Column({ unique: true })
+  userServiceId: number;
+
   @Column({
     type: 'enum',
     enum: Roles,
