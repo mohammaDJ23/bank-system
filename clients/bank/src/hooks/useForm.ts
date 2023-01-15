@@ -23,8 +23,8 @@ export function useForm() {
           return initialForm.name;
         }
 
-        function getForm() {
-          return forms[getFormName()];
+        function getForm(): T {
+          return forms[getFormName()] as T;
         }
 
         function getFormRef(): Form | null {
@@ -55,8 +55,8 @@ export function useForm() {
           return getForm().resetCach();
         }
 
-        function setFormRef(el: Form) {
-          formRef.current[getFormName()] = el;
+        function setFormRef(el: Form | null) {
+          if (el) formRef.current[getFormName()] = el;
         }
 
         function confirmation() {
@@ -89,6 +89,8 @@ export function useForm() {
           confirmation,
           onSubmit,
           isConfirmationActive,
+          getFormRef,
+          getForm,
         };
       };
     },
