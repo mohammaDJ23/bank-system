@@ -4,22 +4,7 @@ import { Constructor, FormMetadataTypes, LocalStorage, routes, Rule, Rules } fro
 import { RootState } from '../../store';
 import { RootActions } from '../../store/actions';
 
-interface FormOptions {
-  shouldCachInput: boolean;
-}
-
 export abstract class Form {
-  private readonly shouldCachInput: boolean;
-
-  constructor(options: FormOptions = { shouldCachInput: true }) {
-    this.shouldCachInput = options.shouldCachInput;
-    const target = Object.assign<this, this>(Object.create(this, {}), this);
-    Object.keys(target).forEach(prop => {
-      delete target[prop as keyof this];
-    });
-    return new Proxy<this>(target, {});
-  }
-
   getPrototype(): object {
     return this.constructor.prototype;
   }
