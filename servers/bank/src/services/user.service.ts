@@ -15,14 +15,17 @@ export class UserService {
   findById(id: number): Promise<User> {
     return this.userService
       .createQueryBuilder('user')
-      .where('user.id = :id', { id })
+      .where('user.user_service_id = :id', { id })
       .getOne();
   }
 
   async create(payload: User, context: RmqContext): Promise<void> {
     try {
-      payload = this.userService.create(payload);
-      await this.userService.save(payload);
+      let user = Object.assign<User, Partial<User>>(payload, {
+        userServiceId: payload.id,
+      });
+      user = this.userService.create(user);
+      await this.userService.save(user);
       this.rabbitmqService.applyAcknowledgment(context);
     } catch (error) {
       throw error;
@@ -31,8 +34,21 @@ export class UserService {
 
   async update(payload: User, context: RmqContext): Promise<void> {
     try {
-      payload = this.userService.create(payload);
-      await this.userService.update({ email: payload.email }, payload);
+      let user = await this.findById(payload.id);
+      user.email = payload.email;
+      user.firstName = payload.firstName;
+      user.lastName = payload.lastName;
+      user.password = payload.password;
+      user.phone = payload.phone;
+      user.role = payload.role;
+      user.userServiceId = payload.id;
+      user.updatedAt = payload.updatedAt;
+      user.createdAt = payload.createdAt;
+      user = this.userService.create(user);
+      await this.userService.update(
+        { userServiceId: user.userServiceId },
+        user,
+      );
       this.rabbitmqService.applyAcknowledgment(context);
     } catch (error) {
       throw error;
@@ -41,7 +57,7 @@ export class UserService {
 
   async delete(payload: User, context: RmqContext): Promise<void> {
     try {
-      await this.userService.delete(payload.id);
+      await this.userService.delete({ userServiceId: payload.id });
       this.rabbitmqService.applyAcknowledgment(context);
     } catch (error) {
       throw error;

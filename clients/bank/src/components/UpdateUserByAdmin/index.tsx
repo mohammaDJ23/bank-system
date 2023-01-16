@@ -1,9 +1,9 @@
 import FormContainer from '../../layout/FormContainer';
 import Form from './Form';
 import { UpdateUserByAdmin, UserObj } from '../../lib';
-import { useAction, useForm, useRequest, useSelector, useAuth } from '../../hooks';
+import { useAction, useForm, useRequest, useSelector } from '../../hooks';
 import { useEffect, FC, useCallback } from 'react';
-import { Navigate, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import Skeleton from './Skeleton';
 import { UpdateUserByAdminApi, UserApi } from '../../apis';
 import { Notification } from 'element-react';
@@ -13,21 +13,22 @@ const UpdateUserByAdminContent: FC = () => {
   const params = useParams();
   const { hideModal } = useAction();
   const { history } = useSelector();
-  const { isAdmin } = useAuth();
   const { request, isApiProcessing, isInitialApiProcessing } = useRequest();
+  const formMaker = useForm();
   const {
-    formRef,
-    rules,
-    form,
+    getForm,
+    getRules,
     onChange,
-    onSubmitWithConfirmation,
-    isConfirmationModalActive,
     resetForm,
-    initializeForm,
+    setFormRef,
     onSubmit,
-  } = useForm(new UpdateUserByAdmin());
+    initializeForm,
+    confirmation,
+    isConfirmationActive,
+  } = formMaker(UpdateUserByAdmin);
   const isUserProcessing = isInitialApiProcessing(UserApi);
   const isFormProcessing = isApiProcessing(UpdateUserByAdminApi);
+  const form = getForm();
   const userId = params.id;
 
   useEffect(() => {
@@ -60,10 +61,6 @@ const UpdateUserByAdminContent: FC = () => {
     });
   }, [form, history, resetForm, onSubmit, request, hideModal]);
 
-  if (!isAdmin()) {
-    return <Navigate to={`/bank/users/${userId}`} />;
-  }
-
   return (
     <FormContainer>
       {isUserProcessing ? (
@@ -72,13 +69,13 @@ const UpdateUserByAdminContent: FC = () => {
         <Form
           isFormProcessing={isFormProcessing}
           form={form}
-          formRef={formRef}
-          rules={rules}
+          formRef={setFormRef}
+          rules={getRules()}
           onChange={onChange}
           onSubmit={formSubmition}
-          isConfirmationModalActive={isConfirmationModalActive}
+          isConfirmationModalActive={isConfirmationActive}
           resetForm={resetForm}
-          onSubmitWithConfirmation={onSubmitWithConfirmation}
+          onSubmitWithConfirmation={confirmation}
           hideModal={hideModal}
         />
       )}

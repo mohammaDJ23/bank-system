@@ -7,9 +7,11 @@ import { FC, useCallback } from 'react';
 
 const CreateUserContent: FC = () => {
   const { getUserRoles } = useAuth();
-  const { formRef, rules, form, onChange, onSubmit, resetForm } = useForm(new CreateUser());
+  const formMaker = useForm();
+  const { getForm, getRules, onChange, resetForm, setFormRef, onSubmit } = formMaker(CreateUser);
   const { isApiProcessing, request } = useRequest();
   const isLoading = isApiProcessing(CreateUserApi);
+  const form = getForm();
 
   const formSubmition = useCallback(() => {
     onSubmit(() => {
@@ -24,7 +26,7 @@ const CreateUserContent: FC = () => {
     <>
       <FormContainer>
         {/**@ts-ignore */}
-        <Form ref={formRef} model={form} rules={rules} labelPosition="top" labelWidth="120">
+        <Form ref={setFormRef} model={form} rules={getRules()} labelPosition="top" labelWidth="120">
           {/**@ts-ignore */}
           <Form.Item style={{ marginBottom: '32px' }} label="First name" prop="firstName">
             <Input

@@ -7,6 +7,7 @@ import {
   requsetProcessReducer,
   specificDetailsReducer,
   paginationListReducer,
+  FormReducer,
 } from './reducers';
 
 const reducers = combineReducers({
@@ -16,6 +17,7 @@ const reducers = combineReducers({
   history: historyReducer,
   specificDetails: specificDetailsReducer,
   paginationList: paginationListReducer,
+  forms: FormReducer,
 });
 
 export const store = createStore(reducers, {}, applyMiddleware(thunk));

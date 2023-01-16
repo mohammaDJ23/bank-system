@@ -6,9 +6,11 @@ import { FC, useCallback } from 'react';
 import { CreateBillApi } from '../../apis';
 
 const CreateBillContent: FC = () => {
-  const { formRef, rules, form, onChange, onSubmit, resetForm } = useForm(new CreateBill());
+  const formMaker = useForm();
+  const { getForm, getRules, onChange, resetForm, setFormRef, onSubmit } = formMaker(CreateBill);
   const { isApiProcessing, request } = useRequest();
   const isLoading = isApiProcessing(CreateBillApi);
+  const form = getForm();
 
   const formSubmition = useCallback(() => {
     onSubmit(() => {
@@ -23,7 +25,7 @@ const CreateBillContent: FC = () => {
   return (
     <FormContainer>
       {/**@ts-ignore */}
-      <Form ref={formRef} model={form} rules={rules} labelPosition="top" labelWidth="120">
+      <Form ref={setFormRef} model={form} rules={getRules()} labelPosition="top" labelWidth="120">
         {/**@ts-ignore */}
         <Form.Item style={{ marginBottom: '32px' }} label="Amount" prop="amount">
           <Input

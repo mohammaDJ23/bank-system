@@ -109,6 +109,8 @@ export class UsersApi<T = any> extends RootApi {
   }
 }
 
+export type UsersApiConstructorType = ConstructorParameters<typeof UsersApi>[0];
+
 export class BillsApi<T = any> extends RootApi {
   constructor(data: ListParams<T>) {
     super({
@@ -117,6 +119,8 @@ export class BillsApi<T = any> extends RootApi {
     });
   }
 }
+
+export type BillsApiConstructorType = ConstructorParameters<typeof BillsApi>[0];
 
 export class UserApi extends RootApi {
   constructor(id: number) {

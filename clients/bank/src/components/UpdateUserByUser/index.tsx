@@ -14,19 +14,21 @@ const UpdateUserByUserContent: FC = () => {
   const { hideModal } = useAction();
   const { history } = useSelector();
   const { request, isApiProcessing, isInitialApiProcessing } = useRequest();
+  const formMaker = useForm();
   const {
-    formRef,
-    rules,
-    form,
+    getForm,
+    getRules,
     onChange,
-    onSubmitWithConfirmation,
-    isConfirmationModalActive,
     resetForm,
-    initializeForm,
+    setFormRef,
     onSubmit,
-  } = useForm(new UpdateUserByUser());
+    initializeForm,
+    confirmation,
+    isConfirmationActive,
+  } = formMaker(UpdateUserByUser);
   const isUserProcessing = isInitialApiProcessing(UserApi);
   const isFormProcessing = isApiProcessing(UpdateUserByUserApi);
+  const form = getForm();
 
   useEffect(() => {
     const userId = params.id;
@@ -64,13 +66,13 @@ const UpdateUserByUserContent: FC = () => {
         <Form
           isFormProcessing={isFormProcessing}
           form={form}
-          formRef={formRef}
-          rules={rules}
+          formRef={setFormRef}
+          rules={getRules()}
           onChange={onChange}
           onSubmit={formSubmition}
-          isConfirmationModalActive={isConfirmationModalActive}
+          isConfirmationModalActive={isConfirmationActive}
           resetForm={resetForm}
-          onSubmitWithConfirmation={onSubmitWithConfirmation}
+          onSubmitWithConfirmation={confirmation}
           hideModal={hideModal}
         />
       )}

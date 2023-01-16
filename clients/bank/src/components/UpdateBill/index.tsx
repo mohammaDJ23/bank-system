@@ -15,19 +15,21 @@ const UpdateBillContent: FC = () => {
   const { hideModal } = useAction();
   const { history } = useSelector();
   const { request, isApiProcessing, isInitialApiProcessing } = useRequest();
+  const formMaker = useForm();
   const {
-    formRef,
-    rules,
-    form,
+    getForm,
+    getRules,
     onChange,
-    onSubmitWithConfirmation,
-    onSubmit,
     resetForm,
-    isConfirmationModalActive,
+    setFormRef,
+    onSubmit,
     initializeForm,
-  } = useForm(new UpdateBill());
+    confirmation,
+    isConfirmationActive,
+  } = formMaker(UpdateBill);
   const isFormProcessing = isApiProcessing(UpdateBillApi);
   const isBillProcessing = isInitialApiProcessing(BillApi);
+  const form = getForm();
 
   useEffect(() => {
     const billId = params.id;
@@ -65,18 +67,18 @@ const UpdateBillContent: FC = () => {
         ) : (
           <Form
             onChange={onChange}
-            onSubmitWithConfirmation={onSubmitWithConfirmation}
+            onSubmitWithConfirmation={confirmation}
             resetForm={resetForm}
             form={form}
             isFormProcessing={isFormProcessing}
-            formRef={formRef}
-            rules={rules}
+            formRef={setFormRef}
+            rules={getRules()}
           />
         )}
       </FormContainer>
       <Modal
         isLoading={isFormProcessing}
-        isActive={isConfirmationModalActive()}
+        isActive={isConfirmationActive()}
         onCancel={() => hideModal(ModalNames.CONFIRMATION)}
         onConfirm={formSubmition}
       />
