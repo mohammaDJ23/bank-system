@@ -50,7 +50,12 @@ export abstract class Form {
   }
 
   cachInput(key: keyof this, value: any): void {
-    if (this.shouldCachInput) {
+    const cachedInputs: Set<string> = Reflect.getMetadata(
+      FormMetadataTypes.CACHE_INPUT,
+      this.getPrototype()
+    );
+    const isInputCached = cachedInputs.has(key as string);
+    if (isInputCached) {
       const constructorName = this.getConstructorName();
       const cachedForm = LocalStorage.getItem(constructorName) || {};
       const newCachedForm = Object.assign(cachedForm, { [key]: value });
