@@ -1,4 +1,4 @@
-import { DefineRules, DefineVal } from '../decorators';
+import { DefineRules, DefineVal, CacheInput } from '../decorators';
 import { isReceiver, isAmount, isDescription, isDate } from '../validations';
 import { Form } from './formConstructor';
 
@@ -8,6 +8,7 @@ export class CreateBill extends Form {
     { validator: isAmount, trigger: 'change' },
   ])
   @DefineVal()
+  @CacheInput()
   amount: string = '';
 
   @DefineRules([
@@ -15,6 +16,7 @@ export class CreateBill extends Form {
     { validator: isReceiver, trigger: 'change' },
   ])
   @DefineVal()
+  @CacheInput()
   receiver: string = '';
 
   @DefineRules([
@@ -22,6 +24,7 @@ export class CreateBill extends Form {
     { validator: isDescription, trigger: 'change' },
   ])
   @DefineVal()
+  @CacheInput()
   description: string = '';
 
   @DefineRules([
@@ -29,6 +32,7 @@ export class CreateBill extends Form {
     { validator: isDate, trigger: 'change' },
   ])
   @DefineVal()
+  @CacheInput()
   date: Date = new Date();
 
   constructor() {

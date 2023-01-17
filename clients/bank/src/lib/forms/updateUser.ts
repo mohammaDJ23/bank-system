@@ -57,7 +57,7 @@ export class UpdateUserByAdmin extends Form {
     phone = '',
     role = UserRoles.USER,
   }: Partial<Omit<UpdateUserByAdmin, keyof Form>> = {}) {
-    super({ shouldCachInput: false });
+    super();
     this.id = id;
     this.firstName = firstName;
     this.lastName = lastName;
@@ -106,7 +106,7 @@ export class UpdateUserByUser extends Form {
     email = '',
     phone = '',
   }: Partial<Omit<UpdateUserByUser, keyof Form>> = {}) {
-    super({ shouldCachInput: false });
+    super();
     this.id = id;
     this.firstName = firstName;
     this.lastName = lastName;

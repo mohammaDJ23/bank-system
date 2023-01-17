@@ -41,7 +41,7 @@ export class UpdateBill extends Form {
     description = '',
     date = new Date(),
   }: Partial<Omit<UpdateBill, keyof Form>> = {}) {
-    super({ shouldCachInput: false });
+    super();
     this.id = id;
     this.amount = amount;
     this.receiver = receiver;

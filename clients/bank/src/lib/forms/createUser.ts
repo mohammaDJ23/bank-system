@@ -1,4 +1,5 @@
 import {
+  CacheInput,
   DefineRules,
   DefineVal,
   isEmail,
@@ -16,6 +17,7 @@ export class CreateUser extends Form {
     { validator: isFirstName, trigger: 'change' },
   ])
   @DefineVal()
+  @CacheInput()
   firstName: string = '';
 
   @DefineRules([
@@ -23,6 +25,7 @@ export class CreateUser extends Form {
     { validator: isLastName, trigger: 'change' },
   ])
   @DefineVal()
+  @CacheInput()
   lastName: string = '';
 
   @DefineRules([
@@ -30,6 +33,7 @@ export class CreateUser extends Form {
     { validator: isEmail, trigger: 'change' },
   ])
   @DefineVal()
+  @CacheInput()
   email: string = '';
 
   @DefineRules([
@@ -44,6 +48,7 @@ export class CreateUser extends Form {
     { validator: isPhone, trigger: 'change' },
   ])
   @DefineVal()
+  @CacheInput()
   phone: string = '';
 
   @DefineRules([
@@ -51,6 +56,7 @@ export class CreateUser extends Form {
     { validator: isRole, trigger: 'change' },
   ])
   @DefineVal()
+  @CacheInput()
   role: string = '';
 
   constructor() {
@@ -58,7 +64,7 @@ export class CreateUser extends Form {
     this.firstName = this.getCachedInput('firstName');
     this.lastName = this.getCachedInput('lastName');
     this.email = this.getCachedInput('email');
-    this.password = this.getCachedInput('password');
+    this.password = '';
     this.phone = this.getCachedInput('phone');
     this.role = this.getCachedInput('role');
   }

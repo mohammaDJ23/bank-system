@@ -33,27 +33,27 @@ export class BillService {
   }
 
   async updateBill(body: UpdateBillDto, user: User): Promise<Bill> {
-    let bill = await this.findById(body.id, user.id);
+    let bill = await this.findById(body.id, user.userServiceId);
     bill = Object.assign(bill, body);
     bill = this.billRepository.create(bill);
     return this.billRepository.save(bill);
   }
 
   async deleteBill(body: DeleteBillDto, user: User): Promise<Bill> {
-    const bill = await this.findById(body.id, user.id);
+    const bill = await this.findById(body.id, user.userServiceId);
     await this.billRepository.delete(bill.id);
     return bill;
   }
 
   findOne(id: number, user: User): Promise<Bill> {
-    return this.findById(id, user.id);
+    return this.findById(id, user.userServiceId);
   }
 
   async findById(billId: number, userId: number): Promise<Bill> {
     const bill = await this.billRepository
       .createQueryBuilder('bill')
       .innerJoinAndSelect('bill.user', 'user')
-      .where('bill.user.id = :userId', { userId })
+      .where('user.user_service_id = :userId', { userId })
       .andWhere('bill.id = :billId', { billId })
       .getOne();
 
@@ -70,7 +70,7 @@ export class BillService {
     return this.billRepository
       .createQueryBuilder('bill')
       .innerJoinAndSelect('bill.user', 'user')
-      .where('bill.user.id = :userId', { userId: user.id })
+      .where('user.user_service_id = :userId', { userId: user.userServiceId })
       .orderBy('bill.date', 'DESC')
       .take(take)
       .skip((page - 1) * take)
@@ -80,7 +80,9 @@ export class BillService {
   findAllWithoutLimitation(user: User): Promise<Bill[]> {
     return this.billRepository
       .createQueryBuilder('bill')
-      .where('bill.user.id = :userId', { userId: user.id })
+      .where('bill.user.user_service_id = :userId', {
+        userId: user.userServiceId,
+      })
       .orderBy('bill.date::TIMESTAMP', 'DESC')
       .getMany();
   }
@@ -89,7 +91,9 @@ export class BillService {
     return this.billRepository
       .createQueryBuilder('bill')
       .select('SUM(bill.amount::INTEGER)', 'totalAmount')
-      .where('bill.user.id = :userId', { userId: user.id })
+      .where('bill.user.user_service_id = :userId', {
+        userId: user.userServiceId,
+      })
       .getRawOne();
   }
 
@@ -103,7 +107,9 @@ export class BillService {
       .andWhere('bill.createdAt::TIMESTAMP <= :end::TIMESTAMP', {
         end: body.end,
       })
-      .andWhere('bill.user.id = :userId', { userId: user.id })
+      .andWhere('bill.user.user_service_id = :userId', {
+        userId: user.userServiceId,
+      })
       .getRawOne();
   }
 
@@ -113,7 +119,9 @@ export class BillService {
       .innerJoinAndSelect('bill.user', 'user')
       .where('bill.date::TIMESTAMP >= :start', { start: body.start })
       .andWhere('bill.date::TIMESTAMP <= :end', { end: body.end })
-      .andWhere('bill.user.id = :userId', { userId: user.id })
+      .andWhere('user.user_service_id = :userId', {
+        userId: user.userServiceId,
+      })
       .take(body.take)
       .skip((body.page - 1) * body.take)
       .getManyAndCount();
@@ -127,7 +135,9 @@ export class BillService {
       .addSelect('bill.date::DATE', 'date')
       .where('bill.date::DATE >= CURRENT_DATE - 7')
       .andWhere('bill.date::DATE <= CURRENT_DATE - 1')
-      .andWhere('bill.user.id = :userId', { userId: user.id })
+      .andWhere('bill.user.user_service_id = :userId', {
+        userId: user.userServiceId,
+      })
       .groupBy('bill.date')
       .getRawMany();
   }
@@ -136,7 +146,7 @@ export class BillService {
     return this.billRepository
       .createQueryBuilder('bill')
       .innerJoinAndSelect('bill.user', 'user')
-      .where('bill.user.id = :userId', { userId: user.id })
+      .where('user.user_service_id = :userId', { userId: user.userServiceId })
       .orderBy('bill.amount', 'DESC')
       .take(body.take)
       .skip((body.page - 1) * body.take)
@@ -147,7 +157,7 @@ export class BillService {
     return this.billRepository
       .createQueryBuilder('bill')
       .innerJoinAndSelect('bill.user', 'user')
-      .where('bill.user.id = :userId', { userId: user.id })
+      .where('user.user_service_id = :userId', { userId: user.userServiceId })
       .orderBy('bill.amount', 'ASC')
       .take(body.take)
       .skip((body.page - 1) * body.take)

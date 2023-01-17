@@ -4,22 +4,7 @@ import { Constructor, FormMetadataTypes, LocalStorage, routes, Rule, Rules } fro
 import { RootState } from '../../store';
 import { RootActions } from '../../store/actions';
 
-interface FormOptions {
-  shouldCachInput: boolean;
-}
-
 export abstract class Form {
-  private readonly shouldCachInput: boolean;
-
-  constructor(options: FormOptions = { shouldCachInput: true }) {
-    this.shouldCachInput = options.shouldCachInput;
-    const target = Object.assign<this, this>(Object.create(this, {}), this);
-    Object.keys(target).forEach(prop => {
-      delete target[prop as keyof this];
-    });
-    return new Proxy<this>(target, {});
-  }
-
   getPrototype(): object {
     return this.constructor.prototype;
   }
@@ -50,7 +35,12 @@ export abstract class Form {
   }
 
   cachInput(key: keyof this, value: any): void {
-    if (this.shouldCachInput) {
+    const cachedInputs: Set<string> = Reflect.getMetadata(
+      FormMetadataTypes.CACHE_INPUT,
+      this.getPrototype()
+    );
+    const isInputCached = cachedInputs.has(key as string);
+    if (isInputCached) {
       const constructorName = this.getConstructorName();
       const cachedForm = LocalStorage.getItem(constructorName) || {};
       const newCachedForm = Object.assign(cachedForm, { [key]: value });
