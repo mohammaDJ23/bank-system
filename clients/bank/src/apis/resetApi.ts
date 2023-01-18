@@ -28,7 +28,7 @@ export class Request<R = any, D = any> implements RootApiObj<D> {
   public readonly api: AxiosRequestConfig<D>;
   public readonly config?: CreateAxiosDefaults<D> | undefined;
 
-  constructor({ api, config = {} }: RootApiObj) {
+  constructor({ api, config = {} }: RootApiObj<D>) {
     this.api = api;
     this.config = {
       baseURL: process.env.BANK_SERVICE,
@@ -43,7 +43,7 @@ export class Request<R = any, D = any> implements RootApiObj<D> {
     try {
       return this.axiosInstance.request<R, AxiosResponse<R>, D>(this.api);
     } catch (error) {
-      const err = error as AxiosError<ErrorObj>;
+      const err = error as AxiosError<ErrorObj, D>;
       throw err;
     }
   }

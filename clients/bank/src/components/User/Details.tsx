@@ -6,7 +6,7 @@ import Modal from '../Modal';
 import { useNavigate, useParams } from 'react-router-dom';
 import { FC, useCallback, useState } from 'react';
 import { useAction, useAuth, useRequest, useSelector } from '../../hooks';
-import { DeleteUserApi } from '../../apis';
+import { DeleteUserApi, IdReq } from '../../apis';
 import { UserObj } from '../../lib';
 import { ModalNames } from '../../store';
 
@@ -24,14 +24,13 @@ const Details: FC<DetailsImporation> = ({ user }) => {
   const { isApiProcessing, request } = useRequest();
   const { isAdmin } = useAuth();
   const isDeletingUserProcessing = isApiProcessing(DeleteUserApi);
-  const options = user
-    ? [
-        {
-          label: 'Update',
-          path: isAdmin() ? `/bank/admin/update-user/${user.id}` : `/bank/update-user/${user.id}`,
-        },
-      ]
-    : [];
+  const options = [
+    {
+      label: 'Update',
+      path: isAdmin() ? `/bank/admin/update-user/${user.id}` : `/bank/update-user/${user.id}`,
+    },
+  ];
+
   const userId = params.id;
 
   const onMenuOpen = useCallback((event: React.MouseEvent<HTMLElement>) => {
@@ -58,7 +57,7 @@ const Details: FC<DetailsImporation> = ({ user }) => {
 
   const deleteUser = useCallback(() => {
     if (userId) {
-      request<UserObj, number>(new DeleteUserApi(+userId)).then(response => {
+      request<UserObj, IdReq>(new DeleteUserApi(+userId)).then(response => {
         hideModal(ModalNames.CONFIRMATION);
         navigate('/bank/users');
       });

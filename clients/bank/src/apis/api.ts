@@ -9,7 +9,7 @@ import {
 } from '../lib';
 import { RootApiObj } from './resetApi';
 
-interface IdReq {
+export interface IdReq {
   id: number;
 }
 
