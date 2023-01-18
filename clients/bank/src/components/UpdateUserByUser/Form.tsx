@@ -1,15 +1,14 @@
-import React, { FC } from 'react';
+import { FC } from 'react';
 import { Button, Form as ReactElementForm, Input } from 'element-react';
 import { Rules, UpdateUserByUser } from '../../lib';
 import Modal from '../Modal';
 import { ModalNames } from '../../store';
-import { UseFormCallbackExportation } from '../../hooks';
 
 interface FormImportation {
   onChange: (key: keyof UpdateUserByUser, value: any) => void;
   form: UpdateUserByUser;
   isFormProcessing: boolean;
-  formRef: UseFormCallbackExportation['setFormRef'];
+  formRef: (el: ReactElementForm | null) => void;
   rules: Rules;
   onSubmitWithConfirmation: () => void;
   resetForm: () => void;

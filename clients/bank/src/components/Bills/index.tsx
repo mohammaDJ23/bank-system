@@ -17,8 +17,8 @@ const BillsContent: FC = () => {
   const getBillsList = useCallback(
     (options: Partial<BillsApiConstructorType> = {}) => {
       const apiData = { take, page, ...options };
-      request<[BillObj[], number]>(new BillsApi<BillObj>(apiData)).then(res => {
-        const [billList, total] = res.data;
+      request<[BillObj[], number], BillObj>(new BillsApi<BillObj>(apiData)).then(response => {
+        const [billList, total] = response.data;
         const createdList = getListInfo();
         const constructedBilllist = new (createdList.constructor as Constructor<BillList>)();
         constructedBilllist.list = Object.assign(lists, { [apiData.page]: billList });
