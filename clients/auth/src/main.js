@@ -4,6 +4,7 @@ import ElementPlus from 'element-plus';
 import { routes } from './lib';
 import App from './App.vue';
 import { store } from './store';
+import './assets/styles/index.scss';
 
 const history = createWebHistory();
 export let router = createRouter({ history, routes });

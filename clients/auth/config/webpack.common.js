@@ -33,13 +33,34 @@ module.exports = {
         use: [{ loader: 'file-loader' }],
       },
       {
-        test: /\.scss|\.css$/,
+        test: /\.s[ac]ss$/i,
         use: [
-          // 'vue-style-loader',
-          'style-loader',
-          { loader: 'css-loader', options: { modules: true } },
-          'sass-loader',
+          'vue-style-loader',
+          {
+            loader: 'css-loader',
+            options: {
+              modules: true,
+            },
+          },
         ],
+      },
+      {
+        test: /\.css$/,
+        use: [
+          {
+            loader: 'css-loader',
+            options: {
+              importLoaders: 1,
+              modules: true,
+            },
+          },
+        ],
+        include: /\.module\.css$/,
+      },
+      {
+        test: /\.css$/,
+        use: ['style-loader', 'css-loader'],
+        exclude: /\.module\.css$/,
       },
     ],
   },
