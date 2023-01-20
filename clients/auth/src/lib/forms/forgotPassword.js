@@ -1,5 +1,5 @@
 import { Form } from './formConstructor';
-import { ElNotification } from 'element-plus';
+import { notification } from 'ant-design-vue';
 
 export class ForgotPassword extends Form {
   email = '';
@@ -10,10 +10,9 @@ export class ForgotPassword extends Form {
   }
 
   afterSubmit(context, res) {
-    ElNotification({
-      title: 'Success',
-      message: res.data.message,
-      type: 'success',
+    notification.success({
+      message: 'Success',
+      description: res.data.message,
     });
   }
 }

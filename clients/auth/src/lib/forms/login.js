@@ -2,7 +2,7 @@ import { decodeToken } from 'react-jwt';
 import { Form } from './formConstructor';
 import { LocalStorage } from '../';
 import { router } from '../../main';
-import { ElNotification } from 'element-plus';
+import { notification } from 'ant-design-vue';
 import { isMicroFrontEnd } from '../validations';
 
 export class Login extends Form {
@@ -27,10 +27,9 @@ export class Login extends Form {
 
     if (isMicroFrontEnd()) router.push('/');
     else
-      ElNotification({
-        title: 'Success',
-        message: 'Your are logged in',
-        type: 'success',
+      notification.success({
+        message: 'Success',
+        description: 'Your are logged in',
       });
   }
 }
