@@ -5,6 +5,8 @@ import { routes } from './lib';
 import App from './App.vue';
 import { store } from './store';
 import './assets/styles/index.scss';
+import 'element-plus/dist/index.css';
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 const history = createWebHistory();
 export let router = createRouter({ history, routes });
