@@ -1,5 +1,5 @@
 import { AxiosError, AxiosResponse } from 'axios';
-import { Notification } from 'element-react';
+import { notification } from 'antd';
 import { useCallback, useEffect } from 'react';
 import { ErrorObj, Request, RequestParametersType, RootApiObj } from '../apis';
 import { Constructor } from '../lib';
@@ -38,7 +38,7 @@ export function useRequest() {
             ? err.message
             : 'Something went wrong';
         message = Array.isArray(message) ? message.join(' - ') : message;
-        Notification(message, 'error');
+        notification.error({ message: 'Error', description: message });
         error(requestConstructorName);
         throw err;
       }
