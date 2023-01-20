@@ -6,7 +6,7 @@ import Modal from '../Modal';
 import { ModalNames } from '../../store';
 import { useEffect, FC, useCallback } from 'react';
 import { useParams } from 'react-router-dom';
-import { Notification } from 'element-react';
+import { notification } from 'antd';
 import Skeleton from './Skeleton';
 import { BillApi, UpdateBillApi } from '../../apis';
 
@@ -53,7 +53,10 @@ const UpdateBillContent: FC = () => {
       request<UpdateBill, UpdateBill>(new UpdateBillApi(form)).then(response => {
         hideModal(ModalNames.CONFIRMATION);
         resetForm();
-        Notification('You have updated the bill successfully.', 'success');
+        notification.success({
+          message: 'Success',
+          description: 'You have updated the bill successfully.',
+        });
         if (history) history.push(`/bank/bills/${form.id}`);
       });
     });
