@@ -1,5 +1,5 @@
 import { ResetApi, apis } from '../../../apis';
-import { ElNotification } from 'element-plus';
+import { notification } from 'ant-design-vue';
 
 export const actions = {
   async request(context, formSchema) {
@@ -22,10 +22,9 @@ export const actions = {
       let message = error?.response?.data?.message || error?.message || 'Something went wrong.';
       message = Array.isArray(message) ? message.join(' - ') : message;
 
-      ElNotification({
-        title: 'Error',
-        message,
-        type: 'error',
+      notification.error({
+        message: 'Error',
+        description: message,
       });
     } finally {
       context.commit('loading', { [formConstructorName]: false });

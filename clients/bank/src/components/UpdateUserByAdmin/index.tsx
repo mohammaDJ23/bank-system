@@ -6,7 +6,7 @@ import { useEffect, FC, useCallback } from 'react';
 import { useParams } from 'react-router-dom';
 import Skeleton from './Skeleton';
 import { UpdateUserByAdminApi, UserApi } from '../../apis';
-import { Notification } from 'element-react';
+import { notification } from 'antd';
 import { ModalNames } from '../../store';
 
 const UpdateUserByAdminContent: FC = () => {
@@ -54,7 +54,10 @@ const UpdateUserByAdminContent: FC = () => {
         response => {
           hideModal(ModalNames.CONFIRMATION);
           resetForm();
-          Notification('You have updated the user successfully.', 'success');
+          notification.success({
+            message: 'Success',
+            description: 'You have updated the user successfully.',
+          });
           if (history) history.push(`/bank/users/${form.id}`);
         }
       );

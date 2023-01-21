@@ -47,6 +47,7 @@
     ]
   },
   "devDependencies": {
+    "source-map-loader": "^4.0.1",
     "ts-loader": "^9.4.1",
     "webpack-cli": "^4.10.0"
   }
