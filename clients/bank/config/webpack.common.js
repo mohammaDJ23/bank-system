@@ -79,6 +79,7 @@ module.exports = {
     filename: '[name].bundle.js',
     path: path.resolve(__dirname, '../dist'),
     clean: true,
+    sourceMapFilename: '[name].js.map',
   },
   devServer: { port: 3006, historyApiFallback: true },
 };
