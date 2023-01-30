@@ -4,14 +4,17 @@ import { LocalStorage } from '../';
 import { router } from '../../main';
 import { notification } from 'ant-design-vue';
 import { isMicroFrontEnd } from '../validations';
+import { CacheInput } from '../decorators';
 
 export class Login extends Form {
+  @CacheInput()
   email = '';
 
   password = '';
 
   constructor() {
     super();
+    this.email = this.getCachedInput('email');
   }
 
   afterSubmit(context, res) {

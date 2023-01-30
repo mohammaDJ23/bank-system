@@ -1,3 +1,4 @@
+import 'reflect-metadata';
 import { createApp } from 'vue';
 import { createRouter, createWebHistory, createMemoryHistory } from 'vue-router';
 import ElementPlus from 'element-plus';
