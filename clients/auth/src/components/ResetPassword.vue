@@ -30,6 +30,7 @@
         v-model="password"
         type="password"
         name="password"
+        isRequired
         @input="() => {}"
       ></v-text-field>
       <v-text-field
@@ -39,6 +40,7 @@
         v-model="confirmedPassword"
         type="confirmedPassword"
         name="confirmedPassword"
+        isRequired
         @input="() => {}"
       ></v-text-field>
       <div class="d-flex align-center gap-2 flex-wrap">
