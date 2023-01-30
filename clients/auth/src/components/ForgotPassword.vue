@@ -20,7 +20,7 @@
         v-model="email"
         type="email"
         name="email"
-        isRequired
+        required
         @input="() => {}"
       ></v-text-field>
       <div class="d-flex align-center gap-2 flex-wrap">
