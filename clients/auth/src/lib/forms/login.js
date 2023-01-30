@@ -12,7 +12,6 @@ export class Login extends Form {
 
   constructor() {
     super();
-    this.setCachedInput('email');
   }
 
   afterSubmit(context, res) {
