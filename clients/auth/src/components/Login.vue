@@ -1,5 +1,5 @@
 <template>
-  <Form :form-schema="formSchema" :rules="rules" forgot-password-button="Forgot your password?">
+  <!-- <Form :form-schema="formSchema" :rules="rules" forgot-password-button="Forgot your password?">
     <el-form-item class="w-100" label="Email" prop="email">
       <el-input
         :disabled="!!isFormProcessing"
@@ -20,13 +20,49 @@
         name="password"
       />
     </el-form-item>
-  </Form>
+  </Form> -->
+  <Card title="User login">
+    <v-form ref="form" v-model="valid" lazy-validation>
+      <v-text-field
+        clearable
+        label="Email"
+        variant="underlined"
+        v-model="email"
+        type="email"
+        name="email"
+        @input="() => {}"
+      ></v-text-field>
+      <v-text-field
+        clearable
+        label="Password"
+        variant="underlined"
+        v-model="password"
+        type="password"
+        name="password"
+        @input="() => {}"
+      ></v-text-field>
+      <div class="d-flex align-center gap-2 flex-wrap">
+        <v-btn color="primary" class="text-lowercase" size="small" type="submit" @click="validate">
+          Login
+        </v-btn>
+        <v-btn
+          color="primary"
+          variant="outlined"
+          size="small"
+          class="text-lowercase"
+          @click="reset"
+        >
+          Forgot your password?
+        </v-btn>
+      </div>
+    </v-form>
+  </Card>
 </template>
 
 <script setup>
 import { reactive, onMounted } from 'vue';
-import Form from './Form.vue';
-import { isEmail, isPassword, LocalStorage, Login } from '../lib';
+import Card from './Card.vue';
+import { isEmail, isPassword, Login } from '../lib';
 import { useFocus, useForm } from '../hooks';
 
 const login = new Login();

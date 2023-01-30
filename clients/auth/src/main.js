@@ -11,7 +11,6 @@ import * as components from 'vuetify/components';
 import * as directives from 'vuetify/directives';
 import 'vuetify/styles';
 import '@mdi/font/css/materialdesignicons.css';
-
 import './assets/styles/index.scss';
 import 'element-plus/dist/index.css';
 import 'ant-design-vue/dist/antd.css';
