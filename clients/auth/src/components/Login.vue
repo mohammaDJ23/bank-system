@@ -24,7 +24,7 @@
         name="password"
         required
       ></v-text-field>
-      <div class="d-flex align-center gap-2 flex-wrap">
+      <div class="d-flex align-center gap-2 flex-wrap mt-3">
         <v-btn
           color="primary"
           class="text-lowercase"
