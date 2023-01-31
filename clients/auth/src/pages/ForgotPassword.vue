@@ -1,5 +1,5 @@
 <template>
-  <ForgotPassword formTitle="Forgot password" />
+  <ForgotPassword />
 </template>
 
 <script>
