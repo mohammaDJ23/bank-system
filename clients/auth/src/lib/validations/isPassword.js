@@ -1,8 +1,6 @@
-export function isPassword(rule, value, callback) {
+export function isPassword(value) {
   const isPasswordValid = /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{6,45}$/.test(
-    value,
+    value
   );
-
-  if (!isPasswordValid) callback(new Error('Invalid password'));
-  else callback();
+  if (!isPasswordValid) return 'Invalid password.';
 }

@@ -1,50 +1,37 @@
 <template>
-  <!-- <Form :form-schema="formSchema" :rules="rules" forgot-password-button="Forgot your password?">
-    <el-form-item class="w-100" label="Email" prop="email">
-      <el-input
-        :disabled="!!isFormProcessing"
-        v-model="formSchema.email"
-        type="email"
-        autocomplete="off"
-        name="email"
-        @input="cacheInput('email', $event)"
-      />
-    </el-form-item>
-
-    <el-form-item class="w-100" label="Password" prop="password">
-      <el-input
-        :disabled="!!isFormProcessing"
-        v-model="formSchema.password"
-        type="password"
-        autocomplete="off"
-        name="password"
-      />
-    </el-form-item>
-  </Form> -->
   <Card title="User login">
-    <v-form ref="form" v-model="valid" lazy-validation>
+    <v-form ref="formRef" v-model="valid" lazy-validation @submit="validate">
       <v-text-field
         clearable
+        :disabled="isFormProcessing"
         label="Email"
         variant="underlined"
-        v-model="email"
+        v-model="form.email"
+        :rules="form.getInputRules('email')"
         type="email"
         name="email"
         required
-        @input="() => {}"
+        @update:model-value="value => form.cacheInput('email', value)"
       ></v-text-field>
       <v-text-field
         clearable
+        :disabled="isFormProcessing"
         label="Password"
         variant="underlined"
-        v-model="password"
+        v-model="form.password"
+        :rules="form.getInputRules('password')"
         type="password"
         name="password"
         required
-        @input="() => {}"
       ></v-text-field>
       <div class="d-flex align-center gap-2 flex-wrap">
-        <v-btn color="primary" class="text-lowercase" size="small" type="submit" @click="validate">
+        <v-btn
+          color="primary"
+          class="text-lowercase"
+          size="small"
+          type="submit"
+          :disabled="isFormProcessing"
+        >
           Login
         </v-btn>
         <v-btn
@@ -52,7 +39,9 @@
           variant="outlined"
           size="small"
           class="text-lowercase"
+          type="button"
           @click="reset"
+          :disabled="isFormProcessing"
         >
           Forgot your password?
         </v-btn>
@@ -62,22 +51,25 @@
 </template>
 
 <script setup>
-import { reactive, onMounted } from 'vue';
+import { reactive, onMounted, ref } from 'vue';
 import Card from './Card.vue';
-import { isEmail, isPassword, Login } from '../lib';
+import { Login } from '../lib';
 import { useFocus, useForm } from '../hooks';
 
-const login = new Login();
-const formSchema = reactive(login);
-const { isFormProcessing, cacheInput } = useForm(formSchema);
+const formRef = ref();
+const form = reactive(new Login());
+const valid = reactive(true);
+const { isFormProcessing } = useForm(form);
 const { focus } = useFocus();
-
-const rules = reactive({
-  email: [{ validator: isEmail, trigger: 'change' }],
-  password: [{ validator: isPassword, trigger: 'change' }],
-});
 
 onMounted(() => {
   focus('email');
 });
+
+async function validate(event) {
+  event.preventDefault();
+  const { valid } = await formRef.value.validate();
+  if (valid) {
+  }
+}
 </script>

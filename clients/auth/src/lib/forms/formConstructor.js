@@ -28,8 +28,8 @@ export class Form {
   }
 
   getCachedInput(key) {
-    if (this.isInputCacheable(key)) return this.getCachedForm()[key] || null;
-    else return this[key] || null;
+    if (this.isInputCacheable(key)) return this.getCachedForm()[key] || this[key];
+    return this[key];
   }
 
   cacheInput(key, value) {
@@ -38,5 +38,12 @@ export class Form {
         this.getConstructorName(),
         Object.assign(this.getCachedForm(), { [key]: value })
       );
+  }
+
+  getInputRules(key) {
+    const inputRules =
+      Reflect.getMetadata(metadataTypes.INPUT_RULES, this.getConstructorPrototype()) || {};
+    if (key in inputRules) return inputRules[key];
+    else return [];
   }
 }
