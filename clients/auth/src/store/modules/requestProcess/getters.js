@@ -5,7 +5,11 @@ export const getters = {
 
   getLoading(state) {
     return function (requestInstance) {
-      return state.loadings[requestInstance.name];
+      let requestInstanceName = '';
+      if (typeof requestInstance === 'function') requestInstanceName = requestInstance.name;
+      else if (typeof requestInstance === 'object')
+        requestInstanceName = requestInstance.getConstructorName();
+      return state.loadings[requestInstanceName];
     };
   },
 };

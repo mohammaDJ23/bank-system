@@ -6,8 +6,18 @@ import { computed } from 'vue';
 export function useRequest() {
   const store = useStore();
 
+  function currentApiProcessing(requestInstance) {
+    return store.getters.getLoading(requestInstance);
+  }
+
+  function isCurrentApiProcessing(requestInstance) {
+    return !!currentApiProcessing(requestInstance);
+  }
+
   async function request(requestInstance) {
     try {
+      if (isCurrentApiProcessing(requestInstance))
+        throw new Error('The api is processing please wait.');
       store.dispatch('loading', requestInstance);
       const restApi = new Request(requestInstance);
       const res = await restApi.build();
@@ -26,7 +36,7 @@ export function useRequest() {
   }
 
   function isApiProcessing(requestInstance) {
-    return computed(() => !!store.getters.getLoading(requestInstance));
+    return computed(() => isCurrentApiProcessing(requestInstance));
   }
 
   return { request, isApiProcessing };
