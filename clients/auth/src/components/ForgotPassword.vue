@@ -64,9 +64,10 @@ async function validate(event) {
   if (valid) {
     request(new ForgotPasswordApi(form)).then(response => {
       form.clearCachedForm();
+      formRef.value.reset();
       notification.success({
         message: 'Success',
-        description: res.data.message,
+        description: response.data.message,
       });
     });
   }

@@ -77,6 +77,7 @@ async function validate(event) {
   if (valid) {
     request(new LoginApi(form)).then(response => {
       form.clearCachedForm();
+      formRef.value.reset();
 
       const token = response.data.accessToken;
       const decodedToken = decodeToken(token);
