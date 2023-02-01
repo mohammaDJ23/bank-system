@@ -46,4 +46,8 @@ export class Form {
     if (key in inputRules) return inputRules[key];
     else return [];
   }
+
+  clearCachedForm() {
+    LocalStorage.clear(this.getConstructorName());
+  }
 }
