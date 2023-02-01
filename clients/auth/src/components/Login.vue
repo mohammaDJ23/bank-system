@@ -53,9 +53,12 @@
 <script setup>
 import { reactive, onMounted, ref } from 'vue';
 import Card from './Card.vue';
-import { Login } from '../lib';
+import { LocalStorage, Login, isMicroFrontEnd } from '../lib';
 import { useFocus, useRequest } from '../hooks';
 import { LoginApi } from '../apis';
+import { notification } from 'ant-design-vue';
+import { decodeToken } from 'react-jwt';
+import { router } from '../main';
 
 const formRef = ref();
 const form = reactive(new Login());
@@ -73,7 +76,21 @@ async function validate(event) {
   const { valid } = await formRef.value.validate();
   if (valid) {
     request(new LoginApi(form)).then(response => {
-      console.log(response);
+      const token = response.data.accessToken;
+      const decodedToken = decodeToken(token);
+      const storableData = [
+        ['access_token', token],
+        ['access_token_expiration', new Date().getTime() + decodedToken.expiration],
+      ];
+
+      for (let [key, value] of storableData) LocalStorage.setItem(key, value);
+
+      if (isMicroFrontEnd()) router.push('/');
+      else
+        notification.success({
+          message: 'Success',
+          description: 'You are logged in.',
+        });
     });
   }
 }
