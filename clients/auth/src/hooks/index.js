@@ -1,3 +1,3 @@
-export * from './useClientFetch';
+export * from './useRequest';
 export * from './useForm';
 export * from './useFocus';

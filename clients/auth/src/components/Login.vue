@@ -54,13 +54,15 @@
 import { reactive, onMounted, ref } from 'vue';
 import Card from './Card.vue';
 import { Login } from '../lib';
-import { useFocus, useForm } from '../hooks';
+import { useFocus, useRequest } from '../hooks';
+import { LoginApi } from '../apis';
 
 const formRef = ref();
 const form = reactive(new Login());
 const valid = reactive(true);
-const { isFormProcessing } = useForm(form);
+let { isApiProcessing, request } = useRequest();
 const { focus } = useFocus();
+const isFormProcessing = isApiProcessing(LoginApi);
 
 onMounted(() => {
   focus('email');
@@ -70,6 +72,9 @@ async function validate(event) {
   event.preventDefault();
   const { valid } = await formRef.value.validate();
   if (valid) {
+    request(new LoginApi(form)).then(response => {
+      console.log(response);
+    });
   }
 }
 </script>

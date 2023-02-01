@@ -4,8 +4,8 @@ export const getters = {
   },
 
   getLoading(state) {
-    return function (name) {
-      return state.loadings[name];
+    return function (requestInstance) {
+      return state.loadings[requestInstance.name];
     };
   },
 };
