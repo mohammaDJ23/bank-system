@@ -8,7 +8,6 @@ export function useRequest() {
 
   async function request(requestInstance) {
     try {
-      if (store.getters.getLoading(requestInstance)) throw new Error('The api is processing.');
       store.dispatch('loading', requestInstance);
       const restApi = new Request(requestInstance);
       const res = await restApi.build();
@@ -26,8 +25,8 @@ export function useRequest() {
     }
   }
 
-  function isApiProcessing(apiInstance) {
-    return computed(() => !!store.getters.getLoading(apiInstance));
+  function isApiProcessing(requestInstance) {
+    return computed(() => !!store.getters.getLoading(requestInstance));
   }
 
   return { request, isApiProcessing };

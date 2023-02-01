@@ -1,19 +1,22 @@
 export const mutations = {
   loading(state, requestInstance) {
-    state.loadings = Object.assign(state.loadings, { [requestInstance.constructor.name]: true });
-    delete state.successes[requestInstance.constructor.name];
-    delete state.errors[requestInstance.constructor.name];
+    const requestInstanceName = requestInstance.getConstructorName();
+    state.loadings = Object.assign(state.loadings, { [requestInstanceName]: true });
+    delete state.successes[requestInstanceName];
+    delete state.errors[requestInstanceName];
   },
 
   success(state, requestInstance) {
-    state.successes = Object.assign(state.successes, { [requestInstance.constructor.name]: true });
-    delete state.loadings[requestInstance.constructor.name];
-    delete state.errors[requestInstance.constructor.name];
+    const requestInstanceName = requestInstance.getConstructorName();
+    state.successes = Object.assign(state.successes, { [requestInstanceName]: true });
+    delete state.loadings[requestInstanceName];
+    delete state.errors[requestInstanceName];
   },
 
   error(state, requestInstance) {
-    state.errors = Object.assign(state.errors, { [requestInstance.constructor.name]: true });
-    delete state.loadings[requestInstance.constructor.name];
-    delete state.successes[requestInstance.constructor.name];
+    const requestInstanceName = requestInstance.getConstructorName();
+    state.errors = Object.assign(state.errors, { [requestInstanceName]: true });
+    delete state.loadings[requestInstanceName];
+    delete state.successes[requestInstanceName];
   },
 };
