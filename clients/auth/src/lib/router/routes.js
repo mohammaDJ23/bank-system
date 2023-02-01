@@ -3,10 +3,16 @@ const ResetPassword = () => import('../../pages/ResetPassword.vue');
 const ForgotPassword = () => import('../../pages/ForgotPassword.vue');
 const NotFound = () => import('../../pages/NotFound.vue');
 
+export const pathes = {
+  login: '/auth/login',
+  forgotPassword: '/auth/forgot-password',
+  resetPassword: '/auth/reset-password',
+};
+
 export const routes = [
-  { path: '/auth/login', name: 'Login', component: Login },
+  { path: pathes.login, name: 'Login', component: Login },
   {
-    path: '/auth/reset-password',
+    path: pathes.resetPassword,
     name: 'ResetPassword',
     component: ResetPassword,
     beforeEnter: (to, from, next) => {
@@ -14,6 +20,6 @@ export const routes = [
       else next();
     },
   },
-  { path: '/auth/forgot-password', name: 'ForgotPassword', component: ForgotPassword },
+  { path: pathes.forgotPassword, name: 'ForgotPassword', component: ForgotPassword },
   { path: '/:catchAll(.*)', name: 'NotFound', component: NotFound },
 ];

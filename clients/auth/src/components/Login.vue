@@ -40,7 +40,7 @@
           size="small"
           class="text-lowercase"
           type="button"
-          @click="reset"
+          @click="redirect(pathes.forgotPassword)"
           :disabled="isFormProcessing"
         >
           Forgot your password?
@@ -53,17 +53,17 @@
 <script setup>
 import { reactive, onMounted, ref } from 'vue';
 import Card from './Card.vue';
-import { LocalStorage, Login, isMicroFrontEnd } from '../lib';
-import { useFocus, useRequest } from '../hooks';
+import { LocalStorage, Login, isMicroFrontEnd, pathes } from '../lib';
+import { useFocus, useRequest, useRedirect } from '../hooks';
 import { LoginApi } from '../apis';
 import { notification } from 'ant-design-vue';
 import { decodeToken } from 'react-jwt';
-import { router } from '../main';
 
 const formRef = ref();
 const form = reactive(new Login());
 const valid = reactive(true);
-let { isApiProcessing, request } = useRequest();
+const { isApiProcessing, request } = useRequest();
+const { redirect } = useRedirect();
 const { focus } = useFocus();
 const isFormProcessing = isApiProcessing(LoginApi);
 
@@ -85,7 +85,7 @@ async function validate(event) {
 
       for (let [key, value] of storableData) LocalStorage.setItem(key, value);
 
-      if (isMicroFrontEnd()) router.push('/');
+      if (isMicroFrontEnd()) redirect('/');
       else
         notification.success({
           message: 'Success',
