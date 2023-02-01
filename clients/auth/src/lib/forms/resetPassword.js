@@ -1,8 +1,9 @@
 import { Form } from './formConstructor';
 import { router } from '../../main';
-import { DefineInputRules } from '../decorators';
+import { Construct, DefineInputRules } from '../decorators';
 import { isPassword, isSamePassword } from '../validations';
 
+@Construct()
 export class ResetPassword extends Form {
   @DefineInputRules([isPassword])
   password = '';
@@ -14,7 +15,9 @@ export class ResetPassword extends Form {
 
   constructor() {
     super();
-    this.setToken.bind(Object.assign(router, this));
+    if (router) {
+      this.setToken.bind(Object.assign(router, this));
+    }
   }
 
   setToken() {

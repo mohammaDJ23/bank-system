@@ -50,4 +50,8 @@ export class Form {
   clearCachedForm() {
     LocalStorage.clear(this.getConstructorName());
   }
+
+  static getPrototype() {
+    return Form.prototype;
+  }
 }
