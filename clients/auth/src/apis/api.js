@@ -1,9 +1,13 @@
-import { Login, ForgotPassword, ResetPassword } from '../lib';
+import { ForgotPassword, ResetPassword } from '../lib';
 
 class RootApi {
   constructor(api = {}, config = {}) {
     this.api = api;
     this.config = config;
+  }
+
+  getConstructorName() {
+    return this.constructor.name;
   }
 }
 
@@ -47,17 +51,6 @@ export class ResetPasswordApi extends RootApi {
 }
 
 export const apis = {
-  [Login.name](data) {
-    return {
-      url: '/auth/login',
-      method: 'post',
-      data,
-      header: {
-        'Content-Type': 'application/json',
-      },
-    };
-  },
-
   [ForgotPassword.name](data) {
     return {
       url: '/auth/forgot-password',
