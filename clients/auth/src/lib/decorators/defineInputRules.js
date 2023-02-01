@@ -6,7 +6,9 @@ export function DefineInputRules(rules) {
       const inputRules = Reflect.getMetadata(metadataTypes.INPUT_RULES, target) || {};
       Reflect.defineMetadata(
         metadataTypes.INPUT_RULES,
-        Object.assign(inputRules, { [name]: rules }),
+        Object.assign(inputRules, {
+          [name]: rules.map(fn => fn.bind(target)),
+        }),
         target
       );
     }

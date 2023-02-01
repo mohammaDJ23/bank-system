@@ -1,9 +1,6 @@
-export function isSamePassword(formSchema) {
-  return function (rule, value, callback) {
-    const isSamePassword =
-      formSchema.password.toString().toLowerCase() === value.toString().toLowerCase();
-
-    if (!isSamePassword || !value) callback(new Error('The password is not the same'));
-    else callback();
-  };
+export function isSamePassword(value) {
+  console.log(this);
+  const isSamePassword =
+    form.password.toString().trim().toLowerCase() === value.toString().trim().toLowerCase();
+  if (!isSamePassword) return 'The password is not the same';
 }
