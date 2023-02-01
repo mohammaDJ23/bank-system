@@ -1,5 +1,5 @@
 <template>
-  <Card title="User login">
+  <Card title="User login" :is-loading="isFormProcessing">
     <v-form ref="formRef" v-model="valid" lazy-validation @submit="validate">
       <v-text-field
         clearable
