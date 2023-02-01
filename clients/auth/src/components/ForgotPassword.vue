@@ -1,38 +1,35 @@
 <template>
-  <!-- <Form :form-schema="formSchema" :rules="rules" show-login-button>
-    <el-form-item class="w-100" label="Email" prop="email">
-      <el-input
-        :disabled="!!isFormProcessing"
-        v-model="formSchema.email"
-        type="email"
-        autocomplete="off"
-        name="email"
-        @input="cacheInput('email', $event)"
-      />
-    </el-form-item>
-  </Form> -->
-  <Card title="Forgot password">
-    <v-form ref="form" v-model="valid" lazy-validation>
+  <Card title="Forgot password" :is-loading="isFormProcessing">
+    <v-form ref="formRef" v-model="valid" lazy-validation @submit="validate">
       <v-text-field
         clearable
+        :disabled="isFormProcessing"
         label="Email"
         variant="underlined"
-        v-model="email"
+        v-model="form.email"
+        :rules="form.getInputRules('email')"
         type="email"
         name="email"
         required
-        @input="() => {}"
+        @update:model-value="value => form.cacheInput('email', value)"
       ></v-text-field>
-      <div class="d-flex align-center gap-2 flex-wrap">
-        <v-btn color="primary" class="text-lowercase" size="small" type="submit" @click="validate">
+      <div class="d-flex align-center gap-2 flex-wrap mt-3">
+        <v-btn
+          color="primary"
+          class="text-capitalize"
+          size="small"
+          type="submit"
+          :disabled="isFormProcessing"
+        >
           Send
         </v-btn>
         <v-btn
           color="primary"
           variant="outlined"
           size="small"
-          class="text-lowercase"
-          @click="reset"
+          class="text-capitalize"
+          @click="redirect(pathes.login)"
+          :disabled="isFormProcessing"
         >
           Back to login
         </v-btn>
@@ -42,21 +39,36 @@
 </template>
 
 <script setup>
-import { onMounted, reactive } from 'vue';
+import { onMounted, reactive, ref } from 'vue';
 import Card from './Card.vue';
-import { isEmail, ForgotPassword } from '../lib';
-import { useForm, useFocus } from '../hooks';
+import { ForgotPassword, pathes } from '../lib';
+import { useFocus, useRedirect, useRequest } from '../hooks';
+import { notification } from 'ant-design-vue';
+import { ForgotPasswordApi } from '../apis';
 
-const forgotPassword = new ForgotPassword();
-const formSchema = reactive(forgotPassword);
-const { isFormProcessing, cacheInput } = useForm(formSchema);
+const formRef = ref();
+const form = reactive(new ForgotPassword());
+const valid = reactive(true);
+const { isApiProcessing, request } = useRequest();
+const { redirect } = useRedirect();
 const { focus } = useFocus();
-
-const rules = reactive({
-  email: [{ validator: isEmail, trigger: 'change' }],
-});
+const isFormProcessing = isApiProcessing(ForgotPasswordApi);
 
 onMounted(() => {
   focus('email');
 });
+
+async function validate(event) {
+  event.preventDefault();
+  const { valid } = await formRef.value.validate();
+  if (valid) {
+    request(new ForgotPasswordApi(form)).then(response => {
+      form.clearCachedForm();
+      notification.success({
+        message: 'Success',
+        description: res.data.message,
+      });
+    });
+  }
+}
 </script>

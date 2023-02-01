@@ -27,7 +27,7 @@
       <div class="d-flex align-center gap-2 flex-wrap mt-3">
         <v-btn
           color="primary"
-          class="text-lowercase"
+          class="text-capitalize"
           size="small"
           type="submit"
           :disabled="isFormProcessing"
@@ -38,7 +38,7 @@
           color="primary"
           variant="outlined"
           size="small"
-          class="text-lowercase"
+          class="text-capitalize"
           type="button"
           @click="redirect(pathes.forgotPassword)"
           :disabled="isFormProcessing"

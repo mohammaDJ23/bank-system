@@ -1,18 +1,14 @@
 import { Form } from './formConstructor';
-import { notification } from 'ant-design-vue';
+import { CacheInput, DefineInputRules } from '../decorators';
+import { isEmail } from '../validations';
 
 export class ForgotPassword extends Form {
+  @DefineInputRules([isEmail])
+  @CacheInput()
   email = '';
 
   constructor() {
     super();
-    this.setCachedInput('email');
-  }
-
-  afterSubmit(context, res) {
-    notification.success({
-      message: 'Success',
-      description: res.data.message,
-    });
+    this.email = this.getCachedInput('email');
   }
 }

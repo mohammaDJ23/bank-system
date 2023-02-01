@@ -16,7 +16,6 @@ export class Request {
     this.api = api;
     this.config = {
       baseURL: process.env.AUTH_SERVICE,
-      timeout: 5000,
       ...config,
     };
     this.axiosInstance = axios.create(this.config);
