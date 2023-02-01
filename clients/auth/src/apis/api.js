@@ -51,17 +51,6 @@ export class ResetPasswordApi extends RootApi {
 }
 
 export const apis = {
-  [ForgotPassword.name](data) {
-    return {
-      url: '/auth/forgot-password',
-      method: 'post',
-      data,
-      header: {
-        'Content-Type': 'application/json',
-      },
-    };
-  },
-
   [ResetPassword.name](data) {
     return {
       url: '/auth/reset-password',
