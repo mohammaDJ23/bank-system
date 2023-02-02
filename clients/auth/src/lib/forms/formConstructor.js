@@ -1,3 +1,4 @@
+import { getCacheableInputList } from '../decorators/cacheInput';
 import { LocalStorage } from '../storage';
 import { metadataTypes } from '../types';
 
@@ -16,7 +17,7 @@ export class Form {
   }
 
   getCacheableInputList() {
-    return Reflect.getMetadata(metadataTypes.CACHE_INPUT, this.getConstructor()) || [];
+    return getCacheableInputList(this.getConstructor());
   }
 
   getCachedForm() {
