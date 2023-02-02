@@ -1,45 +1,100 @@
 <template>
-  <Form :form-schema="formSchema" :rules="rules" forgot-password-button="Forgot your password?">
-    <el-form-item class="w-100" label="Email" prop="email">
-      <el-input
-        :disabled="!!isFormProcessing"
-        v-model="formSchema.email"
+  <Card title="User login" :is-loading="isFormProcessing">
+    <v-form ref="formRef" v-model="valid" lazy-validation @submit="validate">
+      <v-text-field
+        clearable
+        :disabled="isFormProcessing"
+        label="Email"
+        variant="underlined"
+        v-model="form.email"
+        :rules="form.getInputRules('email')"
         type="email"
-        autocomplete="off"
         name="email"
-        @input="cacheInput('email', $event)"
-      />
-    </el-form-item>
-
-    <el-form-item class="w-100" label="Password" prop="password">
-      <el-input
-        :disabled="!!isFormProcessing"
-        v-model="formSchema.password"
+        required
+        @update:model-value="value => form.cacheInput('email', value)"
+      ></v-text-field>
+      <v-text-field
+        clearable
+        :disabled="isFormProcessing"
+        label="Password"
+        variant="underlined"
+        v-model="form.password"
+        :rules="form.getInputRules('password')"
         type="password"
-        autocomplete="off"
         name="password"
-      />
-    </el-form-item>
-  </Form>
+        required
+      ></v-text-field>
+      <div class="d-flex align-center gap-2 flex-wrap mt-3">
+        <v-btn
+          color="primary"
+          class="text-capitalize"
+          size="small"
+          type="submit"
+          :disabled="isFormProcessing"
+        >
+          Login
+        </v-btn>
+        <v-btn
+          color="primary"
+          variant="outlined"
+          size="small"
+          class="text-capitalize"
+          type="button"
+          @click="redirect(pathes.forgotPassword)"
+          :disabled="isFormProcessing"
+        >
+          Forgot your password?
+        </v-btn>
+      </div>
+    </v-form>
+  </Card>
 </template>
 
 <script setup>
-import { reactive, onMounted } from 'vue';
-import Form from './Form.vue';
-import { isEmail, isPassword, LocalStorage, Login } from '../lib';
-import { useFocus, useForm } from '../hooks';
+import { reactive, onMounted, ref } from 'vue';
+import Card from './Card.vue';
+import { LocalStorage, Login, isMicroFrontEnd, pathes } from '../lib';
+import { useFocus, useRequest, useRedirect } from '../hooks';
+import { LoginApi } from '../apis';
+import { notification } from 'ant-design-vue';
+import { decodeToken } from 'react-jwt';
 
-const login = new Login();
-const formSchema = reactive(login);
-const { isFormProcessing, cacheInput } = useForm(formSchema);
+const formRef = ref();
+const form = reactive(new Login());
+const valid = reactive(true);
+const { isApiProcessing, request } = useRequest();
+const { redirect } = useRedirect();
 const { focus } = useFocus();
-
-const rules = reactive({
-  email: [{ validator: isEmail, trigger: 'change' }],
-  password: [{ validator: isPassword, trigger: 'change' }],
-});
+const isFormProcessing = isApiProcessing(LoginApi);
 
 onMounted(() => {
   focus('email');
 });
+
+async function validate(event) {
+  event.preventDefault();
+  const { valid } = await formRef.value.validate();
+  if (valid) {
+    request(new LoginApi(form)).then(response => {
+      form.clearCachedForm();
+      formRef.value.reset();
+
+      const token = response.data.accessToken;
+      const decodedToken = decodeToken(token);
+      const storableData = [
+        ['access_token', token],
+        ['access_token_expiration', new Date().getTime() + decodedToken.expiration],
+      ];
+
+      for (let [key, value] of storableData) LocalStorage.setItem(key, value);
+
+      if (isMicroFrontEnd()) redirect('/');
+      else
+        notification.success({
+          message: 'Success',
+          description: 'You are logged in.',
+        });
+    });
+  }
+}
 </script>

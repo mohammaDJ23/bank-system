@@ -4,8 +4,6 @@
   </Container>
 </template>
 
-<script>
+<script setup>
 import Container from './layouts/container.vue';
-
-export default { components: { Container } };
 </script>

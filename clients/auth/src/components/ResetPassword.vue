@@ -1,47 +1,95 @@
 <template>
-  <Form :form-schema="formSchema" :rules="rules" forgot-password-button="Back to forgot password">
-    <el-form-item class="w-100" label="Password" prop="password">
-      <el-input
-        :disabled="!!isFormProcessing"
-        v-model="formSchema.password"
+  <Card title="Reset password" :is-loading="isFormProcessing">
+    <v-form ref="formRef" v-model="valid" lazy-validation @submit="validate">
+      <v-text-field
+        clearable
+        :disabled="isFormProcessing"
+        label="Password"
+        variant="underlined"
+        v-model="form.password"
+        :rules="form.getInputRules('password')"
         type="password"
-        autocomplete="off"
         name="password"
-      />
-    </el-form-item>
-
-    <el-form-item class="w-100" label="Confirmed password" prop="confirmedPassword">
-      <el-input
-        :disabled="!!isFormProcessing"
-        v-model="formSchema.confirmedPassword"
+        required
+      ></v-text-field>
+      <v-text-field
+        clearable
+        :disabled="isFormProcessing"
+        label="Confirmed password"
+        variant="underlined"
+        v-model="form.confirmedPassword"
+        :rules="form.getInputRules('confirmedPassword')"
         type="password"
-        autocomplete="off"
         name="confirmedPassword"
-      />
-    </el-form-item>
-  </Form>
+        required
+      ></v-text-field>
+      <div class="d-flex align-center gap-2 flex-wrap mt-3">
+        <v-btn
+          color="primary"
+          class="text-capitalize"
+          size="small"
+          type="submit"
+          :disabled="isFormProcessing"
+        >
+          Send
+        </v-btn>
+        <v-btn
+          color="primary"
+          variant="outlined"
+          size="small"
+          class="text-capitalize"
+          type="button"
+          @click="redirect(pathes.login)"
+          :disabled="isFormProcessing"
+        >
+          Back to login
+        </v-btn>
+      </div>
+    </v-form>
+  </Card>
 </template>
 
 <script setup>
-import { reactive, onMounted } from 'vue';
-import Form from './Form.vue';
-import { isPassword, isSamePassword, ResetPassword } from '../lib';
-import { useForm, useFocus } from '../hooks';
+import { reactive, onMounted, ref, watch } from 'vue';
+import Card from './Card.vue';
+import { ResetPassword, pathes } from '../lib';
+import { useFocus, useRequest, useRedirect } from '../hooks';
+import { ResetPasswordApi } from '../apis';
+import { notification } from 'ant-design-vue';
 
-const resetPassword = new ResetPassword();
-const formSchema = reactive(resetPassword);
-const { isFormProcessing } = useForm(formSchema);
+const formRef = ref();
+const form = reactive(new ResetPassword());
+const valid = ref(true);
+const { isApiProcessing, request } = useRequest();
+const { redirect } = useRedirect();
 const { focus } = useFocus();
-
-const rules = reactive({
-  password: [{ validator: isPassword, trigger: 'change' }],
-  confirmedPassword: [
-    { validator: isSamePassword(formSchema), trigger: 'change' },
-    { validator: isSamePassword(formSchema), trigger: 'blur' },
-  ],
-});
+const isFormProcessing = isApiProcessing(ResetPasswordApi);
 
 onMounted(() => {
   focus('password');
 });
+
+async function validate(event) {
+  event.preventDefault();
+  const { valid } = await formRef.value.validate();
+  if (valid) {
+    request(new ResetPasswordApi(form)).then(response => {
+      form.clearCachedForm();
+      formRef.value.reset();
+      notification.success({
+        message: 'Success',
+        description: 'Your password was changed.',
+      });
+      redirect(pathes.login);
+    });
+  }
+}
+
+watch(
+  () => form,
+  form => {
+    form.bindInputsRules();
+  },
+  { deep: true }
+);
 </script>

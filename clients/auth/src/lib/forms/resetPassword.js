@@ -1,21 +1,25 @@
 import { Form } from './formConstructor';
 import { router } from '../../main';
+import { DefineInputRules } from '../decorators';
+import { isPassword, isSamePassword } from '../validations';
 
 export class ResetPassword extends Form {
+  @DefineInputRules([isPassword])
   password = '';
 
+  @DefineInputRules([isPassword, isSamePassword])
   confirmedPassword = '';
 
   token = '';
 
   constructor() {
     super();
-
-    const token = router.currentRoute.value.query.token || '';
-    if (token) this.token = token;
-  }
-
-  afterSubmit(context, res) {
-    router.push('/auth/login');
+    if (router) {
+      const setToken = () => {
+        const token = router.currentRoute.value.query.token || '';
+        if (token) this.token = token;
+      };
+      setToken.call(Object.assign(router, this));
+    }
   }
 }

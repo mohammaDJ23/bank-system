@@ -1,53 +1,68 @@
+import { getCacheableInputList } from '../decorators/cacheInput';
+import { getInputsRules } from '../decorators/defineInputRules';
 import { LocalStorage } from '../storage';
 
 export class Form {
-  static {
-    this.prototype.inputsValidationStore = new Map();
-    Object.freeze(this.prototype);
-  }
-
   getConstructorName() {
     return this.constructor.name;
   }
 
-  getInputsValidationStore(constructorName = this.getConstructorName()) {
-    return this.inputsValidationStore.get(constructorName) || {};
-  }
-
-  setInputValidationStore(inputs = {}, constructorName = this.getConstructorName()) {
-    this.inputsValidationStore.set(constructorName, inputs);
+  getConstructor() {
+    return this.constructor;
   }
 
   getInputName(inputName = '') {
-    if (!(inputName in this)) {
-      throw new Error('Invalid input.');
-    }
-
+    if (!(inputName in this)) throw new Error('Invalid input.');
     return inputName;
   }
 
-  isInputValid(inputName, callback = function (value = null) {}) {
-    inputName = this.getInputName(inputName);
-    const isInputValid = !!callback.call(Object.freeze(this), this[inputName]);
-    let inputs = this.getInputsValidationStore();
-    inputs = Object.assign(inputs, { [inputName]: isInputValid });
-    this.setInputValidationStore(inputs);
-    return isInputValid;
+  getCacheableInputList() {
+    return getCacheableInputList(this.getConstructor());
   }
 
-  isFormValid() {
-    const inputs = this.getInputsValidationStore();
-    let isValid = !!Object.keys(inputs).length;
+  getCachedForm() {
+    return LocalStorage.getItem(this.getConstructorName()) || {};
+  }
 
-    for (const input in inputs) {
-      isValid = isValid && inputs[input];
+  isInputCacheable(key) {
+    return this.getCacheableInputList().indexOf(key) !== -1;
+  }
+
+  getCachedInput(key) {
+    if (this.isInputCacheable(key)) return this.getCachedForm()[key] || this[key];
+    return this[key];
+  }
+
+  cacheInput(key, value) {
+    if (this.isInputCacheable(key))
+      LocalStorage.setItem(
+        this.getConstructorName(),
+        Object.assign(this.getCachedForm(), { [key]: value })
+      );
+  }
+
+  getInputsRules() {
+    return getInputsRules(this.getConstructor());
+  }
+
+  getInputRules(key) {
+    const inputRules = this.getInputsRules();
+    if (key in inputRules) return inputRules[key];
+    else return [];
+  }
+
+  clearCachedForm() {
+    LocalStorage.clear(this.getConstructorName());
+  }
+
+  bindInputsRules() {
+    const rules = this.getInputsRules();
+    for (let input in rules) {
+      rules[input] = rules[input].map(fn => fn.bind(this));
     }
-
-    return isValid;
   }
 
-  setCachedInput(key) {
-    const cachedInput = LocalStorage.getItem(key);
-    if (cachedInput) this[key] = cachedInput;
+  static getPrototype() {
+    return Form.prototype;
   }
 }

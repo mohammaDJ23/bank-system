@@ -1,11 +1,7 @@
 <template>
-  <ForgotPassword formTitle="Forgot password" />
+  <ForgotPassword />
 </template>
 
-<script>
+<script setup>
 import ForgotPassword from '../components/ForgotPassword.vue';
-
-export default {
-  components: { ForgotPassword },
-};
 </script>

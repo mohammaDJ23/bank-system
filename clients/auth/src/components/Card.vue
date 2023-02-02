@@ -1,19 +1,23 @@
 <template>
-  <el-card class="box-card">
-    <template #header>
-      <div class="card-header text-center">
-        <span
-          ><b>{{ title }}</b></span
-        >
-      </div>
-    </template>
+  <v-card :loading="isLoading">
+    <v-card-item v-if="title">
+      <v-card-title
+        class="text-xs-h6 text-sm-h5 text-md-h5 text-lg-h5 text-xl-h5 font-weight-medium text-center"
+        >{{ title }}</v-card-title
+      >
+    </v-card-item>
 
-    <slot />
-  </el-card>
+    <v-card-item>
+      <slot />
+    </v-card-item>
+  </v-card>
 </template>
 
-<script>
-export default {
-  props: { title: String },
-};
+<script setup>
+import { defineProps } from 'vue';
+
+const props = defineProps({
+  title: String,
+  isLoading: { type: Boolean, default: false },
+});
 </script>
