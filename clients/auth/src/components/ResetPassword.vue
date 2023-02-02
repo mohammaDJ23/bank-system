@@ -50,7 +50,7 @@
 </template>
 
 <script setup>
-import { reactive, onMounted, ref } from 'vue';
+import { reactive, onMounted, ref, watch } from 'vue';
 import Card from './Card.vue';
 import { ResetPassword, pathes } from '../lib';
 import { useFocus, useRequest, useRedirect } from '../hooks';
@@ -58,7 +58,7 @@ import { ResetPasswordApi } from '../apis';
 
 const formRef = ref();
 const form = reactive(new ResetPassword());
-const valid = reactive(true);
+const valid = ref(true);
 const { isApiProcessing, request } = useRequest();
 const { redirect } = useRedirect();
 const { focus } = useFocus();
@@ -79,4 +79,12 @@ async function validate(event) {
     });
   }
 }
+
+watch(
+  () => form,
+  form => {
+    form.bindInputRules();
+  },
+  { deep: true }
+);
 </script>

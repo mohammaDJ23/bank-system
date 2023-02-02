@@ -1,8 +1,7 @@
 import { Form } from './formConstructor';
 import { isEmail, isPassword } from '../validations';
-import { CacheInput, DefineInputRules, Construct } from '../decorators';
+import { CacheInput, DefineInputRules } from '../decorators';
 
-@Construct()
 export class Login extends Form {
   @DefineInputRules([isEmail])
   @CacheInput()

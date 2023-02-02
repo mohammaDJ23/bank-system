@@ -50,6 +50,13 @@ export class Form {
     LocalStorage.clear(this.getConstructorName());
   }
 
+  bindInputRules() {
+    const rules = Reflect.getMetadata(metadataTypes.INPUT_RULES, this.getConstructor());
+    for (let input in rules) {
+      rules[input] = rules[input].map(fn => fn.bind(this));
+    }
+  }
+
   static getPrototype() {
     return Form.prototype;
   }

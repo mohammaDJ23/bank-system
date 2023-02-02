@@ -1,10 +1,8 @@
 import { Form } from './formConstructor';
 import { router } from '../../main';
-import { Construct, DefineInputRules, BindInputRules } from '../decorators';
+import { DefineInputRules } from '../decorators';
 import { isPassword, isSamePassword } from '../validations';
 
-@BindInputRules()
-@Construct()
 export class ResetPassword extends Form {
   @DefineInputRules([isPassword])
   password = '';
