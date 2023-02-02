@@ -6,8 +6,8 @@ export class Form {
     return this.constructor.name;
   }
 
-  getConstructorPrototype() {
-    return this.constructor.prototype;
+  getConstructor() {
+    return this.constructor;
   }
 
   getInputName(inputName = '') {
@@ -16,7 +16,7 @@ export class Form {
   }
 
   getCacheableInputList() {
-    return Reflect.getMetadata(metadataTypes.CACHE_INPUT, this.getConstructorPrototype()) || [];
+    return Reflect.getMetadata(metadataTypes.CACHE_INPUT, this.getConstructor()) || [];
   }
 
   getCachedForm() {
@@ -41,8 +41,7 @@ export class Form {
   }
 
   getInputRules(key) {
-    const inputRules =
-      Reflect.getMetadata(metadataTypes.INPUT_RULES, this.getConstructorPrototype()) || {};
+    const inputRules = Reflect.getMetadata(metadataTypes.INPUT_RULES, this.getConstructor()) || {};
     if (key in inputRules) return inputRules[key];
     else return [];
   }
