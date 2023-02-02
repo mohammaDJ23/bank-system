@@ -1,7 +1,6 @@
 import 'reflect-metadata';
 import { createApp } from 'vue';
 import { createRouter, createWebHistory, createMemoryHistory } from 'vue-router';
-import ElementPlus from 'element-plus';
 import antd from 'ant-design-vue';
 import { routes } from './lib';
 import App from './App.vue';
@@ -13,7 +12,6 @@ import * as directives from 'vuetify/directives';
 import 'vuetify/styles';
 import '@mdi/font/css/materialdesignicons.css';
 import './assets/styles/index.scss';
-import 'element-plus/dist/index.css';
 import 'ant-design-vue/dist/antd.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
@@ -42,7 +40,6 @@ function mount(element, { history, onChildNavigate, initialPath }) {
 
   app.use(router);
   app.use(store);
-  app.use(ElementPlus);
   app.use(antd);
   app.use(vuetify);
 

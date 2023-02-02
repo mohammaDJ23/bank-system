@@ -2,10 +2,6 @@
   <ResetPassword />
 </template>
 
-<script>
+<script setup>
 import ResetPassword from '../components/ResetPassword.vue';
-
-export default {
-  components: { ResetPassword },
-};
 </script>

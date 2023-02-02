@@ -1,8 +1,10 @@
 <script setup>
 import { onBeforeMount } from 'vue';
-import { router } from '../main';
+import { useRedirect } from '../hooks';
+
+const { redirect } = useRedirect();
 
 onBeforeMount(() => {
-  router.push('/');
+  redirect('/');
 });
 </script>
