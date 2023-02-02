@@ -14,8 +14,6 @@ import { Provider } from 'react-redux';
 import { store } from './store';
 import HistoryProvider from './components/hoc/HistoryProvider';
 
-// simple change
-
 interface AppImportation {
   history: BrowserHistory | MemoryHistory;
 }
