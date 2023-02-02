@@ -55,6 +55,7 @@ import Card from './Card.vue';
 import { ResetPassword, pathes } from '../lib';
 import { useFocus, useRequest, useRedirect } from '../hooks';
 import { ResetPasswordApi } from '../apis';
+import { notification } from 'ant-design-vue';
 
 const formRef = ref();
 const form = reactive(new ResetPassword());
@@ -75,6 +76,10 @@ async function validate(event) {
     request(new ResetPasswordApi(form)).then(response => {
       form.clearCachedForm();
       formRef.value.reset();
+      notification.success({
+        message: 'Success',
+        description: 'Your password was changed.',
+      });
       redirect(pathes.login);
     });
   }
