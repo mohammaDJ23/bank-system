@@ -1,6 +1,6 @@
 import { getCacheableInputList } from '../decorators/cacheInput';
+import { getInputsRules } from '../decorators/defineInputRules';
 import { LocalStorage } from '../storage';
-import { metadataTypes } from '../types';
 
 export class Form {
   getConstructorName() {
@@ -41,8 +41,12 @@ export class Form {
       );
   }
 
+  getInputsRules() {
+    return getInputsRules(this.getConstructor());
+  }
+
   getInputRules(key) {
-    const inputRules = Reflect.getMetadata(metadataTypes.INPUT_RULES, this.getConstructor()) || {};
+    const inputRules = this.getInputsRules();
     if (key in inputRules) return inputRules[key];
     else return [];
   }
@@ -51,8 +55,8 @@ export class Form {
     LocalStorage.clear(this.getConstructorName());
   }
 
-  bindInputRules() {
-    const rules = Reflect.getMetadata(metadataTypes.INPUT_RULES, this.getConstructor());
+  bindInputsRules() {
+    const rules = this.getInputsRules();
     for (let input in rules) {
       rules[input] = rules[input].map(fn => fn.bind(this));
     }

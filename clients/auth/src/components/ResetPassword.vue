@@ -88,7 +88,7 @@ async function validate(event) {
 watch(
   () => form,
   form => {
-    form.bindInputRules();
+    form.bindInputsRules();
   },
   { deep: true }
 );
