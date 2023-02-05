@@ -1,5 +1,5 @@
 import FormContainer from '../../layout/FormContainer';
-import { Input, Form, Button } from 'element-react';
+import { Box, TextField, Button } from '@mui/material';
 import { notification } from 'antd';
 import { CreateBill } from '../../lib';
 import { useForm, useRequest } from '../../hooks';
@@ -28,9 +28,8 @@ const CreateBillContent: FC = () => {
 
   return (
     <FormContainer>
-      {/**@ts-ignore */}
-      <Form ref={setFormRef} model={form} rules={getRules()} labelPosition="top" labelWidth="120">
-        {/**@ts-ignore */}
+      {/* <Form ref={setFormRef} model={form} rules={getRules()} labelPosition="top" labelWidth="120">
+    
         <Form.Item style={{ marginBottom: '32px' }} label="Amount" prop="amount">
           <Input
             type="number"
@@ -40,7 +39,7 @@ const CreateBillContent: FC = () => {
           ></Input>
         </Form.Item>
 
-        {/**@ts-ignore */}
+    
         <Form.Item style={{ marginBottom: '32px' }} label="Receiver" prop="receiver">
           <Input
             type="text"
@@ -50,7 +49,7 @@ const CreateBillContent: FC = () => {
           ></Input>
         </Form.Item>
 
-        {/**@ts-ignore */}
+    
         <Form.Item style={{ marginBottom: '32px' }} label="Date" prop="date">
           <Input
             type="date"
@@ -60,7 +59,7 @@ const CreateBillContent: FC = () => {
           ></Input>
         </Form.Item>
 
-        {/**@ts-ignore */}
+    
         <Form.Item style={{ marginBottom: '32px' }} label="Description" prop="description">
           <Input
             type="textarea"
@@ -71,19 +70,76 @@ const CreateBillContent: FC = () => {
           ></Input>
         </Form.Item>
 
-        {/**@ts-ignore */}
+    
         <Form.Item style={{ marginBottom: '32px' }}>
-          {/**@ts-ignore */}
+      
           <Button type="primary" onClick={formSubmition} disabled={isLoading}>
             Create
           </Button>
 
-          {/**@ts-ignore */}
+      
           <Button onClick={() => resetForm()} disabled={isLoading}>
             Reset
           </Button>
         </Form.Item>
-      </Form>
+      </Form> */}
+
+      <Box
+        component="form"
+        noValidate
+        autoComplete="off"
+        display="flex"
+        flexDirection="column"
+        gap="20px"
+      >
+        <TextField
+          id="standard-basic"
+          label="Amount"
+          variant="standard"
+          type="number"
+          value={''}
+          helperText=""
+          error={false}
+        />
+        <TextField
+          id="standard-basic"
+          label="Receiver"
+          variant="standard"
+          type="text"
+          value={''}
+          helperText=""
+          error={false}
+        />
+        <TextField
+          id="standard-basic"
+          label="Date"
+          type="date"
+          variant="standard"
+          value={''}
+          helperText=""
+          error={false}
+          InputLabelProps={{ shrink: true }}
+        />
+        <TextField
+          id="standard-basic"
+          label="Description"
+          type="text"
+          rows="7"
+          multiline
+          variant="standard"
+          value={''}
+          helperText=""
+          error={false}
+        />
+        <Box component="div" display="flex" alignItems="center" gap="10px" marginTop="20px">
+          <Button variant="contained" size="small" sx={{ textTransform: 'capitalize' }}>
+            Send
+          </Button>
+          <Button variant="outlined" size="small" sx={{ textTransform: 'capitalize' }}>
+            Reset
+          </Button>
+        </Box>
+      </Box>
     </FormContainer>
   );
 };
