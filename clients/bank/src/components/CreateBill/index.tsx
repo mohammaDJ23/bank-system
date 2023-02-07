@@ -50,6 +50,7 @@ const CreateBillContent: FC = () => {
           onChange={event => onChange('amount', event.target.value)}
           helperText=""
           error={false}
+          disabled={isLoading}
         />
         <TextField
           id="standard-basic"
@@ -60,6 +61,7 @@ const CreateBillContent: FC = () => {
           onChange={event => onChange('receiver', event.target.value)}
           helperText=""
           error={false}
+          disabled={isLoading}
         />
         <TextField
           id="standard-basic"
@@ -71,24 +73,38 @@ const CreateBillContent: FC = () => {
           helperText=""
           error={false}
           InputLabelProps={{ shrink: true }}
+          disabled={isLoading}
         />
         <TextField
           id="standard-basic"
           label="Description"
           type="text"
-          rows="7"
+          rows="5"
           multiline
           variant="standard"
           value={form.description}
           onChange={event => onChange('description', event.target.value)}
           helperText=""
           error={false}
+          disabled={isLoading}
         />
         <Box component="div" display="flex" alignItems="center" gap="10px" marginTop="20px">
-          <Button variant="contained" size="small" sx={{ textTransform: 'capitalize' }}>
+          <Button
+            disabled={isLoading}
+            variant="contained"
+            size="small"
+            type="submit"
+            sx={{ textTransform: 'capitalize' }}
+          >
             Send
           </Button>
-          <Button variant="outlined" size="small" sx={{ textTransform: 'capitalize' }}>
+          <Button
+            disabled={isLoading}
+            variant="outlined"
+            size="small"
+            type="button"
+            sx={{ textTransform: 'capitalize' }}
+          >
             Reset
           </Button>
         </Box>
