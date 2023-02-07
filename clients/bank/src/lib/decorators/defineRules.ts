@@ -10,7 +10,7 @@ export interface Rules {
 }
 
 export function DefineRules(rules: Rule[]): (target: any, prop: string) => void {
-  return function (target, prop) {
+  return function (target: any, prop: string) {
     const formRules = Reflect.getMetadata(FormMetadataTypes.FORM_RULES, target) || {};
     Reflect.defineMetadata(FormMetadataTypes.FORM_RULES, { ...formRules, [prop]: rules }, target);
     if (Reflect.hasMetadata(prop, target))
