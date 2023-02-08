@@ -1,7 +1,6 @@
-export function isName(rule: Object, value: string, callback: (error?: Error) => void): void {
+export function isName(value: string): string | void {
   const length = value.length;
   const isNameValid = length >= 3 && length <= 45;
 
-  if (!isNameValid) callback(new Error('Please input a valid name'));
-  else callback();
+  if (!isNameValid) return 'Please input a valid name';
 }

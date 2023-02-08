@@ -1,7 +1,6 @@
 import { DefineRules, DefineVal, CacheInput } from '../decorators';
 import { isReceiver, isAmount, isDescription, isDate } from '../validations';
 import { Form } from './formConstructor';
-
 export class CreateBill extends Form {
   @DefineRules([isAmount])
   @DefineVal()

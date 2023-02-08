@@ -1,7 +1,7 @@
 import { FormMetadataTypes } from '.';
 
 export interface RuleFn {
-  (value: any): string;
+  (value: any): string | void | undefined;
 }
 
 export type InputRules = RuleFn[];

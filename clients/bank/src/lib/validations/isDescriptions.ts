@@ -1,9 +1,4 @@
-export function isDescription(
-  rule: Object,
-  value: string,
-  callback: (error?: Error) => void
-): void {
-  if (value.length < 3) callback(new Error('Invalid description'));
-  else if (value.length > 500) callback(new Error('The description is too long'));
-  else callback();
+export function isDescription(value: string): string | void {
+  if (value.length < 3) return 'Invalid description';
+  else if (value.length > 500) return 'The description is too long';
 }

@@ -1,4 +1,3 @@
-export function isDate(rule: Object, value: string, callback: (error?: Error) => void): void {
-  if (isNaN(new Date(value).getTime())) callback(new Error('Invalid date'));
-  else callback();
+export function isDate(value: Date): string | void {
+  if (isNaN(new Date(value).getTime())) return 'Invalid date';
 }
