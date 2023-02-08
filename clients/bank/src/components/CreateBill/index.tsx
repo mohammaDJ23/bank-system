@@ -8,7 +8,7 @@ import { CreateBillApi } from '../../apis';
 
 const CreateBillContent: FC = () => {
   const formMaker = useForm();
-  const { getForm, getRules, onChange, resetForm, setFormRef, onSubmit } = formMaker(CreateBill);
+  const { getForm, onChange, resetForm, onSubmit } = formMaker(CreateBill);
   const { isApiProcessing, request } = useRequest();
   const isLoading = isApiProcessing(CreateBillApi);
   const form = getForm();

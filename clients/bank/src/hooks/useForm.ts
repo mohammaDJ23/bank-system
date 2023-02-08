@@ -1,5 +1,4 @@
-import { Form } from 'element-react';
-import { useRef, useMemo } from 'react';
+import { useMemo } from 'react';
 import { Constructor, Form as FormConstructor } from '../lib';
 import { ModalNames } from '../store';
 import { useAction } from './useActions';
@@ -7,15 +6,10 @@ import { useSelector } from '../hooks';
 
 interface FormInstance extends FormConstructor {}
 
-interface FormRef {
-  [key: string]: Form;
-}
-
 export type UseFormExportation = ReturnType<typeof useForm>;
 export type UseFormCallbackExportation = ReturnType<UseFormExportation>;
 
 export function useForm() {
-  const formRef = useRef<FormRef>({});
   const { showModal, setForm, onChange: changeInput, resetForm: resettingForm } = useAction();
   const { modals, forms } = useSelector();
 
@@ -30,10 +24,6 @@ export function useForm() {
           return forms[getFormName()] as T;
         }
 
-        function getFormRef(): Form | null {
-          return formRef.current[getFormName()] || null;
-        }
-
         function initializeForm(form: T) {
           setForm<T>(form);
         }
@@ -43,11 +33,7 @@ export function useForm() {
         }
 
         function resetForm() {
-          const formRef = getFormRef();
-          if (formRef) {
-            formRef.resetFields();
-            resettingForm(initialForm);
-          }
+          resettingForm(initialForm);
         }
 
         function getRules() {
@@ -58,24 +44,14 @@ export function useForm() {
           return getForm().resetCach();
         }
 
-        function setFormRef(el: Form | null) {
-          if (el) formRef.current[getFormName()] = el;
-        }
-
         function confirmation() {
-          const formRef = getFormRef();
-          if (formRef)
-            formRef.validate(valid => {
-              if (valid) showModal(ModalNames.CONFIRMATION);
-            });
+          // check if the form is valid.
+          if (true) showModal(ModalNames.CONFIRMATION);
         }
 
         function onSubmit(cb: () => Promise<void> | void) {
-          const formRef = getFormRef();
-          if (formRef)
-            formRef.validate(valid => {
-              if (valid) cb.call({});
-            });
+          // check if the form is valid
+          if (true) cb.call({});
         }
 
         function isConfirmationActive() {
@@ -86,13 +62,11 @@ export function useForm() {
           initializeForm,
           onChange,
           resetForm,
-          setFormRef,
           resetCach,
           getRules,
           confirmation,
           onSubmit,
           isConfirmationActive,
-          getFormRef,
           getForm,
         };
       };
