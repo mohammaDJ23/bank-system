@@ -16,6 +16,10 @@ export function setInputsRules(rules: InputsRules, target: any) {
   Reflect.defineMetadata(FormMetadataTypes.FORM_RULES, rules, target);
 }
 
+export function getInputRules(key: string, target: any): InputRules {
+  return Reflect.getMetadata(key, target) || [];
+}
+
 export function setInputRules(key: string, value: InputsRules, target: any) {
   Reflect.defineMetadata(key, value, target);
 }

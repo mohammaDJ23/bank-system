@@ -5,8 +5,8 @@ import {
   getInitialInputsValue,
   LocalStorage,
   routes,
-  Rule,
-  Rules,
+  getInputRules,
+  getInputsRules,
 } from '../';
 
 export abstract class Form {
@@ -18,12 +18,12 @@ export abstract class Form {
     return this.constructor.name;
   }
 
-  getRule(key: string): Rule[] {
-    return Reflect.getMetadata(key, this.getPrototype()) || [];
+  getRule(key: string) {
+    return getInputRules(key, this.getPrototype());
   }
 
-  getRules(): Rules {
-    return Reflect.getMetadata(FormMetadataTypes.FORM_RULES, this.getPrototype()) || {};
+  getRules() {
+    return getInputsRules(this.getPrototype());
   }
 
   getParam(param: string): string {

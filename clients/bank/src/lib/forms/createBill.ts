@@ -3,34 +3,22 @@ import { isReceiver, isAmount, isDescription, isDate } from '../validations';
 import { Form } from './formConstructor';
 
 export class CreateBill extends Form {
-  @DefineRules([
-    { validator: isAmount, trigger: 'blur' },
-    { validator: isAmount, trigger: 'change' },
-  ])
+  @DefineRules([isAmount])
   @DefineVal()
   @CacheInput()
   amount: string = '';
 
-  @DefineRules([
-    { validator: isReceiver, trigger: 'blur' },
-    { validator: isReceiver, trigger: 'change' },
-  ])
+  @DefineRules([isReceiver])
   @DefineVal()
   @CacheInput()
   receiver: string = '';
 
-  @DefineRules([
-    { validator: isDescription, trigger: 'blur' },
-    { validator: isDescription, trigger: 'change' },
-  ])
+  @DefineRules([isDescription])
   @DefineVal()
   @CacheInput()
   description: string = '';
 
-  @DefineRules([
-    { validator: isDate, trigger: 'blur' },
-    { validator: isDate, trigger: 'change' },
-  ])
+  @DefineRules([isDate])
   @DefineVal()
   @CacheInput()
   date: Date = new Date();
