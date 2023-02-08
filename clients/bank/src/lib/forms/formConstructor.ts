@@ -1,5 +1,13 @@
 import { matchPath, PathMatch } from 'react-router-dom';
-import { Constructor, FormMetadataTypes, LocalStorage, routes, Rule, Rules } from '../';
+import {
+  Constructor,
+  FormMetadataTypes,
+  getInitialInputsValue,
+  LocalStorage,
+  routes,
+  Rule,
+  Rules,
+} from '../';
 
 export abstract class Form {
   getPrototype(): object {
@@ -51,8 +59,8 @@ export abstract class Form {
   }
 
   resetCach<T extends Form>(): T {
-    const initialInputs = Reflect.getMetadata(FormMetadataTypes.VALUES, this.getPrototype()) || {};
-    for (let key in initialInputs) this[key as keyof this] = initialInputs[key];
+    const inputs = getInitialInputsValue(this.getPrototype());
+    for (let key in inputs) this[key as keyof this] = inputs[key];
     LocalStorage.removeItem(this.getConstructorName());
     return new (this.constructor as Constructor)() as T;
   }
