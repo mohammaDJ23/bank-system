@@ -14,38 +14,23 @@ export class UpdateUserByAdmin extends Form {
   @DefineVal()
   id: number = 0;
 
-  @DefineRules([
-    { validator: isFirstName, trigger: 'blur' },
-    { validator: isFirstName, trigger: 'change' },
-  ])
+  @DefineRules([isFirstName])
   @DefineVal()
   firstName: string = '';
 
-  @DefineRules([
-    { validator: isLastName, trigger: 'blur' },
-    { validator: isLastName, trigger: 'change' },
-  ])
+  @DefineRules([isLastName])
   @DefineVal()
   lastName: string = '';
 
-  @DefineRules([
-    { validator: isEmail, trigger: 'blur' },
-    { validator: isEmail, trigger: 'change' },
-  ])
+  @DefineRules([isEmail])
   @DefineVal()
   email: string = '';
 
-  @DefineRules([
-    { validator: isPhone, trigger: 'blur' },
-    { validator: isPhone, trigger: 'change' },
-  ])
+  @DefineRules([isPhone])
   @DefineVal()
   phone: string = '';
 
-  @DefineRules([
-    { validator: isRole, trigger: 'blur' },
-    { validator: isRole, trigger: 'change' },
-  ])
+  @DefineRules([isRole])
   @DefineVal()
   role: UserRoles = UserRoles.USER;
 
@@ -71,31 +56,19 @@ export class UpdateUserByUser extends Form {
   @DefineVal()
   id: number = 0;
 
-  @DefineRules([
-    { validator: isFirstName, trigger: 'blur' },
-    { validator: isFirstName, trigger: 'change' },
-  ])
+  @DefineRules([isFirstName])
   @DefineVal()
   firstName: string = '';
 
-  @DefineRules([
-    { validator: isLastName, trigger: 'blur' },
-    { validator: isLastName, trigger: 'change' },
-  ])
+  @DefineRules([isLastName])
   @DefineVal()
   lastName: string = '';
 
-  @DefineRules([
-    { validator: isEmail, trigger: 'blur' },
-    { validator: isEmail, trigger: 'change' },
-  ])
+  @DefineRules([isEmail])
   @DefineVal()
   email: string = '';
 
-  @DefineRules([
-    { validator: isPhone, trigger: 'blur' },
-    { validator: isPhone, trigger: 'change' },
-  ])
+  @DefineRules([isPhone])
   @DefineVal()
   phone: string = '';
 
