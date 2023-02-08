@@ -1,12 +1,12 @@
 import { matchPath, PathMatch } from 'react-router-dom';
 import {
   Constructor,
-  FormMetadataTypes,
   getInitialInputsValue,
   LocalStorage,
   routes,
   getInputRules,
   getInputsRules,
+  getCachedInputs,
 } from '../';
 
 export abstract class Form {
@@ -40,10 +40,7 @@ export abstract class Form {
   }
 
   cachInput(key: keyof this, value: any): void {
-    const cachedInputs: Set<string> = Reflect.getMetadata(
-      FormMetadataTypes.CACHE_INPUT,
-      this.getPrototype()
-    );
+    const cachedInputs = getCachedInputs(this.getPrototype());
     const isInputCached = cachedInputs.has(key as string);
     if (isInputCached) {
       const constructorName = this.getConstructorName();
