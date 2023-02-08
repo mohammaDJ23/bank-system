@@ -96,7 +96,7 @@ const CreateBillContent: FC = () => {
             type="submit"
             sx={{ textTransform: 'capitalize' }}
           >
-            Send
+            Create
           </Button>
           <Button
             disabled={isLoading}
