@@ -1,5 +1,14 @@
 import FormContainer from '../../layout/FormContainer';
-import { Box, TextField, Button, Select, FormControl, MenuItem, InputLabel } from '@mui/material';
+import {
+  Box,
+  TextField,
+  Button,
+  Select,
+  FormControl,
+  MenuItem,
+  InputLabel,
+  FormHelperText,
+} from '@mui/material';
 import { notification } from 'antd';
 import { CreateUser } from '../../lib';
 import { useAuth, useForm, useRequest } from '../../hooks';
@@ -101,6 +110,7 @@ const CreateUserContent: FC = () => {
               <MenuItem value={el.value}>{el.label}</MenuItem>
             ))}
           </Select>
+          {false && <FormHelperText></FormHelperText>}
         </FormControl>
         <Box component="div" display="flex" alignItems="center" gap="10px" marginTop="20px">
           <Button
