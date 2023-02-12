@@ -1,5 +1,14 @@
 import FormContainer from '../../layout/FormContainer';
-import { Input, Form, Button, Select } from 'element-react';
+import {
+  Box,
+  TextField,
+  Button,
+  Select,
+  FormControl,
+  MenuItem,
+  InputLabel,
+  FormHelperText,
+} from '@mui/material';
 import { notification } from 'antd';
 import { CreateUser } from '../../lib';
 import { useAuth, useForm, useRequest } from '../../hooks';
@@ -9,7 +18,7 @@ import { FC, useCallback } from 'react';
 const CreateUserContent: FC = () => {
   const { getUserRoles } = useAuth();
   const formMaker = useForm();
-  const { getForm, getRules, onChange, resetForm, setFormRef, onSubmit } = formMaker(CreateUser);
+  const { getForm, onChange, resetForm, onSubmit } = formMaker(CreateUser);
   const { isApiProcessing, request } = useRequest();
   const isLoading = isApiProcessing(CreateUserApi);
   const form = getForm();
@@ -27,91 +36,104 @@ const CreateUserContent: FC = () => {
   }, [form, resetForm, onSubmit, request]);
 
   return (
-    <>
-      <FormContainer>
-        {/**@ts-ignore */}
-        <Form ref={setFormRef} model={form} rules={getRules()} labelPosition="top" labelWidth="120">
-          {/**@ts-ignore */}
-          <Form.Item style={{ marginBottom: '32px' }} label="First name" prop="firstName">
-            <Input
-              type="text"
-              onChange={value => onChange('firstName', value)}
-              value={form.firstName}
-              disabled={isLoading}
-            ></Input>
-          </Form.Item>
-
-          {/**@ts-ignore */}
-          <Form.Item style={{ marginBottom: '32px' }} label="Last name" prop="lastName">
-            <Input
-              type="text"
-              onChange={value => onChange('lastName', value)}
-              value={form.lastName}
-              disabled={isLoading}
-            ></Input>
-          </Form.Item>
-
-          {/**@ts-ignore */}
-          <Form.Item style={{ marginBottom: '32px' }} label="Email" prop="email">
-            <Input
-              type="email"
-              onChange={value => onChange('email', value)}
-              value={form.email}
-              disabled={isLoading}
-            ></Input>
-          </Form.Item>
-
-          {/**@ts-ignore */}
-          <Form.Item style={{ marginBottom: '32px' }} label="Password" prop="password">
-            <Input
-              type="password"
-              onChange={value => onChange('password', value)}
-              value={form.password}
-              disabled={isLoading}
-            ></Input>
-          </Form.Item>
-
-          {/**@ts-ignore */}
-          <Form.Item style={{ marginBottom: '32px' }} label="Phone" prop="phone">
-            <Input
-              onChange={value => onChange('phone', value)}
-              value={form.phone}
-              disabled={isLoading}
-            ></Input>
-          </Form.Item>
-
-          {/**@ts-ignore */}
-          <Form.Item style={{ marginBottom: '32px' }} label="Role" prop="role">
-            {/**@ts-ignore */}
-            <Select
-              placeholder="Select a role"
-              value={form.role}
-              clearable
-              onChange={value => onChange('role', value)}
-              style={{ width: '100%' }}
-              disabled={isLoading}
-            >
-              {getUserRoles().map(el => (
-                <Select.Option key={el.value} label={el.label} value={el.value} />
-              ))}
-            </Select>
-          </Form.Item>
-
-          {/**@ts-ignore */}
-          <Form.Item style={{ marginBottom: '32px' }}>
-            {/**@ts-ignore */}
-            <Button type="primary" disabled={isLoading} loading={isLoading} onClick={formSubmition}>
-              Create
-            </Button>
-
-            {/**@ts-ignore */}
-            <Button onClick={() => resetForm()} disabled={isLoading} loading={isLoading}>
-              Reset
-            </Button>
-          </Form.Item>
-        </Form>
-      </FormContainer>
-    </>
+    <FormContainer>
+      <Box
+        component="form"
+        noValidate
+        autoComplete="off"
+        display="flex"
+        flexDirection="column"
+        gap="20px"
+        onSubmit={formSubmition}
+      >
+        <TextField
+          label="First Name"
+          variant="standard"
+          type="text"
+          value={form.firstName}
+          onChange={event => onChange('firstName', event.target.value)}
+          helperText=""
+          error={false}
+          disabled={isLoading}
+        />
+        <TextField
+          label="Last Name"
+          variant="standard"
+          type="text"
+          value={form.lastName}
+          onChange={event => onChange('lastName', event.target.value)}
+          helperText=""
+          error={false}
+          disabled={isLoading}
+        />
+        <TextField
+          label="Email"
+          type="email"
+          variant="standard"
+          value={form.email}
+          onChange={event => onChange('email', event.target.value)}
+          helperText=""
+          error={false}
+          disabled={isLoading}
+        />
+        <TextField
+          label="Password"
+          type="password"
+          variant="standard"
+          value={form.password}
+          onChange={event => onChange('password', event.target.value)}
+          helperText=""
+          error={false}
+          disabled={isLoading}
+        />
+        <TextField
+          label="Phone"
+          type="text"
+          variant="standard"
+          value={form.phone}
+          onChange={event => onChange('phone', event.target.value)}
+          helperText=""
+          error={false}
+          disabled={isLoading}
+        />
+        <FormControl variant="standard">
+          <InputLabel id="role">Role</InputLabel>
+          <Select
+            labelId="role"
+            id="role"
+            value={form.role}
+            onChange={event => onChange('role', event.target.value)}
+            label="Role"
+            error={false}
+          >
+            {getUserRoles().map(el => (
+              <MenuItem value={el.value}>{el.label}</MenuItem>
+            ))}
+          </Select>
+          {false && <FormHelperText></FormHelperText>}
+        </FormControl>
+        <Box component="div" display="flex" alignItems="center" gap="10px" marginTop="20px">
+          <Button
+            disabled={isLoading}
+            variant="contained"
+            size="small"
+            type="submit"
+            sx={{ textTransform: 'capitalize' }}
+          >
+            Create
+          </Button>
+          <Button
+            disabled={isLoading}
+            variant="outlined"
+            size="small"
+            type="button"
+            sx={{ textTransform: 'capitalize' }}
+          >
+            Reset
+          </Button>
+        </Box>
+      </Box>
+    </FormContainer>
   );
 };
 

@@ -6,31 +6,19 @@ export class UpdateBill extends Form {
   @DefineVal()
   id: number = 0;
 
-  @DefineRules([
-    { validator: isAmount, trigger: 'blur' },
-    { validator: isAmount, trigger: 'change' },
-  ])
+  @DefineRules([isAmount])
   @DefineVal()
   amount: string = '';
 
-  @DefineRules([
-    { validator: isReceiver, trigger: 'blur' },
-    { validator: isReceiver, trigger: 'change' },
-  ])
+  @DefineRules([isReceiver])
   @DefineVal()
   receiver: string = '';
 
-  @DefineRules([
-    { validator: isDescription, trigger: 'blur' },
-    { validator: isDescription, trigger: 'change' },
-  ])
+  @DefineRules([isDescription])
   @DefineVal()
   description: string = '';
 
-  @DefineRules([
-    { validator: isDate, trigger: 'blur' },
-    { validator: isDate, trigger: 'change' },
-  ])
+  @DefineRules([isDate])
   @DefineVal()
   date: Date = new Date();
 

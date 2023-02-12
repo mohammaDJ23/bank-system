@@ -1,20 +1,37 @@
 import { FormMetadataTypes } from '.';
 
-export interface Rule {
-  validator(rule: Object, value: string, callback: (error?: Error) => void): void;
-  trigger: string;
+export interface RuleFn {
+  (value: any): string | void | undefined;
 }
 
-export interface Rules {
-  [key: string]: Rule[];
+export type InputRules = RuleFn[];
+
+export type InputsRules = Record<string, InputRules>;
+
+export function getInputsRules(target: any): InputsRules {
+  return Reflect.getMetadata(FormMetadataTypes.FORM_RULES, target) || {};
 }
 
-export function DefineRules(rules: Rule[]): (target: any, prop: string) => void {
-  return function (target, prop) {
-    const formRules = Reflect.getMetadata(FormMetadataTypes.FORM_RULES, target) || {};
-    Reflect.defineMetadata(FormMetadataTypes.FORM_RULES, { ...formRules, [prop]: rules }, target);
+export function setInputsRules(rules: InputsRules, target: any) {
+  Reflect.defineMetadata(FormMetadataTypes.FORM_RULES, rules, target);
+}
+
+export function getInputRules(key: string, target: any): InputRules {
+  return Reflect.getMetadata(key, target) || [];
+}
+
+export function setInputRules(key: string, value: InputsRules, target: any) {
+  Reflect.defineMetadata(key, value, target);
+}
+
+export function DefineRules(rules: RuleFn[]) {
+  return function (target: any, prop: string) {
+    const inputsRules = getInputsRules(target);
+    const newRule = { [prop]: rules };
+    const newInputsRules = Object.assign(inputsRules, newRule);
+    setInputsRules(newInputsRules, target);
     if (Reflect.hasMetadata(prop, target))
       throw new Error('Choose another key as signature of the metadata');
-    else Reflect.defineMetadata(prop, { [prop]: rules }, target);
+    else setInputRules(prop, newRule, target);
   };
 }

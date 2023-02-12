@@ -12,49 +12,31 @@ import {
 import { Form } from './formConstructor';
 
 export class CreateUser extends Form {
-  @DefineRules([
-    { validator: isFirstName, trigger: 'blur' },
-    { validator: isFirstName, trigger: 'change' },
-  ])
+  @DefineRules([isFirstName])
   @DefineVal()
   @CacheInput()
   firstName: string = '';
 
-  @DefineRules([
-    { validator: isLastName, trigger: 'blur' },
-    { validator: isLastName, trigger: 'change' },
-  ])
+  @DefineRules([isLastName])
   @DefineVal()
   @CacheInput()
   lastName: string = '';
 
-  @DefineRules([
-    { validator: isEmail, trigger: 'blur' },
-    { validator: isEmail, trigger: 'change' },
-  ])
+  @DefineRules([isEmail])
   @DefineVal()
   @CacheInput()
   email: string = '';
 
-  @DefineRules([
-    { validator: isPassword, trigger: 'blur' },
-    { validator: isPassword, trigger: 'change' },
-  ])
+  @DefineRules([isPassword])
   @DefineVal()
   password: string = '';
 
-  @DefineRules([
-    { validator: isPhone, trigger: 'blur' },
-    { validator: isPhone, trigger: 'change' },
-  ])
+  @DefineRules([isPhone])
   @DefineVal()
   @CacheInput()
   phone: string = '';
 
-  @DefineRules([
-    { validator: isRole, trigger: 'blur' },
-    { validator: isRole, trigger: 'change' },
-  ])
+  @DefineRules([isRole])
   @DefineVal()
   @CacheInput()
   role: string = '';

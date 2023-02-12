@@ -1,5 +1,5 @@
 import FormContainer from '../../layout/FormContainer';
-import { Input, Form, Button } from 'element-react';
+import { Box, TextField, Button } from '@mui/material';
 import { notification } from 'antd';
 import { CreateBill } from '../../lib';
 import { useForm, useRequest } from '../../hooks';
@@ -8,82 +8,107 @@ import { CreateBillApi } from '../../apis';
 
 const CreateBillContent: FC = () => {
   const formMaker = useForm();
-  const { getForm, getRules, onChange, resetForm, setFormRef, onSubmit } = formMaker(CreateBill);
+  const { getForm, onChange, resetForm, onSubmit } = formMaker(CreateBill);
   const { isApiProcessing, request } = useRequest();
   const isLoading = isApiProcessing(CreateBillApi);
   const form = getForm();
 
-  const formSubmition = useCallback(() => {
-    onSubmit(() => {
-      onChange('date', new Date(form.date));
-      request<CreateBill, CreateBill>(new CreateBillApi(form)).then(response => {
-        resetForm();
-        notification.success({
-          message: 'Success',
-          description: 'Your bill was created successfully.',
+  const formSubmition = useCallback(
+    (event: React.FormEvent) => {
+      event.preventDefault();
+      onSubmit(() => {
+        onChange('date', new Date(form.date));
+        request<CreateBill, CreateBill>(new CreateBillApi(form)).then(response => {
+          resetForm();
+          notification.success({
+            message: 'Success',
+            description: 'Your bill was created successfully.',
+          });
         });
       });
-    });
-  }, [form, resetForm, onSubmit, request, onChange]);
+    },
+    [form, resetForm, onSubmit, request, onChange]
+  );
 
   return (
     <FormContainer>
-      {/**@ts-ignore */}
-      <Form ref={setFormRef} model={form} rules={getRules()} labelPosition="top" labelWidth="120">
-        {/**@ts-ignore */}
-        <Form.Item style={{ marginBottom: '32px' }} label="Amount" prop="amount">
-          <Input
-            type="number"
-            onChange={value => onChange('amount', value)}
-            value={form.amount}
+      <Box
+        component="form"
+        noValidate
+        autoComplete="off"
+        display="flex"
+        flexDirection="column"
+        gap="20px"
+        onSubmit={formSubmition}
+      >
+        <TextField
+          id="standard-basic"
+          label="Amount"
+          variant="standard"
+          type="number"
+          value={form.amount}
+          onChange={event => onChange('amount', event.target.value)}
+          helperText=""
+          error={false}
+          disabled={isLoading}
+        />
+        <TextField
+          id="standard-basic"
+          label="Receiver"
+          variant="standard"
+          type="text"
+          value={form.receiver}
+          onChange={event => onChange('receiver', event.target.value)}
+          helperText=""
+          error={false}
+          disabled={isLoading}
+        />
+        <TextField
+          id="standard-basic"
+          label="Date"
+          type="date"
+          variant="standard"
+          value={form.date}
+          onChange={event => onChange('date', event.target.value)}
+          helperText=""
+          error={false}
+          InputLabelProps={{ shrink: true }}
+          disabled={isLoading}
+        />
+        <TextField
+          id="standard-basic"
+          label="Description"
+          type="text"
+          rows="5"
+          multiline
+          variant="standard"
+          value={form.description}
+          onChange={event => onChange('description', event.target.value)}
+          helperText=""
+          error={false}
+          disabled={isLoading}
+        />
+        <Box component="div" display="flex" alignItems="center" gap="10px" marginTop="20px">
+          <Button
             disabled={isLoading}
-          ></Input>
-        </Form.Item>
-
-        {/**@ts-ignore */}
-        <Form.Item style={{ marginBottom: '32px' }} label="Receiver" prop="receiver">
-          <Input
-            type="text"
-            onChange={value => onChange('receiver', value)}
-            value={form.receiver}
-            disabled={isLoading}
-          ></Input>
-        </Form.Item>
-
-        {/**@ts-ignore */}
-        <Form.Item style={{ marginBottom: '32px' }} label="Date" prop="date">
-          <Input
-            type="date"
-            onChange={value => onChange('date', value)}
-            value={form.date}
-            disabled={isLoading}
-          ></Input>
-        </Form.Item>
-
-        {/**@ts-ignore */}
-        <Form.Item style={{ marginBottom: '32px' }} label="Description" prop="description">
-          <Input
-            type="textarea"
-            autosize={{ minRows: 5 }}
-            onChange={value => onChange('description', value)}
-            value={form.description}
-            disabled={isLoading}
-          ></Input>
-        </Form.Item>
-
-        {/**@ts-ignore */}
-        <Form.Item style={{ marginBottom: '32px' }}>
-          {/**@ts-ignore */}
-          <Button type="primary" onClick={formSubmition} disabled={isLoading}>
+            variant="contained"
+            size="small"
+            type="submit"
+            sx={{ textTransform: 'capitalize' }}
+          >
             Create
           </Button>
-
-          {/**@ts-ignore */}
-          <Button onClick={() => resetForm()} disabled={isLoading}>
+          <Button
+            disabled={isLoading}
+            variant="outlined"
+            size="small"
+            type="button"
+            sx={{ textTransform: 'capitalize' }}
+          >
             Reset
           </Button>
-        </Form.Item>
-      </Form>
+        </Box>
+      </Box>
     </FormContainer>
   );
 };

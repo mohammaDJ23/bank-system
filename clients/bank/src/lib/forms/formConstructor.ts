@@ -1,8 +1,13 @@
-import { Dispatch } from 'react';
 import { matchPath, PathMatch } from 'react-router-dom';
-import { Constructor, FormMetadataTypes, LocalStorage, routes, Rule, Rules } from '../';
-import { RootState } from '../../store';
-import { RootActions } from '../../store/actions';
+import {
+  Constructor,
+  getInitialInputsValue,
+  LocalStorage,
+  routes,
+  getInputRules,
+  getInputsRules,
+  getCachedInputs,
+} from '../';
 
 export abstract class Form {
   getPrototype(): object {
@@ -13,12 +18,12 @@ export abstract class Form {
     return this.constructor.name;
   }
 
-  getRule(key: string): Rule[] {
-    return Reflect.getMetadata(key, this.getPrototype()) || [];
+  getRule(key: string) {
+    return getInputRules(key, this.getPrototype());
   }
 
-  getRules(): Rules {
-    return Reflect.getMetadata(FormMetadataTypes.FORM_RULES, this.getPrototype()) || {};
+  getRules() {
+    return getInputsRules(this.getPrototype());
   }
 
   getParam(param: string): string {
@@ -35,10 +40,7 @@ export abstract class Form {
   }
 
   cachInput(key: keyof this, value: any): void {
-    const cachedInputs: Set<string> = Reflect.getMetadata(
-      FormMetadataTypes.CACHE_INPUT,
-      this.getPrototype()
-    );
+    const cachedInputs = getCachedInputs(this.getPrototype());
     const isInputCached = cachedInputs.has(key as string);
     if (isInputCached) {
       const constructorName = this.getConstructorName();
@@ -54,21 +56,9 @@ export abstract class Form {
   }
 
   resetCach<T extends Form>(): T {
-    const initialInputs = Reflect.getMetadata(FormMetadataTypes.VALUES, this.getPrototype()) || {};
-    for (let key in initialInputs) this[key as keyof this] = initialInputs[key];
+    const inputs = getInitialInputsValue(this.getPrototype());
+    for (let key in inputs) this[key as keyof this] = inputs[key];
     LocalStorage.removeItem(this.getConstructorName());
     return new (this.constructor as Constructor)() as T;
-  }
-
-  beforeSubmition(dispatch: Dispatch<RootActions>, store: RootState) {
-    const beforeSubmitionAction: ((dispatch: Dispatch<RootActions>, store: RootState) => void)[] =
-      Reflect.getMetadata(FormMetadataTypes.BEFORE_SUBMITION, this.getPrototype()) || [];
-    beforeSubmitionAction.forEach(fn => fn.call(this, dispatch, store));
-  }
-
-  afterSubmition(dispatch: Dispatch<RootActions>, store: RootState) {
-    const afterSubmitionFns: ((dispatch: Dispatch<RootActions>, store: RootState) => void)[] =
-      Reflect.getMetadata(FormMetadataTypes.AFTER_SUBMITION, this.getPrototype()) || [];
-    afterSubmitionFns.forEach(fn => fn.call(this, dispatch, store));
   }
 }

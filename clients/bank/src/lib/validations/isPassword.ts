@@ -1,8 +1,7 @@
-export function isPassword(rule: Object, value: string, callback: (error?: Error) => void): void {
+export function isPassword(value: string): string | void {
   const isPasswordValid = /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{6,45}$/.test(
-    value,
+    value
   );
 
-  if (!isPasswordValid) callback(new Error('Invalid password'));
-  else callback();
+  if (!isPasswordValid) return 'Invalid password';
 }
