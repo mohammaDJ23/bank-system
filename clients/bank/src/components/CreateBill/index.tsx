@@ -13,22 +13,18 @@ const CreateBillContent: FC = () => {
   const isLoading = isApiProcessing(CreateBillApi);
   const form = getForm();
 
-  const formSubmition = useCallback(
-    (event: React.FormEvent) => {
-      event.preventDefault();
-      onSubmit(() => {
-        onChange('date', new Date(form.date));
-        request<CreateBill, CreateBill>(new CreateBillApi(form)).then(response => {
-          resetForm();
-          notification.success({
-            message: 'Success',
-            description: 'Your bill was created successfully.',
-          });
+  const formSubmition = useCallback(() => {
+    onSubmit(() => {
+      onChange('date', new Date(form.date));
+      request<CreateBill, CreateBill>(new CreateBillApi(form)).then(response => {
+        resetForm();
+        notification.success({
+          message: 'Success',
+          description: 'Your bill was created successfully.',
         });
       });
-    },
-    [form, resetForm, onSubmit, request, onChange]
-  );
+    });
+  }, [form, resetForm, onSubmit, request, onChange]);
 
   return (
     <FormContainer>
@@ -39,7 +35,10 @@ const CreateBillContent: FC = () => {
         display="flex"
         flexDirection="column"
         gap="20px"
-        onSubmit={formSubmition}
+        onSubmit={event => {
+          event.preventDefault();
+          formSubmition();
+        }}
       >
         <TextField
           id="standard-basic"

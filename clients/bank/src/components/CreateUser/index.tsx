@@ -44,7 +44,10 @@ const CreateUserContent: FC = () => {
         display="flex"
         flexDirection="column"
         gap="20px"
-        onSubmit={formSubmition}
+        onSubmit={event => {
+          event.preventDefault();
+          formSubmition();
+        }}
       >
         <TextField
           label="First Name"
