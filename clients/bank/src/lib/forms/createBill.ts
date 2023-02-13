@@ -20,7 +20,7 @@ export class CreateBill extends Form {
   @DefineRules([isDate])
   @DefineVal()
   @CacheInput()
-  date: Date = new Date();
+  date: string = new Date().toISOString();
 
   constructor() {
     super();
