@@ -2,7 +2,6 @@ import FormContainer from '../../layout/FormContainer';
 import Form from './Form';
 import { BillObj, UpdateBill } from '../../lib';
 import { useAction, useForm, useRequest, useSelector } from '../../hooks';
-import Modal from '../Modal';
 import { ModalNames } from '../../store';
 import { useEffect, FC, useCallback } from 'react';
 import { useParams } from 'react-router-dom';
@@ -18,10 +17,8 @@ const UpdateBillContent: FC = () => {
   const formMaker = useForm();
   const {
     getForm,
-    getRules,
     onChange,
     resetForm,
-    setFormRef,
     onSubmit,
     initializeForm,
     confirmation,
@@ -63,29 +60,21 @@ const UpdateBillContent: FC = () => {
   }, [form, history, resetForm, onSubmit, request, hideModal]);
 
   return (
-    <>
-      <FormContainer>
-        {isBillProcessing ? (
-          <Skeleton />
-        ) : (
-          <Form
-            onChange={onChange}
-            onSubmitWithConfirmation={confirmation}
-            resetForm={resetForm}
-            form={form}
-            isFormProcessing={isFormProcessing}
-            formRef={setFormRef}
-            rules={getRules()}
-          />
-        )}
-      </FormContainer>
-      <Modal
-        isLoading={isFormProcessing}
-        isActive={isConfirmationActive()}
-        onCancel={() => hideModal(ModalNames.CONFIRMATION)}
-        onConfirm={formSubmition}
-      />
-    </>
+    <FormContainer>
+      {isBillProcessing ? (
+        <Skeleton />
+      ) : (
+        <Form
+          onChange={onChange}
+          onSubmitWithConfirmation={confirmation}
+          resetForm={resetForm}
+          formSubmition={formSubmition}
+          isConfirmationActive={isConfirmationActive()}
+          form={form}
+          isLoading={isFormProcessing}
+        />
+      )}
+    </FormContainer>
   );
 };
 
