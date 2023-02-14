@@ -100,7 +100,9 @@ const Form: FC<FormImportation> = ({
             error={false}
           >
             {getUserRoles().map(el => (
-              <MenuItem value={el.value}>{el.label}</MenuItem>
+              <MenuItem key={el.value} value={el.value}>
+                {el.label}
+              </MenuItem>
             ))}
           </Select>
           {false && <FormHelperText></FormHelperText>}

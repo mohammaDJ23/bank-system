@@ -30,8 +30,6 @@ export function DefineRules(rules: RuleFn[]) {
     const newRule = { [prop]: rules };
     const newInputsRules = Object.assign(inputsRules, newRule);
     setInputsRules(newInputsRules, target);
-    if (Reflect.hasMetadata(prop, target))
-      throw new Error('Choose another key as signature of the metadata');
-    else setInputRules(prop, newRule, target);
+    setInputRules(prop, newRule, target);
   };
 }
