@@ -8,7 +8,8 @@ import { CreateBillApi } from '../../apis';
 
 const CreateBillContent: FC = () => {
   const formMaker = useForm();
-  const { getForm, onChange, resetForm, onSubmit } = formMaker(CreateBill);
+  const { getForm, onChange, resetForm, onSubmit, getInputErrorMessage, isInputValid } =
+    formMaker(CreateBill);
   const { isApiProcessing, request } = useRequest();
   const isLoading = isApiProcessing(CreateBillApi);
   const form = getForm();
@@ -41,18 +42,16 @@ const CreateBillContent: FC = () => {
         }}
       >
         <TextField
-          id="standard-basic"
           label="Amount"
           variant="standard"
           type="number"
           value={form.amount}
           onChange={event => onChange('amount', event.target.value)}
-          helperText=""
-          error={false}
+          helperText={getInputErrorMessage('amount')}
+          error={isInputValid('amount')}
           disabled={isLoading}
         />
         <TextField
-          id="standard-basic"
           label="Receiver"
           variant="standard"
           type="text"
@@ -63,7 +62,6 @@ const CreateBillContent: FC = () => {
           disabled={isLoading}
         />
         <TextField
-          id="standard-basic"
           label="Date"
           type="date"
           variant="standard"
@@ -75,7 +73,6 @@ const CreateBillContent: FC = () => {
           disabled={isLoading}
         />
         <TextField
-          id="standard-basic"
           label="Description"
           type="text"
           rows="5"

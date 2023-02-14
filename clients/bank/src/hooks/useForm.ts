@@ -58,6 +58,14 @@ export function useForm() {
           return !!modals[ModalNames.CONFIRMATION];
         }
 
+        function getInputErrorMessage(key: keyof T) {
+          return getForm().getInputValidation(key).errorMessage;
+        }
+
+        function isInputValid(key: keyof T) {
+          return !getForm().getInputValidation(key).isValid;
+        }
+
         return {
           initializeForm,
           onChange,
@@ -68,6 +76,8 @@ export function useForm() {
           onSubmit,
           isConfirmationActive,
           getForm,
+          getInputErrorMessage,
+          isInputValid,
         };
       };
     },

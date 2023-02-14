@@ -37,14 +37,13 @@ function onChange(state: FormState, action: OnChangeAction): FormState {
   copiedForm.cachInput(key, value);
 
   let errorMessage: string | undefined;
-  let inputValidation: InputValidation;
+  let inputValidation: InputValidation | undefined;
 
   for (const applyValidation of copiedForm.getRule(key)) {
-    errorMessage = applyValidation(value);
-    if (errorMessage) {
-      inputValidation = copiedForm.getInputValidation(key);
-      console.log(inputValidation, errorMessage);
-    }
+    if (!errorMessage) errorMessage = applyValidation(value);
+    inputValidation = copiedForm.getInputValidation(key);
+    inputValidation.isValid = !!!errorMessage;
+    inputValidation.errorMessage = errorMessage;
   }
 
   return newState;
