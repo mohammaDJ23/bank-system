@@ -7,6 +7,8 @@ import {
   getInputRules,
   getInputsRules,
   getCachedInputs,
+  getInputValidation,
+  getInputsValidation,
 } from '../';
 
 export abstract class Form {
@@ -60,5 +62,13 @@ export abstract class Form {
     for (let key in inputs) this[key as keyof this] = inputs[key];
     LocalStorage.removeItem(this.getConstructorName());
     return new (this.constructor as Constructor)() as T;
+  }
+
+  getInputValidation(key: string) {
+    return getInputValidation(key, this.getPrototype());
+  }
+
+  getInputsValidation() {
+    return getInputsValidation(this.getPrototype());
   }
 }
