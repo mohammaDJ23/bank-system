@@ -40,7 +40,7 @@ function onChange(state: FormState, action: OnChangeAction): FormState {
   let inputValidation: InputValidation | undefined;
 
   for (const applyValidation of copiedForm.getRule(key)) {
-    if (!errorMessage) errorMessage = applyValidation(value);
+    errorMessage = applyValidation(value) ?? '';
     inputValidation = copiedForm.getInputValidation(key);
     inputValidation.isValid = !!!errorMessage;
     inputValidation.errorMessage = errorMessage;

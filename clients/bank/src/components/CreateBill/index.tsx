@@ -8,8 +8,15 @@ import { CreateBillApi } from '../../apis';
 
 const CreateBillContent: FC = () => {
   const formMaker = useForm();
-  const { getForm, onChange, resetForm, onSubmit, getInputErrorMessage, isInputValid } =
-    formMaker(CreateBill);
+  const {
+    getForm,
+    onChange,
+    resetForm,
+    onSubmit,
+    getInputErrorMessage,
+    isInputValid,
+    isFormValid,
+  } = formMaker(CreateBill);
   const { isApiProcessing, request } = useRequest();
   const isLoading = isApiProcessing(CreateBillApi);
   const form = getForm();
@@ -57,8 +64,8 @@ const CreateBillContent: FC = () => {
           type="text"
           value={form.receiver}
           onChange={event => onChange('receiver', event.target.value)}
-          helperText=""
-          error={false}
+          helperText={getInputErrorMessage('receiver')}
+          error={isInputValid('receiver')}
           disabled={isLoading}
         />
         <TextField
@@ -67,8 +74,8 @@ const CreateBillContent: FC = () => {
           variant="standard"
           value={form.date}
           onChange={event => onChange('date', event.target.value)}
-          helperText=""
-          error={false}
+          helperText={getInputErrorMessage('date')}
+          error={isInputValid('date')}
           InputLabelProps={{ shrink: true }}
           disabled={isLoading}
         />
@@ -80,13 +87,13 @@ const CreateBillContent: FC = () => {
           variant="standard"
           value={form.description}
           onChange={event => onChange('description', event.target.value)}
-          helperText=""
-          error={false}
+          helperText={getInputErrorMessage('description')}
+          error={isInputValid('description')}
           disabled={isLoading}
         />
         <Box component="div" display="flex" alignItems="center" gap="10px" marginTop="20px">
           <Button
-            disabled={isLoading}
+            disabled={isLoading || !isFormValid()}
             variant="contained"
             size="small"
             type="submit"

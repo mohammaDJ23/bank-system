@@ -8,6 +8,7 @@ import {
   getInputsRules,
   getCachedInputs,
   getInputsValidation,
+  InputValidation,
 } from '../';
 
 export abstract class Form {
@@ -64,10 +65,17 @@ export abstract class Form {
   }
 
   getInputValidation(key: keyof this) {
-    return getInputsValidation(this.getPrototype())[key as string];
+    return this.getInputsValidation()[key as string];
   }
 
   getInputsValidation() {
     return getInputsValidation(this.getPrototype());
+  }
+
+  isFormValid() {
+    let isFormValid: boolean = true;
+    const inputsValidation = this.getInputsValidation();
+    for (const key in inputsValidation) isFormValid = isFormValid && inputsValidation[key].isValid;
+    return isFormValid;
   }
 }
