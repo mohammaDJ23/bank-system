@@ -18,7 +18,15 @@ import { FC, useCallback } from 'react';
 const CreateUserContent: FC = () => {
   const { getUserRoles } = useAuth();
   const formMaker = useForm();
-  const { getForm, onChange, resetForm, onSubmit } = formMaker(CreateUser);
+  const {
+    getForm,
+    onChange,
+    resetForm,
+    onSubmit,
+    isFormValid,
+    getInputErrorMessage,
+    isInputValid,
+  } = formMaker(CreateUser);
   const { isApiProcessing, request } = useRequest();
   const isLoading = isApiProcessing(CreateUserApi);
   const form = getForm();
@@ -55,8 +63,8 @@ const CreateUserContent: FC = () => {
           type="text"
           value={form.firstName}
           onChange={event => onChange('firstName', event.target.value)}
-          helperText=""
-          error={false}
+          helperText={getInputErrorMessage('firstName')}
+          error={isInputValid('firstName')}
           disabled={isLoading}
         />
         <TextField
@@ -65,8 +73,8 @@ const CreateUserContent: FC = () => {
           type="text"
           value={form.lastName}
           onChange={event => onChange('lastName', event.target.value)}
-          helperText=""
-          error={false}
+          helperText={getInputErrorMessage('lastName')}
+          error={isInputValid('lastName')}
           disabled={isLoading}
         />
         <TextField
@@ -75,8 +83,8 @@ const CreateUserContent: FC = () => {
           variant="standard"
           value={form.email}
           onChange={event => onChange('email', event.target.value)}
-          helperText=""
-          error={false}
+          helperText={getInputErrorMessage('email')}
+          error={isInputValid('email')}
           disabled={isLoading}
         />
         <TextField
@@ -85,8 +93,8 @@ const CreateUserContent: FC = () => {
           variant="standard"
           value={form.password}
           onChange={event => onChange('password', event.target.value)}
-          helperText=""
-          error={false}
+          helperText={getInputErrorMessage('password')}
+          error={isInputValid('password')}
           disabled={isLoading}
         />
         <TextField
@@ -95,8 +103,8 @@ const CreateUserContent: FC = () => {
           variant="standard"
           value={form.phone}
           onChange={event => onChange('phone', event.target.value)}
-          helperText=""
-          error={false}
+          helperText={getInputErrorMessage('phone')}
+          error={isInputValid('phone')}
           disabled={isLoading}
         />
         <FormControl variant="standard">
@@ -107,7 +115,7 @@ const CreateUserContent: FC = () => {
             value={form.role}
             onChange={event => onChange('role', event.target.value)}
             label="Role"
-            error={false}
+            error={isInputValid('role')}
           >
             {getUserRoles().map(el => (
               <MenuItem key={el.value} value={el.value}>
@@ -115,11 +123,11 @@ const CreateUserContent: FC = () => {
               </MenuItem>
             ))}
           </Select>
-          {false && <FormHelperText></FormHelperText>}
+          {isInputValid('role') && <FormHelperText>{getInputErrorMessage('role')}</FormHelperText>}
         </FormControl>
         <Box component="div" display="flex" alignItems="center" gap="10px" marginTop="20px">
           <Button
-            disabled={isLoading}
+            disabled={isLoading || !isFormValid()}
             variant="contained"
             size="small"
             type="submit"
