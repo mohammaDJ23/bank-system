@@ -8,7 +8,6 @@ import {
   getInputsRules,
   getCachedInputs,
   getInputsValidation,
-  InputValidation,
 } from '../';
 
 export abstract class Form {

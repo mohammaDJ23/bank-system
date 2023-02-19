@@ -1,4 +1,5 @@
 import { FormMetadataTypes } from '.';
+import { LocalStorage } from '../storage';
 
 export interface InputValidation {
   isValid: boolean;
@@ -17,7 +18,9 @@ export function setInputsValidation(value: InputsValidation, target: any) {
 
 export function DefineValidation(inputValidation: Partial<InputValidation> = {}) {
   return function (target: any, prop: string) {
+    const cachedForm: typeof target = LocalStorage.getItem(target.constructor.name);
     inputValidation = { isValid: false, errorMessage: '', ...inputValidation };
+    if (cachedForm[prop]) inputValidation.isValid = true;
     const inputsValidation = getInputsValidation(target);
     const newInputsValidation = Object.assign(inputsValidation, { [prop]: inputValidation });
     setInputsValidation(newInputsValidation, target);
