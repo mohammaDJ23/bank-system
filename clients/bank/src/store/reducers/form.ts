@@ -34,7 +34,6 @@ function onChange(state: FormState, action: OnChangeAction): FormState {
   const copiedForm = copyConstructor(newState[form.name]);
   copiedForm[key] = value;
   newState[copiedForm.getConstructorName()] = copiedForm;
-  copiedForm.cachInput(key, value);
 
   let errorMessage: string | undefined;
   let inputValidation: InputValidation | undefined;
@@ -44,6 +43,8 @@ function onChange(state: FormState, action: OnChangeAction): FormState {
     inputValidation = copiedForm.getInputValidation(key);
     inputValidation.isValid = !!!errorMessage;
     inputValidation.errorMessage = errorMessage;
+    if (inputValidation.isValid) copiedForm.cachInput(key, value);
+    else copiedForm.clearCachedInput(key);
   }
 
   return newState;
