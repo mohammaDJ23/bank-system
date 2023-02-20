@@ -7,6 +7,7 @@ import {
   getInputRules,
   getInputsRules,
   getCachedInputs,
+  getInputsValidation,
 } from '../';
 
 export abstract class Form {
@@ -43,22 +44,54 @@ export abstract class Form {
     const cachedInputs = getCachedInputs(this.getPrototype());
     const isInputCached = cachedInputs.has(key as string);
     if (isInputCached) {
-      const constructorName = this.getConstructorName();
-      const cachedForm = LocalStorage.getItem(constructorName) || {};
+      const cachedForm = this.getCachedForm();
       const newCachedForm = Object.assign(cachedForm, { [key]: value });
-      LocalStorage.setItem(constructorName, newCachedForm);
+      this.setCacheableFrom(newCachedForm);
     }
   }
 
+  getCachedForm(): this {
+    return LocalStorage.getItem(this.getConstructorName()) || {};
+  }
+
+  setCacheableFrom(value: this) {
+    LocalStorage.setItem(this.getConstructorName(), value);
+  }
+
+  clearCachedForm() {
+    LocalStorage.removeItem(this.getConstructorName());
+  }
+
+  clearCachedInput(key: keyof this) {
+    const cachedForm = this.getCachedForm();
+    if (cachedForm[key]) delete cachedForm[key];
+    this.setCacheableFrom(cachedForm);
+  }
+
   getCachedInput(name: keyof this): any {
-    const cachedForm: this = LocalStorage.getItem(this.getConstructorName()) || {};
+    const cachedForm = this.getCachedForm();
     return cachedForm[name] || this[name];
   }
 
   resetCach<T extends Form>(): T {
     const inputs = getInitialInputsValue(this.getPrototype());
     for (let key in inputs) this[key as keyof this] = inputs[key];
-    LocalStorage.removeItem(this.getConstructorName());
+    this.clearCachedForm();
     return new (this.constructor as Constructor)() as T;
+  }
+
+  getInputValidation(key: keyof this) {
+    return this.getInputsValidation()[key as string];
+  }
+
+  getInputsValidation() {
+    return getInputsValidation(this.getPrototype());
+  }
+
+  isFormValid() {
+    let isFormValid: boolean = true;
+    const inputsValidation = this.getInputsValidation();
+    for (const key in inputsValidation) isFormValid = isFormValid && inputsValidation[key].isValid;
+    return isFormValid;
   }
 }

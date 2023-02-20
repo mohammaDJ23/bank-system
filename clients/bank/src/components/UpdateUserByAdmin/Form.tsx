@@ -1,126 +1,138 @@
 import { FC } from 'react';
-import { Button, Form as ReactElementForm, Input, Select } from 'element-react';
-import { getUserRoles, Rules, UpdateUserByAdmin } from '../../lib';
+import { getUserRoles, UpdateUserByAdmin } from '../../lib';
 import Modal from '../Modal';
 import { ModalNames } from '../../store';
+import { useAction } from '../../hooks';
+import {
+  Box,
+  TextField,
+  Button,
+  Select,
+  FormControl,
+  MenuItem,
+  InputLabel,
+  FormHelperText,
+} from '@mui/material';
 
 interface FormImportation {
   onChange: (key: keyof UpdateUserByAdmin, value: any) => void;
   form: UpdateUserByAdmin;
-  isFormProcessing: boolean;
-  formRef: (el: ReactElementForm | null) => void;
-  rules: Rules;
+  isLoading: boolean;
   onSubmitWithConfirmation: () => void;
   resetForm: () => void;
-  isConfirmationModalActive: () => boolean;
-  hideModal: (name: ModalNames) => void;
+  isConfirmationModalActive: boolean;
   onSubmit: () => void;
 }
 
 const Form: FC<FormImportation> = ({
   form,
-  isFormProcessing,
-  formRef,
-  rules,
+  isLoading,
+  isConfirmationModalActive,
   onChange,
   onSubmitWithConfirmation,
   resetForm,
-  isConfirmationModalActive,
-  hideModal,
   onSubmit,
 }) => {
+  const { hideModal } = useAction();
+
   return (
     <>
-      {/**@ts-ignore */}
-      <ReactElementForm
-        ref={formRef}
-        model={form}
-        rules={rules}
-        labelPosition="top"
-        labelWidth="120"
+      <Box
+        component="form"
+        noValidate
+        autoComplete="off"
+        display="flex"
+        flexDirection="column"
+        gap="20px"
+        onSubmit={event => {
+          event.preventDefault();
+          onSubmitWithConfirmation();
+        }}
       >
-        {/**@ts-ignore */}
-        <ReactElementForm.Item style={{ marginBottom: '32px' }} label="First name" prop="firstName">
-          <Input
-            type="text"
-            onChange={value => onChange('firstName', value)}
-            value={form.firstName}
-            disabled={isFormProcessing}
-          ></Input>
-        </ReactElementForm.Item>
-
-        {/**@ts-ignore */}
-        <ReactElementForm.Item style={{ marginBottom: '32px' }} label="Last name" prop="lastName">
-          <Input
-            type="text"
-            onChange={value => onChange('lastName', value)}
-            value={form.lastName}
-            disabled={isFormProcessing}
-          ></Input>
-        </ReactElementForm.Item>
-
-        {/**@ts-ignore */}
-        <ReactElementForm.Item style={{ marginBottom: '32px' }} label="Email" prop="email">
-          <Input
-            type="email"
-            onChange={value => onChange('email', value)}
-            value={form.email}
-            disabled={isFormProcessing}
-          ></Input>
-        </ReactElementForm.Item>
-
-        {/**@ts-ignore */}
-        <ReactElementForm.Item style={{ marginBottom: '32px' }} label="Phone" prop="phone">
-          <Input
-            onChange={value => onChange('phone', value)}
-            value={form.phone}
-            disabled={isFormProcessing}
-          ></Input>
-        </ReactElementForm.Item>
-
-        {/**@ts-ignore */}
-        <ReactElementForm.Item style={{ marginBottom: '32px' }} label="Role" prop="role">
-          {/**@ts-ignore */}
+        <TextField
+          label="First Name"
+          variant="standard"
+          type="text"
+          value={form.firstName}
+          onChange={event => onChange('firstName', event.target.value)}
+          helperText=""
+          error={false}
+          disabled={isLoading}
+        />
+        <TextField
+          label="Last Name"
+          variant="standard"
+          type="text"
+          value={form.lastName}
+          onChange={event => onChange('lastName', event.target.value)}
+          helperText=""
+          error={false}
+          disabled={isLoading}
+        />
+        <TextField
+          label="Email"
+          type="email"
+          variant="standard"
+          value={form.email}
+          onChange={event => onChange('email', event.target.value)}
+          helperText=""
+          error={false}
+          disabled={isLoading}
+        />
+        <TextField
+          label="Phone"
+          type="text"
+          variant="standard"
+          value={form.phone}
+          onChange={event => onChange('phone', event.target.value)}
+          helperText=""
+          error={false}
+          disabled={isLoading}
+        />
+        <FormControl variant="standard">
+          <InputLabel id="role">Role</InputLabel>
           <Select
-            placeholder="Select a role"
+            labelId="role"
+            id="role"
             value={form.role}
-            clearable
-            onChange={value => onChange('role', value)}
-            style={{ width: '100%' }}
-            disabled={isFormProcessing}
+            onChange={event => onChange('role', event.target.value)}
+            label="Role"
+            error={false}
           >
             {getUserRoles().map(el => (
-              <Select.Option key={el.value} label={el.label} value={el.value} />
+              <MenuItem key={el.value} value={el.value}>
+                {el.label}
+              </MenuItem>
             ))}
           </Select>
-        </ReactElementForm.Item>
-
-        {/**@ts-ignore */}
-        <ReactElementForm.Item style={{ marginBottom: '32px' }}>
-          {/**@ts-ignore */}
+          {false && <FormHelperText></FormHelperText>}
+        </FormControl>
+        <Box component="div" display="flex" alignItems="center" gap="10px" marginTop="20px">
           <Button
-            loading={isFormProcessing}
-            disabled={isFormProcessing}
-            type="primary"
-            onClick={() => onSubmitWithConfirmation()}
+            disabled={isLoading}
+            variant="contained"
+            size="small"
+            type="submit"
+            sx={{ textTransform: 'capitalize' }}
           >
-            Update
+            Create
           </Button>
-
-          {/**@ts-ignore */}
           <Button
-            loading={isFormProcessing}
-            disabled={isFormProcessing}
+            disabled={isLoading}
+            variant="outlined"
+            size="small"
+            type="button"
+            sx={{ textTransform: 'capitalize' }}
             onClick={() => resetForm()}
           >
             Reset
           </Button>
-        </ReactElementForm.Item>
-      </ReactElementForm>
+        </Box>
+      </Box>
 
       <Modal
-        isLoading={isFormProcessing}
-        isActive={isConfirmationModalActive()}
+        isLoading={isLoading}
+        isActive={isConfirmationModalActive}
         onCancel={() => hideModal(ModalNames.CONFIRMATION)}
         onConfirm={() => onSubmit()}
       />

@@ -8,27 +8,31 @@ import { CreateBillApi } from '../../apis';
 
 const CreateBillContent: FC = () => {
   const formMaker = useForm();
-  const { getForm, onChange, resetForm, onSubmit } = formMaker(CreateBill);
+  const {
+    getForm,
+    onChange,
+    resetForm,
+    onSubmit,
+    getInputErrorMessage,
+    isInputValid,
+    isFormValid,
+  } = formMaker(CreateBill);
   const { isApiProcessing, request } = useRequest();
   const isLoading = isApiProcessing(CreateBillApi);
   const form = getForm();
 
-  const formSubmition = useCallback(
-    (event: React.FormEvent) => {
-      event.preventDefault();
-      onSubmit(() => {
-        onChange('date', new Date(form.date));
-        request<CreateBill, CreateBill>(new CreateBillApi(form)).then(response => {
-          resetForm();
-          notification.success({
-            message: 'Success',
-            description: 'Your bill was created successfully.',
-          });
+  const formSubmition = useCallback(() => {
+    onSubmit(() => {
+      onChange('date', new Date(form.date));
+      request<CreateBill, CreateBill>(new CreateBillApi(form)).then(response => {
+        resetForm();
+        notification.success({
+          message: 'Success',
+          description: 'Your bill was created successfully.',
         });
       });
-    },
-    [form, resetForm, onSubmit, request, onChange]
-  );
+    });
+  }, [form, resetForm, onSubmit, request, onChange]);
 
   return (
     <FormContainer>
@@ -39,44 +43,43 @@ const CreateBillContent: FC = () => {
         display="flex"
         flexDirection="column"
         gap="20px"
-        onSubmit={formSubmition}
+        onSubmit={event => {
+          event.preventDefault();
+          formSubmition();
+        }}
       >
         <TextField
-          id="standard-basic"
           label="Amount"
           variant="standard"
           type="number"
           value={form.amount}
           onChange={event => onChange('amount', event.target.value)}
-          helperText=""
-          error={false}
+          helperText={getInputErrorMessage('amount')}
+          error={isInputValid('amount')}
           disabled={isLoading}
         />
         <TextField
-          id="standard-basic"
           label="Receiver"
           variant="standard"
           type="text"
           value={form.receiver}
           onChange={event => onChange('receiver', event.target.value)}
-          helperText=""
-          error={false}
+          helperText={getInputErrorMessage('receiver')}
+          error={isInputValid('receiver')}
           disabled={isLoading}
         />
         <TextField
-          id="standard-basic"
           label="Date"
           type="date"
           variant="standard"
           value={form.date}
           onChange={event => onChange('date', event.target.value)}
-          helperText=""
-          error={false}
+          helperText={getInputErrorMessage('date')}
+          error={isInputValid('date')}
           InputLabelProps={{ shrink: true }}
           disabled={isLoading}
         />
         <TextField
-          id="standard-basic"
           label="Description"
           type="text"
           rows="5"
@@ -84,13 +87,13 @@ const CreateBillContent: FC = () => {
           variant="standard"
           value={form.description}
           onChange={event => onChange('description', event.target.value)}
-          helperText=""
-          error={false}
+          helperText={getInputErrorMessage('description')}
+          error={isInputValid('description')}
           disabled={isLoading}
         />
         <Box component="div" display="flex" alignItems="center" gap="10px" marginTop="20px">
           <Button
-            disabled={isLoading}
+            disabled={isLoading || !isFormValid()}
             variant="contained"
             size="small"
             type="submit"

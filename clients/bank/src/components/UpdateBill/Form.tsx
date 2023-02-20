@@ -1,99 +1,116 @@
-import { Button, Input, Form as ReactElementForm } from 'element-react';
-import { Rules, UpdateBill } from '../../lib';
+import { UpdateBill } from '../../lib';
 import { FC } from 'react';
-import { UseFormCallbackExportation } from '../../hooks';
+import { Box, TextField, Button } from '@mui/material';
+import Modal from '../Modal';
+import { useAction } from '../../hooks';
+import { ModalNames } from '../../store';
 
 interface FormImportation {
   onChange: (key: keyof UpdateBill, value: any) => void;
   form: UpdateBill;
-  isFormProcessing: boolean;
-  formRef: UseFormCallbackExportation['setFormRef'];
-  rules: Rules;
+  isLoading: boolean;
   onSubmitWithConfirmation: () => void;
+  formSubmition: () => void;
   resetForm: () => void;
+  isConfirmationActive: boolean;
 }
 
 const Form: FC<FormImportation> = ({
   onChange,
   onSubmitWithConfirmation,
   resetForm,
+  formSubmition,
   form,
-  isFormProcessing,
-  formRef,
-  rules,
+  isLoading,
+  isConfirmationActive,
 }) => {
+  const { hideModal } = useAction();
+
   return (
     <>
-      {/**@ts-ignore */}
-      <ReactElementForm
-        ref={formRef}
-        model={form}
-        rules={rules}
-        labelPosition="top"
-        labelWidth="120"
+      <Box
+        component="form"
+        noValidate
+        autoComplete="off"
+        display="flex"
+        flexDirection="column"
+        gap="20px"
+        onSubmit={event => {
+          event.preventDefault();
+          onSubmitWithConfirmation();
+        }}
       >
-        {/**@ts-ignore */}
-        <ReactElementForm.Item style={{ marginBottom: '32px' }} label="Amount" prop="amount">
-          <Input
-            type="number"
-            onChange={value => onChange('amount', value)}
-            value={form.amount}
-            disabled={isFormProcessing}
-          ></Input>
-        </ReactElementForm.Item>
-
-        {/**@ts-ignore */}
-        <ReactElementForm.Item style={{ marginBottom: '32px' }} label="Receiver" prop="receiver">
-          <Input
-            type="text"
-            onChange={value => onChange('receiver', value)}
-            value={form.receiver}
-            disabled={isFormProcessing}
-          ></Input>
-        </ReactElementForm.Item>
-
-        {/**@ts-ignore */}
-        <ReactElementForm.Item style={{ marginBottom: '32px' }} label="Date" prop="date">
-          <Input
-            type="date"
-            onChange={value => onChange('date', value)}
-            value={form.date}
-            disabled={isFormProcessing}
-          ></Input>
-        </ReactElementForm.Item>
-
-        {/**@ts-ignore */}
-        <ReactElementForm.Item
-          style={{ marginBottom: '32px' }}
+        <TextField
+          label="Amount"
+          variant="standard"
+          type="number"
+          value={form.amount}
+          onChange={event => onChange('amount', event.target.value)}
+          helperText=""
+          error={false}
+          disabled={isLoading}
+        />
+        <TextField
+          label="Receiver"
+          variant="standard"
+          type="text"
+          value={form.receiver}
+          onChange={event => onChange('receiver', event.target.value)}
+          helperText=""
+          error={false}
+          disabled={isLoading}
+        />
+        <TextField
+          label="Date"
+          type="date"
+          variant="standard"
+          value={form.date}
+          onChange={event => onChange('date', event.target.value)}
+          helperText=""
+          error={false}
+          InputLabelProps={{ shrink: true }}
+          disabled={isLoading}
+        />
+        <TextField
           label="Description"
-          prop="description"
-        >
-          <Input
-            type="textarea"
-            autosize={{ minRows: 5 }}
-            onChange={value => onChange('description', value)}
-            value={form.description}
-            disabled={isFormProcessing}
-          ></Input>
-        </ReactElementForm.Item>
-
-        {/**@ts-ignore */}
-        <ReactElementForm.Item style={{ marginBottom: '32px' }}>
-          {/**@ts-ignore */}
+          type="text"
+          rows="5"
+          multiline
+          variant="standard"
+          value={form.description}
+          onChange={event => onChange('description', event.target.value)}
+          helperText=""
+          error={false}
+          disabled={isLoading}
+        />
+        <Box component="div" display="flex" alignItems="center" gap="10px" marginTop="20px">
           <Button
-            type="primary"
-            onClick={() => onSubmitWithConfirmation()}
-            disabled={isFormProcessing}
+            disabled={isLoading}
+            variant="contained"
+            size="small"
+            type="submit"
+            sx={{ textTransform: 'capitalize' }}
           >
             Update
           </Button>
-
-          {/**@ts-ignore */}
-          <Button onClick={() => resetForm()} disabled={isFormProcessing}>
+          <Button
+            disabled={isLoading}
+            variant="outlined"
+            size="small"
+            type="button"
+            sx={{ textTransform: 'capitalize' }}
+            onClick={() => resetForm()}
+          >
             Reset
           </Button>
-        </ReactElementForm.Item>
-      </ReactElementForm>
+        </Box>
+      </Box>
+      <Modal
+        isLoading={isLoading}
+        isActive={isConfirmationActive}
+        onCancel={() => hideModal(ModalNames.CONFIRMATION)}
+        onConfirm={formSubmition}
+      />
     </>
   );
 };

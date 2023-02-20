@@ -17,10 +17,8 @@ const UpdateUserByAdminContent: FC = () => {
   const formMaker = useForm();
   const {
     getForm,
-    getRules,
     onChange,
     resetForm,
-    setFormRef,
     onSubmit,
     initializeForm,
     confirmation,
@@ -70,16 +68,13 @@ const UpdateUserByAdminContent: FC = () => {
         <Skeleton />
       ) : (
         <Form
-          isFormProcessing={isFormProcessing}
+          isLoading={isFormProcessing}
           form={form}
-          formRef={setFormRef}
-          rules={getRules()}
           onChange={onChange}
           onSubmit={formSubmition}
-          isConfirmationModalActive={isConfirmationActive}
+          isConfirmationModalActive={isConfirmationActive()}
           resetForm={resetForm}
           onSubmitWithConfirmation={confirmation}
-          hideModal={hideModal}
         />
       )}
     </FormContainer>

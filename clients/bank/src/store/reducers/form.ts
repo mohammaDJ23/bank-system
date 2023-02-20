@@ -1,4 +1,4 @@
-import { copyConstructor, Form as FormConstructor, forms } from '../../lib';
+import { copyConstructor, Form as FormConstructor, forms, InputValidation } from '../../lib';
 import { FormActions, OnChangeAction, ResetFormAction, SetFormAction } from '../actions/form';
 
 export enum Form {
@@ -34,7 +34,19 @@ function onChange(state: FormState, action: OnChangeAction): FormState {
   const copiedForm = copyConstructor(newState[form.name]);
   copiedForm[key] = value;
   newState[copiedForm.getConstructorName()] = copiedForm;
-  copiedForm.cachInput(key, value);
+
+  let errorMessage: string | undefined;
+  let inputValidation: InputValidation | undefined;
+
+  for (const applyValidation of copiedForm.getRule(key)) {
+    errorMessage = applyValidation(value) ?? '';
+    inputValidation = copiedForm.getInputValidation(key);
+    inputValidation.isValid = !!!errorMessage;
+    inputValidation.errorMessage = errorMessage;
+    if (inputValidation.isValid) copiedForm.cachInput(key, value);
+    else copiedForm.clearCachedInput(key);
+  }
+
   return newState;
 }
 

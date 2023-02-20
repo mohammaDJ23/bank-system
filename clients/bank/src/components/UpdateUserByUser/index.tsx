@@ -6,7 +6,6 @@ import { useEffect, FC, useCallback } from 'react';
 import { useParams } from 'react-router-dom';
 import Skeleton from './Skeleton';
 import { UpdateUserByUserApi, UserApi } from '../../apis';
-import { Notification } from 'element-react';
 import { notification } from 'antd';
 import { ModalNames } from '../../store';
 
@@ -18,10 +17,8 @@ const UpdateUserByUserContent: FC = () => {
   const formMaker = useForm();
   const {
     getForm,
-    getRules,
     onChange,
     resetForm,
-    setFormRef,
     onSubmit,
     initializeForm,
     confirmation,
@@ -68,16 +65,13 @@ const UpdateUserByUserContent: FC = () => {
         <Skeleton />
       ) : (
         <Form
-          isFormProcessing={isFormProcessing}
+          isLoading={isFormProcessing}
           form={form}
-          formRef={setFormRef}
-          rules={getRules()}
           onChange={onChange}
           onSubmit={formSubmition}
-          isConfirmationModalActive={isConfirmationActive}
+          isConfirmationModalActive={isConfirmationActive()}
           resetForm={resetForm}
           onSubmitWithConfirmation={confirmation}
-          hideModal={hideModal}
         />
       )}
     </FormContainer>

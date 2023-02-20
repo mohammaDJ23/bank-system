@@ -1,7 +1,7 @@
 import { FormMetadataTypes } from '.';
 
 export interface RuleFn {
-  (value: any): string | void | undefined;
+  (value: any): string | undefined;
 }
 
 export type InputRules = RuleFn[];
@@ -20,7 +20,7 @@ export function getInputRules(key: string, target: any): InputRules {
   return Reflect.getMetadata(key, target) || [];
 }
 
-export function setInputRules(key: string, value: InputsRules, target: any) {
+export function setInputRules(key: string, value: InputRules, target: any) {
   Reflect.defineMetadata(key, value, target);
 }
 
@@ -30,8 +30,6 @@ export function DefineRules(rules: RuleFn[]) {
     const newRule = { [prop]: rules };
     const newInputsRules = Object.assign(inputsRules, newRule);
     setInputsRules(newInputsRules, target);
-    if (Reflect.hasMetadata(prop, target))
-      throw new Error('Choose another key as signature of the metadata');
-    else setInputRules(prop, newRule, target);
+    setInputRules(prop, rules, target);
   };
 }

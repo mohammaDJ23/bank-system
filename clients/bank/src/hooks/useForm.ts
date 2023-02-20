@@ -44,18 +44,28 @@ export function useForm() {
           return getForm().resetCach();
         }
 
+        function isFormValid() {
+          return getForm().isFormValid();
+        }
+
         function confirmation() {
-          // check if the form is valid.
-          if (true) showModal(ModalNames.CONFIRMATION);
+          if (isFormValid()) showModal(ModalNames.CONFIRMATION);
         }
 
         function onSubmit(cb: () => Promise<void> | void) {
-          // check if the form is valid
-          if (true) cb.call({});
+          if (isFormValid()) cb.call({});
         }
 
         function isConfirmationActive() {
           return !!modals[ModalNames.CONFIRMATION];
+        }
+
+        function getInputErrorMessage(key: keyof T) {
+          return getForm().getInputValidation(key).errorMessage;
+        }
+
+        function isInputValid(key: keyof T) {
+          return !!getForm().getInputValidation(key).errorMessage;
         }
 
         return {
@@ -68,6 +78,9 @@ export function useForm() {
           onSubmit,
           isConfirmationActive,
           getForm,
+          getInputErrorMessage,
+          isInputValid,
+          isFormValid,
         };
       };
     },
