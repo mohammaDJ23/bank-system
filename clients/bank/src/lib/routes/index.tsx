@@ -10,18 +10,33 @@ const UpdateUserByUser = lazy(() => import('../../Pages/UpdateUserByUser'));
 const User = lazy(() => import('../../Pages/User'));
 const Users = lazy(() => import('../../Pages/Users'));
 
+export enum Pathes {
+  INITIAL = '/',
+  LOGIN = '/auth/login',
+  BILLS = '/bank/bills',
+  USERS = '/bank/users',
+  CREATE_BILL = '/bank/create-bill',
+  CREATE_USER = '/bank/create-user',
+  UPDATE_USER_BY_ADMIN = '/bank/admin/update-user/:id',
+  UPDATE_BILL = '/bank/update-bill/:id',
+  UPDATE_USER = '/bank/update-user/:id',
+  USER = '/bank/users/:id',
+  BILL = '/bank/bills/:id',
+  UN_AUTHORIZED = '/bank/unauthorized',
+}
+
 export const routes = [
-  { title: 'Bills', path: '/bank/bills', element: <Bills /> },
-  { title: 'Users', path: '/bank/users', element: <Users /> },
-  { title: 'Create bill', path: '/bank/create-bill', element: <CreateBill /> },
-  { title: 'Create user', path: '/bank/create-user', element: <CreateUser /> },
+  { title: 'Bills', path: Pathes.BILLS, element: <Bills /> },
+  { title: 'Users', path: Pathes.USERS, element: <Users /> },
+  { title: 'Create bill', path: Pathes.CREATE_BILL, element: <CreateBill /> },
+  { title: 'Create user', path: Pathes.CREATE_USER, element: <CreateUser /> },
   {
     title: 'Update user by admin',
-    path: '/bank/admin/update-user/:id',
+    path: Pathes.UPDATE_USER_BY_ADMIN,
     element: <UpdateUserByAdmin />,
   },
-  { title: 'Update bill', path: '/bank/update-bill/:id', element: <UpdateBill /> },
-  { title: 'Update user', path: '/bank/update-user/:id', element: <UpdateUserByUser /> },
-  { title: 'User', path: '/bank/users/:id', element: <User /> },
-  { title: 'Bill', path: '/bank/bills/:id', element: <Bill /> },
+  { title: 'Update bill', path: Pathes.UPDATE_BILL, element: <UpdateBill /> },
+  { title: 'Update user', path: Pathes.UPDATE_USER, element: <UpdateUserByUser /> },
+  { title: 'User', path: Pathes.USER, element: <User /> },
+  { title: 'Bill', path: Pathes.BILL, element: <Bill /> },
 ];
