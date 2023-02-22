@@ -13,6 +13,9 @@ interface FormImportation {
   resetForm: () => void;
   isConfirmationModalActive: boolean;
   onSubmit: () => void;
+  getInputErrorMessage: (key: keyof UpdateUserByUser) => string | undefined;
+  isInputValid: (key: keyof UpdateUserByUser) => boolean;
+  isFormValid: () => boolean;
 }
 
 const Form: FC<FormImportation> = ({
@@ -23,6 +26,9 @@ const Form: FC<FormImportation> = ({
   onSubmitWithConfirmation,
   resetForm,
   onSubmit,
+  getInputErrorMessage,
+  isInputValid,
+  isFormValid,
 }) => {
   const { hideModal } = useAction();
 
@@ -46,8 +52,8 @@ const Form: FC<FormImportation> = ({
           type="text"
           value={form.firstName}
           onChange={event => onChange('firstName', event.target.value)}
-          helperText=""
-          error={false}
+          helperText={getInputErrorMessage('firstName')}
+          error={isInputValid('firstName')}
           disabled={isLoading}
         />
         <TextField
@@ -56,8 +62,8 @@ const Form: FC<FormImportation> = ({
           type="text"
           value={form.lastName}
           onChange={event => onChange('lastName', event.target.value)}
-          helperText=""
-          error={false}
+          helperText={getInputErrorMessage('lastName')}
+          error={isInputValid('lastName')}
           disabled={isLoading}
         />
         <TextField
@@ -66,8 +72,8 @@ const Form: FC<FormImportation> = ({
           variant="standard"
           value={form.email}
           onChange={event => onChange('email', event.target.value)}
-          helperText=""
-          error={false}
+          helperText={getInputErrorMessage('email')}
+          error={isInputValid('email')}
           disabled={isLoading}
         />
         <TextField
@@ -76,13 +82,13 @@ const Form: FC<FormImportation> = ({
           variant="standard"
           value={form.phone}
           onChange={event => onChange('phone', event.target.value)}
-          helperText=""
-          error={false}
+          helperText={getInputErrorMessage('phone')}
+          error={isInputValid('phone')}
           disabled={isLoading}
         />
         <Box component="div" display="flex" alignItems="center" gap="10px" marginTop="20px">
           <Button
-            disabled={isLoading}
+            disabled={isLoading || !isFormValid()}
             variant="contained"
             size="small"
             type="submit"
