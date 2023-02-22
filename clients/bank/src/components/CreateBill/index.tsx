@@ -107,6 +107,7 @@ const CreateBillContent: FC = () => {
             size="small"
             type="button"
             sx={{ textTransform: 'capitalize' }}
+            onClick={() => resetForm()}
           >
             Reset
           </Button>
