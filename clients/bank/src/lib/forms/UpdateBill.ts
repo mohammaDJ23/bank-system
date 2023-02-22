@@ -9,22 +9,22 @@ export class UpdateBill extends Form {
 
   @DefineRules([isAmount])
   @DefineVal()
-  @DefineValidation()
+  @DefineValidation({ isValid: true })
   amount: string = '';
 
   @DefineRules([isReceiver])
   @DefineVal()
-  @DefineValidation()
+  @DefineValidation({ isValid: true })
   receiver: string = '';
 
   @DefineRules([isDescription])
   @DefineVal()
-  @DefineValidation()
+  @DefineValidation({ isValid: true })
   description: string = '';
 
   @DefineRules([isDate])
   @DefineVal()
-  @DefineValidation()
+  @DefineValidation({ isValid: true })
   date: string = new Date().toISOString();
 
   constructor({

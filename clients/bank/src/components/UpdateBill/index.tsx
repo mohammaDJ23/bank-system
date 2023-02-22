@@ -23,6 +23,9 @@ const UpdateBillContent: FC = () => {
     initializeForm,
     confirmation,
     isConfirmationActive,
+    getInputErrorMessage,
+    isInputValid,
+    isFormValid,
   } = formMaker(UpdateBill);
   const isFormProcessing = isApiProcessing(UpdateBillApi);
   const isBillProcessing = isInitialApiProcessing(BillApi);
@@ -70,6 +73,9 @@ const UpdateBillContent: FC = () => {
           resetForm={resetForm}
           formSubmition={formSubmition}
           isConfirmationActive={isConfirmationActive()}
+          getInputErrorMessage={getInputErrorMessage}
+          isInputValid={isInputValid}
+          isFormValid={isFormValid}
           form={form}
           isLoading={isFormProcessing}
         />
