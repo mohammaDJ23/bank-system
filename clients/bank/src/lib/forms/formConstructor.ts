@@ -8,6 +8,9 @@ import {
   getInputsRules,
   getCachedInputs,
   getInputsValidation,
+  getInitialInputValidation,
+  InputsValidation,
+  setInputsValidation,
 } from '../';
 
 export abstract class Form {
@@ -88,10 +91,20 @@ export abstract class Form {
     return getInputsValidation(this.getPrototype());
   }
 
+  setInputsValidation(value: InputsValidation) {
+    setInputsValidation(value, this.getPrototype());
+  }
+
   isFormValid() {
     let isFormValid: boolean = true;
     const inputsValidation = this.getInputsValidation();
     for (const key in inputsValidation) isFormValid = isFormValid && inputsValidation[key].isValid;
     return isFormValid;
+  }
+
+  resetInputsValidation() {
+    const inputsValidation = this.getInputsValidation();
+    for (const key in inputsValidation) inputsValidation[key] = getInitialInputValidation();
+    this.setInputsValidation(inputsValidation);
   }
 }

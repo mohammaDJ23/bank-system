@@ -34,6 +34,7 @@ export function useForm() {
 
         function resetForm() {
           resettingForm(initialForm);
+          getForm().resetInputsValidation();
         }
 
         function getRules() {
