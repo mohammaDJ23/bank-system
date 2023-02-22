@@ -2,9 +2,10 @@ import { copyConstructor, ListInstance, lists } from '../../lib';
 import {
   AddPaginationListAction,
   ChangePaginationListPageAction,
-  PaginationListActions,
+  RootActions,
   SetPaginationListAction,
 } from '../actions';
+import { ClearState } from './clearState';
 
 export enum PaginationList {
   SET_LISTS = 'SET_LISTS',
@@ -53,9 +54,13 @@ function addList(state: PaginationListState, action: AddPaginationListAction): P
   return newState;
 }
 
+function clearState(): PaginationListState {
+  return makeListState();
+}
+
 export function paginationListReducer(
   state: PaginationListState = initialState,
-  actions: PaginationListActions
+  actions: RootActions
 ) {
   switch (actions.type) {
     case PaginationList.SET_LISTS:
@@ -66,6 +71,9 @@ export function paginationListReducer(
 
     case PaginationList.ADD_LIST:
       return addList(state, actions);
+
+    case ClearState.CLEAR_STATE:
+      return clearState();
 
     default:
       return state;

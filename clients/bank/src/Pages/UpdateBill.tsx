@@ -1,7 +1,12 @@
 import UpdateBillContent from '../components/UpdateBill';
+import ClearStateProvider from '../lib/providers';
 
 const UpdateBill = () => {
-  return <UpdateBillContent />;
+  return (
+    <ClearStateProvider>
+      <UpdateBillContent />
+    </ClearStateProvider>
+  );
 };
 
 export default UpdateBill;

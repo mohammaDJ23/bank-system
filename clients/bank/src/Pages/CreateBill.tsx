@@ -1,7 +1,12 @@
 import CreateBillContent from '../components/CreateBill';
+import ClearStateProvider from '../lib/providers';
 
 const CreateBill = () => {
-  return <CreateBillContent />;
+  return (
+    <ClearStateProvider>
+      <CreateBillContent />
+    </ClearStateProvider>
+  );
 };
 
 export default CreateBill;

@@ -1,4 +1,5 @@
 import { HideModalAction, RootActions, ShowModalAction } from '../actions';
+import { ClearState } from './clearState';
 
 export enum Modal {
   SHOW_MODAL = 'SHOW_MODAL',
@@ -31,6 +32,10 @@ function hideModal(state: ModalState, action: HideModalAction): ModalState {
   return newState;
 }
 
+function clearState(): ModalState {
+  return {};
+}
+
 export function modalReducer(state: ModalState = initialState, actions: RootActions): ModalState {
   switch (actions.type) {
     case Modal.SHOW_MODAL:
@@ -38,6 +43,9 @@ export function modalReducer(state: ModalState = initialState, actions: RootActi
 
     case Modal.HIDE_MODAL:
       return hideModal(state, actions);
+
+    case ClearState.CLEAR_STATE:
+      return clearState();
 
     default:
       return state;

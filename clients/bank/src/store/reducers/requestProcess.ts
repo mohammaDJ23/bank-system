@@ -1,5 +1,6 @@
 import { RootActions } from '../actions';
 import { ErrorAction, LoadingAction, SuccessAction } from '../actions/requestProcess';
+import { ClearState } from './clearState';
 
 export enum RequestProcess {
   LOADING = 'LOADING',
@@ -73,6 +74,7 @@ export function requsetProcessReducer(
     case RequestProcess.ERROR:
       return error(state, actions);
 
+    case ClearState.CLEAR_STATE:
     case RequestProcess.CLEAN:
       return clean(state);
 
