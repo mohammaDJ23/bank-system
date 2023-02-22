@@ -65,7 +65,7 @@ export function useForm() {
           return getForm().getInputValidation(key).errorMessage;
         }
 
-        function isInputValid(key: keyof T) {
+        function isInputInValid(key: keyof T) {
           return !!getForm().getInputValidation(key).errorMessage;
         }
 
@@ -80,7 +80,7 @@ export function useForm() {
           isConfirmationActive,
           getForm,
           getInputErrorMessage,
-          isInputValid,
+          isInputInValid,
           isFormValid,
         };
       };

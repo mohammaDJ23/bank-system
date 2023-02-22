@@ -25,7 +25,7 @@ const CreateUserContent: FC = () => {
     onSubmit,
     isFormValid,
     getInputErrorMessage,
-    isInputValid,
+    isInputInValid,
   } = formMaker(CreateUser);
   const { isApiProcessing, request } = useRequest();
   const isLoading = isApiProcessing(CreateUserApi);
@@ -64,7 +64,7 @@ const CreateUserContent: FC = () => {
           value={form.firstName}
           onChange={event => onChange('firstName', event.target.value)}
           helperText={getInputErrorMessage('firstName')}
-          error={isInputValid('firstName')}
+          error={isInputInValid('firstName')}
           disabled={isLoading}
         />
         <TextField
@@ -74,7 +74,7 @@ const CreateUserContent: FC = () => {
           value={form.lastName}
           onChange={event => onChange('lastName', event.target.value)}
           helperText={getInputErrorMessage('lastName')}
-          error={isInputValid('lastName')}
+          error={isInputInValid('lastName')}
           disabled={isLoading}
         />
         <TextField
@@ -84,7 +84,7 @@ const CreateUserContent: FC = () => {
           value={form.email}
           onChange={event => onChange('email', event.target.value)}
           helperText={getInputErrorMessage('email')}
-          error={isInputValid('email')}
+          error={isInputInValid('email')}
           disabled={isLoading}
         />
         <TextField
@@ -94,7 +94,7 @@ const CreateUserContent: FC = () => {
           value={form.password}
           onChange={event => onChange('password', event.target.value)}
           helperText={getInputErrorMessage('password')}
-          error={isInputValid('password')}
+          error={isInputInValid('password')}
           disabled={isLoading}
         />
         <TextField
@@ -104,7 +104,7 @@ const CreateUserContent: FC = () => {
           value={form.phone}
           onChange={event => onChange('phone', event.target.value)}
           helperText={getInputErrorMessage('phone')}
-          error={isInputValid('phone')}
+          error={isInputInValid('phone')}
           disabled={isLoading}
         />
         <FormControl variant="standard">
@@ -115,7 +115,7 @@ const CreateUserContent: FC = () => {
             value={form.role}
             onChange={event => onChange('role', event.target.value)}
             label="Role"
-            error={isInputValid('role')}
+            error={isInputInValid('role')}
           >
             {getUserRoles().map(el => (
               <MenuItem key={el.value} value={el.value}>
@@ -123,7 +123,9 @@ const CreateUserContent: FC = () => {
               </MenuItem>
             ))}
           </Select>
-          {isInputValid('role') && <FormHelperText>{getInputErrorMessage('role')}</FormHelperText>}
+          {isInputInValid('role') && (
+            <FormHelperText>{getInputErrorMessage('role')}</FormHelperText>
+          )}
         </FormControl>
         <Box component="div" display="flex" alignItems="center" gap="10px" marginTop="20px">
           <Button

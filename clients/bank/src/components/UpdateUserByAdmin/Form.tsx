@@ -23,7 +23,7 @@ interface FormImportation {
   isConfirmationModalActive: boolean;
   onSubmit: () => void;
   getInputErrorMessage: (key: keyof UpdateUserByAdmin) => string | undefined;
-  isInputValid: (key: keyof UpdateUserByAdmin) => boolean;
+  isInputInValid: (key: keyof UpdateUserByAdmin) => boolean;
   isFormValid: () => boolean;
 }
 
@@ -36,7 +36,7 @@ const Form: FC<FormImportation> = ({
   resetForm,
   onSubmit,
   getInputErrorMessage,
-  isInputValid,
+  isInputInValid,
   isFormValid,
 }) => {
   const { hideModal } = useAction();
@@ -62,7 +62,7 @@ const Form: FC<FormImportation> = ({
           value={form.firstName}
           onChange={event => onChange('firstName', event.target.value)}
           helperText={getInputErrorMessage('firstName')}
-          error={isInputValid('firstName')}
+          error={isInputInValid('firstName')}
           disabled={isLoading}
         />
         <TextField
@@ -72,7 +72,7 @@ const Form: FC<FormImportation> = ({
           value={form.lastName}
           onChange={event => onChange('lastName', event.target.value)}
           helperText={getInputErrorMessage('lastName')}
-          error={isInputValid('lastName')}
+          error={isInputInValid('lastName')}
           disabled={isLoading}
         />
         <TextField
@@ -82,7 +82,7 @@ const Form: FC<FormImportation> = ({
           value={form.email}
           onChange={event => onChange('email', event.target.value)}
           helperText={getInputErrorMessage('email')}
-          error={isInputValid('email')}
+          error={isInputInValid('email')}
           disabled={isLoading}
         />
         <TextField
@@ -92,7 +92,7 @@ const Form: FC<FormImportation> = ({
           value={form.phone}
           onChange={event => onChange('phone', event.target.value)}
           helperText={getInputErrorMessage('phone')}
-          error={isInputValid('phone')}
+          error={isInputInValid('phone')}
           disabled={isLoading}
         />
         <FormControl variant="standard">
@@ -103,7 +103,7 @@ const Form: FC<FormImportation> = ({
             value={form.role}
             onChange={event => onChange('role', event.target.value)}
             label="Role"
-            error={isInputValid('role')}
+            error={isInputInValid('role')}
           >
             {getUserRoles().map(el => (
               <MenuItem key={el.value} value={el.value}>
@@ -111,7 +111,9 @@ const Form: FC<FormImportation> = ({
               </MenuItem>
             ))}
           </Select>
-          {isInputValid('role') && <FormHelperText>{getInputErrorMessage('role')}</FormHelperText>}
+          {isInputInValid('role') && (
+            <FormHelperText>{getInputErrorMessage('role')}</FormHelperText>
+          )}
         </FormControl>
         <Box component="div" display="flex" alignItems="center" gap="10px" marginTop="20px">
           <Button

@@ -14,7 +14,7 @@ const CreateBillContent: FC = () => {
     resetForm,
     onSubmit,
     getInputErrorMessage,
-    isInputValid,
+    isInputInValid,
     isFormValid,
   } = formMaker(CreateBill);
   const { isApiProcessing, request } = useRequest();
@@ -55,7 +55,7 @@ const CreateBillContent: FC = () => {
           value={form.amount}
           onChange={event => onChange('amount', event.target.value)}
           helperText={getInputErrorMessage('amount')}
-          error={isInputValid('amount')}
+          error={isInputInValid('amount')}
           disabled={isLoading}
         />
         <TextField
@@ -65,7 +65,7 @@ const CreateBillContent: FC = () => {
           value={form.receiver}
           onChange={event => onChange('receiver', event.target.value)}
           helperText={getInputErrorMessage('receiver')}
-          error={isInputValid('receiver')}
+          error={isInputInValid('receiver')}
           disabled={isLoading}
         />
         <TextField
@@ -75,7 +75,7 @@ const CreateBillContent: FC = () => {
           value={form.date}
           onChange={event => onChange('date', event.target.value)}
           helperText={getInputErrorMessage('date')}
-          error={isInputValid('date')}
+          error={isInputInValid('date')}
           InputLabelProps={{ shrink: true }}
           disabled={isLoading}
         />
@@ -88,7 +88,7 @@ const CreateBillContent: FC = () => {
           value={form.description}
           onChange={event => onChange('description', event.target.value)}
           helperText={getInputErrorMessage('description')}
-          error={isInputValid('description')}
+          error={isInputInValid('description')}
           disabled={isLoading}
         />
         <Box component="div" display="flex" alignItems="center" gap="10px" marginTop="20px">

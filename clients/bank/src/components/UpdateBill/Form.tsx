@@ -13,7 +13,7 @@ interface FormImportation {
   formSubmition: () => void;
   resetForm: () => void;
   getInputErrorMessage: (key: keyof UpdateBill) => string | undefined;
-  isInputValid: (key: keyof UpdateBill) => boolean;
+  isInputInValid: (key: keyof UpdateBill) => boolean;
   isFormValid: () => boolean;
   isConfirmationActive: boolean;
 }
@@ -24,7 +24,7 @@ const Form: FC<FormImportation> = ({
   resetForm,
   formSubmition,
   getInputErrorMessage,
-  isInputValid,
+  isInputInValid,
   isFormValid,
   form,
   isLoading,
@@ -53,7 +53,7 @@ const Form: FC<FormImportation> = ({
           value={form.amount}
           onChange={event => onChange('amount', event.target.value)}
           helperText={getInputErrorMessage('amount')}
-          error={isInputValid('amount')}
+          error={isInputInValid('amount')}
           disabled={isLoading}
         />
         <TextField
@@ -63,7 +63,7 @@ const Form: FC<FormImportation> = ({
           value={form.receiver}
           onChange={event => onChange('receiver', event.target.value)}
           helperText={getInputErrorMessage('receiver')}
-          error={isInputValid('receiver')}
+          error={isInputInValid('receiver')}
           disabled={isLoading}
         />
         <TextField
@@ -73,7 +73,7 @@ const Form: FC<FormImportation> = ({
           value={form.date}
           onChange={event => onChange('date', event.target.value)}
           helperText={getInputErrorMessage('date')}
-          error={isInputValid('date')}
+          error={isInputInValid('date')}
           InputLabelProps={{ shrink: true }}
           disabled={isLoading}
         />
@@ -86,7 +86,7 @@ const Form: FC<FormImportation> = ({
           value={form.description}
           onChange={event => onChange('description', event.target.value)}
           helperText={getInputErrorMessage('description')}
-          error={isInputValid('description')}
+          error={isInputInValid('description')}
           disabled={isLoading}
         />
         <Box component="div" display="flex" alignItems="center" gap="10px" marginTop="20px">
