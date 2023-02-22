@@ -23,6 +23,9 @@ const UpdateUserByUserContent: FC = () => {
     initializeForm,
     confirmation,
     isConfirmationActive,
+    getInputErrorMessage,
+    isInputInValid,
+    isFormValid,
   } = formMaker(UpdateUserByUser);
   const isUserProcessing = isInitialApiProcessing(UserApi);
   const isFormProcessing = isApiProcessing(UpdateUserByUserApi);
@@ -72,6 +75,9 @@ const UpdateUserByUserContent: FC = () => {
           isConfirmationModalActive={isConfirmationActive()}
           resetForm={resetForm}
           onSubmitWithConfirmation={confirmation}
+          getInputErrorMessage={getInputErrorMessage}
+          isInputInValid={isInputInValid}
+          isFormValid={isFormValid}
         />
       )}
     </FormContainer>

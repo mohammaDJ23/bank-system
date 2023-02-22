@@ -1,5 +1,7 @@
 import { copyConstructor, Form as FormConstructor, forms, InputValidation } from '../../lib';
-import { FormActions, OnChangeAction, ResetFormAction, SetFormAction } from '../actions/form';
+import { RootActions } from '../actions';
+import { OnChangeAction, ResetFormAction, SetFormAction } from '../actions/form';
+import { ClearState } from './clearState';
 
 export enum Form {
   SET_FORM = 'SET_FORM',
@@ -59,7 +61,11 @@ function resetForm(state: FormState, action: ResetFormAction): FormState {
   return newState;
 }
 
-export function FormReducer(state: FormState = initialState, actions: FormActions): FormState {
+function cleanState(): FormState {
+  return makeFormsState();
+}
+
+export function FormReducer(state: FormState = initialState, actions: RootActions): FormState {
   switch (actions.type) {
     case Form.SET_FORM:
       return setForm(state, actions);
@@ -69,6 +75,9 @@ export function FormReducer(state: FormState = initialState, actions: FormAction
 
     case Form.RESET_FORM:
       return resetForm(state, actions);
+
+    case ClearState.CLEAR_STATE:
+      return cleanState();
 
     default:
       return state;

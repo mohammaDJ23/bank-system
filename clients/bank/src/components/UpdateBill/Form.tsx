@@ -12,6 +12,9 @@ interface FormImportation {
   onSubmitWithConfirmation: () => void;
   formSubmition: () => void;
   resetForm: () => void;
+  getInputErrorMessage: (key: keyof UpdateBill) => string | undefined;
+  isInputInValid: (key: keyof UpdateBill) => boolean;
+  isFormValid: () => boolean;
   isConfirmationActive: boolean;
 }
 
@@ -20,6 +23,9 @@ const Form: FC<FormImportation> = ({
   onSubmitWithConfirmation,
   resetForm,
   formSubmition,
+  getInputErrorMessage,
+  isInputInValid,
+  isFormValid,
   form,
   isLoading,
   isConfirmationActive,
@@ -46,8 +52,8 @@ const Form: FC<FormImportation> = ({
           type="number"
           value={form.amount}
           onChange={event => onChange('amount', event.target.value)}
-          helperText=""
-          error={false}
+          helperText={getInputErrorMessage('amount')}
+          error={isInputInValid('amount')}
           disabled={isLoading}
         />
         <TextField
@@ -56,8 +62,8 @@ const Form: FC<FormImportation> = ({
           type="text"
           value={form.receiver}
           onChange={event => onChange('receiver', event.target.value)}
-          helperText=""
-          error={false}
+          helperText={getInputErrorMessage('receiver')}
+          error={isInputInValid('receiver')}
           disabled={isLoading}
         />
         <TextField
@@ -66,8 +72,8 @@ const Form: FC<FormImportation> = ({
           variant="standard"
           value={form.date}
           onChange={event => onChange('date', event.target.value)}
-          helperText=""
-          error={false}
+          helperText={getInputErrorMessage('date')}
+          error={isInputInValid('date')}
           InputLabelProps={{ shrink: true }}
           disabled={isLoading}
         />
@@ -79,13 +85,13 @@ const Form: FC<FormImportation> = ({
           variant="standard"
           value={form.description}
           onChange={event => onChange('description', event.target.value)}
-          helperText=""
-          error={false}
+          helperText={getInputErrorMessage('description')}
+          error={isInputInValid('description')}
           disabled={isLoading}
         />
         <Box component="div" display="flex" alignItems="center" gap="10px" marginTop="20px">
           <Button
-            disabled={isLoading}
+            disabled={isLoading || !isFormValid()}
             variant="contained"
             size="small"
             type="submit"

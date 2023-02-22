@@ -1,4 +1,5 @@
 import { RootActions, SetListContainerElementAction } from '../actions';
+import { ClearState } from './clearState';
 
 export enum ListContainer {
   SET_LIST_CONTAINER_ELEMENT = 'SET_LIST_CONTAINER_ELEMENT',
@@ -22,6 +23,10 @@ function setListContainerElement(
   };
 }
 
+function clearState(state: ListContainerState): ListContainerState {
+  return { ...state, element: null };
+}
+
 export function listContainerReducer(
   state: ListContainerState = initialState,
   actions: RootActions
@@ -29,6 +34,9 @@ export function listContainerReducer(
   switch (actions.type) {
     case ListContainer.SET_LIST_CONTAINER_ELEMENT:
       return setListContainerElement(state, actions);
+
+    case ClearState.CLEAR_STATE:
+      return clearState(state);
 
     default:
       return state;

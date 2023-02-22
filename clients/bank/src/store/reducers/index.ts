@@ -5,3 +5,4 @@ export * from './history';
 export * from './specificDetails';
 export * from './paginationList';
 export * from './form';
+export * from './clearState';

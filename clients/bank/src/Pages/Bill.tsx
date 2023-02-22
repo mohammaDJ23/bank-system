@@ -1,7 +1,12 @@
 import BillContent from '../components/Bill';
+import ClearStateProvider from '../lib/providers';
 
 const Bill = () => {
-  return <BillContent />;
+  return (
+    <ClearStateProvider>
+      <BillContent />
+    </ClearStateProvider>
+  );
 };
 
 export default Bill;

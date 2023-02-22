@@ -25,7 +25,7 @@ export class CreateBill extends Form {
   @DefineRules([isDate])
   @DefineVal()
   @CacheInput()
-  @DefineValidation({ isValid: true })
+  @DefineValidation()
   date: string = new Date().toISOString();
 
   constructor() {

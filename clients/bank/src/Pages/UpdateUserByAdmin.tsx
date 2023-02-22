@@ -1,13 +1,16 @@
 import { useParams } from 'react-router-dom';
 import ProtectAdminRouteProvider from '../components/hoc/ProtectAdminRouteProvider';
 import UpdateUserByAdminContent from '../components/UpdateUserByAdmin';
+import ClearStateProvider from '../lib/providers';
 
 const UpdateUserByAdmin = () => {
   const params = useParams();
 
   return (
     <ProtectAdminRouteProvider path={`/bank/users/${params.id}`}>
-      <UpdateUserByAdminContent />
+      <ClearStateProvider>
+        <UpdateUserByAdminContent />
+      </ClearStateProvider>
     </ProtectAdminRouteProvider>
   );
 };

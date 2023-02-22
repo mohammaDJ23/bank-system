@@ -7,6 +7,7 @@ import {
   isPhone,
   isRole,
   UserRoles,
+  DefineValidation,
 } from '../';
 import { Form } from './formConstructor';
 
@@ -16,22 +17,27 @@ export class UpdateUserByAdmin extends Form {
 
   @DefineRules([isFirstName])
   @DefineVal()
+  @DefineValidation()
   firstName: string = '';
 
   @DefineRules([isLastName])
   @DefineVal()
+  @DefineValidation()
   lastName: string = '';
 
   @DefineRules([isEmail])
   @DefineVal()
+  @DefineValidation()
   email: string = '';
 
   @DefineRules([isPhone])
   @DefineVal()
+  @DefineValidation()
   phone: string = '';
 
   @DefineRules([isRole])
   @DefineVal()
+  @DefineValidation()
   role: UserRoles = UserRoles.USER;
 
   constructor({
@@ -58,18 +64,22 @@ export class UpdateUserByUser extends Form {
 
   @DefineRules([isFirstName])
   @DefineVal()
+  @DefineValidation()
   firstName: string = '';
 
   @DefineRules([isLastName])
   @DefineVal()
+  @DefineValidation()
   lastName: string = '';
 
   @DefineRules([isEmail])
   @DefineVal()
+  @DefineValidation()
   email: string = '';
 
   @DefineRules([isPhone])
   @DefineVal()
+  @DefineValidation()
   phone: string = '';
 
   constructor({
