@@ -97,8 +97,11 @@ export abstract class Form {
 
   isFormValid() {
     let isFormValid: boolean = true;
-    const inputsValidation = this.getInputsValidation();
-    for (const key in inputsValidation) isFormValid = isFormValid && inputsValidation[key].isValid;
+    for (const key in this) {
+      for (const ruleFn of this.getRule(key)) {
+        isFormValid = isFormValid && !!!ruleFn(this[key]);
+      }
+    }
     return isFormValid;
   }
 

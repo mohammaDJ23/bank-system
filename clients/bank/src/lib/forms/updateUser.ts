@@ -17,27 +17,27 @@ export class UpdateUserByAdmin extends Form {
 
   @DefineRules([isFirstName])
   @DefineVal()
-  @DefineValidation({ isValid: true })
+  @DefineValidation()
   firstName: string = '';
 
   @DefineRules([isLastName])
   @DefineVal()
-  @DefineValidation({ isValid: true })
+  @DefineValidation()
   lastName: string = '';
 
   @DefineRules([isEmail])
   @DefineVal()
-  @DefineValidation({ isValid: true })
+  @DefineValidation()
   email: string = '';
 
   @DefineRules([isPhone])
   @DefineVal()
-  @DefineValidation({ isValid: true })
+  @DefineValidation()
   phone: string = '';
 
   @DefineRules([isRole])
   @DefineVal()
-  @DefineValidation({ isValid: true })
+  @DefineValidation()
   role: UserRoles = UserRoles.USER;
 
   constructor({
@@ -64,22 +64,22 @@ export class UpdateUserByUser extends Form {
 
   @DefineRules([isFirstName])
   @DefineVal()
-  @DefineValidation({ isValid: true })
+  @DefineValidation()
   firstName: string = '';
 
   @DefineRules([isLastName])
   @DefineVal()
-  @DefineValidation({ isValid: true })
+  @DefineValidation()
   lastName: string = '';
 
   @DefineRules([isEmail])
   @DefineVal()
-  @DefineValidation({ isValid: true })
+  @DefineValidation()
   email: string = '';
 
   @DefineRules([isPhone])
   @DefineVal()
-  @DefineValidation({ isValid: true })
+  @DefineValidation()
   phone: string = '';
 
   constructor({
