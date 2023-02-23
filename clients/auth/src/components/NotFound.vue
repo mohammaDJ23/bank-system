@@ -5,6 +5,6 @@ import { useRedirect } from '../hooks';
 const { redirect } = useRedirect();
 
 onBeforeMount(() => {
-  redirect('/');
+  redirect('/auth/login');
 });
 </script>
