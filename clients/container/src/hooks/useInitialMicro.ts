@@ -10,9 +10,7 @@ export function useInitialMicro(mount: Mount) {
     if (ref.current) {
       const { onParentNavigate } = mount(ref.current, {
         onChildNavigate: function (path) {
-          if (location.pathname !== path) {
-            navigate(path);
-          }
+          navigate(path);
         },
 
         initialPath: location.pathname,
