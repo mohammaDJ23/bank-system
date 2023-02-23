@@ -21,5 +21,5 @@ export const routes = [
     },
   },
   { path: pathes.forgotPassword, name: 'ForgotPassword', component: ForgotPassword },
-  { path: '/:catchAll(.*)', name: 'NotFound', component: NotFound },
+  { path: '/:catchAll(.*)*', name: 'NotFound', component: NotFound },
 ];
