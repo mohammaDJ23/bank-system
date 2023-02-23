@@ -11,9 +11,9 @@ import {
 } from '@mui/material';
 import { notification } from 'antd';
 import { CreateUser } from '../../lib';
-import { useAuth, useForm, useRequest } from '../../hooks';
+import { useAuth, useForm, useRequest, useFocus } from '../../hooks';
 import { CreateUserApi } from '../../apis';
-import { FC, useCallback } from 'react';
+import { FC, useCallback, useEffect } from 'react';
 
 const CreateUserContent: FC = () => {
   const { getUserRoles } = useAuth();
@@ -28,6 +28,7 @@ const CreateUserContent: FC = () => {
     isInputInValid,
   } = formMaker(CreateUser);
   const { isApiProcessing, request } = useRequest();
+  const { focus } = useFocus();
   const isLoading = isApiProcessing(CreateUserApi);
   const form = getForm();
 
@@ -42,6 +43,10 @@ const CreateUserContent: FC = () => {
       });
     });
   }, [form, resetForm, onSubmit, request]);
+
+  useEffect(() => {
+    focus('firstName');
+  }, []);
 
   return (
     <FormContainer>
@@ -66,6 +71,7 @@ const CreateUserContent: FC = () => {
           helperText={getInputErrorMessage('firstName')}
           error={isInputInValid('firstName')}
           disabled={isLoading}
+          name="firstName"
         />
         <TextField
           label="Last Name"

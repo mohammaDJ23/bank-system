@@ -2,8 +2,8 @@ import FormContainer from '../../layout/FormContainer';
 import { Box, TextField, Button } from '@mui/material';
 import { notification } from 'antd';
 import { CreateBill } from '../../lib';
-import { useForm, useRequest } from '../../hooks';
-import { FC, useCallback } from 'react';
+import { useForm, useRequest, useFocus } from '../../hooks';
+import { FC, useCallback, useEffect } from 'react';
 import { CreateBillApi } from '../../apis';
 
 const CreateBillContent: FC = () => {
@@ -18,6 +18,7 @@ const CreateBillContent: FC = () => {
     isFormValid,
   } = formMaker(CreateBill);
   const { isApiProcessing, request } = useRequest();
+  const { focus } = useFocus();
   const isLoading = isApiProcessing(CreateBillApi);
   const form = getForm();
 
@@ -33,6 +34,10 @@ const CreateBillContent: FC = () => {
       });
     });
   }, [form, resetForm, onSubmit, request, onChange]);
+
+  useEffect(() => {
+    focus('amount');
+  }, []);
 
   return (
     <FormContainer>
@@ -57,6 +62,7 @@ const CreateBillContent: FC = () => {
           helperText={getInputErrorMessage('amount')}
           error={isInputInValid('amount')}
           disabled={isLoading}
+          name="amount"
         />
         <TextField
           label="Receiver"
