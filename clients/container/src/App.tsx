@@ -2,7 +2,6 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import Auth from './components/Auth';
 import Bank from './components/Bank';
 import UnAuthorized from './components/UnAuthorized';
-import { isUserAuthenticated } from './lib';
 
 function App() {
   return (
