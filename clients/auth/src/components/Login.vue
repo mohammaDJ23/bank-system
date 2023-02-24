@@ -96,12 +96,7 @@ async function validate(event) {
 
       for (let [key, value] of storableData) LocalStorage.setItem(key, value);
 
-      if (isMicroFrontEnd()) redirect('/');
-      else
-        notification.success({
-          message: 'Success',
-          description: 'You are logged in.',
-        });
+      redirect('/');
     });
   }
 }
