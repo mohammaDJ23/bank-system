@@ -7,19 +7,13 @@ import { isUserAuthenticated } from './lib';
 function App() {
   return (
     <BrowserRouter>
-      {isUserAuthenticated() ? (
-        <Routes>
-          <Route path="/bank/*" element={<Bank />} />
-          <Route path="/" element={<div>container home</div>} />
-          <Route path="*" element={<Navigate to="/" />} />
-        </Routes>
-      ) : (
-        <Routes>
-          <Route path="/auth/*" element={<Auth />} />
-          <Route path="/unauthorized" element={<UnAuthorized />} />
-          <Route path="*" element={<Navigate to="/unauthorized" />} />
-        </Routes>
-      )}
+      <Routes>
+        <Route path="/" element={<div>container home</div>} />
+        <Route path="/bank/*" element={<Bank />} />
+        <Route path="/auth/*" element={<Auth />} />
+        <Route path="/unauthorized" element={<UnAuthorized />} />
+        <Route path="*" element={<Navigate to="/unauthorized" />} />
+      </Routes>
     </BrowserRouter>
   );
 }
