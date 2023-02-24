@@ -53,10 +53,9 @@
 <script setup>
 import { reactive, onMounted, ref, onBeforeMount } from 'vue';
 import Card from './Card.vue';
-import { LocalStorage, Login, isMicroFrontEnd, pathes } from '../lib';
+import { LocalStorage, Login, pathes } from '../lib';
 import { useFocus, useRequest, useRedirect } from '../hooks';
 import { LoginApi } from '../apis';
-import { notification } from 'ant-design-vue';
 import { decodeToken } from 'react-jwt';
 import { isUserAuthenticated } from '../lib';
 
@@ -71,7 +70,7 @@ const isUserLoggedIn = isUserAuthenticated();
 
 onBeforeMount(() => {
   if (isUserLoggedIn) {
-    redirect('/');
+    redirect(pathes.initial);
   }
 });
 
@@ -96,7 +95,7 @@ async function validate(event) {
 
       for (let [key, value] of storableData) LocalStorage.setItem(key, value);
 
-      redirect('/');
+      redirect(pathes.initial);
     });
   }
 }

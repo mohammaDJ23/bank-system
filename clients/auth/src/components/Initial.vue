@@ -6,7 +6,7 @@
 
 <script setup>
 import { onBeforeMount } from 'vue';
-import { isUserAuthenticated } from '../lib';
+import { isUserAuthenticated, pathes } from '../lib';
 import { useRedirect } from '../hooks';
 
 const { redirect } = useRedirect();
@@ -14,7 +14,7 @@ const isUserLoggedIn = isUserAuthenticated();
 
 onBeforeMount(() => {
   if (!isUserLoggedIn) {
-    redirect('/auth/login');
+    redirect(pathes.login);
   }
 });
 </script>
