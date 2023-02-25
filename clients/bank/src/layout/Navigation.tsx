@@ -73,7 +73,8 @@ const Navigation: FC<PropsWithChildren> = ({ children }) => {
   const [open, setOpen] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
-  const { isAdmin, isUser } = useAuth();
+  const { isAdmin, isUser, isUserAuthenticated } = useAuth();
+  const isUserLoggedIn = isUserAuthenticated();
   const activeRoute = routes.find(route => matchPath(route.path, location.pathname));
   const activeRouteTitle = activeRoute?.title || 'Bank system';
 
@@ -112,15 +113,17 @@ const Navigation: FC<PropsWithChildren> = ({ children }) => {
     <>
       <AppBar>
         <Toolbar>
-          <IconButton
-            color="inherit"
-            aria-label="open drawer"
-            onClick={() => setOpen(true)}
-            edge="start"
-            sx={{ mr: 2 }}
-          >
-            <MenuIcon sx={{ color: 'white' }} />
-          </IconButton>
+          {isUserLoggedIn && (
+            <IconButton
+              color="inherit"
+              aria-label="open drawer"
+              onClick={() => setOpen(true)}
+              edge="start"
+              sx={{ mr: 2 }}
+            >
+              <MenuIcon sx={{ color: 'white' }} />
+            </IconButton>
+          )}
 
           <Typography variant="h6" noWrap component="div" sx={{ color: 'white' }}>
             {activeRouteTitle}
@@ -130,37 +133,41 @@ const Navigation: FC<PropsWithChildren> = ({ children }) => {
 
       <ChildrenWrapper>{children}</ChildrenWrapper>
 
-      <Drawer sx={{ zIndex: 11 }} anchor="left" open={open} onClose={() => setOpen(false)}>
-        <Box sx={{ width: 250 }} role="presentation">
-          <DrawerHeader>
-            <CloseIcon onClick={() => setOpen(false)} />
-          </DrawerHeader>
+      {isUserLoggedIn && (
+        <Drawer sx={{ zIndex: 11 }} anchor="left" open={open} onClose={() => setOpen(false)}>
+          <Box sx={{ width: 250 }} role="presentation">
+            <DrawerHeader>
+              <CloseIcon onClick={() => setOpen(false)} />
+            </DrawerHeader>
 
-          <Divider />
+            <Divider />
 
-          <List>
-            {navigationItems.map((item, index) => {
-              const navigationEl = (
-                <ListItem
-                  onClick={() => {
-                    setOpen(false);
-                    if (!isSamePath(item)) navigate(item.path);
-                  }}
-                  key={index}
-                  disablePadding
-                >
-                  <ListItemButton>
-                    <StyledListItemIcon active={isPathActive(item)}>{item.icon}</StyledListItemIcon>
-                    <StyledListItemText active={isPathActive(item)} primary={item.title} />
-                  </ListItemButton>
-                </ListItem>
-              );
+            <List>
+              {navigationItems.map((item, index) => {
+                const navigationEl = (
+                  <ListItem
+                    onClick={() => {
+                      setOpen(false);
+                      if (!isSamePath(item)) navigate(item.path);
+                    }}
+                    key={index}
+                    disablePadding
+                  >
+                    <ListItemButton>
+                      <StyledListItemIcon active={isPathActive(item)}>
+                        {item.icon}
+                      </StyledListItemIcon>
+                      <StyledListItemText active={isPathActive(item)} primary={item.title} />
+                    </ListItemButton>
+                  </ListItem>
+                );
 
-              return isAdmin() ? navigationEl : isUser(item.role) && navigationEl;
-            })}
-          </List>
-        </Box>
-      </Drawer>
+                return isAdmin() ? navigationEl : isUser(item.role) && navigationEl;
+              })}
+            </List>
+          </Box>
+        </Drawer>
+      )}
     </>
   );
 };

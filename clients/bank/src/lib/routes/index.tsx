@@ -10,6 +10,8 @@ const UpdateUserByUser = lazy(() => import('../../Pages/UpdateUserByUser'));
 const User = lazy(() => import('../../Pages/User'));
 const Users = lazy(() => import('../../Pages/Users'));
 const Dashboard = lazy(() => import('../../Pages/Dashboard'));
+const UnAuthorized = lazy(() => import('../../Pages/UnAuthorized'));
+const NotFound = lazy(() => import('../../Pages/NotFound'));
 
 export enum Pathes {
   INITIAL = '/',
@@ -25,6 +27,7 @@ export enum Pathes {
   USER = '/bank/users/:id',
   BILL = '/bank/bills/:id',
   UNAUTHORIZED = '/bank/unauthorized',
+  NOT_FOUND = '/bank/not-found',
 }
 
 export const routes = [
@@ -42,4 +45,6 @@ export const routes = [
   { title: 'Update user', path: Pathes.UPDATE_USER, element: <UpdateUserByUser /> },
   { title: 'User', path: Pathes.USER, element: <User /> },
   { title: 'Bill', path: Pathes.BILL, element: <Bill /> },
+  { title: 'permission denied', path: Pathes.UNAUTHORIZED, element: <UnAuthorized /> },
+  { title: 'NotFound', path: Pathes.UNAUTHORIZED, element: <NotFound /> },
 ];
