@@ -1,5 +1,5 @@
 <template>
-  <Card title="User login" :is-loading="isFormProcessing">
+  <Card v-if="!isUserLoggedIn" title="User login" :is-loading="isFormProcessing">
     <v-form ref="formRef" v-model="valid" lazy-validation @submit="validate">
       <v-text-field
         clearable
@@ -51,13 +51,13 @@
 </template>
 
 <script setup>
-import { reactive, onMounted, ref } from 'vue';
+import { reactive, onMounted, ref, onBeforeMount } from 'vue';
 import Card from './Card.vue';
-import { LocalStorage, Login, isMicroFrontEnd, pathes } from '../lib';
+import { LocalStorage, Login, pathes } from '../lib';
 import { useFocus, useRequest, useRedirect } from '../hooks';
 import { LoginApi } from '../apis';
-import { notification } from 'ant-design-vue';
 import { decodeToken } from 'react-jwt';
+import { isUserAuthenticated } from '../lib';
 
 const formRef = ref();
 const form = reactive(new Login());
@@ -66,6 +66,13 @@ const { isApiProcessing, request } = useRequest();
 const { redirect } = useRedirect();
 const { focus } = useFocus();
 const isFormProcessing = isApiProcessing(LoginApi);
+const isUserLoggedIn = isUserAuthenticated();
+
+onBeforeMount(() => {
+  if (isUserLoggedIn) {
+    redirect(pathes.initial);
+  }
+});
 
 onMounted(() => {
   focus('email');
@@ -88,12 +95,7 @@ async function validate(event) {
 
       for (let [key, value] of storableData) LocalStorage.setItem(key, value);
 
-      if (isMicroFrontEnd()) redirect('/');
-      else
-        notification.success({
-          message: 'Success',
-          description: 'You are logged in.',
-        });
+      redirect(pathes.initial);
     });
   }
 }
