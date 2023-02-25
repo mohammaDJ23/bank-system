@@ -1,6 +1,6 @@
 import CreateUserContent from '../components/CreateUser';
 import ProtectAdminRouteProvider from '../components/hoc/ProtectAdminRouteProvider';
-import ClearStateProvider from '../lib/providers';
+import ClearStateProvider from '../lib/providers/ClearStateProvider';
 
 const CreateUser = () => {
   return (

@@ -1,7 +1,7 @@
 import ProtectAdminRouteProvider from '../components/hoc/ProtectAdminRouteProvider';
 import UsersContent from '../components/Users';
 import { useAuth } from '../hooks';
-import ClearStateProvider from '../lib/providers';
+import ClearStateProvider from '../lib/providers/ClearStateProvider';
 
 const Users = () => {
   const { getTokenInfo } = useAuth();
