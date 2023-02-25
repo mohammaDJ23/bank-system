@@ -13,7 +13,7 @@ import LoadingFallback from './layout/LoadingFallback';
 import { Provider } from 'react-redux';
 import { store } from './store';
 import HistoryProvider from './components/hoc/HistoryProvider';
-import UnAuthorized from './components/UnAuthorized';
+import UnAuthorized from './Pages/UnAuthorized';
 
 interface AppImportation {
   history: BrowserHistory | MemoryHistory;
@@ -48,8 +48,8 @@ const App: FC<AppImportation> = props => {
             </Routes>
           ) : (
             <Routes>
-              <Route path={Pathes.UN_AUTHORIZED} element={<UnAuthorized />} />
-              <Route path="*" element={<Navigate to={Pathes.UN_AUTHORIZED} replace />} />
+              <Route path={Pathes.UNAUTHORIZED} element={<UnAuthorized />} />
+              <Route path="*" element={<Navigate to={Pathes.UNAUTHORIZED} replace />} />
             </Routes>
           )}
         </HistoryProvider>

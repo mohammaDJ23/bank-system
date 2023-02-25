@@ -24,7 +24,7 @@ export enum Pathes {
   UPDATE_USER = '/bank/update-user/:id',
   USER = '/bank/users/:id',
   BILL = '/bank/bills/:id',
-  UN_AUTHORIZED = '/bank/unauthorized',
+  UNAUTHORIZED = '/bank/unauthorized',
 }
 
 export const routes = [
