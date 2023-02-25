@@ -41,7 +41,9 @@ const App: FC<AppImportation> = props => {
 
               <Route
                 path="*"
-                element={<Navigate to={isMicroFrontEnd() ? Pathes.INITIAL : Pathes.CREATE_BILL} />}
+                element={
+                  <Navigate to={isMicroFrontEnd() ? Pathes.DASHBOARD : Pathes.CREATE_BILL} />
+                }
               />
             </Routes>
           ) : (
