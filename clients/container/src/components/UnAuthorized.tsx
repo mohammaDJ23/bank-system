@@ -9,7 +9,7 @@ const UnAuthorized = () => {
 
   useEffect(() => {
     if (isUserLoggedIn) {
-      navigate(pathes.initial);
+      navigate(pathes.dashboard);
     }
   }, [isUserLoggedIn, navigate]);
 

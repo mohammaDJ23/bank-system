@@ -8,7 +8,6 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path={pathes.initial} element={<div>container home</div>} />
         <Route path={pathes.bank} element={<Bank />} />
         <Route path={pathes.auth} element={<Auth />} />
         <Route path={pathes.unauthorized} element={<UnAuthorized />} />

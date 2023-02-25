@@ -9,10 +9,12 @@ const UpdateUserByAdmin = lazy(() => import('../../Pages/UpdateUserByAdmin'));
 const UpdateUserByUser = lazy(() => import('../../Pages/UpdateUserByUser'));
 const User = lazy(() => import('../../Pages/User'));
 const Users = lazy(() => import('../../Pages/Users'));
+const Dashboard = lazy(() => import('../../Pages/Dashboard'));
 
 export enum Pathes {
   INITIAL = '/',
   LOGIN = '/auth/login',
+  DASHBOARD = '/bank/dashboard',
   BILLS = '/bank/bills',
   USERS = '/bank/users',
   CREATE_BILL = '/bank/create-bill',
@@ -26,6 +28,7 @@ export enum Pathes {
 }
 
 export const routes = [
+  { title: 'Dashboard', path: Pathes.DASHBOARD, element: <Dashboard /> },
   { title: 'Bills', path: Pathes.BILLS, element: <Bills /> },
   { title: 'Users', path: Pathes.USERS, element: <Users /> },
   { title: 'Create bill', path: Pathes.CREATE_BILL, element: <CreateBill /> },
