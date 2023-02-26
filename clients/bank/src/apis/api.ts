@@ -165,3 +165,12 @@ export class DeleteUserApi extends RootApi<IdReq> {
     );
   }
 }
+
+export class TotalAmountApi extends RootApi {
+  constructor() {
+    super({
+      url: '/bill/total-amount',
+      method: 'get',
+    });
+  }
+}
