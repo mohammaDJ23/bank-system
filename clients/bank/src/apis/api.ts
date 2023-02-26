@@ -7,6 +7,7 @@ import {
   UpdateUserByAdmin,
   UpdateUserByUser,
   ListParams,
+  BillObj,
 } from '../lib';
 import { RootApiObj } from './resetApi';
 
@@ -207,6 +208,19 @@ export class BillsLastWeekApi extends RootApi {
     super({
       url: '/bills/last-week',
       method: 'get',
+    });
+  }
+}
+
+export class BillsMaxAmountsApi extends RootApi<ListParams<BillObj>> {
+  constructor(data: ListParams<BillObj>) {
+    super({
+      url: '/bills/max-amounts',
+      method: 'post',
+      data,
+      headers: {
+        'Content-type': 'application/json',
+      },
     });
   }
 }

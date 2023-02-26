@@ -17,7 +17,7 @@ export interface ListInstanceConstructor<K extends ListInstance> {
   new (...args: any[]): ListInstance<ListType<K>>;
 }
 
-export type ListParams<T> = Pick<ListInstance<T>, 'take' | 'page'>;
+export type ListParams<T = any> = Pick<ListInstance<T>, 'take' | 'page'>;
 
 export type ListResponse<T extends unknown = unknown> = [T[], number];
 
