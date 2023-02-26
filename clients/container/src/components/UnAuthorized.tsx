@@ -1,17 +1,10 @@
-import { useEffect } from 'react';
 import { Box, Typography, Button } from '@mui/material';
-import { useNavigate } from 'react-router-dom';
+import { Navigate, useNavigate } from 'react-router-dom';
 import { isUserAuthenticated, pathes } from '../lib';
 
 const UnAuthorized = () => {
   const navigate = useNavigate();
   const isUserLoggedIn = isUserAuthenticated();
-
-  useEffect(() => {
-    if (isUserLoggedIn) {
-      navigate(pathes.dashboard);
-    }
-  }, [isUserLoggedIn, navigate]);
 
   return !isUserLoggedIn ? (
     <Box component="div" padding="30px" textAlign="center">
@@ -28,7 +21,9 @@ const UnAuthorized = () => {
         Navigate to the login page
       </Button>
     </Box>
-  ) : null;
+  ) : (
+    <Navigate to={pathes.dashboard} />
+  );
 };
 
 export default UnAuthorized;
