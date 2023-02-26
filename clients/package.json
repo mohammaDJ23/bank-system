@@ -5,16 +5,13 @@
   "main": "index.js",
   "scripts": {
     "webpack:start:dev:auth": "npm run webpack:start:dev --prefix auth",
-    "webpack:start:micro:auth": "npm run webpack:start:micro --prefix auth",
     "webpack:start:dev:bank": "npm run webpack:start:dev --prefix bank",
-    "webpack:start:micro:bank": "npm run webpack:start:micro --prefix bank",
     "webpack:start:dev:container": "npm run webpack:start:dev --prefix container",
     "webpack:build:auth": "npm run webpack:build:prod --prefix auth",
     "webpack:build:bank": "npm run webpack:build:prod --prefix bank",
     "webpack:build:container": "npm run webpack:build:prod --prefix container",
     "webpack:start:dev": "concurrently \"npm run webpack:start:dev:auth\" \"npm run webpack:start:dev:bank\" \"npm run webpack:start:dev:container\"",
-    "webpack:build": "concurrently \"npm run webpack:build:auth\" \"npm run webpack:build:bank\" \"npm run webpack:build:container\"",
-    "webpack:start:micro": "concurrently \"npm run webpack:start:micro:auth\" \"npm run webpack:start:micro:bank\" \"npm run webpack:start:dev:container\""
+    "webpack:build": "concurrently \"npm run webpack:build:auth\" \"npm run webpack:build:bank\" \"npm run webpack:build:container\""
   },
   "author": "mohammad nowresideh",
   "license": "ISC",
