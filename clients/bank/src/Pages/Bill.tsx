@@ -1,7 +1,8 @@
+import { FC } from 'react';
 import BillContent from '../components/Bill';
 import ClearStateProvider from '../lib/providers/ClearStateProvider';
 
-const Bill = () => {
+const Bill: FC = () => {
   return (
     <ClearStateProvider>
       <BillContent />

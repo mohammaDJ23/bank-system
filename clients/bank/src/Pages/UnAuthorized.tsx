@@ -1,6 +1,7 @@
+import { FC } from 'react';
 import UnAuthorizedContent from '../components/UnAuthorized';
 
-const UnAuthorized = () => {
+const UnAuthorized: FC = () => {
   return <UnAuthorizedContent />;
 };
 

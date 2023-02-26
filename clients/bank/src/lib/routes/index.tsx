@@ -31,20 +31,21 @@ export enum Pathes {
 }
 
 export const routes = [
-  { title: 'Dashboard', path: Pathes.DASHBOARD, element: <Dashboard /> },
-  { title: 'Bills', path: Pathes.BILLS, element: <Bills /> },
-  { title: 'Users', path: Pathes.USERS, element: <Users /> },
-  { title: 'Create bill', path: Pathes.CREATE_BILL, element: <CreateBill /> },
-  { title: 'Create user', path: Pathes.CREATE_USER, element: <CreateUser /> },
+  { title: 'Dashboard', path: Pathes.DASHBOARD, element: <Dashboard />, needAuth: true },
+  { title: 'Bills', path: Pathes.BILLS, element: <Bills />, needAuth: true },
+  { title: 'Users', path: Pathes.USERS, element: <Users />, needAuth: true },
+  { title: 'Create bill', path: Pathes.CREATE_BILL, element: <CreateBill />, needAuth: true },
+  { title: 'Create user', path: Pathes.CREATE_USER, element: <CreateUser />, needAuth: true },
   {
     title: 'Update user by admin',
     path: Pathes.UPDATE_USER_BY_ADMIN,
     element: <UpdateUserByAdmin />,
+    needAuth: true,
   },
-  { title: 'Update bill', path: Pathes.UPDATE_BILL, element: <UpdateBill /> },
-  { title: 'Update user', path: Pathes.UPDATE_USER, element: <UpdateUserByUser /> },
-  { title: 'User', path: Pathes.USER, element: <User /> },
-  { title: 'Bill', path: Pathes.BILL, element: <Bill /> },
+  { title: 'Update bill', path: Pathes.UPDATE_BILL, element: <UpdateBill />, needAuth: true },
+  { title: 'Update user', path: Pathes.UPDATE_USER, element: <UpdateUserByUser />, needAuth: true },
+  { title: 'User', path: Pathes.USER, element: <User />, needAuth: true },
+  { title: 'Bill', path: Pathes.BILL, element: <Bill />, needAuth: true },
   { title: 'permission denied', path: Pathes.UNAUTHORIZED, element: <UnAuthorized /> },
-  { title: 'NotFound', path: Pathes.UNAUTHORIZED, element: <NotFound /> },
+  { title: 'NotFound', path: Pathes.NOT_FOUND, element: <NotFound /> },
 ];

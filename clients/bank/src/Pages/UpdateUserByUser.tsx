@@ -1,7 +1,8 @@
+import { FC } from 'react';
 import UpdateUserByUserContent from '../components/UpdateUserByUser';
 import ClearStateProvider from '../lib/providers/ClearStateProvider';
 
-const UpdateUserByUser = () => {
+const UpdateUserByUser: FC = () => {
   return (
     <ClearStateProvider>
       <UpdateUserByUserContent />
