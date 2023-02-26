@@ -32,7 +32,6 @@ export class Request<R = any, D = any> implements RootApiObj<D> {
     this.api = api;
     this.config = {
       baseURL: process.env.BANK_SERVICE,
-      timeout: 5000,
       headers: { Authorization: `Bearer ${getToken()}` },
       ...config,
     };
