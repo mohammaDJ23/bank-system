@@ -237,3 +237,12 @@ export class BillsMinAmountsApi extends RootApi<ListParams<BillObj>> {
     });
   }
 }
+
+export class BillsExcelApi extends RootApi {
+  constructor() {
+    super({
+      url: '/bills/excel',
+      method: 'get',
+    });
+  }
+}
