@@ -201,3 +201,12 @@ export class BillsPeriodApi extends RootApi<BillsPeriod> {
     });
   }
 }
+
+export class BillsLastWeekApi extends RootApi {
+  constructor() {
+    super({
+      url: '/bills/last-week',
+      method: 'get',
+    });
+  }
+}
