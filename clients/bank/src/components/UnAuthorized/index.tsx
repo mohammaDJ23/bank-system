@@ -1,7 +1,7 @@
 import { Box, Typography, Button } from '@mui/material';
 import { useSelector } from '../../hooks';
 import DefaultContainer from '../../layout/DefaultContainer';
-import { isMicroFrontEnd, isUserAuthenticated, Pathes } from '../../lib';
+import { isContainerApp, isUserAuthenticated, Pathes } from '../../lib';
 import { Navigate } from 'react-router-dom';
 import { FC } from 'react';
 
@@ -16,7 +16,7 @@ const UnAuthorized: FC = () => {
         {history && (
           <Button
             onClick={() => {
-              history.push(isMicroFrontEnd() ? Pathes.LOGIN : process.env.AUTH_APP + Pathes.LOGIN);
+              history.push(isContainerApp() ? Pathes.LOGIN : process.env.AUTH_APP + Pathes.LOGIN);
             }}
             variant="contained"
             size="small"
