@@ -224,3 +224,16 @@ export class BillsMaxAmountsApi extends RootApi<ListParams<BillObj>> {
     });
   }
 }
+
+export class BillsMinAmountsApi extends RootApi<ListParams<BillObj>> {
+  constructor(data: ListParams<BillObj>) {
+    super({
+      url: '/bills/min-amounts',
+      method: 'post',
+      data,
+      headers: {
+        'Content-type': 'application/json',
+      },
+    });
+  }
+}
