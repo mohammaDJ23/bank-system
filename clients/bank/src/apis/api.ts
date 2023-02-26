@@ -1,5 +1,5 @@
 import { AxiosRequestConfig, CreateAxiosDefaults } from 'axios';
-import { PeriodAmount } from '../components/Dashboard';
+import { BillsPeriod, PeriodAmount } from '../components/Dashboard';
 import {
   CreateBill,
   CreateUser,
@@ -180,6 +180,19 @@ export class PeriodAmountApi extends RootApi<PeriodAmount> {
   constructor(data: PeriodAmount) {
     super({
       url: '/bill/period-amount',
+      method: 'post',
+      data,
+      headers: {
+        'Content-type': 'application/json',
+      },
+    });
+  }
+}
+
+export class BillsPeriodApi extends RootApi<BillsPeriod> {
+  constructor(data: BillsPeriod) {
+    super({
+      url: '/bills/period',
       method: 'post',
       data,
       headers: {
