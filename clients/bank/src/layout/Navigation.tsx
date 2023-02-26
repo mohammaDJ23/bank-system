@@ -8,6 +8,7 @@ import Typography from '@mui/material/Typography';
 import Divider from '@mui/material/Divider';
 import IconButton from '@mui/material/IconButton';
 import MenuIcon from '@mui/icons-material/Menu';
+import DashboardIcon from '@mui/icons-material/Dashboard';
 import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
@@ -18,7 +19,7 @@ import AddCardIcon from '@mui/icons-material/AddCard';
 import CreditCardIcon from '@mui/icons-material/CreditCard';
 import CloseIcon from '@mui/icons-material/Close';
 import { styled } from '@mui/material/styles';
-import { routes, UserRoles } from '../lib';
+import { Pathes, routes, UserRoles } from '../lib';
 import { useAuth } from '../hooks';
 
 interface StyledListItemTextAttr {
@@ -73,30 +74,37 @@ const Navigation: FC<PropsWithChildren> = ({ children }) => {
   const [open, setOpen] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
-  const { isAdmin, isUser } = useAuth();
+  const { isAdmin, isUser, isUserAuthenticated } = useAuth();
+  const isUserLoggedIn = isUserAuthenticated();
   const activeRoute = routes.find(route => matchPath(route.path, location.pathname));
   const activeRouteTitle = activeRoute?.title || 'Bank system';
 
   const navigationItems = [
     {
+      title: 'Dashboard',
+      icon: <DashboardIcon />,
+      path: Pathes.DASHBOARD,
+      role: UserRoles.USER,
+    },
+    {
       title: 'Create user',
       icon: <GroupAddIcon />,
-      path: '/bank/create-user',
+      path: Pathes.CREATE_USER,
       role: UserRoles.ADMIN,
     },
     {
       title: 'Create bill',
       icon: <AddCardIcon />,
-      path: '/bank/create-bill',
+      path: Pathes.CREATE_BILL,
       role: UserRoles.USER,
     },
     {
       title: 'users',
       icon: <SupervisorAccountIcon />,
-      path: '/bank/users',
+      path: Pathes.USERS,
       role: UserRoles.ADMIN,
     },
-    { title: 'bills', icon: <CreditCardIcon />, path: '/bank/bills', role: UserRoles.USER },
+    { title: 'bills', icon: <CreditCardIcon />, path: Pathes.BILLS, role: UserRoles.USER },
   ];
 
   function isSamePath(item: typeof navigationItems[number]) {
@@ -112,15 +120,17 @@ const Navigation: FC<PropsWithChildren> = ({ children }) => {
     <>
       <AppBar>
         <Toolbar>
-          <IconButton
-            color="inherit"
-            aria-label="open drawer"
-            onClick={() => setOpen(true)}
-            edge="start"
-            sx={{ mr: 2 }}
-          >
-            <MenuIcon sx={{ color: 'white' }} />
-          </IconButton>
+          {isUserLoggedIn && (
+            <IconButton
+              color="inherit"
+              aria-label="open drawer"
+              onClick={() => setOpen(true)}
+              edge="start"
+              sx={{ mr: 2 }}
+            >
+              <MenuIcon sx={{ color: 'white' }} />
+            </IconButton>
+          )}
 
           <Typography variant="h6" noWrap component="div" sx={{ color: 'white' }}>
             {activeRouteTitle}
@@ -130,37 +140,41 @@ const Navigation: FC<PropsWithChildren> = ({ children }) => {
 
       <ChildrenWrapper>{children}</ChildrenWrapper>
 
-      <Drawer sx={{ zIndex: 11 }} anchor="left" open={open} onClose={() => setOpen(false)}>
-        <Box sx={{ width: 250 }} role="presentation">
-          <DrawerHeader>
-            <CloseIcon onClick={() => setOpen(false)} />
-          </DrawerHeader>
+      {isUserLoggedIn && (
+        <Drawer sx={{ zIndex: 11 }} anchor="left" open={open} onClose={() => setOpen(false)}>
+          <Box sx={{ width: 250 }} role="presentation">
+            <DrawerHeader>
+              <CloseIcon onClick={() => setOpen(false)} />
+            </DrawerHeader>
 
-          <Divider />
+            <Divider />
 
-          <List>
-            {navigationItems.map((item, index) => {
-              const navigationEl = (
-                <ListItem
-                  onClick={() => {
-                    setOpen(false);
-                    if (!isSamePath(item)) navigate(item.path);
-                  }}
-                  key={index}
-                  disablePadding
-                >
-                  <ListItemButton>
-                    <StyledListItemIcon active={isPathActive(item)}>{item.icon}</StyledListItemIcon>
-                    <StyledListItemText active={isPathActive(item)} primary={item.title} />
-                  </ListItemButton>
-                </ListItem>
-              );
+            <List>
+              {navigationItems.map((item, index) => {
+                const navigationEl = (
+                  <ListItem
+                    onClick={() => {
+                      setOpen(false);
+                      if (!isSamePath(item)) navigate(item.path);
+                    }}
+                    key={index}
+                    disablePadding
+                  >
+                    <ListItemButton>
+                      <StyledListItemIcon active={isPathActive(item)}>
+                        {item.icon}
+                      </StyledListItemIcon>
+                      <StyledListItemText active={isPathActive(item)} primary={item.title} />
+                    </ListItemButton>
+                  </ListItem>
+                );
 
-              return isAdmin() ? navigationEl : isUser(item.role) && navigationEl;
-            })}
-          </List>
-        </Box>
-      </Drawer>
+                return isAdmin() ? navigationEl : isUser(item.role) && navigationEl;
+              })}
+            </List>
+          </Box>
+        </Drawer>
+      )}
     </>
   );
 };
