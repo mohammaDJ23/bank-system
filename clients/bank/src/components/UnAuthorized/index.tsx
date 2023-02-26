@@ -3,8 +3,9 @@ import { useSelector } from '../../hooks';
 import DefaultContainer from '../../layout/DefaultContainer';
 import { isMicroFrontEnd, isUserAuthenticated, Pathes } from '../../lib';
 import { Navigate } from 'react-router-dom';
+import { FC } from 'react';
 
-const UnAuthorized = () => {
+const UnAuthorized: FC = () => {
   const { history } = useSelector();
   const isUserLoggedIn = isUserAuthenticated();
 
