@@ -119,8 +119,8 @@ export class BillService {
     return this.billRepository
       .createQueryBuilder('bill')
       .innerJoinAndSelect('bill.user', 'user')
-      .where('bill.date::TIMESTAMP >= :start', { start: body.start })
-      .andWhere('bill.date::TIMESTAMP <= :end', { end: body.end })
+      .where('bill.date::TIMESTAMP >= :start::TIMESTAMP', { start: body.start })
+      .andWhere('bill.date::TIMESTAMP <= :end::TIMESTAMP', { end: body.end })
       .andWhere('user.user_service_id = :userId', {
         userId: user.userServiceId,
       })

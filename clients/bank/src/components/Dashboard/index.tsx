@@ -1,6 +1,7 @@
 import { FC, useEffect } from 'react';
 import { BillsLastWeekApi, BillsPeriodApi, PeriodAmountApi, TotalAmountApi } from '../../apis';
 import { useRequest } from '../../hooks';
+import { BillList } from '../../lib';
 
 export class PeriodAmount {
   constructor(
@@ -22,7 +23,7 @@ const Dashboard: FC = () => {
   const dashboardApis = [
     new TotalAmountApi(),
     new PeriodAmountApi(new PeriodAmount()),
-    // new BillsPeriodApi(new BillsPeriod()),
+    new BillsPeriodApi(Object.assign({}, new BillsPeriod(), new BillList())),
     // new BillsLastWeekApi(),
   ];
 
