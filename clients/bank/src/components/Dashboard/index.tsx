@@ -19,7 +19,12 @@ export class BillsPeriod {
 const Dashboard: FC = () => {
   const { request } = useRequest();
 
-  const dashboardApis = [new TotalAmountApi(), new PeriodAmountApi(new PeriodAmount())];
+  const dashboardApis = [
+    new TotalAmountApi(),
+    new PeriodAmountApi(new PeriodAmount()),
+    // new BillsPeriodApi(new BillsPeriod()),
+    // new BillsLastWeekApi(),
+  ];
 
   useEffect(() => {
     async function getRequests() {

@@ -41,7 +41,7 @@ export class BillService {
 
   async deleteBill(body: DeleteBillDto, user: User): Promise<Bill> {
     const bill = await this.findById(body.id, user.userServiceId);
-    await this.billRepository.delete(bill.id);
+    await this.billRepository.delete({ id: bill.id });
     return bill;
   }
 
@@ -90,8 +90,9 @@ export class BillService {
   getTotalAmount(user: User): Promise<TotalAmountDto> {
     return this.billRepository
       .createQueryBuilder('bill')
-      .select('SUM(bill.amount::INTEGER)', 'totalAmount')
-      .where('bill.user.user_service_id = :userId', {
+      .innerJoinAndSelect('bill.user', 'user')
+      .select('SUM(bill.amount::NUMERIC)::VARCHAR(100)', 'totalAmount')
+      .where('user.user_service_id = :userId', {
         userId: user.userServiceId,
       })
       .getRawOne();
@@ -100,14 +101,15 @@ export class BillService {
   periodAmount(body: PeriodAmountDto, user: User): Promise<TotalAmountDto> {
     return this.billRepository
       .createQueryBuilder('bill')
-      .select('SUM(bill.amount::INTEGER)', 'totalAmount')
-      .where('bill.createdAt::TIMESTAMP >= :start::TIMESTAMP', {
+      .innerJoinAndSelect('bill.user', 'user')
+      .select('SUM(bill.amount::NUMERIC)::VARCHAR(100)', 'totalAmount')
+      .where('bill.date::TIMESTAMP >= :start::TIMESTAMP', {
         start: body.start,
       })
-      .andWhere('bill.createdAt::TIMESTAMP <= :end::TIMESTAMP', {
+      .andWhere('bill.date::TIMESTAMP <= :end::TIMESTAMP', {
         end: body.end,
       })
-      .andWhere('bill.user.user_service_id = :userId', {
+      .andWhere('user.user_service_id = :userId', {
         userId: user.userServiceId,
       })
       .getRawOne();
