@@ -24,7 +24,7 @@ const Dashboard: FC = () => {
     new TotalAmountApi(),
     new PeriodAmountApi(new PeriodAmount()),
     new BillsPeriodApi(Object.assign({}, new BillsPeriod(), new BillList())),
-    // new BillsLastWeekApi(),
+    new BillsLastWeekApi(),
   ];
 
   useEffect(() => {

@@ -132,12 +132,13 @@ export class BillService {
   lastWeekBills(user: User): Promise<LastWeekDto[]> {
     return this.billRepository
       .createQueryBuilder('bill')
+      .innerJoinAndSelect('bill.user', 'user')
       .select('COUNT(bill.date::DATE)::INTEGER', 'count')
-      .addSelect('SUM(bill.amount::INTEGER)', 'amount')
+      .addSelect('SUM(bill.amount::NUMERIC)::VARCHAR(100)', 'amount')
       .addSelect('bill.date::DATE', 'date')
-      .where('bill.date::DATE >= CURRENT_DATE - 7')
-      .andWhere('bill.date::DATE <= CURRENT_DATE - 1')
-      .andWhere('bill.user.user_service_id = :userId', {
+      .where('bill.date::DATE >= CURRENT_DATE - 6')
+      .andWhere('bill.date::DATE <= CURRENT_DATE ')
+      .andWhere('user.user_service_id = :userId', {
         userId: user.userServiceId,
       })
       .groupBy('bill.date')
