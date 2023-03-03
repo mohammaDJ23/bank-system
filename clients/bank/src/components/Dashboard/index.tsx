@@ -1,20 +1,42 @@
-import { FC } from 'react';
+import { FC, useEffect } from 'react';
+import { BillsLastWeekApi, BillsPeriodApi, PeriodAmountApi, TotalAmountApi } from '../../apis';
+import { useRequest } from '../../hooks';
 
 export class PeriodAmount {
   constructor(
-    public start: string = new Date().toISOString(),
+    public start: string = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(),
     public end: string = new Date().toISOString()
   ) {}
 }
 
 export class BillsPeriod {
   constructor(
-    public start: string = new Date().toISOString(),
+    public start: string = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(),
     public end: string = new Date().toISOString()
   ) {}
 }
 
 const Dashboard: FC = () => {
+  const { request } = useRequest();
+
+  const dashboardApis = [new TotalAmountApi(), new PeriodAmountApi(new PeriodAmount())];
+
+  useEffect(() => {
+    async function getRequests() {
+      const responses = await Promise.all(
+        dashboardApis.map(api =>
+          request(api)
+            .then(api => api)
+            .catch(err => err)
+        )
+      );
+
+      console.log(responses);
+    }
+
+    getRequests();
+  }, []);
+
   return <div></div>;
 };
 

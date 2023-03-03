@@ -8,7 +8,7 @@ import { FC, useCallback, useState } from 'react';
 import { useAction, useRequest, useSelector } from '../../hooks';
 import { BillObj } from '../../lib';
 import { ModalNames } from '../../store';
-import { BillApi } from '../../apis';
+import { BillApi, DeleteBillApi } from '../../apis';
 
 interface DetailsImporation {
   bill: BillObj;
@@ -50,7 +50,7 @@ const Details: FC<DetailsImporation> = ({ bill }) => {
 
   const deleteBill = useCallback(() => {
     if (billId) {
-      request(new BillApi(+billId)).then(() => {
+      request(new DeleteBillApi(+billId)).then(() => {
         hideModal(ModalNames.CONFIRMATION);
         navigate('/bank/bills');
       });

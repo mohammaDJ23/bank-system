@@ -171,7 +171,7 @@ export class DeleteUserApi extends RootApi<IdReq> {
 export class TotalAmountApi extends RootApi {
   constructor() {
     super({
-      url: '/bill/total-amount',
+      url: '/bank/bill/total-amount',
       method: 'get',
     });
   }
@@ -180,7 +180,7 @@ export class TotalAmountApi extends RootApi {
 export class PeriodAmountApi extends RootApi<PeriodAmount> {
   constructor(data: PeriodAmount) {
     super({
-      url: '/bill/period-amount',
+      url: '/bank/bill/period-amount',
       method: 'post',
       data,
       headers: {
@@ -193,7 +193,7 @@ export class PeriodAmountApi extends RootApi<PeriodAmount> {
 export class BillsPeriodApi extends RootApi<BillsPeriod> {
   constructor(data: BillsPeriod) {
     super({
-      url: '/bills/period',
+      url: '/bank/bills/period',
       method: 'post',
       data,
       headers: {
@@ -206,7 +206,7 @@ export class BillsPeriodApi extends RootApi<BillsPeriod> {
 export class BillsLastWeekApi extends RootApi {
   constructor() {
     super({
-      url: '/bills/last-week',
+      url: '/bank/bills/last-week',
       method: 'get',
     });
   }
@@ -215,7 +215,7 @@ export class BillsLastWeekApi extends RootApi {
 export class BillsMaxAmountsApi extends RootApi<ListParams<BillObj>> {
   constructor(data: ListParams<BillObj>) {
     super({
-      url: '/bills/max-amounts',
+      url: '/bank/bills/max-amounts',
       method: 'post',
       data,
       headers: {
@@ -228,7 +228,7 @@ export class BillsMaxAmountsApi extends RootApi<ListParams<BillObj>> {
 export class BillsMinAmountsApi extends RootApi<ListParams<BillObj>> {
   constructor(data: ListParams<BillObj>) {
     super({
-      url: '/bills/min-amounts',
+      url: '/bank/bills/min-amounts',
       method: 'post',
       data,
       headers: {
@@ -241,7 +241,7 @@ export class BillsMinAmountsApi extends RootApi<ListParams<BillObj>> {
 export class BillsExcelApi extends RootApi {
   constructor() {
     super({
-      url: '/bills/excel',
+      url: '/bank/bills/excel',
       method: 'get',
     });
   }
