@@ -6,14 +6,34 @@ export enum SpecificDetails {
   SET_SPECIFIC_DETAILS = 'SET_SPECIFIC_DETAILS',
 }
 
+export interface TotalAmountObj {
+  totalAmount: string;
+}
+
+export interface PeriodAmountObj {
+  periodAmount: string;
+}
+
+export interface BillsLastWeekObj {
+  count: number;
+  amount: string;
+  date: string;
+}
+
 export interface SpecificDetailsState {
   user: UserObj | null;
   bill: BillObj | null;
+  totalAmount: TotalAmountObj | null;
+  periodAmount: PeriodAmountObj | null;
+  billsLastWeek: BillsLastWeekObj[] | null;
 }
 
 const initialState: SpecificDetailsState = {
   user: null,
   bill: null,
+  totalAmount: null,
+  periodAmount: null,
+  billsLastWeek: null,
 };
 
 function setSpecificDetails(

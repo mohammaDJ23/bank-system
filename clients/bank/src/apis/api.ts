@@ -1,4 +1,5 @@
 import { AxiosRequestConfig, CreateAxiosDefaults } from 'axios';
+import { BillsPeriod, PeriodAmount } from '../components/Dashboard';
 import {
   CreateBill,
   CreateUser,
@@ -6,6 +7,7 @@ import {
   UpdateUserByAdmin,
   UpdateUserByUser,
   ListParams,
+  BillObj,
 } from '../lib';
 import { RootApiObj } from './resetApi';
 
@@ -163,5 +165,84 @@ export class DeleteUserApi extends RootApi<IdReq> {
       },
       { baseURL: process.env.USER_SERVICE }
     );
+  }
+}
+
+export class TotalAmountApi extends RootApi {
+  constructor() {
+    super({
+      url: '/bank/bill/total-amount',
+      method: 'get',
+    });
+  }
+}
+
+export class PeriodAmountApi extends RootApi<PeriodAmount> {
+  constructor(data: PeriodAmount) {
+    super({
+      url: '/bank/bill/period-amount',
+      method: 'post',
+      data,
+      headers: {
+        'Content-type': 'application/json',
+      },
+    });
+  }
+}
+
+export class BillsPeriodApi extends RootApi<BillsPeriod> {
+  constructor(data: BillsPeriod) {
+    super({
+      url: '/bank/bills/period',
+      method: 'post',
+      data,
+      headers: {
+        'Content-type': 'application/json',
+      },
+    });
+  }
+}
+
+export class BillsLastWeekApi extends RootApi {
+  constructor() {
+    super({
+      url: '/bank/bills/last-week',
+      method: 'get',
+    });
+  }
+}
+
+export class BillsMaxAmountsApi extends RootApi<ListParams<BillObj>> {
+  constructor(data: ListParams<BillObj>) {
+    super({
+      url: '/bank/bills/max-amounts',
+      method: 'post',
+      data,
+      headers: {
+        'Content-type': 'application/json',
+      },
+    });
+  }
+}
+
+export class BillsMinAmountsApi extends RootApi<ListParams<BillObj>> {
+  constructor(data: ListParams<BillObj>) {
+    super({
+      url: '/bank/bills/min-amounts',
+      method: 'post',
+      data,
+      headers: {
+        'Content-type': 'application/json',
+      },
+    });
+  }
+}
+
+export class BillsExcelApi extends RootApi {
+  constructor() {
+    super({
+      url: '/bank/bills/excel',
+      method: 'get',
+    });
   }
 }
