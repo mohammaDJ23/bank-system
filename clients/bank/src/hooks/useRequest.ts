@@ -46,19 +46,6 @@ export function useRequest() {
     [loading, success, error, getRequestConstructorName]
   );
 
-  const all = useCallback(
-    (requestInstances: RequestParametersType[]) => {
-      return Promise.all(
-        requestInstances.map(requestInstance =>
-          request(requestInstance)
-            .then(res => res)
-            .catch(err => err)
-        )
-      );
-    },
-    [request]
-  );
-
   const isRequestProccessing = useCallback(
     <T extends RootApiObj>(requestInstance: Constructor<T>) => {
       return requestProcess.loadings[getRequestConstructorName(requestInstance)];
@@ -115,5 +102,5 @@ export function useRequest() {
     };
   }, []);
 
-  return { request, isApiProcessing, isInitialApiProcessing, all };
+  return { request, isApiProcessing, isInitialApiProcessing };
 }
