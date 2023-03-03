@@ -1,4 +1,4 @@
-import { AxiosError, AxiosResponse } from 'axios';
+import { AxiosResponse } from 'axios';
 import { FC, useEffect } from 'react';
 import { BillsLastWeekApi, BillsPeriodApi, PeriodAmountApi, TotalAmountApi } from '../../apis';
 import { useAction, usePaginationList, useRequest } from '../../hooks';
