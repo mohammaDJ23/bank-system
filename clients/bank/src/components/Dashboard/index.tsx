@@ -17,27 +17,24 @@ export class BillsPeriod {
   ) {}
 }
 
-const Dashboard: FC = () => {
-  const { request } = useRequest();
+const dashboardApis = [
+  new TotalAmountApi(),
+  new PeriodAmountApi(new PeriodAmount()),
+  new BillsPeriodApi(Object.assign({}, new BillsPeriod(), new BillList())),
+  new BillsLastWeekApi(),
+];
 
-  const dashboardApis = [
-    new TotalAmountApi(),
-    new PeriodAmountApi(new PeriodAmount()),
-    new BillsPeriodApi(Object.assign({}, new BillsPeriod(), new BillList())),
-    new BillsLastWeekApi(),
-  ];
+const Dashboard: FC = () => {
+  const { all } = useRequest();
 
   useEffect(() => {
     async function getRequests() {
-      const responses = await Promise.all(
-        dashboardApis.map(api =>
-          request(api)
-            .then(api => api)
-            .catch(err => err)
-        )
-      );
-
-      console.log(responses);
+      const [
+        TotalAmountResponse,
+        PeriodAmountResponse,
+        billsPeriodResponse,
+        billsLastWeekResponse,
+      ] = await all(dashboardApis);
     }
 
     getRequests();
