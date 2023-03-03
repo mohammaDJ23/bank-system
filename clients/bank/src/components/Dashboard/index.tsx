@@ -2,6 +2,7 @@ import { AxiosResponse } from 'axios';
 import { FC, useEffect } from 'react';
 import { BillsLastWeekApi, BillsPeriodApi, PeriodAmountApi, TotalAmountApi } from '../../apis';
 import { useAction, usePaginationList, useRequest } from '../../hooks';
+import MainContainer from '../../layout/MainContainer';
 import { BillList, BillObj } from '../../lib';
 import { BillsLastWeekObj, PeriodAmountObj, TotalAmountObj } from '../../store';
 
@@ -20,10 +21,14 @@ export class BillsPeriod {
 }
 
 const Dashboard: FC = () => {
-  const { request } = useRequest();
+  const { request, isApiProcessing } = useRequest();
   const { setSpecificDetails } = useAction();
   const listMaker = usePaginationList();
   const { setList } = listMaker(BillList);
+  const isTotalAmountProcessing = isApiProcessing(TotalAmountApi);
+  const isPeriodAmountProcessing = isApiProcessing(PeriodAmountApi);
+  const isBillsPeriodProcessing = isApiProcessing(BillsPeriodApi);
+  const isBillsLastWeekProcessing = isApiProcessing(BillsLastWeekApi);
 
   useEffect(() => {
     Promise.allSettled<
@@ -60,7 +65,7 @@ const Dashboard: FC = () => {
     );
   }, []);
 
-  return <div></div>;
+  return <MainContainer></MainContainer>;
 };
 
 export default Dashboard;
