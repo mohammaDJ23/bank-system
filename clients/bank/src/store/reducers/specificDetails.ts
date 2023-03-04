@@ -17,7 +17,7 @@ export interface PeriodAmountObj {
 export interface BillsLastWeekObj {
   count: number;
   amount: string;
-  date: string;
+  date: string | number;
 }
 
 export interface SpecificDetailsState {

@@ -1,10 +1,24 @@
 import { AxiosResponse } from 'axios';
 import { FC, useEffect } from 'react';
+import { Box, CardContent } from '@mui/material';
 import { BillsLastWeekApi, BillsPeriodApi, PeriodAmountApi, TotalAmountApi } from '../../apis';
-import { useAction, usePaginationList, useRequest } from '../../hooks';
+import { useAction, usePaginationList, useRequest, useSelector } from '../../hooks';
 import MainContainer from '../../layout/MainContainer';
 import { BillList, BillObj } from '../../lib';
 import { BillsLastWeekObj, PeriodAmountObj, TotalAmountObj } from '../../store';
+import Skeleton from '../Skeleton';
+import Card from '../Card';
+import {
+  Chart,
+  ArgumentAxis,
+  ValueAxis,
+  AreaSeries,
+  Title,
+  Legend,
+  Tooltip,
+} from '@devexpress/dx-react-chart-material-ui';
+import { ArgumentScale, Animation, EventTracker } from '@devexpress/dx-react-chart';
+import { curveCatmullRom, area } from 'd3-shape';
 
 export class PeriodAmount {
   constructor(
@@ -20,15 +34,34 @@ export class BillsPeriod {
   ) {}
 }
 
+const Root = (props: Legend.RootProps) => (
+  <Legend.Root {...props} sx={{ display: 'flex', margin: 'auto', flexDirection: 'row' }} />
+);
+const Label = (props: Legend.LabelProps) => (
+  <Legend.Label {...props} sx={{ whiteSpace: 'nowrap' }} />
+);
+
+const Area = (props: any) => (
+  <AreaSeries.Path
+    {...props}
+    path={area()
+      .x(({ arg }: any) => arg)
+      .y1(({ val }: any) => val)
+      .y0(({ startVal }: any) => startVal)
+      .curve(curveCatmullRom)}
+  />
+);
+
 const Dashboard: FC = () => {
-  const { request, isApiProcessing } = useRequest();
+  const { request, isInitialApiProcessing } = useRequest();
   const { setSpecificDetails } = useAction();
+  const { specificDetails } = useSelector();
   const listMaker = usePaginationList();
   const { setList } = listMaker(BillList);
-  const isTotalAmountProcessing = isApiProcessing(TotalAmountApi);
-  const isPeriodAmountProcessing = isApiProcessing(PeriodAmountApi);
-  const isBillsPeriodProcessing = isApiProcessing(BillsPeriodApi);
-  const isBillsLastWeekProcessing = isApiProcessing(BillsLastWeekApi);
+  const isTotalAmountProcessing = isInitialApiProcessing(TotalAmountApi);
+  const isPeriodAmountProcessing = isInitialApiProcessing(PeriodAmountApi);
+  const isBillsPeriodProcessing = isInitialApiProcessing(BillsPeriodApi);
+  const isBillsLastWeekProcessing = isInitialApiProcessing(BillsLastWeekApi);
 
   useEffect(() => {
     Promise.allSettled<
@@ -65,7 +98,75 @@ const Dashboard: FC = () => {
     );
   }, []);
 
-  return <MainContainer></MainContainer>;
+  return (
+    <MainContainer>
+      <Box
+        component="div"
+        display="flex"
+        alignItems="center"
+        justifyContent="center"
+        flexDirection="column"
+        gap="16px"
+      >
+        {isBillsLastWeekProcessing ? (
+          <Skeleton height="300px" width="100%" />
+        ) : (
+          <>
+            {(() => {
+              const billsLastWeek = specificDetails.billsLastWeek || [];
+              const isBillsExist = billsLastWeek.length > 0;
+              const data = billsLastWeek.map(item => ({
+                ...item,
+                date: new Date(item.date).getDay() + 1,
+              }));
+
+              return (
+                isBillsExist && (
+                  <Card sx={{ width: '100%' }}>
+                    <CardContent>
+                      <Chart data={data}>
+                        <ArgumentScale />
+                        <ArgumentAxis
+                          showGrid
+                          tickFormat={scale => tick => {
+                            if (
+                              Number.isInteger(tick) &&
+                              data.findIndex(item => item.date === Number(tick)) > -1
+                            ) {
+                              return Math.floor(Number(tick)).toString();
+                            } else return '';
+                          }}
+                        />
+                        <ValueAxis
+                          showGrid
+                          tickFormat={scale => tick => {
+                            if (Number.isInteger(tick)) return Math.floor(Number(tick)).toString();
+                            else return '';
+                          }}
+                        />
+                        <AreaSeries
+                          color="#20a0ff"
+                          name="Bills"
+                          valueField="count"
+                          argumentField="date"
+                          seriesComponent={Area}
+                        />
+                        <Animation />
+                        <EventTracker />
+                        <Tooltip />
+                        <Legend position="bottom" rootComponent={Root} labelComponent={Label} />
+                        <Title text="The Previous Week Reports" />
+                      </Chart>
+                    </CardContent>
+                  </Card>
+                )
+              );
+            })()}
+          </>
+        )}
+      </Box>
+    </MainContainer>
+  );
 };
 
 export default Dashboard;
