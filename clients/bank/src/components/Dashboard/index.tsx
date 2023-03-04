@@ -1,6 +1,6 @@
 import { AxiosResponse } from 'axios';
 import { FC, useEffect } from 'react';
-import { Box, CardContent } from '@mui/material';
+import { Box, CardContent, Typography } from '@mui/material';
 import { BillsLastWeekApi, BillsPeriodApi, PeriodAmountApi, TotalAmountApi } from '../../apis';
 import { useAction, usePaginationList, useRequest, useSelector } from '../../hooks';
 import MainContainer from '../../layout/MainContainer';
@@ -122,7 +122,7 @@ const Dashboard: FC = () => {
 
               return (
                 isBillsExist && (
-                  <Card sx={{ width: '100%' }}>
+                  <Card>
                     <CardContent>
                       <Chart data={data}>
                         <ArgumentScale />
@@ -163,6 +163,21 @@ const Dashboard: FC = () => {
               );
             })()}
           </>
+        )}
+
+        {isTotalAmountProcessing ? (
+          <Skeleton width="100%" height="60px" />
+        ) : (
+          specificDetails.totalAmount && (
+            <Card>
+              <CardContent>
+                <Box display="flex" alignItems="center" justifyContent="space-between" gap="20px">
+                  <Typography whiteSpace="nowrap">Total Amount: </Typography>
+                  <Typography>{specificDetails.totalAmount.totalAmount}</Typography>
+                </Box>
+              </CardContent>
+            </Card>
+          )
         )}
       </Box>
     </MainContainer>
