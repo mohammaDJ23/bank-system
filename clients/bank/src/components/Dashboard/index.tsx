@@ -114,7 +114,6 @@ const Dashboard: FC = () => {
 
         if (billDatesResponse.status === 'fulfilled') {
           const { start, end } = billDatesResponse.value.data;
-          console.log(start, end);
           setSpecificDetails('billDates', new BillDates(start, end));
         }
       }
