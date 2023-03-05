@@ -1,11 +1,13 @@
 import { AxiosResponse } from 'axios';
 import { FC, useEffect } from 'react';
-import { Box, CardContent, Typography } from '@mui/material';
+import { Box, CardContent, Typography, Slider, Input } from '@mui/material';
+import { DateRange } from '@mui/icons-material';
+import { grey } from '@mui/material/colors';
 import { BillsLastWeekApi, BillsPeriodApi, PeriodAmountApi, TotalAmountApi } from '../../apis';
 import { useAction, usePaginationList, useRequest, useSelector } from '../../hooks';
 import MainContainer from '../../layout/MainContainer';
 import { BillList, BillObj } from '../../lib';
-import { BillsLastWeekObj, PeriodAmountObj, TotalAmountObj } from '../../store';
+import { BillsLastWeekObj, PeriodAmountFilter, PeriodAmountObj, TotalAmountObj } from '../../store';
 import Skeleton from '../Skeleton';
 import Card from '../Card';
 import {
@@ -19,13 +21,7 @@ import {
 } from '@devexpress/dx-react-chart-material-ui';
 import { ArgumentScale, Animation, EventTracker } from '@devexpress/dx-react-chart';
 import { curveCatmullRom, area } from 'd3-shape';
-
-export class PeriodAmount {
-  constructor(
-    public start: string = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(),
-    public end: string = new Date().toISOString()
-  ) {}
-}
+import moment from 'moment';
 
 export class BillsPeriod {
   constructor(
@@ -73,7 +69,7 @@ const Dashboard: FC = () => {
       ]
     >([
       request(new TotalAmountApi()),
-      request(new PeriodAmountApi(new PeriodAmount())),
+      request(new PeriodAmountApi(specificDetails.periodAmountFilter)),
       request(new BillsPeriodApi(Object.assign({}, new BillsPeriod(), new BillList()))),
       request(new BillsLastWeekApi()),
     ]).then(
@@ -174,6 +170,101 @@ const Dashboard: FC = () => {
                 <Box display="flex" alignItems="center" justifyContent="space-between" gap="20px">
                   <Typography whiteSpace="nowrap">Total Amount: </Typography>
                   <Typography>{specificDetails.totalAmount.totalAmount}</Typography>
+                </Box>
+              </CardContent>
+            </Card>
+          )
+        )}
+
+        {isPeriodAmountProcessing ? (
+          <Skeleton width="100%" height="80px" />
+        ) : (
+          specificDetails.periodAmount && (
+            <Card>
+              <CardContent>
+                <Box display="flex" justifyContent="center" flexDirection="column" gap="20px">
+                  <Box
+                    display="flex"
+                    alignItems="center"
+                    justifyContent="space-between"
+                    gap="20px"
+                    position="relative"
+                  >
+                    <Box display="flex" alignItems="center" gap="5px">
+                      <Typography fontSize="10px" whiteSpace="nowrap">
+                        {moment(specificDetails.periodAmountFilter.start).format('ll')}
+                      </Typography>
+                      <DateRange fontSize="small" sx={{ color: grey[600] }} />
+                    </Box>
+                    <Input
+                      type="date"
+                      value={moment(specificDetails.periodAmountFilter.start).format('YYYY-MM-DD')}
+                      onChange={event => {
+                        setSpecificDetails(
+                          'periodAmountFilter',
+                          new PeriodAmountFilter(
+                            new Date(event.target.value).toISOString(),
+                            specificDetails.periodAmountFilter.end
+                          )
+                        );
+                      }}
+                      sx={{
+                        position: 'absolute',
+                        top: '7px',
+                        left: '-57px',
+                        opacity: '0',
+                      }}
+                    />
+                    <Slider
+                      value={[
+                        new Date(specificDetails.periodAmountFilter.start).getTime(),
+                        new Date(specificDetails.periodAmountFilter.end).getTime(),
+                      ]}
+                      min={new Date('2000-2-2').getTime()}
+                      max={new Date('2023-3-4').getTime()}
+                      onChange={(event, value) => {
+                        const [start, end] = value as number[];
+                        setSpecificDetails(
+                          'periodAmountFilter',
+                          new PeriodAmountFilter(
+                            new Date(start).toISOString(),
+                            new Date(end).toISOString()
+                          )
+                        );
+                      }}
+                      valueLabelDisplay="off"
+                    />
+                    <Box display="flex" alignItems="center" gap="5px">
+                      <Typography fontSize="10px" whiteSpace="nowrap">
+                        {moment(specificDetails.periodAmountFilter.end).format('ll')}
+                      </Typography>
+                      <DateRange fontSize="small" sx={{ color: grey[600] }} />
+                    </Box>
+                    <Input
+                      type="date"
+                      value={moment(specificDetails.periodAmountFilter.end).format('YYYY-MM-DD')}
+                      onChange={event => {
+                        setSpecificDetails(
+                          'periodAmountFilter',
+                          new PeriodAmountFilter(
+                            specificDetails.periodAmountFilter.start,
+                            new Date(event.target.value).toISOString()
+                          )
+                        );
+                      }}
+                      sx={{
+                        position: 'absolute',
+                        top: '7px',
+                        right: '0px',
+                        opacity: '0',
+                        width: '20px',
+                      }}
+                    />
+                  </Box>
+                  <Box display="flex" alignItems="center" justifyContent="space-between" gap="20px">
+                    <Typography whiteSpace="nowrap">Period Amount: </Typography>
+                    <Typography>{specificDetails.periodAmount.totalAmount}</Typography>
+                  </Box>
                 </Box>
               </CardContent>
             </Card>

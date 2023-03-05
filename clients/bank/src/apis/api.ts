@@ -1,5 +1,5 @@
 import { AxiosRequestConfig, CreateAxiosDefaults } from 'axios';
-import { BillsPeriod, PeriodAmount } from '../components/Dashboard';
+import { BillsPeriod } from '../components/Dashboard';
 import {
   CreateBill,
   CreateUser,
@@ -9,6 +9,7 @@ import {
   ListParams,
   BillObj,
 } from '../lib';
+import { PeriodAmountFilter } from '../store';
 import { RootApiObj } from './resetApi';
 
 export interface IdReq {
@@ -177,8 +178,8 @@ export class TotalAmountApi extends RootApi {
   }
 }
 
-export class PeriodAmountApi extends RootApi<PeriodAmount> {
-  constructor(data: PeriodAmount) {
+export class PeriodAmountApi extends RootApi<PeriodAmountFilter> {
+  constructor(data: PeriodAmountFilter) {
     super({
       url: '/bank/bill/period-amount',
       method: 'post',
