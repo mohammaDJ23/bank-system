@@ -19,6 +19,7 @@ import { createReadStream, existsSync, ReadStream } from 'fs';
 import { join } from 'path';
 import { Workbook } from 'exceljs';
 import { BillsPeriodDto } from 'src/dtos/bills-period.dto';
+import { BillDatesDto } from 'src/dtos/bill-dates.dto';
 
 @Injectable()
 export class BillService {
@@ -208,5 +209,15 @@ export class BillService {
       await this.makeBillReports(billReportsFileName, user);
 
     return this.getSteamableFile(billReportsFileName);
+  }
+
+  async getBillDates(user: User): Promise<BillDatesDto> {
+    return this.billRepository
+      .createQueryBuilder('bill')
+      .innerJoinAndSelect('bill.user', 'user')
+      .select('MIN(bill.date::TIMESTAMP)::TEXT', 'start')
+      .addSelect('MAX(bill.date::TIMESTAMP)::TEXT', 'end')
+      .where('user.user_service_id = :userId', { userId: user.userServiceId })
+      .getRawOne();
   }
 }

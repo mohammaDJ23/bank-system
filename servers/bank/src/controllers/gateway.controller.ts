@@ -40,6 +40,7 @@ import { LastWeekDto } from 'src/dtos/last-week.dto';
 import { ListDto } from 'src/dtos/list.dto';
 import { BillsPeriodDto } from 'src/dtos/bills-period.dto';
 import { ErrorDto } from 'src/dtos/error.dto';
+import { BillDatesDto } from 'src/dtos/bill-dates.dto';
 
 @UseGuards(JwtAuthGuard)
 @Controller('bank')
@@ -218,5 +219,17 @@ export class GatewayController {
     @CurrentUser() user: User,
   ): Promise<Bill> {
     return this.billService.findOne(id, user);
+  }
+
+  @Get('bills/dates')
+  @HttpCode(HttpStatus.OK)
+  @ObjectSerializer(BillDatesDto)
+  @ApiBearerAuth()
+  @ApiResponse({ status: HttpStatus.OK, type: BillDatesDto })
+  @ApiResponse({ status: HttpStatus.UNAUTHORIZED, type: ErrorDto })
+  @ApiResponse({ status: HttpStatus.NOT_FOUND, type: ErrorDto })
+  @ApiResponse({ status: HttpStatus.INTERNAL_SERVER_ERROR, type: ErrorDto })
+  getBillDates(@CurrentUser() user: User): Promise<BillDatesDto> {
+    return this.billService.getBillDates(user);
   }
 }

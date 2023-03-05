@@ -114,7 +114,8 @@ const Dashboard: FC = () => {
 
         if (billDatesResponse.status === 'fulfilled') {
           const { start, end } = billDatesResponse.value.data;
-          setSpecificDetails('periodAmountFilter', new PeriodAmountFilter(start, end));
+          console.log(start, end);
+          setSpecificDetails('billDates', new BillDates(start, end));
         }
       }
     );
@@ -246,8 +247,8 @@ const Dashboard: FC = () => {
                         new Date(specificDetails.periodAmountFilter.start).getTime(),
                         new Date(specificDetails.periodAmountFilter.end).getTime(),
                       ]}
-                      min={new Date('2000-2-2').getTime()}
-                      max={new Date('2023-3-4').getTime()}
+                      min={new Date(specificDetails.billDates.start).getTime()}
+                      max={new Date(specificDetails.billDates.end).getTime()}
                       onChange={(event, value) => {
                         const [start, end] = value as number[];
                         setSpecificDetails(

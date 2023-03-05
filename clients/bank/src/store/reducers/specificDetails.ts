@@ -28,7 +28,10 @@ export class PeriodAmountFilter {
 }
 
 export class BillDates {
-  constructor(public start: string, public end: string) {}
+  constructor(
+    public start: string = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(),
+    public end: string = new Date().toISOString()
+  ) {}
 }
 
 export interface SpecificDetailsState {
@@ -38,6 +41,7 @@ export interface SpecificDetailsState {
   periodAmount: PeriodAmountObj | null;
   periodAmountFilter: PeriodAmountFilter;
   billsLastWeek: BillsLastWeekObj[] | null;
+  billDates: BillDates;
 }
 
 const initialState: SpecificDetailsState = {
@@ -47,6 +51,7 @@ const initialState: SpecificDetailsState = {
   periodAmount: null,
   periodAmountFilter: new PeriodAmountFilter(),
   billsLastWeek: null,
+  billDates: new BillDates(),
 };
 
 function setSpecificDetails(
