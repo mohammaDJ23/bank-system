@@ -3,11 +3,23 @@ import { FC, useEffect } from 'react';
 import { Box, CardContent, Typography, Slider, Input } from '@mui/material';
 import { DateRange } from '@mui/icons-material';
 import { grey } from '@mui/material/colors';
-import { BillsLastWeekApi, BillsPeriodApi, PeriodAmountApi, TotalAmountApi } from '../../apis';
+import {
+  BillDatesApi,
+  BillsLastWeekApi,
+  BillsPeriodApi,
+  PeriodAmountApi,
+  TotalAmountApi,
+} from '../../apis';
 import { useAction, usePaginationList, useRequest, useSelector } from '../../hooks';
 import MainContainer from '../../layout/MainContainer';
 import { BillList, BillObj } from '../../lib';
-import { BillsLastWeekObj, PeriodAmountFilter, PeriodAmountObj, TotalAmountObj } from '../../store';
+import {
+  BillDates,
+  BillsLastWeekObj,
+  PeriodAmountFilter,
+  PeriodAmountObj,
+  TotalAmountObj,
+} from '../../store';
 import Skeleton from '../Skeleton';
 import Card from '../Card';
 import {
@@ -58,6 +70,7 @@ const Dashboard: FC = () => {
   const isPeriodAmountProcessing = isInitialApiProcessing(PeriodAmountApi);
   const isBillsPeriodProcessing = isInitialApiProcessing(BillsPeriodApi);
   const isBillsLastWeekProcessing = isInitialApiProcessing(BillsLastWeekApi);
+  const isBillDatesProcessing = isInitialApiProcessing(BillDatesApi);
 
   useEffect(() => {
     Promise.allSettled<
@@ -65,15 +78,23 @@ const Dashboard: FC = () => {
         Promise<AxiosResponse<TotalAmountObj>>,
         Promise<AxiosResponse<PeriodAmountObj>>,
         Promise<AxiosResponse<[BillObj[], number]>>,
-        Promise<AxiosResponse<BillsLastWeekObj[]>>
+        Promise<AxiosResponse<BillsLastWeekObj[]>>,
+        Promise<AxiosResponse<BillDates>>
       ]
     >([
       request(new TotalAmountApi()),
       request(new PeriodAmountApi(specificDetails.periodAmountFilter)),
       request(new BillsPeriodApi(Object.assign({}, new BillsPeriod(), new BillList()))),
       request(new BillsLastWeekApi()),
+      request(new BillDatesApi()),
     ]).then(
-      ([totalAmountResponse, periodAmountResponse, billsPeriodResponse, billsLastWeekResponse]) => {
+      ([
+        totalAmountResponse,
+        periodAmountResponse,
+        billsPeriodResponse,
+        billsLastWeekResponse,
+        billDatesResponse,
+      ]) => {
         if (totalAmountResponse.status === 'fulfilled')
           setSpecificDetails('totalAmount', totalAmountResponse.value.data);
 
@@ -90,6 +111,11 @@ const Dashboard: FC = () => {
 
         if (billsLastWeekResponse.status === 'fulfilled')
           setSpecificDetails('billsLastWeek', billsLastWeekResponse.value.data);
+
+        if (billDatesResponse.status === 'fulfilled') {
+          const { start, end } = billDatesResponse.value.data;
+          setSpecificDetails('periodAmountFilter', new PeriodAmountFilter(start, end));
+        }
       }
     );
   }, []);
@@ -169,14 +195,14 @@ const Dashboard: FC = () => {
               <CardContent>
                 <Box display="flex" alignItems="center" justifyContent="space-between" gap="20px">
                   <Typography whiteSpace="nowrap">Total Amount: </Typography>
-                  <Typography>{specificDetails.totalAmount.totalAmount}</Typography>
+                  <Typography>{specificDetails.totalAmount.totalAmount || 0}</Typography>
                 </Box>
               </CardContent>
             </Card>
           )
         )}
 
-        {isPeriodAmountProcessing ? (
+        {isPeriodAmountProcessing || isBillDatesProcessing ? (
           <Skeleton width="100%" height="80px" />
         ) : (
           specificDetails.periodAmount && (
@@ -263,7 +289,7 @@ const Dashboard: FC = () => {
                   </Box>
                   <Box display="flex" alignItems="center" justifyContent="space-between" gap="20px">
                     <Typography whiteSpace="nowrap">Period Amount: </Typography>
-                    <Typography>{specificDetails.periodAmount.totalAmount}</Typography>
+                    <Typography>{specificDetails.periodAmount.totalAmount || 0}</Typography>
                   </Box>
                 </Box>
               </CardContent>

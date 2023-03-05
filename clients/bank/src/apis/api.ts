@@ -247,3 +247,12 @@ export class BillsExcelApi extends RootApi {
     });
   }
 }
+
+export class BillDatesApi extends RootApi {
+  constructor() {
+    super({
+      url: '/bank/bills/dates',
+      method: 'get',
+    });
+  }
+}

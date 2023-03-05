@@ -27,6 +27,10 @@ export class PeriodAmountFilter {
   ) {}
 }
 
+export class BillDates {
+  constructor(public start: string, public end: string) {}
+}
+
 export interface SpecificDetailsState {
   user: UserObj | null;
   bill: BillObj | null;
