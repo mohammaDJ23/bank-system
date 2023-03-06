@@ -1,5 +1,5 @@
 import { AxiosResponse } from 'axios';
-import { ChangeEvent, FC, useEffect } from 'react';
+import { ChangeEvent, FC, useEffect, useRef } from 'react';
 import { Box, CardContent, Typography, Slider, Input } from '@mui/material';
 import { DateRange } from '@mui/icons-material';
 import { grey } from '@mui/material/colors';
@@ -72,6 +72,20 @@ const Dashboard: FC = () => {
   const isBillsPeriodProcessing = isInitialApiProcessing(BillsPeriodApi);
   const isBillsLastWeekProcessing = isInitialApiProcessing(BillsLastWeekApi);
   const isBillDatesProcessing = isInitialApiProcessing(BillDatesApi);
+
+  const periodAmountChangeRequest = useRef(
+    debounce(
+      500,
+      (
+        previousPeriodAmountFilter: PeriodAmountFilter,
+        newPeriodAmountFilter: PeriodAmountFilter
+      ) => {
+        request(new PeriodAmountApi(newPeriodAmountFilter))
+          .then(response => setSpecificDetails('periodAmount', response.data))
+          .catch(err => setSpecificDetails('periodAmountFilter', previousPeriodAmountFilter));
+      }
+    )
+  );
 
   useEffect(() => {
     Promise.allSettled<
@@ -253,15 +267,18 @@ const Dashboard: FC = () => {
                     <Input
                       type="date"
                       value={moment(specificDetails.periodAmountFilter.start).format('YYYY-MM-DD')}
-                      onChange={debounce(1000, (event: ChangeEvent<HTMLInputElement>) => {
-                        setSpecificDetails(
-                          'periodAmountFilter',
-                          new PeriodAmountFilter(
-                            getNewDateValue(event.target.value).toISOString(),
-                            specificDetails.periodAmountFilter.end
-                          )
+                      onChange={event => {
+                        const previousPeriodAmountFilter = specificDetails.periodAmountFilter;
+                        const newPeriodAmountFilter = new PeriodAmountFilter(
+                          getNewDateValue(event.target.value).toISOString(),
+                          previousPeriodAmountFilter.end
                         );
-                      })}
+                        setSpecificDetails('periodAmountFilter', newPeriodAmountFilter);
+                        periodAmountChangeRequest.current(
+                          previousPeriodAmountFilter,
+                          newPeriodAmountFilter
+                        );
+                      }}
                       sx={{
                         position: 'absolute',
                         top: '7px',
@@ -276,16 +293,19 @@ const Dashboard: FC = () => {
                       ]}
                       min={new Date(specificDetails.billDates.start).getTime()}
                       max={new Date(specificDetails.billDates.end).getTime()}
-                      onChange={debounce(1000, (event: ChangeEvent, value) => {
+                      onChange={(event, value) => {
                         const [start, end] = value as number[];
-                        setSpecificDetails(
-                          'periodAmountFilter',
-                          new PeriodAmountFilter(
-                            new Date(start).toISOString(),
-                            new Date(end).toISOString()
-                          )
+                        const previousPeriodAmountFilter = specificDetails.periodAmountFilter;
+                        const newPeriodAmountFilter = new PeriodAmountFilter(
+                          new Date(start).toISOString(),
+                          new Date(end).toISOString()
                         );
-                      })}
+                        setSpecificDetails('periodAmountFilter', newPeriodAmountFilter);
+                        periodAmountChangeRequest.current(
+                          previousPeriodAmountFilter,
+                          newPeriodAmountFilter
+                        );
+                      }}
                       valueLabelDisplay="off"
                     />
                     <Box display="flex" alignItems="center" gap="5px">
@@ -297,15 +317,18 @@ const Dashboard: FC = () => {
                     <Input
                       type="date"
                       value={moment(specificDetails.periodAmountFilter.end).format('YYYY-MM-DD')}
-                      onChange={debounce(1000, (event: ChangeEvent<HTMLInputElement>) => {
-                        setSpecificDetails(
-                          'periodAmountFilter',
-                          new PeriodAmountFilter(
-                            specificDetails.periodAmountFilter.start,
-                            getNewDateValue(event.target.value).toISOString()
-                          )
+                      onChange={event => {
+                        const previousPeriodAmountFilter = specificDetails.periodAmountFilter;
+                        const newPeriodAmountFilter = new PeriodAmountFilter(
+                          previousPeriodAmountFilter.start,
+                          getNewDateValue(event.target.value).toISOString()
                         );
-                      })}
+                        setSpecificDetails('periodAmountFilter', newPeriodAmountFilter);
+                        periodAmountChangeRequest.current(
+                          previousPeriodAmountFilter,
+                          newPeriodAmountFilter
+                        );
+                      }}
                       sx={{
                         position: 'absolute',
                         top: '7px',
