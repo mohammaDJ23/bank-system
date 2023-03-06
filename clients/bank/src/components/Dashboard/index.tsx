@@ -34,6 +34,7 @@ import {
 import { ArgumentScale, Animation, EventTracker } from '@devexpress/dx-react-chart';
 import { curveCatmullRom, area } from 'd3-shape';
 import moment from 'moment';
+import { notification } from 'antd';
 
 export class BillsPeriod {
   constructor(
@@ -115,10 +116,37 @@ const Dashboard: FC = () => {
         if (billDatesResponse.status === 'fulfilled') {
           const { start, end } = billDatesResponse.value.data;
           setSpecificDetails('billDates', new BillDates(start, end));
+          setSpecificDetails('periodAmountFilter', new PeriodAmountFilter(start, end));
         }
       }
     );
   }, []);
+
+  function getNewDateValue(value: string) {
+    let newDate = new Date(value);
+    const startDate = new Date(specificDetails.billDates.start);
+    const endDate = new Date(specificDetails.billDates.end);
+    if (newDate < startDate) {
+      notification.warning({
+        message: 'Warning',
+        description: `The minimum date is equal to ${moment(specificDetails.billDates.start).format(
+          'll'
+        )}`,
+        duration: 7,
+      });
+      newDate = startDate;
+    } else if (newDate > endDate) {
+      notification.warning({
+        message: 'Warning',
+        description: `The maximum date is equal to ${moment(specificDetails.billDates.end).format(
+          'll'
+        )}`,
+        duration: 7,
+      });
+      newDate = endDate;
+    }
+    return newDate;
+  }
 
   return (
     <MainContainer>
@@ -229,7 +257,7 @@ const Dashboard: FC = () => {
                         setSpecificDetails(
                           'periodAmountFilter',
                           new PeriodAmountFilter(
-                            new Date(event.target.value).toISOString(),
+                            getNewDateValue(event.target.value).toISOString(),
                             specificDetails.periodAmountFilter.end
                           )
                         );
@@ -274,7 +302,7 @@ const Dashboard: FC = () => {
                           'periodAmountFilter',
                           new PeriodAmountFilter(
                             specificDetails.periodAmountFilter.start,
-                            new Date(event.target.value).toISOString()
+                            getNewDateValue(event.target.value).toISOString()
                           )
                         );
                       }}
