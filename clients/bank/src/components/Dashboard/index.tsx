@@ -1,5 +1,5 @@
 import { AxiosResponse } from 'axios';
-import { FC, useEffect } from 'react';
+import { ChangeEvent, FC, useEffect } from 'react';
 import { Box, CardContent, Typography, Slider, Input } from '@mui/material';
 import { DateRange } from '@mui/icons-material';
 import { grey } from '@mui/material/colors';
@@ -12,7 +12,7 @@ import {
 } from '../../apis';
 import { useAction, usePaginationList, useRequest, useSelector } from '../../hooks';
 import MainContainer from '../../layout/MainContainer';
-import { BillList, BillObj } from '../../lib';
+import { BillList, BillObj, debounce } from '../../lib';
 import {
   BillDates,
   BillsLastWeekObj,
@@ -253,7 +253,7 @@ const Dashboard: FC = () => {
                     <Input
                       type="date"
                       value={moment(specificDetails.periodAmountFilter.start).format('YYYY-MM-DD')}
-                      onChange={event => {
+                      onChange={debounce(1000, (event: ChangeEvent<HTMLInputElement>) => {
                         setSpecificDetails(
                           'periodAmountFilter',
                           new PeriodAmountFilter(
@@ -261,7 +261,7 @@ const Dashboard: FC = () => {
                             specificDetails.periodAmountFilter.end
                           )
                         );
-                      }}
+                      })}
                       sx={{
                         position: 'absolute',
                         top: '7px',
@@ -276,7 +276,7 @@ const Dashboard: FC = () => {
                       ]}
                       min={new Date(specificDetails.billDates.start).getTime()}
                       max={new Date(specificDetails.billDates.end).getTime()}
-                      onChange={(event, value) => {
+                      onChange={debounce(1000, (event: ChangeEvent, value) => {
                         const [start, end] = value as number[];
                         setSpecificDetails(
                           'periodAmountFilter',
@@ -285,7 +285,7 @@ const Dashboard: FC = () => {
                             new Date(end).toISOString()
                           )
                         );
-                      }}
+                      })}
                       valueLabelDisplay="off"
                     />
                     <Box display="flex" alignItems="center" gap="5px">
@@ -297,7 +297,7 @@ const Dashboard: FC = () => {
                     <Input
                       type="date"
                       value={moment(specificDetails.periodAmountFilter.end).format('YYYY-MM-DD')}
-                      onChange={event => {
+                      onChange={debounce(1000, (event: ChangeEvent<HTMLInputElement>) => {
                         setSpecificDetails(
                           'periodAmountFilter',
                           new PeriodAmountFilter(
@@ -305,7 +305,7 @@ const Dashboard: FC = () => {
                             getNewDateValue(event.target.value).toISOString()
                           )
                         );
-                      }}
+                      })}
                       sx={{
                         position: 'absolute',
                         top: '7px',
