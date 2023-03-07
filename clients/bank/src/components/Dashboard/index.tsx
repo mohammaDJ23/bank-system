@@ -173,7 +173,7 @@ const Dashboard: FC = () => {
         gap="16px"
       >
         {isBillsLastWeekProcessing ? (
-          <Skeleton height="300px" width="100%" />
+          <Skeleton height="440px" width="100%" />
         ) : (
           <>
             {(() => {
@@ -188,7 +188,7 @@ const Dashboard: FC = () => {
                 isBillsExist && (
                   <Card>
                     <CardContent>
-                      <Chart data={data}>
+                      <Chart data={data} height={400}>
                         <ArgumentScale />
                         <ArgumentAxis
                           showGrid
@@ -230,7 +230,7 @@ const Dashboard: FC = () => {
         )}
 
         {isTotalAmountProcessing ? (
-          <Skeleton width="100%" height="60px" />
+          <Skeleton width="100%" height="64px" />
         ) : (
           specificDetails.totalAmount && (
             <Card>
@@ -245,7 +245,7 @@ const Dashboard: FC = () => {
         )}
 
         {isPeriodAmountProcessing || isBillDatesProcessing ? (
-          <Skeleton width="100%" height="80px" />
+          <Skeleton width="100%" height="128px" />
         ) : (
           specificDetails.periodAmount && (
             <Card>
@@ -291,6 +291,7 @@ const Dashboard: FC = () => {
                         new Date(specificDetails.periodAmountFilter.start).getTime(),
                         new Date(specificDetails.periodAmountFilter.end).getTime(),
                       ]}
+                      step={1 * 24 * 60 * 60 * 1000}
                       min={new Date(specificDetails.billDates.start).getTime()}
                       max={new Date(specificDetails.billDates.end).getTime()}
                       onChange={(event, value) => {
