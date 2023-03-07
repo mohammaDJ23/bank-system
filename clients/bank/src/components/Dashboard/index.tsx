@@ -247,7 +247,8 @@ const Dashboard: FC = () => {
         {isPeriodAmountProcessing || isBillDatesProcessing ? (
           <Skeleton width="100%" height="128px" />
         ) : (
-          specificDetails.periodAmount && (
+          specificDetails.periodAmount &&
+          specificDetails.periodAmountFilter && (
             <Card>
               <CardContent>
                 <Box display="flex" justifyContent="center" flexDirection="column" gap="20px">
