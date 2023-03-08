@@ -19,7 +19,7 @@ const UserContent: FC = () => {
 
   useEffect(() => {
     if (userId) {
-      request<UserObj, number>(new UserApi(+userId)).then(response => {
+      request<UserObj, number>(new UserApi(+userId).setInitialApi()).then(response => {
         setSpecificDetails('user', response.data);
       });
     }
