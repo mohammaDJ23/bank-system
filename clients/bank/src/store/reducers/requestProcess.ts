@@ -117,8 +117,8 @@ function initialProcessingApiError(
 
 function clean(state: RequestProcessState) {
   return Object.assign<RequestProcessState, Partial<RequestProcessState>>(state, {
-    processingApis: processingApi,
-    initialProcessingApis: processingApi,
+    processingApis: { loadings: {}, errors: {}, successes: {} },
+    initialProcessingApis: { loadings: {}, errors: {}, successes: {} },
   });
 }
 
