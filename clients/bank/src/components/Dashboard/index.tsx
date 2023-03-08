@@ -55,7 +55,6 @@ const Dashboard: FC = () => {
   const { setList } = listMaker(BillList);
   const isTotalAmountProcessing = isInitialApiProcessing(TotalAmountApi);
   const isInitialPeriodAmountProcessing = isInitialApiProcessing(PeriodAmountApi);
-  const isBillsPeriodProcessing = isInitialApiProcessing(BillsPeriodApi);
   const isBillsLastWeekProcessing = isInitialApiProcessing(BillsLastWeekApi);
   const isBillDatesProcessing = isInitialApiProcessing(BillDatesApi);
   const isPeriodAmountProcessing = isApiProcessing(PeriodAmountApi);
