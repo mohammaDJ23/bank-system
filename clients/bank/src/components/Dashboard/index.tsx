@@ -102,9 +102,10 @@ const Dashboard: FC = () => {
           setSpecificDetails('billsLastWeek', billsLastWeekResponse.value.data);
 
         if (billDatesResponse.status === 'fulfilled') {
-          const { start, end } = billDatesResponse.value.data;
+          let { start, end } = billDatesResponse.value.data;
+          start = new Date(start).toISOString();
+          end = new Date(end).toISOString();
           setSpecificDetails('billDates', new BillDates(start, end));
-          setSpecificDetails('periodAmountFilter', new PeriodAmountFilter(start, end));
         }
       }
     );
