@@ -92,7 +92,7 @@ export class BillService {
     return this.billRepository
       .createQueryBuilder('bill')
       .innerJoinAndSelect('bill.user', 'user')
-      .select('SUM(bill.amount::NUMERIC)::VARCHAR(100)', 'totalAmount')
+      .select('SUM(bill.amount::NUMERIC)::TEXT', 'totalAmount')
       .where('user.user_service_id = :userId', {
         userId: user.userServiceId,
       })
@@ -103,7 +103,7 @@ export class BillService {
     return this.billRepository
       .createQueryBuilder('bill')
       .innerJoinAndSelect('bill.user', 'user')
-      .select('SUM(bill.amount::NUMERIC)::VARCHAR(100)', 'totalAmount')
+      .select('SUM(bill.amount::NUMERIC)::TEXT', 'totalAmount')
       .where('bill.date::TIMESTAMP >= :start::TIMESTAMP', {
         start: body.start,
       })
@@ -135,7 +135,7 @@ export class BillService {
       .createQueryBuilder('bill')
       .innerJoinAndSelect('bill.user', 'user')
       .select('COUNT(bill.date::DATE)::INTEGER', 'count')
-      .addSelect('SUM(bill.amount::NUMERIC)::VARCHAR(100)', 'amount')
+      .addSelect('SUM(bill.amount::NUMERIC)::TEXT', 'amount')
       .addSelect('bill.date::DATE', 'date')
       .where('bill.date::DATE >= CURRENT_DATE - 6')
       .andWhere('bill.date::DATE <= CURRENT_DATE ')
