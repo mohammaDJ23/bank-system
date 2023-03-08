@@ -16,7 +16,6 @@ export enum RequestProcess {
   INITIAL_PROCESSING_API_LOADING = 'INITIAL_PROCESSING_API_LOADING',
   INITIAL_PROCESSING_API_SUCCESS = 'INITIAL_PROCESSING_API_SUCCESS',
   INITIAL_PROCESSING_API_ERROR = 'INITIAL_PROCESSING_API_ERROR',
-  CLEAN = 'CLEAN',
 }
 
 interface Process<T = boolean> {
@@ -147,7 +146,6 @@ export function requsetProcessReducer(
       return initialProcessingApiError(state, actions);
 
     case ClearState.CLEAR_STATE:
-    case RequestProcess.CLEAN:
       return clean(state);
 
     default:

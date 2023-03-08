@@ -30,18 +30,13 @@ export interface InitialProcessingApiErrorAction {
   payload: { name: string };
 }
 
-export interface CleanAction {
-  type: RequestProcess.CLEAN;
-}
-
 export type RequestProcessActions =
   | ProcessingApiLoadingAction
   | ProcessingApiSuccessAction
   | ProcessingApiErrorAction
   | InitialProcessingApiLoadingAction
   | InitialProcessingApiSuccessAction
-  | InitialProcessingApiErrorAction
-  | CleanAction;
+  | InitialProcessingApiErrorAction;
 
 export function processingApiLoading(name: string) {
   return {
@@ -82,11 +77,5 @@ export function initialProcessingApiError(name: string) {
   return {
     type: RequestProcess.INITIAL_PROCESSING_API_ERROR,
     payload: { name },
-  };
-}
-
-export function cleanRequestProcess() {
-  return {
-    type: RequestProcess.CLEAN,
   };
 }
