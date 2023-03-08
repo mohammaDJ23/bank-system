@@ -34,7 +34,7 @@ const UpdateUserByUserContent: FC = () => {
   useEffect(() => {
     const userId = params.id;
     if (userId) {
-      request<UserObj, number>(new UserApi(+userId)).then(response => {
+      request<UserObj, number>(new UserApi(+userId).setInitialApi()).then(response => {
         initializeForm(
           new UpdateUserByUser({
             id: response.data.id,
