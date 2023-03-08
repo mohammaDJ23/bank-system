@@ -50,7 +50,7 @@ const Area = (props: any) => (
 const Dashboard: FC = () => {
   const { request, isInitialApiProcessing } = useRequest();
   const { setSpecificDetails } = useAction();
-  const { specificDetails } = useSelector();
+  const { specificDetails, requestProcess } = useSelector();
   const listMaker = usePaginationList();
   const { setList } = listMaker(BillList);
   const isTotalAmountProcessing = isInitialApiProcessing(TotalAmountApi);
@@ -58,6 +58,8 @@ const Dashboard: FC = () => {
   const isBillsPeriodProcessing = isInitialApiProcessing(BillsPeriodApi);
   const isBillsLastWeekProcessing = isInitialApiProcessing(BillsLastWeekApi);
   const isBillDatesProcessing = isInitialApiProcessing(BillDatesApi);
+
+  console.log(requestProcess);
 
   const periodAmountChangeRequest = useRef(
     debounce(500, (previousPeriodAmountFilter: PeriodAmountFilter, newPeriodAmountFilter: PeriodAmountFilter) => {

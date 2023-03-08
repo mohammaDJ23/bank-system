@@ -25,7 +25,7 @@ export function useRequest() {
   const request = useCallback(
     async <R = any, D = any>(requestInstance: RootApi<D>): Promise<AxiosResponse<R, D>> => {
       const requestConstructorName = getRequestConstructorName(requestInstance);
-      const isInitialApi = false;
+      const isInitialApi = requestInstance.isInitialApi;
 
       try {
         if (isInitialApi) initialProcessingApiLoading(requestConstructorName);
