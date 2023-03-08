@@ -193,12 +193,12 @@ const Dashboard: FC = () => {
         {isTotalAmountProcessing ? (
           <Skeleton width="100%" height="64px" />
         ) : (
-          specificDetails.totalAmount && (
+          specificDetails.totalAmount?.totalAmount && (
             <Card>
               <CardContent>
                 <Box display="flex" alignItems="center" justifyContent="space-between" gap="20px">
                   <Typography whiteSpace="nowrap">Total Amount: </Typography>
-                  <Typography>{specificDetails.totalAmount.totalAmount || 0}</Typography>
+                  <Typography>{specificDetails.totalAmount.totalAmount}</Typography>
                 </Box>
               </CardContent>
             </Card>
@@ -209,7 +209,8 @@ const Dashboard: FC = () => {
           <Skeleton width="100%" height="128px" />
         ) : (
           specificDetails.periodAmount &&
-          specificDetails.periodAmountFilter && (
+          specificDetails.periodAmountFilter.start &&
+          specificDetails.periodAmountFilter.end && (
             <Card>
               <CardContent>
                 <Box display="flex" justifyContent="center" flexDirection="column" gap="20px">
@@ -289,10 +290,12 @@ const Dashboard: FC = () => {
                       }}
                     />
                   </Box>
-                  <Box display="flex" alignItems="center" justifyContent="space-between" gap="20px">
-                    <Typography whiteSpace="nowrap">Period Amount: </Typography>
-                    <Typography>{specificDetails.periodAmount.totalAmount || 0}</Typography>
-                  </Box>
+                  {specificDetails.periodAmount.totalAmount && (
+                    <Box display="flex" alignItems="center" justifyContent="space-between" gap="20px">
+                      <Typography whiteSpace="nowrap">Period Amount: </Typography>
+                      <Typography>{specificDetails.periodAmount.totalAmount}</Typography>
+                    </Box>
+                  )}
                 </Box>
               </CardContent>
             </Card>
