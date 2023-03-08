@@ -5,6 +5,7 @@ import { ErrorObj, Request, RootApi, RootApiObj } from '../apis';
 import { Constructor } from '../lib';
 import { useAction } from './useActions';
 import { useSelector } from './useSelector';
+import { initialProcessingApiError, initialProcessingApiLoading, initialProcessingApiSuccess } from '../store/actions';
 
 export function useRequest() {
   const { requestProcess } = useSelector();
@@ -21,14 +22,14 @@ export function useRequest() {
       const isInitialApi = requestInstance.isInitialApi;
 
       try {
-        if (isInitialApi) {
-        } else processingApiLoading(requestConstructorName);
+        if (isInitialApi) initialProcessingApiLoading(requestConstructorName);
+        else processingApiLoading(requestConstructorName);
 
         const request = new Request<R, D>(requestInstance);
         const response = await request.build();
 
-        if (isInitialApi) {
-        } else processingApiSuccess(requestConstructorName);
+        if (isInitialApi) initialProcessingApiSuccess(requestConstructorName);
+        else processingApiSuccess(requestConstructorName);
 
         return response;
       } catch (e) {
@@ -42,8 +43,8 @@ export function useRequest() {
         message = Array.isArray(message) ? message.join(' - ') : message;
         notification.error({ message: 'Error', description: message });
 
-        if (isInitialApi) {
-        } else processingApiError(requestConstructorName);
+        if (isInitialApi) initialProcessingApiError(requestConstructorName);
+        else processingApiError(requestConstructorName);
 
         throw err;
       }

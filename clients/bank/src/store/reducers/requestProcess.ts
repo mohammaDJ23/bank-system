@@ -1,5 +1,8 @@
 import { RootActions } from '../actions';
 import {
+  InitialProcessingApiErrorAction,
+  InitialProcessingApiLoadingAction,
+  InitialProcessingApiSuccessAction,
   ProcessingApiErrorAction,
   ProcessingApiLoadingAction,
   ProcessingApiSuccessAction,
@@ -71,6 +74,48 @@ function processingApiError(state: RequestProcessState, action: ProcessingApiErr
   return newState;
 }
 
+function initialProcessingApiLoading(
+  state: RequestProcessState,
+  action: InitialProcessingApiLoadingAction
+): RequestProcessState {
+  const requestName = action.payload.name;
+  const newState = Object.assign<object, RequestProcessState>({}, state);
+  delete newState.initialProcessingApis.errors[requestName];
+  delete newState.initialProcessingApis.successes[requestName];
+  newState.initialProcessingApis.loadings = Object.assign<Process, Process>(newState.initialProcessingApis.loadings, {
+    [requestName]: true,
+  });
+  return newState;
+}
+
+function initialProcessingApiSuccess(
+  state: RequestProcessState,
+  action: InitialProcessingApiSuccessAction
+): RequestProcessState {
+  const requestName = action.payload.name;
+  const newState = Object.assign<object, RequestProcessState>({}, state);
+  delete newState.initialProcessingApis.loadings[requestName];
+  delete newState.initialProcessingApis.errors[requestName];
+  newState.initialProcessingApis.successes = Object.assign<Process, Process>(newState.initialProcessingApis.successes, {
+    [requestName]: true,
+  });
+  return newState;
+}
+
+function initialProcessingApiError(
+  state: RequestProcessState,
+  action: InitialProcessingApiErrorAction
+): RequestProcessState {
+  const requestName = action.payload.name;
+  const newState = Object.assign<object, RequestProcessState>({}, state);
+  delete newState.initialProcessingApis.loadings[requestName];
+  delete newState.initialProcessingApis.successes[requestName];
+  newState.initialProcessingApis.errors = Object.assign<Process, Process>(newState.initialProcessingApis.errors, {
+    [requestName]: true,
+  });
+  return newState;
+}
+
 function clean(state: RequestProcessState) {
   return Object.assign<RequestProcessState, Partial<RequestProcessState>>(state, {
     processingApis: processingApi,
@@ -91,6 +136,15 @@ export function requsetProcessReducer(
 
     case RequestProcess.PROCESSING_API_ERROR:
       return processingApiError(state, actions);
+
+    case RequestProcess.INITIAL_PROCESSING_API_LOADING:
+      return initialProcessingApiLoading(state, actions);
+
+    case RequestProcess.INITIAL_PROCESSING_API_SUCCESS:
+      return initialProcessingApiSuccess(state, actions);
+
+    case RequestProcess.INITIAL_PROCESSING_API_ERROR:
+      return initialProcessingApiError(state, actions);
 
     case ClearState.CLEAR_STATE:
     case RequestProcess.CLEAN:
