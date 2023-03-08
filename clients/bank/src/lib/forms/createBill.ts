@@ -22,7 +22,7 @@ export class CreateBill extends Form {
   description: string = '';
 
   @DefineRules([isDate])
-  @DefineVal()
+  @DefineVal(new Date().getTime())
   @CacheInput()
   @DefineValidation()
   date: number = new Date().getTime();

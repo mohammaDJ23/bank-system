@@ -22,7 +22,7 @@ export class UpdateBill extends Form {
   description: string = '';
 
   @DefineRules([isDate])
-  @DefineVal()
+  @DefineVal(new Date().getTime())
   @DefineValidation()
   date: number = new Date().getTime();
 

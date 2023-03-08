@@ -10,11 +10,11 @@ export function setInitialInputsValue(values: InitialInputsValue, target: any) {
   Reflect.defineMetadata(FormMetadataTypes.VALUES, values, target);
 }
 
-export function DefineVal() {
+export function DefineVal(initialValue?: any) {
   return function (target: any, prop: string) {
     const value: any = Reflect.getMetadata('design:type', target, prop)();
     const inputs = getInitialInputsValue(target);
-    const newInputs = Object.assign(inputs, { [prop]: value });
+    const newInputs = Object.assign(inputs, { [prop]: initialValue || value });
     setInitialInputsValue(newInputs, target);
   };
 }
