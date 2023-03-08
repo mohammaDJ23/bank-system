@@ -1,17 +1,17 @@
 import { RequestProcess } from '../reducers';
 
-export interface LoadingAction {
-  type: RequestProcess.LOADING;
+export interface ProcessingApiLoadingAction {
+  type: RequestProcess.PROCESSING_API_LOADING;
   payload: { name: string };
 }
 
-export interface SuccessAction {
-  type: RequestProcess.SUCCESS;
+export interface ProcessingApiSuccessAction {
+  type: RequestProcess.PROCESSING_API_SUCCESS;
   payload: { name: string };
 }
 
-export interface ErrorAction {
-  type: RequestProcess.ERROR;
+export interface ProcessingApiErrorAction {
+  type: RequestProcess.PROCESSING_API_ERROR;
   payload: { name: string };
 }
 
@@ -19,25 +19,29 @@ export interface CleanAction {
   type: RequestProcess.CLEAN;
 }
 
-export type RequestProcessActions = LoadingAction | SuccessAction | ErrorAction | CleanAction;
+export type RequestProcessActions =
+  | ProcessingApiLoadingAction
+  | ProcessingApiSuccessAction
+  | ProcessingApiErrorAction
+  | CleanAction;
 
-export function loading(name: string) {
+export function processingApiLoading(name: string) {
   return {
-    type: RequestProcess.LOADING,
+    type: RequestProcess.PROCESSING_API_LOADING,
     payload: { name },
   };
 }
 
-export function success(name: string) {
+export function processingApiSuccess(name: string) {
   return {
-    type: RequestProcess.SUCCESS,
+    type: RequestProcess.PROCESSING_API_SUCCESS,
     payload: { name },
   };
 }
 
-export function error(name: string) {
+export function processingApiError(name: string) {
   return {
-    type: RequestProcess.ERROR,
+    type: RequestProcess.PROCESSING_API_ERROR,
     payload: { name },
   };
 }

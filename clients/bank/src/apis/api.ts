@@ -8,7 +8,7 @@ export interface IdReq {
   id: number;
 }
 
-abstract class RootApi<D = any> implements RootApiObj<D> {
+export abstract class RootApi<D = any> implements RootApiObj<D> {
   protected _isInitialApi: boolean = false;
 
   constructor(public readonly api: AxiosRequestConfig<D>, public readonly config: CreateAxiosDefaults<D> = {}) {

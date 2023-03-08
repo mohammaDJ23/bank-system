@@ -8,8 +8,6 @@ export interface ErrorObj {
   path: string;
 }
 
-export type RequestParametersType<R = any, D = any> = ConstructorParameters<typeof Request<R, D>>[0];
-
 export interface RootApiObj<D = any> {
   readonly api: AxiosRequestConfig<D>;
   readonly config?: CreateAxiosDefaults<D>;
