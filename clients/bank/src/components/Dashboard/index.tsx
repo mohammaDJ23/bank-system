@@ -48,18 +48,17 @@ const Area = (props: any) => (
 );
 
 const Dashboard: FC = () => {
-  const { request, isInitialApiProcessing } = useRequest();
+  const { request, isInitialApiProcessing, isApiProcessing } = useRequest();
   const { setSpecificDetails } = useAction();
-  const { specificDetails, requestProcess } = useSelector();
+  const { specificDetails } = useSelector();
   const listMaker = usePaginationList();
   const { setList } = listMaker(BillList);
   const isTotalAmountProcessing = isInitialApiProcessing(TotalAmountApi);
-  const isPeriodAmountProcessing = isInitialApiProcessing(PeriodAmountApi);
+  const isInitialPeriodAmountProcessing = isInitialApiProcessing(PeriodAmountApi);
   const isBillsPeriodProcessing = isInitialApiProcessing(BillsPeriodApi);
   const isBillsLastWeekProcessing = isInitialApiProcessing(BillsLastWeekApi);
   const isBillDatesProcessing = isInitialApiProcessing(BillDatesApi);
-
-  console.log(requestProcess);
+  const isPeriodAmountProcessing = isApiProcessing(PeriodAmountApi);
 
   const periodAmountChangeRequest = useRef(
     debounce(500, (previousPeriodAmountFilter: PeriodAmountFilter, newPeriodAmountFilter: PeriodAmountFilter) => {
@@ -206,7 +205,7 @@ const Dashboard: FC = () => {
           )
         )}
 
-        {isPeriodAmountProcessing || isBillDatesProcessing ? (
+        {isInitialPeriodAmountProcessing || isBillDatesProcessing ? (
           <Skeleton width="100%" height="128px" />
         ) : (
           specificDetails.periodAmount &&
@@ -222,6 +221,7 @@ const Dashboard: FC = () => {
                       <DateRange fontSize="small" sx={{ color: grey[600] }} />
                     </Box>
                     <Input
+                      disabled={isPeriodAmountProcessing}
                       type="date"
                       value={moment(specificDetails.periodAmountFilter.start).format('YYYY-MM-DD')}
                       onChange={event => {
@@ -241,6 +241,7 @@ const Dashboard: FC = () => {
                       }}
                     />
                     <Slider
+                      disabled={isPeriodAmountProcessing}
                       value={[
                         new Date(specificDetails.periodAmountFilter.start).getTime(),
                         new Date(specificDetails.periodAmountFilter.end).getTime(),
@@ -267,6 +268,7 @@ const Dashboard: FC = () => {
                       <DateRange fontSize="small" sx={{ color: grey[600] }} />
                     </Box>
                     <Input
+                      disabled={isPeriodAmountProcessing}
                       type="date"
                       value={moment(specificDetails.periodAmountFilter.end).format('YYYY-MM-DD')}
                       onChange={event => {
