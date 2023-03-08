@@ -20,7 +20,7 @@ export class BillDto {
 
   @Expose()
   @ApiProperty()
-  date: string;
+  date: number;
 
   @Expose()
   @ApiProperty()

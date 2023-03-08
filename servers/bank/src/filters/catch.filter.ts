@@ -28,7 +28,7 @@ export class AllExceptionFilter implements ExceptionFilter {
     exception: any,
   ) {
     const { statusCode, message } = this.getExceptionInfo(exception);
-    const timestamp = new Date().toISOString();
+    const timestamp = new Date().getTime();
     const path = httpAdapter.getRequestUrl(ctx.getRequest());
     const responseBody = { statusCode, message, timestamp, path };
     return responseBody;

@@ -135,11 +135,11 @@ export class BillService {
     return this.billRepository
       .createQueryBuilder('bill')
       .innerJoinAndSelect('bill.user', 'user')
-      .select('COUNT(bill.date::DATE)::INTEGER', 'count')
+      .select('COUNT(bill.date::TIMESTAMP)::INTEGER', 'count')
       .addSelect('SUM(bill.amount::NUMERIC)::TEXT', 'amount')
-      .addSelect('bill.date::DATE', 'date')
-      .where('bill.date::DATE >= CURRENT_DATE - 6')
-      .andWhere('bill.date::DATE <= CURRENT_DATE ')
+      .addSelect('bill.date::TIMESTAMP', 'date')
+      .where('bill.date::TIMESTAMP >= CURRENT_DATE - 6')
+      .andWhere('bill.date::TIMESTAMP <= CURRENT_DATE ')
       .andWhere('user.user_service_id = :userId', {
         userId: user.userServiceId,
       })

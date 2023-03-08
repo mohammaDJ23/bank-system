@@ -22,8 +22,8 @@ export class Bill {
   @Column({ length: 500 })
   description: string;
 
-  @Column({ type: 'timestamptz' })
-  date: Date;
+  @Column({ type: 'timestamp' })
+  date: number;
 
   @CreateDateColumn()
   createdAt: Date;

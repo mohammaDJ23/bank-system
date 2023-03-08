@@ -1,13 +1,13 @@
-import { IsDateString } from 'class-validator';
+import { IsNumber } from 'class-validator';
 import { ListDto } from './list.dto';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class BillsPeriodDto extends ListDto {
-  @IsDateString()
+  @IsNumber()
   @ApiProperty()
-  start: Date;
+  start: number;
 
-  @IsDateString()
+  @IsNumber()
   @ApiProperty()
-  end: Date;
+  end: number;
 }

@@ -4,9 +4,9 @@ import { ApiProperty } from '@nestjs/swagger';
 export class BillDatesDto {
   @Expose()
   @ApiProperty()
-  start: string;
+  start: number;
 
   @Expose()
   @ApiProperty()
-  end: string;
+  end: number;
 }
