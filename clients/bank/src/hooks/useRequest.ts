@@ -19,9 +19,7 @@ export function useRequest() {
   );
 
   const request = useCallback(
-    async <R = any, D = any>(
-      requestInstance: RequestParametersType<R, D>
-    ): Promise<AxiosResponse<R, D>> => {
+    async <R = any, D = any>(requestInstance: RequestParametersType<R, D>): Promise<AxiosResponse<R, D>> => {
       const requestConstructorName = getRequestConstructorName(requestInstance);
       try {
         loading(requestConstructorName);
@@ -70,9 +68,7 @@ export function useRequest() {
   const isApiProcessing = useCallback(
     <T extends RootApiObj>(requestInstance: Constructor<T>) => {
       return (
-        isRequestProccessing(requestInstance) &&
-        !isRequestFailed(requestInstance) &&
-        !isRequestSuccess(requestInstance)
+        isRequestProccessing(requestInstance) && !isRequestFailed(requestInstance) && !isRequestSuccess(requestInstance)
       );
     },
     [isRequestProccessing, isRequestFailed, isRequestSuccess]
@@ -82,9 +78,7 @@ export function useRequest() {
     <T extends RootApiObj>(requestInstance: Constructor<T>) => {
       const proccessingRequest = isRequestProccessing(requestInstance);
       return (
-        (!proccessingRequest &&
-          !isRequestFailed(requestInstance) &&
-          !isRequestSuccess(requestInstance)) ||
+        (!proccessingRequest && !isRequestFailed(requestInstance) && !isRequestSuccess(requestInstance)) ||
         proccessingRequest
       );
     },

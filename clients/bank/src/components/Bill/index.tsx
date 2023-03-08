@@ -19,7 +19,7 @@ const BillContent: FC = () => {
 
   useEffect(() => {
     if (billId) {
-      request<BillObj, number>(new BillApi(+billId)).then(response => {
+      request<BillObj, number>(new BillApi(+billId).setInitialApi()).then(response => {
         setSpecificDetails('bill', response.data);
       });
     }

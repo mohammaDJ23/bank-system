@@ -1,25 +1,13 @@
 import { AxiosResponse } from 'axios';
-import { ChangeEvent, FC, useEffect, useRef } from 'react';
+import { FC, useEffect, useRef } from 'react';
 import { Box, CardContent, Typography, Slider, Input } from '@mui/material';
 import { DateRange } from '@mui/icons-material';
 import { grey } from '@mui/material/colors';
-import {
-  BillDatesApi,
-  BillsLastWeekApi,
-  BillsPeriodApi,
-  PeriodAmountApi,
-  TotalAmountApi,
-} from '../../apis';
+import { BillDatesApi, BillsLastWeekApi, BillsPeriodApi, PeriodAmountApi, TotalAmountApi } from '../../apis';
 import { useAction, usePaginationList, useRequest, useSelector } from '../../hooks';
 import MainContainer from '../../layout/MainContainer';
 import { BillList, BillObj, debounce } from '../../lib';
-import {
-  BillDates,
-  BillsLastWeekObj,
-  PeriodAmountFilter,
-  PeriodAmountObj,
-  TotalAmountObj,
-} from '../../store';
+import { BillDates, BillsLastWeekObj, PeriodAmountFilter, PeriodAmountObj, TotalAmountObj } from '../../store';
 import Skeleton from '../Skeleton';
 import Card from '../Card';
 import {
@@ -46,9 +34,7 @@ export class BillsPeriod {
 const Root = (props: Legend.RootProps) => (
   <Legend.Root {...props} sx={{ display: 'flex', margin: 'auto', flexDirection: 'row' }} />
 );
-const Label = (props: Legend.LabelProps) => (
-  <Legend.Label {...props} sx={{ whiteSpace: 'nowrap' }} />
-);
+const Label = (props: Legend.LabelProps) => <Legend.Label {...props} sx={{ whiteSpace: 'nowrap' }} />;
 
 const Area = (props: any) => (
   <AreaSeries.Path
@@ -74,17 +60,11 @@ const Dashboard: FC = () => {
   const isBillDatesProcessing = isInitialApiProcessing(BillDatesApi);
 
   const periodAmountChangeRequest = useRef(
-    debounce(
-      500,
-      (
-        previousPeriodAmountFilter: PeriodAmountFilter,
-        newPeriodAmountFilter: PeriodAmountFilter
-      ) => {
-        request(new PeriodAmountApi(newPeriodAmountFilter))
-          .then(response => setSpecificDetails('periodAmount', response.data))
-          .catch(err => setSpecificDetails('periodAmountFilter', previousPeriodAmountFilter));
-      }
-    )
+    debounce(500, (previousPeriodAmountFilter: PeriodAmountFilter, newPeriodAmountFilter: PeriodAmountFilter) => {
+      request(new PeriodAmountApi(newPeriodAmountFilter))
+        .then(response => setSpecificDetails('periodAmount', response.data))
+        .catch(err => setSpecificDetails('periodAmountFilter', previousPeriodAmountFilter));
+    })
   );
 
   useEffect(() => {
@@ -97,19 +77,13 @@ const Dashboard: FC = () => {
         Promise<AxiosResponse<BillDates>>
       ]
     >([
-      request(new TotalAmountApi()),
-      request(new PeriodAmountApi(specificDetails.periodAmountFilter)),
-      request(new BillsPeriodApi(Object.assign({}, new BillsPeriod(), new BillList()))),
-      request(new BillsLastWeekApi()),
-      request(new BillDatesApi()),
+      request(new TotalAmountApi().setInitialApi()),
+      request(new PeriodAmountApi(specificDetails.periodAmountFilter).setInitialApi()),
+      request(new BillsPeriodApi(Object.assign({}, new BillsPeriod(), new BillList())).setInitialApi()),
+      request(new BillsLastWeekApi().setInitialApi()),
+      request(new BillDatesApi().setInitialApi()),
     ]).then(
-      ([
-        totalAmountResponse,
-        periodAmountResponse,
-        billsPeriodResponse,
-        billsLastWeekResponse,
-        billDatesResponse,
-      ]) => {
+      ([totalAmountResponse, periodAmountResponse, billsPeriodResponse, billsLastWeekResponse, billDatesResponse]) => {
         if (totalAmountResponse.status === 'fulfilled')
           setSpecificDetails('totalAmount', totalAmountResponse.value.data);
 
@@ -143,18 +117,14 @@ const Dashboard: FC = () => {
     if (newDate < startDate) {
       notification.warning({
         message: 'Warning',
-        description: `The minimum date is equal to ${moment(specificDetails.billDates.start).format(
-          'll'
-        )}`,
+        description: `The minimum date is equal to ${moment(specificDetails.billDates.start).format('ll')}`,
         duration: 7,
       });
       newDate = startDate;
     } else if (newDate > endDate) {
       notification.warning({
         message: 'Warning',
-        description: `The maximum date is equal to ${moment(specificDetails.billDates.end).format(
-          'll'
-        )}`,
+        description: `The maximum date is equal to ${moment(specificDetails.billDates.end).format('ll')}`,
         duration: 7,
       });
       newDate = endDate;
@@ -164,14 +134,7 @@ const Dashboard: FC = () => {
 
   return (
     <MainContainer>
-      <Box
-        component="div"
-        display="flex"
-        alignItems="center"
-        justifyContent="center"
-        flexDirection="column"
-        gap="16px"
-      >
+      <Box component="div" display="flex" alignItems="center" justifyContent="center" flexDirection="column" gap="16px">
         {isBillsLastWeekProcessing ? (
           <Skeleton height="440px" width="100%" />
         ) : (
@@ -193,10 +156,7 @@ const Dashboard: FC = () => {
                         <ArgumentAxis
                           showGrid
                           tickFormat={scale => tick => {
-                            if (
-                              Number.isInteger(tick) &&
-                              data.findIndex(item => item.date === Number(tick)) > -1
-                            ) {
+                            if (Number.isInteger(tick) && data.findIndex(item => item.date === Number(tick)) > -1) {
                               return Math.floor(Number(tick)).toString();
                             } else return '';
                           }}
@@ -252,13 +212,7 @@ const Dashboard: FC = () => {
             <Card>
               <CardContent>
                 <Box display="flex" justifyContent="center" flexDirection="column" gap="20px">
-                  <Box
-                    display="flex"
-                    alignItems="center"
-                    justifyContent="space-between"
-                    gap="20px"
-                    position="relative"
-                  >
+                  <Box display="flex" alignItems="center" justifyContent="space-between" gap="20px" position="relative">
                     <Box display="flex" alignItems="center" gap="5px">
                       <Typography fontSize="10px" whiteSpace="nowrap">
                         {moment(specificDetails.periodAmountFilter.start).format('ll')}
@@ -275,10 +229,7 @@ const Dashboard: FC = () => {
                           previousPeriodAmountFilter.end
                         );
                         setSpecificDetails('periodAmountFilter', newPeriodAmountFilter);
-                        periodAmountChangeRequest.current(
-                          previousPeriodAmountFilter,
-                          newPeriodAmountFilter
-                        );
+                        periodAmountChangeRequest.current(previousPeriodAmountFilter, newPeriodAmountFilter);
                       }}
                       sx={{
                         position: 'absolute',
@@ -303,10 +254,7 @@ const Dashboard: FC = () => {
                           new Date(end).toISOString()
                         );
                         setSpecificDetails('periodAmountFilter', newPeriodAmountFilter);
-                        periodAmountChangeRequest.current(
-                          previousPeriodAmountFilter,
-                          newPeriodAmountFilter
-                        );
+                        periodAmountChangeRequest.current(previousPeriodAmountFilter, newPeriodAmountFilter);
                       }}
                       valueLabelDisplay="off"
                     />
@@ -326,10 +274,7 @@ const Dashboard: FC = () => {
                           getNewDateValue(event.target.value).toISOString()
                         );
                         setSpecificDetails('periodAmountFilter', newPeriodAmountFilter);
-                        periodAmountChangeRequest.current(
-                          previousPeriodAmountFilter,
-                          newPeriodAmountFilter
-                        );
+                        periodAmountChangeRequest.current(previousPeriodAmountFilter, newPeriodAmountFilter);
                       }}
                       sx={{
                         position: 'absolute',

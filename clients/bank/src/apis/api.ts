@@ -1,14 +1,6 @@
 import { AxiosRequestConfig, CreateAxiosDefaults } from 'axios';
 import { BillsPeriod } from '../components/Dashboard';
-import {
-  CreateBill,
-  CreateUser,
-  UpdateBill,
-  UpdateUserByAdmin,
-  UpdateUserByUser,
-  ListParams,
-  BillObj,
-} from '../lib';
+import { CreateBill, CreateUser, UpdateBill, UpdateUserByAdmin, UpdateUserByUser, ListParams, BillObj } from '../lib';
 import { PeriodAmountFilter } from '../store';
 import { RootApiObj } from './resetApi';
 
@@ -17,12 +9,20 @@ export interface IdReq {
 }
 
 abstract class RootApi<D = any> implements RootApiObj<D> {
-  constructor(
-    public readonly api: AxiosRequestConfig<D>,
-    public readonly config: CreateAxiosDefaults<D> = {}
-  ) {
+  protected _isInitialApi: boolean = false;
+
+  constructor(public readonly api: AxiosRequestConfig<D>, public readonly config: CreateAxiosDefaults<D> = {}) {
     this.api = api;
     this.config = config;
+  }
+
+  get isInitialApi() {
+    return this._isInitialApi;
+  }
+
+  setInitialApi(value: boolean = true) {
+    this._isInitialApi = value;
+    return this;
   }
 }
 
@@ -123,7 +123,7 @@ export class BillsApi<T = any> extends RootApi {
   }
 }
 
-export type BillsApiConstructorType = ConstructorParameters<typeof BillsApi>[0];
+export type BillsApiConstructorType = ConstructorParameters<typeof BillsApi>[0] & Pick<RootApi, 'isInitialApi'>;
 
 export class UserApi extends RootApi {
   constructor(id: number) {

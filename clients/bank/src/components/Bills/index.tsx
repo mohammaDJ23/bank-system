@@ -17,7 +17,13 @@ const BillsContent: FC = () => {
   const getBillsList = useCallback(
     (options: Partial<BillsApiConstructorType> = {}) => {
       const apiData = { take, page, ...options };
-      request<[BillObj[], number], BillObj>(new BillsApi<BillObj>(apiData)).then(response => {
+      const billsApi = new BillsApi<BillObj>(apiData);
+
+      if (options.isInitialApi) {
+        billsApi.setInitialApi();
+      }
+
+      request<[BillObj[], number], BillObj>(billsApi).then(response => {
         const [billList, total] = response.data;
         const createdList = getListInfo();
         const constructedBilllist = new (createdList.constructor as Constructor<BillList>)();
@@ -31,8 +37,10 @@ const BillsContent: FC = () => {
   );
 
   useEffect(() => {
-    getBillsList();
-    return () => setList(new BillList());
+    getBillsList({ isInitialApi: true });
+    return () => {
+      setList(new BillList());
+    };
   }, []);
 
   const changePage = useCallback(
