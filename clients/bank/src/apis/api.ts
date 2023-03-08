@@ -112,7 +112,7 @@ export class UsersApi<T = any> extends RootApi {
   }
 }
 
-export type UsersApiConstructorType = ConstructorParameters<typeof UsersApi>[0];
+export type UsersApiConstructorType = ConstructorParameters<typeof UsersApi>[0] & Pick<RootApi, 'isInitialApi'>;
 
 export class BillsApi<T = any> extends RootApi {
   constructor(data: ListParams<T>) {
