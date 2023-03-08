@@ -17,20 +17,20 @@ export interface PeriodAmountObj {
 export interface BillsLastWeekObj {
   count: number;
   amount: string;
-  date: string | number;
+  date: number;
 }
 
 export class PeriodAmountFilter {
   constructor(
-    public start: string = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(),
-    public end: string = new Date().toISOString()
+    public start: number = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).getTime(),
+    public end: number = new Date().getTime()
   ) {}
 }
 
 export class BillDates {
   constructor(
-    public start: string = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(),
-    public end: string = new Date().toISOString()
+    public start: number = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).getTime(),
+    public end: number = new Date().getTime()
   ) {}
 }
 
@@ -54,10 +54,7 @@ const initialState: SpecificDetailsState = {
   billDates: new BillDates(),
 };
 
-function setSpecificDetails(
-  state: SpecificDetailsState,
-  action: SetSpecificDetailsAction
-): SpecificDetailsState {
+function setSpecificDetails(state: SpecificDetailsState, action: SetSpecificDetailsAction): SpecificDetailsState {
   return {
     ...state,
     [action.payload.key]: action.payload.data,

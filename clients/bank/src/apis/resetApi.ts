@@ -4,7 +4,7 @@ import { getToken } from '../lib';
 export interface ErrorObj {
   statusCode: number;
   message: string;
-  timestamp: string;
+  timestamp: number;
   path: string;
 }
 

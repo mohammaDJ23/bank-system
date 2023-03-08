@@ -3,10 +3,10 @@ import { FC, useEffect, useRef } from 'react';
 import { Box, CardContent, Typography, Slider, Input } from '@mui/material';
 import { DateRange } from '@mui/icons-material';
 import { grey } from '@mui/material/colors';
-import { BillDatesApi, BillsLastWeekApi, BillsPeriodApi, PeriodAmountApi, TotalAmountApi } from '../../apis';
-import { useAction, usePaginationList, useRequest, useSelector } from '../../hooks';
+import { BillDatesApi, BillsLastWeekApi, PeriodAmountApi, TotalAmountApi } from '../../apis';
+import { useAction, useRequest, useSelector } from '../../hooks';
 import MainContainer from '../../layout/MainContainer';
-import { BillList, BillObj, debounce } from '../../lib';
+import { debounce } from '../../lib';
 import { BillDates, BillsLastWeekObj, PeriodAmountFilter, PeriodAmountObj, TotalAmountObj } from '../../store';
 import Skeleton from '../Skeleton';
 import Card from '../Card';
@@ -26,8 +26,8 @@ import { notification } from 'antd';
 
 export class BillsPeriod {
   constructor(
-    public start: string = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(),
-    public end: string = new Date().toISOString()
+    public start: number = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).getTime(),
+    public end: number = new Date().getTime()
   ) {}
 }
 
@@ -51,8 +51,6 @@ const Dashboard: FC = () => {
   const { request, isInitialApiProcessing, isApiProcessing } = useRequest();
   const { setSpecificDetails } = useAction();
   const { specificDetails } = useSelector();
-  const listMaker = usePaginationList();
-  const { setList } = listMaker(BillList);
   const isTotalAmountProcessing = isInitialApiProcessing(TotalAmountApi);
   const isInitialPeriodAmountProcessing = isInitialApiProcessing(PeriodAmountApi);
   const isBillsLastWeekProcessing = isInitialApiProcessing(BillsLastWeekApi);
@@ -72,60 +70,45 @@ const Dashboard: FC = () => {
       [
         Promise<AxiosResponse<TotalAmountObj>>,
         Promise<AxiosResponse<PeriodAmountObj>>,
-        Promise<AxiosResponse<[BillObj[], number]>>,
         Promise<AxiosResponse<BillsLastWeekObj[]>>,
         Promise<AxiosResponse<BillDates>>
       ]
     >([
       request(new TotalAmountApi().setInitialApi()),
       request(new PeriodAmountApi(specificDetails.periodAmountFilter).setInitialApi()),
-      request(new BillsPeriodApi(Object.assign({}, new BillsPeriod(), new BillList())).setInitialApi()),
       request(new BillsLastWeekApi().setInitialApi()),
       request(new BillDatesApi().setInitialApi()),
-    ]).then(
-      ([totalAmountResponse, periodAmountResponse, billsPeriodResponse, billsLastWeekResponse, billDatesResponse]) => {
-        if (totalAmountResponse.status === 'fulfilled')
-          setSpecificDetails('totalAmount', totalAmountResponse.value.data);
+    ]).then(([totalAmountResponse, periodAmountResponse, billsLastWeekResponse, billDatesResponse]) => {
+      if (totalAmountResponse.status === 'fulfilled') setSpecificDetails('totalAmount', totalAmountResponse.value.data);
 
-        if (periodAmountResponse.status === 'fulfilled')
-          setSpecificDetails('periodAmount', periodAmountResponse.value.data);
+      if (periodAmountResponse.status === 'fulfilled')
+        setSpecificDetails('periodAmount', periodAmountResponse.value.data);
 
-        if (billsPeriodResponse.status === 'fulfilled') {
-          const [list, total] = billsPeriodResponse.value.data;
-          const billList = new BillList();
-          billList.total = total;
-          billList.list[billList.page] = list;
-          setList(billList);
-        }
+      if (billsLastWeekResponse.status === 'fulfilled')
+        setSpecificDetails('billsLastWeek', billsLastWeekResponse.value.data);
 
-        if (billsLastWeekResponse.status === 'fulfilled')
-          setSpecificDetails('billsLastWeek', billsLastWeekResponse.value.data);
-
-        if (billDatesResponse.status === 'fulfilled') {
-          let { start, end } = billDatesResponse.value.data;
-          start = new Date(start).toISOString();
-          end = new Date(end).toISOString();
-          setSpecificDetails('billDates', new BillDates(start, end));
-        }
+      if (billDatesResponse.status === 'fulfilled') {
+        let { start, end } = billDatesResponse.value.data;
+        setSpecificDetails('billDates', new BillDates(start, end));
       }
-    );
+    });
   }, []);
 
   function getNewDateValue(value: string) {
-    let newDate = new Date(value);
-    const startDate = new Date(specificDetails.billDates.start);
-    const endDate = new Date(specificDetails.billDates.end);
+    let newDate = new Date(value).getTime();
+    const startDate = specificDetails.billDates.start;
+    const endDate = specificDetails.billDates.end;
     if (newDate < startDate) {
       notification.warning({
         message: 'Warning',
-        description: `The minimum date is equal to ${moment(specificDetails.billDates.start).format('ll')}`,
+        description: `The minimum date is equal to ${moment(startDate).format('ll')}`,
         duration: 7,
       });
       newDate = startDate;
     } else if (newDate > endDate) {
       notification.warning({
         message: 'Warning',
-        description: `The maximum date is equal to ${moment(specificDetails.billDates.end).format('ll')}`,
+        description: `The maximum date is equal to ${moment(endDate).format('ll')}`,
         duration: 7,
       });
       newDate = endDate;
@@ -228,7 +211,7 @@ const Dashboard: FC = () => {
                       onChange={event => {
                         const previousPeriodAmountFilter = specificDetails.periodAmountFilter;
                         const newPeriodAmountFilter = new PeriodAmountFilter(
-                          getNewDateValue(event.target.value).toISOString(),
+                          getNewDateValue(event.target.value),
                           previousPeriodAmountFilter.end
                         );
                         setSpecificDetails('periodAmountFilter', newPeriodAmountFilter);
@@ -243,19 +226,16 @@ const Dashboard: FC = () => {
                     />
                     <Slider
                       disabled={isPeriodAmountProcessing}
-                      value={[
-                        new Date(specificDetails.periodAmountFilter.start).getTime(),
-                        new Date(specificDetails.periodAmountFilter.end).getTime(),
-                      ]}
+                      value={[specificDetails.periodAmountFilter.start, specificDetails.periodAmountFilter.end]}
                       step={1 * 24 * 60 * 60 * 1000}
-                      min={new Date(specificDetails.billDates.start).getTime()}
-                      max={new Date(specificDetails.billDates.end).getTime()}
+                      min={specificDetails.billDates.start}
+                      max={specificDetails.billDates.end}
                       onChange={(event, value) => {
                         const [start, end] = value as number[];
                         const previousPeriodAmountFilter = specificDetails.periodAmountFilter;
                         const newPeriodAmountFilter = new PeriodAmountFilter(
-                          new Date(start).toISOString(),
-                          new Date(end).toISOString()
+                          new Date(start).getTime(),
+                          new Date(end).getTime()
                         );
                         setSpecificDetails('periodAmountFilter', newPeriodAmountFilter);
                         periodAmountChangeRequest.current(previousPeriodAmountFilter, newPeriodAmountFilter);
@@ -276,7 +256,7 @@ const Dashboard: FC = () => {
                         const previousPeriodAmountFilter = specificDetails.periodAmountFilter;
                         const newPeriodAmountFilter = new PeriodAmountFilter(
                           previousPeriodAmountFilter.start,
-                          getNewDateValue(event.target.value).toISOString()
+                          getNewDateValue(event.target.value)
                         );
                         setSpecificDetails('periodAmountFilter', newPeriodAmountFilter);
                         periodAmountChangeRequest.current(previousPeriodAmountFilter, newPeriodAmountFilter);

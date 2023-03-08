@@ -41,7 +41,7 @@ const UpdateBillContent: FC = () => {
             amount: response.data.amount,
             receiver: response.data.receiver,
             description: response.data.description,
-            date: new Date(response.data.date).toISOString(),
+            date: response.data.date,
           })
         );
       });

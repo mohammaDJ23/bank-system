@@ -5,7 +5,7 @@ export interface BillObj {
   amount: string;
   receiver: string;
   description: string;
-  date: Date;
+  date: number;
   createdAt: Date;
   updatedAt: Date;
   userId: number;

@@ -5,18 +5,12 @@ import { CreateBill } from '../../lib';
 import { useForm, useRequest, useFocus } from '../../hooks';
 import { FC, useCallback, useEffect } from 'react';
 import { CreateBillApi } from '../../apis';
+import dateFormat from 'dateformat';
 
 const CreateBillContent: FC = () => {
   const formMaker = useForm();
-  const {
-    getForm,
-    onChange,
-    resetForm,
-    onSubmit,
-    getInputErrorMessage,
-    isInputInValid,
-    isFormValid,
-  } = formMaker(CreateBill);
+  const { getForm, onChange, resetForm, onSubmit, getInputErrorMessage, isInputInValid, isFormValid } =
+    formMaker(CreateBill);
   const { isApiProcessing, request } = useRequest();
   const { focus } = useFocus();
   const isLoading = isApiProcessing(CreateBillApi);
@@ -24,7 +18,6 @@ const CreateBillContent: FC = () => {
 
   const formSubmition = useCallback(() => {
     onSubmit(() => {
-      onChange('date', new Date(form.date));
       request<CreateBill, CreateBill>(new CreateBillApi(form)).then(response => {
         resetForm();
         notification.success({
@@ -33,7 +26,7 @@ const CreateBillContent: FC = () => {
         });
       });
     });
-  }, [form, resetForm, onSubmit, request, onChange]);
+  }, [form, resetForm, onSubmit, request]);
 
   useEffect(() => {
     focus('amount');
@@ -78,8 +71,8 @@ const CreateBillContent: FC = () => {
           label="Date"
           type="date"
           variant="standard"
-          value={form.date}
-          onChange={event => onChange('date', event.target.value)}
+          value={dateFormat(form.date, 'yyyy-mm-dd')}
+          onChange={event => onChange('date', new Date(event.target.value).getTime())}
           helperText={getInputErrorMessage('date')}
           error={isInputInValid('date')}
           InputLabelProps={{ shrink: true }}
