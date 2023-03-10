@@ -26,7 +26,7 @@ export class Bill {
     type: 'timestamptz',
     transformer: {
       from(value) {
-        return value;
+        return new Date(value);
       },
       to(value) {
         return new Date(value);
