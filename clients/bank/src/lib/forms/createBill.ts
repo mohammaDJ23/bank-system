@@ -1,4 +1,5 @@
 import { DefineRules, DefineVal, CacheInput, DefineValidation } from '../decorators';
+import { getTime } from '../utilFunctions';
 import { isReceiver, isAmount, isDescription, isDate } from '../validations';
 import { Form } from './formConstructor';
 
@@ -22,10 +23,10 @@ export class CreateBill extends Form {
   description: string = '';
 
   @DefineRules([isDate])
-  @DefineVal(new Date().getTime())
+  @DefineVal(getTime())
   @CacheInput()
   @DefineValidation()
-  date: number = new Date().getTime();
+  date: number = getTime();
 
   constructor() {
     super();

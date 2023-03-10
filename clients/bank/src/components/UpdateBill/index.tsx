@@ -1,6 +1,6 @@
 import FormContainer from '../../layout/FormContainer';
 import Form from './Form';
-import { BillObj, UpdateBill } from '../../lib';
+import { BillObj, getTime, UpdateBill } from '../../lib';
 import { useAction, useForm, useRequest, useSelector } from '../../hooks';
 import { ModalNames } from '../../store';
 import { useEffect, FC, useCallback } from 'react';
@@ -41,7 +41,7 @@ const UpdateBillContent: FC = () => {
             amount: response.data.amount,
             receiver: response.data.receiver,
             description: response.data.description,
-            date: response.data.date,
+            date: getTime(response.data.date),
           })
         );
       });

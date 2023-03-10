@@ -1,4 +1,5 @@
 import { DefineRules, DefineVal, DefineValidation } from '../decorators';
+import { getTime } from '../utilFunctions';
 import { isReceiver, isAmount, isDescription, isDate } from '../validations';
 import { Form } from './formConstructor';
 
@@ -22,16 +23,16 @@ export class UpdateBill extends Form {
   description: string = '';
 
   @DefineRules([isDate])
-  @DefineVal(new Date().getTime())
+  @DefineVal(getTime())
   @DefineValidation()
-  date: number = new Date().getTime();
+  date: number = getTime();
 
   constructor({
     id = 0,
     amount = '',
     receiver = '',
     description = '',
-    date = new Date().getTime(),
+    date = getTime(),
   }: Partial<Omit<UpdateBill, keyof Form>> = {}) {
     super();
     this.id = id;

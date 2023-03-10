@@ -6,7 +6,7 @@ import { grey } from '@mui/material/colors';
 import { BillDatesApi, BillsLastWeekApi, PeriodAmountApi, TotalAmountApi } from '../../apis';
 import { useAction, useRequest, useSelector } from '../../hooks';
 import MainContainer from '../../layout/MainContainer';
-import { debounce } from '../../lib';
+import { debounce, getTime } from '../../lib';
 import { BillDates, BillsLastWeekObj, PeriodAmountFilter, PeriodAmountObj, TotalAmountObj } from '../../store';
 import Skeleton from '../Skeleton';
 import Card from '../Card';
@@ -25,10 +25,7 @@ import moment from 'moment';
 import { notification } from 'antd';
 
 export class BillsPeriod {
-  constructor(
-    public start: number = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).getTime(),
-    public end: number = new Date().getTime()
-  ) {}
+  constructor(public start: number = getTime(Date.now() - 7 * 24 * 60 * 60 * 1000), public end: number = getTime()) {}
 }
 
 const Root = (props: Legend.RootProps) => (
@@ -89,13 +86,13 @@ const Dashboard: FC = () => {
 
       if (billDatesResponse.status === 'fulfilled') {
         let { start, end } = billDatesResponse.value.data;
-        setSpecificDetails('billDates', new BillDates(start, end));
+        setSpecificDetails('billDates', new BillDates(getTime(start), getTime(end)));
       }
     });
   }, []);
 
   function getNewDateValue(value: string) {
-    let newDate = new Date(value).getTime();
+    let newDate = getTime(value);
     const startDate = specificDetails.billDates.start;
     const endDate = specificDetails.billDates.end;
     if (newDate < startDate) {
@@ -233,10 +230,7 @@ const Dashboard: FC = () => {
                       onChange={(event, value) => {
                         const [start, end] = value as number[];
                         const previousPeriodAmountFilter = specificDetails.periodAmountFilter;
-                        const newPeriodAmountFilter = new PeriodAmountFilter(
-                          new Date(start).getTime(),
-                          new Date(end).getTime()
-                        );
+                        const newPeriodAmountFilter = new PeriodAmountFilter(getTime(start), getTime(end));
                         setSpecificDetails('periodAmountFilter', newPeriodAmountFilter);
                         periodAmountChangeRequest.current(previousPeriodAmountFilter, newPeriodAmountFilter);
                       }}

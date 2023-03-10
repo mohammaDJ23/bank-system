@@ -1,11 +1,10 @@
 import FormContainer from '../../layout/FormContainer';
 import { Box, TextField, Button } from '@mui/material';
 import { notification } from 'antd';
-import { CreateBill } from '../../lib';
+import { CreateBill, getTime, isoDate } from '../../lib';
 import { useForm, useRequest, useFocus } from '../../hooks';
 import { FC, useCallback, useEffect } from 'react';
 import { CreateBillApi } from '../../apis';
-import dateFormat from 'dateformat';
 
 const CreateBillContent: FC = () => {
   const formMaker = useForm();
@@ -71,8 +70,8 @@ const CreateBillContent: FC = () => {
           label="Date"
           type="date"
           variant="standard"
-          value={dateFormat(form.date, 'yyyy-mm-dd')}
-          onChange={event => onChange('date', new Date(event.target.value).getTime())}
+          value={isoDate(form.date)}
+          onChange={event => onChange('date', getTime(event.target.value))}
           helperText={getInputErrorMessage('date')}
           error={isInputInValid('date')}
           InputLabelProps={{ shrink: true }}
