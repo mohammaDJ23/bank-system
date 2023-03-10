@@ -24,28 +24,30 @@ const App: FC<AppImportation> = props => {
     /**@ts-ignore */
     <HistoryRouter history={props.history}>
       <Provider store={store}>
-        <Routes>
-          {routes.map(route => (
-            <Route
-              key={route.path}
-              path={route.path}
-              element={
-                route.needAuth ? (
-                  <AuthProtectionProvider>
+        <HistoryProvider history={props.history}>
+          <Routes>
+            {routes.map(route => (
+              <Route
+                key={route.path}
+                path={route.path}
+                element={
+                  route.needAuth ? (
+                    <AuthProtectionProvider>
+                      <Navigation>
+                        <Suspense fallback={<LoadingFallback />}>{route.element}</Suspense>
+                      </Navigation>
+                    </AuthProtectionProvider>
+                  ) : (
                     <Navigation>
                       <Suspense fallback={<LoadingFallback />}>{route.element}</Suspense>
                     </Navigation>
-                  </AuthProtectionProvider>
-                ) : (
-                  <Navigation>
-                    <Suspense fallback={<LoadingFallback />}>{route.element}</Suspense>
-                  </Navigation>
-                )
-              }
-            />
-          ))}
-          <Route path="*" element={<Navigate to={Pathes.NOT_FOUND} />} />
-        </Routes>
+                  )
+                }
+              />
+            ))}
+            <Route path="*" element={<Navigate to={Pathes.NOT_FOUND} />} />
+          </Routes>
+        </HistoryProvider>
       </Provider>
     </HistoryRouter>
   );
