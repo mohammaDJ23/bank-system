@@ -23,10 +23,6 @@ const BillContent: FC = () => {
         setSpecificDetails('bill', response.data);
       });
     }
-
-    return () => {
-      setSpecificDetails('bill', null);
-    };
   }, []);
 
   return (

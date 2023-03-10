@@ -23,10 +23,6 @@ const UserContent: FC = () => {
         setSpecificDetails('user', response.data);
       });
     }
-
-    return () => {
-      setSpecificDetails('user', null);
-    };
   }, []);
 
   return (

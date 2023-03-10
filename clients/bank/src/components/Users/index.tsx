@@ -38,9 +38,6 @@ const UsersContent: FC = () => {
 
   useEffect(() => {
     getUsersList({ isInitialApi: true });
-    return () => {
-      setList(new UserList());
-    };
   }, []);
 
   const changePage = useCallback(

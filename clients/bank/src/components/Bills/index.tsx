@@ -41,9 +41,6 @@ const BillsContent: FC = () => {
 
   useEffect(() => {
     getBillsList({ isInitialApi: true });
-    return () => {
-      setList(new BillList());
-    };
   }, []);
 
   const changePage = useCallback(
