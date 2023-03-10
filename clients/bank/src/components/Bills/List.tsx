@@ -29,21 +29,13 @@ const BillList: FC<BillListImportation> = ({ list, take, page, count, onPageChan
           >
             <ListItemButton>
               <ListItem disablePadding sx={{ my: '10px' }}>
-                <Box
-                  display="flex"
-                  flexDirection="column"
-                  alignItems="start"
-                  width="100%"
-                  gap="10px"
-                >
+                <Box display="flex" flexDirection="column" alignItems="start" width="100%" gap="10px">
                   <Box component="div">
                     <ListItemText
                       primaryTypographyProps={{ fontSize: '14px', mb: '10px' }}
                       secondaryTypographyProps={{ fontSize: '12px' }}
                       sx={{ margin: '0' }}
-                      primary={`${bill.receiver} received ${bill.amount} at ${moment(
-                        bill.date
-                      ).format('ll')}`}
+                      primary={`${bill.receiver} received ${bill.amount} at ${moment(bill.date).format('ll')}`}
                       secondary={bill.description}
                     />
                   </Box>

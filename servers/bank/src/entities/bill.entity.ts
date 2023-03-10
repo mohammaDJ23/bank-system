@@ -22,8 +22,18 @@ export class Bill {
   @Column({ length: 500 })
   description: string;
 
-  @Column({ type: 'timestamp' })
-  date: number;
+  @Column({
+    type: 'timestamptz',
+    transformer: {
+      from(value) {
+        return value;
+      },
+      to(value) {
+        return new Date(value);
+      },
+    },
+  })
+  date: Date;
 
   @CreateDateColumn()
   createdAt: Date;
