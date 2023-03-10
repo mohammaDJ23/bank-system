@@ -106,10 +106,10 @@ export class BillService {
       .innerJoinAndSelect('bill.user', 'user')
       .select('SUM(bill.amount::NUMERIC)::TEXT', 'totalAmount')
       .where('bill.date::TIMESTAMP >= :start::TIMESTAMP', {
-        start: body.start,
+        start: new Date(body.start),
       })
       .andWhere('bill.date::TIMESTAMP <= :end::TIMESTAMP', {
-        end: body.end,
+        end: new Date(body.end),
       })
       .andWhere('user.user_service_id = :userId', {
         userId: user.userServiceId,
@@ -121,8 +121,12 @@ export class BillService {
     return this.billRepository
       .createQueryBuilder('bill')
       .innerJoinAndSelect('bill.user', 'user')
-      .where('bill.date::TIMESTAMP >= :start::TIMESTAMP', { start: body.start })
-      .andWhere('bill.date::TIMESTAMP <= :end::TIMESTAMP', { end: body.end })
+      .where('bill.date::TIMESTAMP >= :start::TIMESTAMP', {
+        start: new Date(body.start),
+      })
+      .andWhere('bill.date::TIMESTAMP <= :end::TIMESTAMP', {
+        end: new Date(body.end),
+      })
       .andWhere('user.user_service_id = :userId', {
         userId: user.userServiceId,
       })
