@@ -86,7 +86,10 @@ const Dashboard: FC = () => {
 
       if (billDatesResponse.status === 'fulfilled') {
         let { start, end } = billDatesResponse.value.data;
-        setSpecificDetails('billDates', new BillDates(getTime(start), getTime(end)));
+        start = getTime(start);
+        end = getTime(end);
+        setSpecificDetails('billDates', new BillDates(start, end));
+        setSpecificDetails('periodAmountFilter', new PeriodAmountFilter(start, end));
       }
     });
   }, []);
