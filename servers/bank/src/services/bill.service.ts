@@ -93,7 +93,7 @@ export class BillService {
     return this.billRepository
       .createQueryBuilder('bill')
       .innerJoinAndSelect('bill.user', 'user')
-      .select('SUM(bill.amount::NUMERIC)::TEXT', 'totalAmount')
+      .select('COALESCE(SUM(bill.amount::BIGINT), 0)::TEXT', 'totalAmount')
       .where('user.user_service_id = :userId', {
         userId: user.userServiceId,
       })
@@ -104,7 +104,7 @@ export class BillService {
     return this.billRepository
       .createQueryBuilder('bill')
       .innerJoinAndSelect('bill.user', 'user')
-      .select('SUM(bill.amount::NUMERIC)::TEXT', 'totalAmount')
+      .select('COALESCE(SUM(bill.amount::BIGINT), 0)::TEXT', 'totalAmount')
       .where('bill.date::TIMESTAMP >= :start::TIMESTAMP', {
         start: new Date(body.start),
       })
