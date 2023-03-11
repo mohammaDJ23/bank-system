@@ -191,84 +191,78 @@ const Dashboard: FC = () => {
           <Card>
             <CardContent>
               <Box display="flex" justifyContent="center" flexDirection="column" gap="20px">
-                <Box display="flex" alignItems="center" justifyContent="space-between" gap="20px" position="relative">
-                  {isStartBillDateExist && (
-                    <>
-                      <Box display="flex" alignItems="center" gap="5px">
-                        <Typography fontSize="10px" whiteSpace="nowrap">
-                          {moment(specificDetails.periodAmountFilter.start).format('ll')}
-                        </Typography>
-                        <DateRange fontSize="small" sx={{ color: grey[600] }} />
-                      </Box>
-                      <Input
-                        disabled={isPeriodAmountProcessing}
-                        type="date"
-                        value={moment(specificDetails.periodAmountFilter.start).format('YYYY-MM-DD')}
-                        onChange={event => {
-                          const previousPeriodAmountFilter = specificDetails.periodAmountFilter;
-                          const newPeriodAmountFilter = new PeriodAmountFilter(
-                            getNewDateValue(event.target.value),
-                            previousPeriodAmountFilter.end
-                          );
-                          setSpecificDetails('periodAmountFilter', newPeriodAmountFilter);
-                          periodAmountChangeRequest.current(previousPeriodAmountFilter, newPeriodAmountFilter);
-                        }}
-                        sx={{
-                          position: 'absolute',
-                          top: '7px',
-                          left: '-57px',
-                          opacity: '0',
-                        }}
-                      />
-                    </>
-                  )}
-                  <Slider
-                    disabled={isPeriodAmountProcessing || !(isStartBillDateExist && isEndBillDateExist)}
-                    value={[specificDetails.periodAmountFilter.start, specificDetails.periodAmountFilter.end]}
-                    step={1 * 24 * 60 * 60 * 1000}
-                    min={specificDetails.billDates.start}
-                    max={specificDetails.billDates.end}
-                    onChange={(event, value) => {
-                      const [start, end] = value as number[];
-                      const previousPeriodAmountFilter = specificDetails.periodAmountFilter;
-                      const newPeriodAmountFilter = new PeriodAmountFilter(getTime(start), getTime(end));
-                      setSpecificDetails('periodAmountFilter', newPeriodAmountFilter);
-                      periodAmountChangeRequest.current(previousPeriodAmountFilter, newPeriodAmountFilter);
-                    }}
-                    valueLabelDisplay="off"
-                  />
-                  {isEndBillDateExist && (
-                    <>
-                      <Box display="flex" alignItems="center" gap="5px">
-                        <Typography fontSize="10px" whiteSpace="nowrap">
-                          {moment(specificDetails.periodAmountFilter.end).format('ll')}
-                        </Typography>
-                        <DateRange fontSize="small" sx={{ color: grey[600] }} />
-                      </Box>
-                      <Input
-                        disabled={isPeriodAmountProcessing}
-                        type="date"
-                        value={moment(specificDetails.periodAmountFilter.end).format('YYYY-MM-DD')}
-                        onChange={event => {
-                          const previousPeriodAmountFilter = specificDetails.periodAmountFilter;
-                          const newPeriodAmountFilter = new PeriodAmountFilter(
-                            previousPeriodAmountFilter.start,
-                            getNewDateValue(event.target.value)
-                          );
-                          setSpecificDetails('periodAmountFilter', newPeriodAmountFilter);
-                          periodAmountChangeRequest.current(previousPeriodAmountFilter, newPeriodAmountFilter);
-                        }}
-                        sx={{
-                          position: 'absolute',
-                          top: '7px',
-                          right: '0px',
-                          opacity: '0',
-                          width: '20px',
-                        }}
-                      />
-                    </>
-                  )}
-                </Box>
+                {isStartBillDateExist && isEndBillDateExist && (
+                  <Box display="flex" alignItems="center" justifyContent="space-between" gap="20px" position="relative">
+                    <Box display="flex" alignItems="center" gap="5px">
+                      <Typography fontSize="10px" whiteSpace="nowrap">
+                        {moment(specificDetails.periodAmountFilter.start).format('ll')}
+                      </Typography>
+                      <DateRange fontSize="small" sx={{ color: grey[600] }} />
+                    </Box>
+                    <Input
+                      disabled={isPeriodAmountProcessing}
+                      type="date"
+                      value={moment(specificDetails.periodAmountFilter.start).format('YYYY-MM-DD')}
+                      onChange={event => {
+                        const previousPeriodAmountFilter = specificDetails.periodAmountFilter;
+                        const newPeriodAmountFilter = new PeriodAmountFilter(
+                          getNewDateValue(event.target.value),
+                          previousPeriodAmountFilter.end
+                        );
+                        setSpecificDetails('periodAmountFilter', newPeriodAmountFilter);
+                        periodAmountChangeRequest.current(previousPeriodAmountFilter, newPeriodAmountFilter);
+                      }}
+                      sx={{
+                        position: 'absolute',
+                        top: '7px',
+                        left: '-57px',
+                        opacity: '0',
+                      }}
+                    />
+                    <Slider
+                      disabled={isPeriodAmountProcessing}
+                      value={[specificDetails.periodAmountFilter.start, specificDetails.periodAmountFilter.end]}
+                      step={1 * 24 * 60 * 60 * 1000}
+                      min={specificDetails.billDates.start}
+                      max={specificDetails.billDates.end}
+                      onChange={(event, value) => {
+                        const [start, end] = value as number[];
+                        const previousPeriodAmountFilter = specificDetails.periodAmountFilter;
+                        const newPeriodAmountFilter = new PeriodAmountFilter(getTime(start), getTime(end));
+                        setSpecificDetails('periodAmountFilter', newPeriodAmountFilter);
+                        periodAmountChangeRequest.current(previousPeriodAmountFilter, newPeriodAmountFilter);
+                      }}
+                      valueLabelDisplay="off"
+                    />
+                    <Box display="flex" alignItems="center" gap="5px">
+                      <Typography fontSize="10px" whiteSpace="nowrap">
+                        {moment(specificDetails.periodAmountFilter.end).format('ll')}
+                      </Typography>
+                      <DateRange fontSize="small" sx={{ color: grey[600] }} />
+                    </Box>
+                    <Input
+                      disabled={isPeriodAmountProcessing}
+                      type="date"
+                      value={moment(specificDetails.periodAmountFilter.end).format('YYYY-MM-DD')}
+                      onChange={event => {
+                        const previousPeriodAmountFilter = specificDetails.periodAmountFilter;
+                        const newPeriodAmountFilter = new PeriodAmountFilter(
+                          previousPeriodAmountFilter.start,
+                          getNewDateValue(event.target.value)
+                        );
+                        setSpecificDetails('periodAmountFilter', newPeriodAmountFilter);
+                        periodAmountChangeRequest.current(previousPeriodAmountFilter, newPeriodAmountFilter);
+                      }}
+                      sx={{
+                        position: 'absolute',
+                        top: '7px',
+                        right: '0px',
+                        opacity: '0',
+                        width: '20px',
+                      }}
+                    />
+                  </Box>
+                )}
                 <Box display="flex" alignItems="center" justifyContent="space-between" gap="20px">
                   <Typography whiteSpace="nowrap">Period Amount: </Typography>
                   <Typography>{specificDetails.periodAmount.totalAmount}</Typography>
