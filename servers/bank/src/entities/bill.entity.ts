@@ -26,19 +26,19 @@ export class Bill {
     type: 'timestamptz',
     transformer: {
       from(value) {
-        return new Date(value);
+        return new Date(value).getTime();
       },
       to(value) {
         return new Date(value);
       },
     },
   })
-  date: Date;
+  date: Date | number;
 
-  @CreateDateColumn()
+  @CreateDateColumn({ type: 'timestamptz' })
   createdAt: Date;
 
-  @UpdateDateColumn()
+  @UpdateDateColumn({ type: 'timestamptz' })
   updatedAt: Date;
 
   @ManyToOne(() => User, (user) => user.bills)

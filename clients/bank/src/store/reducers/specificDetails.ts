@@ -6,12 +6,12 @@ export enum SpecificDetails {
   SET_SPECIFIC_DETAILS = 'SET_SPECIFIC_DETAILS',
 }
 
-export interface TotalAmountObj {
-  totalAmount: string;
+export class TotalAmount {
+  constructor(public totalAmount: string = '0') {}
 }
 
-export interface PeriodAmountObj {
-  totalAmount: string;
+export class PeriodAmount {
+  constructor(public totalAmount: string = '0') {}
 }
 
 export interface BillsLastWeekObj {
@@ -31,20 +31,20 @@ export class BillDates {
 export interface SpecificDetailsState {
   user: UserObj | null;
   bill: BillObj | null;
-  totalAmount: TotalAmountObj | null;
-  periodAmount: PeriodAmountObj | null;
+  totalAmount: TotalAmount;
+  periodAmount: PeriodAmount;
   periodAmountFilter: PeriodAmountFilter;
-  billsLastWeek: BillsLastWeekObj[] | null;
+  billsLastWeek: BillsLastWeekObj[];
   billDates: BillDates;
 }
 
 const initialState: SpecificDetailsState = {
   user: null,
   bill: null,
-  totalAmount: null,
-  periodAmount: null,
+  totalAmount: new TotalAmount(),
+  periodAmount: new PeriodAmount(),
   periodAmountFilter: new PeriodAmountFilter(),
-  billsLastWeek: null,
+  billsLastWeek: [],
   billDates: new BillDates(),
 };
 

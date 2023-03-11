@@ -217,12 +217,16 @@ export class BillService {
   }
 
   async getBillDates(user: User): Promise<BillDatesDto> {
-    return this.billRepository
+    const dates = await this.billRepository
       .createQueryBuilder('bill')
       .innerJoinAndSelect('bill.user', 'user')
-      .select('MIN(bill.date::TIMESTAMP)::TEXT', 'start')
-      .addSelect('MAX(bill.date::TIMESTAMP)::TEXT', 'end')
+      .select('COALESCE(EXTRACT(EPOCH FROM MIN(bill.date)) * 1000, 0)', 'start')
+      .addSelect(
+        'COALESCE(EXTRACT(EPOCH FROM MAX(bill.date)) * 1000, 0)',
+        'end',
+      )
       .where('user.user_service_id = :userId', { userId: user.userServiceId })
       .getRawOne();
+    return { start: +dates.start, end: +dates.end };
   }
 }
