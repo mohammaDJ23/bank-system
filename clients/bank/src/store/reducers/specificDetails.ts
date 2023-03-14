@@ -1,4 +1,4 @@
-import { BillObj, getTime, UserObj } from '../../lib';
+import { BillObj, UserObj } from '../../lib';
 import { RootActions, SetSpecificDetailsAction } from '../actions';
 import { ClearState } from './clearState';
 
@@ -17,11 +17,11 @@ export interface BillsLastWeekObj {
 }
 
 export class PeriodAmountFilter {
-  constructor(public start: number = getTime(Date.now() - 7 * 24 * 60 * 60 * 1000), public end: number = getTime()) {}
+  constructor(public start: number = 0, public end: number = 0) {}
 }
 
 export class BillDates {
-  constructor(public start: number = getTime(Date.now() - 7 * 24 * 60 * 60 * 1000), public end: number = getTime()) {}
+  constructor(public start: number = 0, public end: number = 0) {}
 }
 
 export interface SpecificDetailsState {
