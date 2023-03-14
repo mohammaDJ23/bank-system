@@ -7,7 +7,7 @@ export class UpdateBillDto {
   id: number;
 
   @IsNumberString()
-  @Length(1, 100)
+  @Length(1, 18)
   @ApiProperty()
   amount: string;
 

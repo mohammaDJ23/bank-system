@@ -3,7 +3,7 @@ import { ApiProperty } from '@nestjs/swagger';
 
 export class CreateBillDto {
   @IsNumberString()
-  @Length(1, 100)
+  @Length(1, 18)
   @ApiProperty()
   amount: string;
 
