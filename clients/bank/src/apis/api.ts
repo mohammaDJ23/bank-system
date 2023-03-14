@@ -1,5 +1,4 @@
 import { AxiosRequestConfig, CreateAxiosDefaults } from 'axios';
-import { BillsPeriod } from '../components/Dashboard';
 import { CreateBill, CreateUser, UpdateBill, UpdateUserByAdmin, UpdateUserByUser, ListParams, BillObj } from '../lib';
 import { PeriodAmountFilter } from '../store';
 import { RootApiObj } from './resetApi';
@@ -182,19 +181,6 @@ export class PeriodAmountApi extends RootApi<PeriodAmountFilter> {
   constructor(data: PeriodAmountFilter) {
     super({
       url: '/bank/bill/period-amount',
-      method: 'post',
-      data,
-      headers: {
-        'Content-type': 'application/json',
-      },
-    });
-  }
-}
-
-export class BillsPeriodApi extends RootApi<BillsPeriod> {
-  constructor(data: BillsPeriod) {
-    super({
-      url: '/bank/bills/period',
       method: 'post',
       data,
       headers: {
