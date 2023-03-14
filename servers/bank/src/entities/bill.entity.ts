@@ -10,7 +10,7 @@ import { User } from './user.entity';
 
 @Entity()
 export class Bill {
-  @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn({ type: 'bigint' })
   id: number;
 
   @Column({ default: '0', length: 100 })

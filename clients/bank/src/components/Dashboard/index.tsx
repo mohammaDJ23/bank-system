@@ -50,8 +50,11 @@ const Dashboard: FC = () => {
 
   const periodAmountChangeRequest = useRef(
     debounce(500, (previousPeriodAmountFilter: PeriodAmountFilter, newPeriodAmountFilter: PeriodAmountFilter) => {
-      request(new PeriodAmountApi(newPeriodAmountFilter))
-        .then(response => setSpecificDetails('totalAmount', response.data))
+      request<TotalAmount, PeriodAmountFilter>(new PeriodAmountApi(newPeriodAmountFilter))
+        .then(response => {
+          const { totalAmount, quantities } = response.data;
+          setSpecificDetails('totalAmount', new TotalAmount(totalAmount, quantities));
+        })
         .catch(err => setSpecificDetails('periodAmountFilter', previousPeriodAmountFilter));
     })
   );
@@ -62,8 +65,8 @@ const Dashboard: FC = () => {
       request(new BillsLastWeekApi().setInitialApi()),
     ]).then(([totalAmountResponse, billsLastWeekResponse]) => {
       if (totalAmountResponse.status === 'fulfilled') {
-        const { start, end, totalAmount } = totalAmountResponse.value.data;
-        setSpecificDetails('totalAmount', { totalAmount });
+        const { start, end, totalAmount, quantities } = totalAmountResponse.value.data;
+        setSpecificDetails('totalAmount', new TotalAmount(totalAmount, quantities));
         setSpecificDetails('billDates', new BillDates(start, end));
         setSpecificDetails('periodAmountFilter', new PeriodAmountFilter(start, end));
       }
@@ -158,7 +161,7 @@ const Dashboard: FC = () => {
             <CardContent>
               <Box display="flex" justifyContent="center" flexDirection="column" gap="20px">
                 {specificDetails.periodAmountFilter.start > 0 && specificDetails.periodAmountFilter.end > 0 && (
-                  <Box display="flex" alignItems="center" justifyContent="space-between" gap="20px" position="relative">
+                  <Box display="flex" alignItems="center" justifyContent="space-between" gap="30px" position="relative">
                     <Box display="flex" alignItems="center" gap="5px">
                       <Typography fontSize="10px" whiteSpace="nowrap">
                         {moment(specificDetails.periodAmountFilter.start).format('ll')}
@@ -188,7 +191,6 @@ const Dashboard: FC = () => {
                     <Slider
                       disabled={isPeriodAmountProcessing}
                       value={[specificDetails.periodAmountFilter.start, specificDetails.periodAmountFilter.end]}
-                      step={1 * 24 * 60 * 60 * 1000}
                       min={specificDetails.billDates.start}
                       max={specificDetails.billDates.end}
                       onChange={(event, value) => {
@@ -232,6 +234,10 @@ const Dashboard: FC = () => {
                 <Box display="flex" alignItems="center" justifyContent="space-between" gap="20px">
                   <Typography whiteSpace="nowrap">Total Amount: </Typography>
                   <Typography>{specificDetails.totalAmount.totalAmount}</Typography>
+                </Box>
+                <Box display="flex" alignItems="center" justifyContent="space-between" gap="20px">
+                  <Typography whiteSpace="nowrap">Bill quantities: </Typography>
+                  <Typography>{specificDetails.totalAmount.quantities}</Typography>
                 </Box>
               </Box>
             </CardContent>

@@ -95,6 +95,7 @@ export class BillService {
       .createQueryBuilder('bill')
       .innerJoinAndSelect('bill.user', 'user')
       .select('COALESCE(SUM(bill.amount::BIGINT), 0)::TEXT', 'totalAmount')
+      .addSelect('COALESCE(COUNT(bill.id), 0)', 'quantities')
       .addSelect(
         'COALESCE(EXTRACT(EPOCH FROM MIN(bill.date)) * 1000, 0)::BIGINT',
         'start',
@@ -122,6 +123,7 @@ export class BillService {
       .createQueryBuilder('bill')
       .innerJoinAndSelect('bill.user', 'user')
       .select('COALESCE(SUM(bill.amount::BIGINT), 0)::TEXT', 'totalAmount')
+      .addSelect('COALESCE(COUNT(bill.id), 0)', 'quantities')
       .where('user.user_service_id = :userId', { userId: user.userServiceId })
       .andWhere('bill.date::TIMESTAMP >= :start::TIMESTAMP', {
         start: new Date(body.start),

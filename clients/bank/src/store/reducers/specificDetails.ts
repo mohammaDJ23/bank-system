@@ -7,7 +7,7 @@ export enum SpecificDetails {
 }
 
 export class TotalAmount {
-  constructor(public totalAmount: string = '0') {}
+  constructor(public totalAmount: string = '0', public quantities: string = '0') {}
 }
 
 export interface BillsLastWeekObj {
