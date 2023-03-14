@@ -9,7 +9,10 @@ import { DeleteBillDto } from 'src/dtos/delete-bill.dto';
 import { LastWeekDto } from 'src/dtos/last-week.dto';
 import { ListDto } from 'src/dtos/list.dto';
 import { PeriodAmountDto } from 'src/dtos/period-amount.dto';
-import { TotalAmountDto } from 'src/dtos/total-amount.dto';
+import {
+  TotalAmountDto,
+  TotalAmountWithoutDates,
+} from 'src/dtos/total-amount.dto';
 import { UpdateBillDto } from 'src/dtos/update-bill.dto';
 import { Repository } from 'typeorm';
 import { CreateBillDto } from '../dtos/create-bill.dto';
@@ -19,7 +22,6 @@ import { createReadStream, existsSync, ReadStream } from 'fs';
 import { join } from 'path';
 import { Workbook } from 'exceljs';
 import { BillsPeriodDto } from 'src/dtos/bills-period.dto';
-import { BillDatesDto } from 'src/dtos/bill-dates.dto';
 
 @Injectable()
 export class BillService {
@@ -89,30 +91,44 @@ export class BillService {
       .getMany();
   }
 
-  getTotalAmount(user: User): Promise<TotalAmountDto> {
-    return this.billRepository
+  async getTotalAmount(user: User): Promise<TotalAmountDto> {
+    const data: TotalAmountDto = await this.billRepository
       .createQueryBuilder('bill')
       .innerJoinAndSelect('bill.user', 'user')
       .select('COALESCE(SUM(bill.amount::BIGINT), 0)::TEXT', 'totalAmount')
+      .addSelect(
+        'COALESCE(EXTRACT(EPOCH FROM MIN(bill.date)) * 1000, 0)::BIGINT',
+        'start',
+      )
+      .addSelect(
+        'COALESCE(EXTRACT(EPOCH FROM MAX(bill.date)) * 1000, 0)::BIGINT',
+        'end',
+      )
       .where('user.user_service_id = :userId', {
         userId: user.userServiceId,
       })
       .getRawOne();
+
+    return Object.assign<TotalAmountDto, Partial<TotalAmountDto>>(data, {
+      start: +data.start,
+      end: +data.end,
+    });
   }
 
-  periodAmount(body: PeriodAmountDto, user: User): Promise<TotalAmountDto> {
+  async periodAmount(
+    body: PeriodAmountDto,
+    user: User,
+  ): Promise<TotalAmountWithoutDates> {
     return this.billRepository
       .createQueryBuilder('bill')
       .innerJoinAndSelect('bill.user', 'user')
       .select('COALESCE(SUM(bill.amount::BIGINT), 0)::TEXT', 'totalAmount')
-      .where('bill.date::TIMESTAMP >= :start::TIMESTAMP', {
+      .where('user.user_service_id = :userId', { userId: user.userServiceId })
+      .andWhere('bill.date::TIMESTAMP >= :start::TIMESTAMP', {
         start: new Date(body.start),
       })
       .andWhere('bill.date::TIMESTAMP <= :end::TIMESTAMP', {
         end: new Date(body.end),
-      })
-      .andWhere('user.user_service_id = :userId', {
-        userId: user.userServiceId,
       })
       .getRawOne();
   }
@@ -214,19 +230,5 @@ export class BillService {
       await this.makeBillReports(billReportsFileName, user);
 
     return this.getSteamableFile(billReportsFileName);
-  }
-
-  async getBillDates(user: User): Promise<BillDatesDto> {
-    const dates = await this.billRepository
-      .createQueryBuilder('bill')
-      .innerJoinAndSelect('bill.user', 'user')
-      .select('COALESCE(EXTRACT(EPOCH FROM MIN(bill.date)) * 1000, 0)', 'start')
-      .addSelect(
-        'COALESCE(EXTRACT(EPOCH FROM MAX(bill.date)) * 1000, 0)',
-        'end',
-      )
-      .where('user.user_service_id = :userId', { userId: user.userServiceId })
-      .getRawOne();
-    return { start: +dates.start, end: +dates.end };
   }
 }

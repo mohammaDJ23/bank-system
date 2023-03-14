@@ -10,10 +10,6 @@ export class TotalAmount {
   constructor(public totalAmount: string = '0') {}
 }
 
-export class PeriodAmount {
-  constructor(public totalAmount: string = '0') {}
-}
-
 export interface BillsLastWeekObj {
   count: number;
   amount: string;
@@ -32,7 +28,6 @@ export interface SpecificDetailsState {
   user: UserObj | null;
   bill: BillObj | null;
   totalAmount: TotalAmount;
-  periodAmount: PeriodAmount;
   periodAmountFilter: PeriodAmountFilter;
   billsLastWeek: BillsLastWeekObj[];
   billDates: BillDates;
@@ -42,7 +37,6 @@ const initialState: SpecificDetailsState = {
   user: null,
   bill: null,
   totalAmount: new TotalAmount(),
-  periodAmount: new PeriodAmount(),
   periodAmountFilter: new PeriodAmountFilter(),
   billsLastWeek: [],
   billDates: new BillDates(),

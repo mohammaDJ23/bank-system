@@ -3,11 +3,11 @@ import { FC, useEffect, useRef } from 'react';
 import { Box, CardContent, Typography, Slider, Input } from '@mui/material';
 import { DateRange } from '@mui/icons-material';
 import { grey } from '@mui/material/colors';
-import { BillDatesApi, BillsLastWeekApi, PeriodAmountApi, TotalAmountApi } from '../../apis';
+import { BillsLastWeekApi, PeriodAmountApi, TotalAmountApi } from '../../apis';
 import { useAction, useRequest, useSelector } from '../../hooks';
 import MainContainer from '../../layout/MainContainer';
 import { debounce, getTime } from '../../lib';
-import { BillDates, BillsLastWeekObj, PeriodAmountFilter, PeriodAmount, TotalAmount } from '../../store';
+import { BillDates, BillsLastWeekObj, PeriodAmountFilter, TotalAmount } from '../../store';
 import Skeleton from '../Skeleton';
 import Card from '../Card';
 import {
@@ -49,48 +49,31 @@ const Dashboard: FC = () => {
   const { setSpecificDetails } = useAction();
   const { specificDetails } = useSelector();
   const isTotalAmountProcessing = isInitialApiProcessing(TotalAmountApi);
-  const isInitialPeriodAmountProcessing = isInitialApiProcessing(PeriodAmountApi);
   const isBillsLastWeekProcessing = isInitialApiProcessing(BillsLastWeekApi);
-  const isBillDatesProcessing = isInitialApiProcessing(BillDatesApi);
   const isPeriodAmountProcessing = isApiProcessing(PeriodAmountApi);
-  const isStartBillDateExist = specificDetails.periodAmountFilter.start > 0;
-  const isEndBillDateExist = specificDetails.periodAmountFilter.end > 0;
 
   const periodAmountChangeRequest = useRef(
     debounce(500, (previousPeriodAmountFilter: PeriodAmountFilter, newPeriodAmountFilter: PeriodAmountFilter) => {
       request(new PeriodAmountApi(newPeriodAmountFilter))
-        .then(response => setSpecificDetails('periodAmount', response.data))
+        .then(response => setSpecificDetails('totalAmount', response.data))
         .catch(err => setSpecificDetails('periodAmountFilter', previousPeriodAmountFilter));
     })
   );
 
   useEffect(() => {
-    Promise.allSettled<
-      [
-        Promise<AxiosResponse<TotalAmount>>,
-        Promise<AxiosResponse<PeriodAmount>>,
-        Promise<AxiosResponse<BillsLastWeekObj[]>>,
-        Promise<AxiosResponse<BillDates>>
-      ]
-    >([
+    Promise.allSettled<[Promise<AxiosResponse<TotalAmount & BillDates>>, Promise<AxiosResponse<BillsLastWeekObj[]>>]>([
       request(new TotalAmountApi().setInitialApi()),
-      request(new PeriodAmountApi(specificDetails.periodAmountFilter).setInitialApi()),
       request(new BillsLastWeekApi().setInitialApi()),
-      request(new BillDatesApi().setInitialApi()),
-    ]).then(([totalAmountResponse, periodAmountResponse, billsLastWeekResponse, billDatesResponse]) => {
-      if (totalAmountResponse.status === 'fulfilled') setSpecificDetails('totalAmount', totalAmountResponse.value.data);
-
-      if (periodAmountResponse.status === 'fulfilled')
-        setSpecificDetails('periodAmount', periodAmountResponse.value.data);
-
-      if (billsLastWeekResponse.status === 'fulfilled')
-        setSpecificDetails('billsLastWeek', billsLastWeekResponse.value.data);
-
-      if (billDatesResponse.status === 'fulfilled') {
-        let { start, end } = billDatesResponse.value.data;
+    ]).then(([totalAmountResponse, billsLastWeekResponse]) => {
+      if (totalAmountResponse.status === 'fulfilled') {
+        const { start, end, totalAmount } = totalAmountResponse.value.data;
+        setSpecificDetails('totalAmount', { totalAmount });
         setSpecificDetails('billDates', new BillDates(start, end));
         setSpecificDetails('periodAmountFilter', new PeriodAmountFilter(start, end));
       }
+
+      if (billsLastWeekResponse.status === 'fulfilled')
+        setSpecificDetails('billsLastWeek', billsLastWeekResponse.value.data);
     });
   }, []);
 
@@ -173,25 +156,12 @@ const Dashboard: FC = () => {
         )}
 
         {isTotalAmountProcessing ? (
-          <Skeleton width="100%" height="64px" />
-        ) : (
-          <Card>
-            <CardContent>
-              <Box display="flex" alignItems="center" justifyContent="space-between" gap="20px">
-                <Typography whiteSpace="nowrap">Total Amount: </Typography>
-                <Typography>{specificDetails.totalAmount.totalAmount}</Typography>
-              </Box>
-            </CardContent>
-          </Card>
-        )}
-
-        {isInitialPeriodAmountProcessing || isBillDatesProcessing ? (
           <Skeleton width="100%" height="128px" />
         ) : (
           <Card>
             <CardContent>
               <Box display="flex" justifyContent="center" flexDirection="column" gap="20px">
-                {isStartBillDateExist && isEndBillDateExist && (
+                {specificDetails.periodAmountFilter.start > 0 && specificDetails.periodAmountFilter.end > 0 && (
                   <Box display="flex" alignItems="center" justifyContent="space-between" gap="20px" position="relative">
                     <Box display="flex" alignItems="center" gap="5px">
                       <Typography fontSize="10px" whiteSpace="nowrap">
@@ -264,8 +234,8 @@ const Dashboard: FC = () => {
                   </Box>
                 )}
                 <Box display="flex" alignItems="center" justifyContent="space-between" gap="20px">
-                  <Typography whiteSpace="nowrap">Period Amount: </Typography>
-                  <Typography>{specificDetails.periodAmount.totalAmount}</Typography>
+                  <Typography whiteSpace="nowrap">Total Amount: </Typography>
+                  <Typography>{specificDetails.totalAmount.totalAmount}</Typography>
                 </Box>
               </Box>
             </CardContent>
