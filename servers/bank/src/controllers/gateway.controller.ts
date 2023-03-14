@@ -41,7 +41,6 @@ import {
 import { PeriodAmountDto } from 'src/dtos/period-amount.dto';
 import { LastWeekDto } from 'src/dtos/last-week.dto';
 import { ListDto } from 'src/dtos/list.dto';
-import { BillsPeriodDto } from 'src/dtos/bills-period.dto';
 import { ErrorDto } from 'src/dtos/error.dto';
 
 @UseGuards(JwtAuthGuard)
@@ -121,21 +120,6 @@ export class GatewayController {
     @CurrentUser() user: User,
   ): Promise<TotalAmountWithoutDates> {
     return this.billService.periodAmount(body, user);
-  }
-
-  @Post('bills/period')
-  @HttpCode(HttpStatus.OK)
-  @ListSerializer(BillDto)
-  @ApiBody({ type: BillsPeriodDto })
-  @ApiBearerAuth()
-  @ApiResponse({ status: HttpStatus.OK, type: BillDto, isArray: true })
-  @ApiResponse({ status: HttpStatus.UNAUTHORIZED, type: ErrorDto })
-  @ApiResponse({ status: HttpStatus.INTERNAL_SERVER_ERROR, type: ErrorDto })
-  billsPeriod(
-    @Body() body: BillsPeriodDto,
-    @CurrentUser() user: User,
-  ): Promise<[Bill[], number]> {
-    return this.billService.billsPeriod(body, user);
   }
 
   @Get('bills/last-week')
