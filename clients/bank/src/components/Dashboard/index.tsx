@@ -24,10 +24,6 @@ import { curveCatmullRom, area } from 'd3-shape';
 import moment from 'moment';
 import { notification } from 'antd';
 
-export class BillsPeriod {
-  constructor(public start: number = getTime(Date.now() - 7 * 24 * 60 * 60 * 1000), public end: number = getTime()) {}
-}
-
 const Root = (props: Legend.RootProps) => (
   <Legend.Root {...props} sx={{ display: 'flex', margin: 'auto', flexDirection: 'row' }} />
 );
