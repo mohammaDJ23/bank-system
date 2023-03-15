@@ -3,11 +3,11 @@ import { FC, useEffect, useRef, useState } from 'react';
 import { Box, CardContent, Typography, Slider, Input } from '@mui/material';
 import { DateRange } from '@mui/icons-material';
 import { grey } from '@mui/material/colors';
-import { BillsLastWeekApi, PeriodAmountApi, TotalAmountApi } from '../../apis';
-import { useAction, useRequest, useSelector } from '../../hooks';
+import { BillsLastWeekApi, PeriodAmountApi, TotalAmountApi, UserQuantitiesApi } from '../../apis';
+import { useAction, useAuth, useRequest, useSelector } from '../../hooks';
 import MainContainer from '../../layout/MainContainer';
 import { debounce, getTime } from '../../lib';
-import { BillDates, BillsLastWeekObj, PeriodAmountFilter, TotalAmount } from '../../store';
+import { BillDates, BillsLastWeekObj, PeriodAmountFilter, TotalAmount, UserQuantities } from '../../store';
 import Skeleton from '../Skeleton';
 import Card from '../Card';
 import {
@@ -45,11 +45,13 @@ const defaultSliderStep = 1 * 24 * 60 * 60 * 1000;
 const Dashboard: FC = () => {
   const [sliderStep, setSliderStep] = useState(defaultSliderStep);
   const { request, isInitialApiProcessing, isApiProcessing } = useRequest();
+  const { isAdmin } = useAuth();
   const { setSpecificDetails } = useAction();
   const { specificDetails } = useSelector();
   const isTotalAmountProcessing = isInitialApiProcessing(TotalAmountApi);
   const isBillsLastWeekProcessing = isInitialApiProcessing(BillsLastWeekApi);
   const isPeriodAmountProcessing = isApiProcessing(PeriodAmountApi);
+  const isUserQuantitiesProcessing = isInitialApiProcessing(UserQuantitiesApi);
 
   const periodAmountChangeRequest = useRef(
     debounce(500, (previousPeriodAmountFilter: PeriodAmountFilter, newPeriodAmountFilter: PeriodAmountFilter) => {
@@ -63,6 +65,15 @@ const Dashboard: FC = () => {
   );
 
   useEffect(() => {
+    if (isAdmin()) {
+      Promise.allSettled<Promise<AxiosResponse<UserQuantities>>>([
+        request(new UserQuantitiesApi().setInitialApi()),
+      ]).then(([userQuantitiesResponse]) => {
+        if (userQuantitiesResponse.status === 'fulfilled')
+          setSpecificDetails('userQuantities', new UserQuantities(userQuantitiesResponse.value.data.quantities));
+      });
+    }
+
     Promise.allSettled<[Promise<AxiosResponse<TotalAmount & BillDates>>, Promise<AxiosResponse<BillsLastWeekObj[]>>]>([
       request(new TotalAmountApi().setInitialApi()),
       request(new BillsLastWeekApi().setInitialApi()),
@@ -155,6 +166,22 @@ const Dashboard: FC = () => {
               );
             })()}
           </>
+        )}
+
+        {isUserQuantitiesProcessing ? (
+          <Skeleton width="100%" height="64px" />
+        ) : (
+          specificDetails.userQuantities &&
+          isAdmin() && (
+            <Card>
+              <CardContent>
+                <Box display="flex" alignItems="center" justifyContent="space-between" gap="30px">
+                  <Typography whiteSpace="nowrap">Total Users: </Typography>
+                  <Typography>{specificDetails.userQuantities.quantities}</Typography>
+                </Box>
+              </CardContent>
+            </Card>
+          )
         )}
 
         {isTotalAmountProcessing ? (

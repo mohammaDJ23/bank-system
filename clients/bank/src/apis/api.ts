@@ -233,3 +233,15 @@ export class BillsExcelApi extends RootApi {
     });
   }
 }
+
+export class UserQuantitiesApi extends RootApi {
+  constructor() {
+    super(
+      {
+        url: '/user/quantities',
+        method: 'get',
+      },
+      { baseURL: process.env.USER_SERVICE }
+    );
+  }
+}
