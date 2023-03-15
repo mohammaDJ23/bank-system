@@ -35,6 +35,7 @@ import { UpdateUserByAdminDto } from '../dtos/update-user-by-admin.dto';
 import { User } from 'src/entities/user.entity';
 import { CurrentUser } from 'src/decorators/current-user.decorator';
 import { ErrorDto } from 'src/dtos/error.dto';
+import { UserQuantitiesDto } from 'src/dtos/user-quantities.dto';
 
 @UseGuards(JwtAuthGuard)
 @Controller('user')
@@ -116,6 +117,19 @@ export class GatewayController {
     @Query('take') take: number,
   ): Promise<[User[], number]> {
     return this.userService.findAll(page, take);
+  }
+
+  @Get('quantities')
+  @UseGuards(AdminAuthGuard)
+  @HttpCode(HttpStatus.OK)
+  @ObjectSerializer(UserQuantitiesDto)
+  @ApiBearerAuth()
+  @ApiResponse({ status: HttpStatus.OK, type: UserQuantitiesDto })
+  @ApiResponse({ status: HttpStatus.UNAUTHORIZED, type: ErrorDto })
+  @ApiResponse({ status: HttpStatus.NOT_FOUND, type: ErrorDto })
+  @ApiResponse({ status: HttpStatus.INTERNAL_SERVER_ERROR, type: ErrorDto })
+  getUserQuantities(): Promise<UserQuantitiesDto> {
+    return this.userService.getUserQuantities();
   }
 
   @Get(':id')

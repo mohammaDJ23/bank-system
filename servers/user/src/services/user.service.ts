@@ -17,6 +17,7 @@ import { DeleteAccountDto } from '../dtos/delete-account.dto';
 import { RabbitMqServices } from '../types/rabbitmq';
 import { UpdateUserByUserDto } from 'src/dtos/update-user-by-user.dto';
 import { RabbitmqService } from './rabbitmq.service';
+import { UserQuantitiesDto } from 'src/dtos/user-quantities.dto';
 
 @Injectable()
 export class UserService {
@@ -160,5 +161,12 @@ export class UserService {
       .take(take)
       .skip((page - 1) * take)
       .getManyAndCount();
+  }
+
+  getUserQuantities(): Promise<UserQuantitiesDto> {
+    return this.userRepository
+      .createQueryBuilder('user')
+      .select('COALESCE(COUNT(user.id), 0)::INTEGER', 'quantities')
+      .getRawOne();
   }
 }
