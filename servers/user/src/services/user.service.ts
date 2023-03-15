@@ -12,12 +12,12 @@ import { User } from '../entities/user.entity';
 import { hash } from 'bcrypt';
 import { ClientProxy, RmqContext, RpcException } from '@nestjs/microservices';
 import { UpdateUserDto } from '../dtos/update-user.dto';
-import { FindAllDto } from '../dtos/find-all.dto';
 import { DeleteAccountDto } from '../dtos/delete-account.dto';
 import { RabbitMqServices } from '../types/rabbitmq';
 import { UpdateUserByUserDto } from 'src/dtos/update-user-by-user.dto';
 import { RabbitmqService } from './rabbitmq.service';
 import { UserQuantitiesDto } from 'src/dtos/user-quantities.dto';
+import { Roles } from 'src/types/user';
 
 @Injectable()
 export class UserService {
@@ -163,10 +163,18 @@ export class UserService {
       .getManyAndCount();
   }
 
-  getUserQuantities(): Promise<UserQuantitiesDto> {
+  async getUserQuantities(): Promise<UserQuantitiesDto> {
     return this.userRepository
       .createQueryBuilder('user')
       .select('COALESCE(COUNT(user.id), 0)::INTEGER', 'quantities')
+      .addSelect(
+        `COALESCE(SUM((user.role = '${Roles.ADMIN}')::INTEGER), 0)::INTEGER`,
+        'adminQuantities',
+      )
+      .addSelect(
+        `COALESCE(SUM((user.role = '${Roles.USER}')::INTEGER), 0)::INTEGER`,
+        'userQuantities',
+      )
       .getRawOne();
   }
 }

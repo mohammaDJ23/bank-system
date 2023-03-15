@@ -69,8 +69,10 @@ const Dashboard: FC = () => {
       Promise.allSettled<Promise<AxiosResponse<UserQuantities>>>([
         request(new UserQuantitiesApi().setInitialApi()),
       ]).then(([userQuantitiesResponse]) => {
-        if (userQuantitiesResponse.status === 'fulfilled')
-          setSpecificDetails('userQuantities', new UserQuantities(userQuantitiesResponse.value.data.quantities));
+        if (userQuantitiesResponse.status === 'fulfilled') {
+          const { quantities, adminQuantities, userQuantities } = userQuantitiesResponse.value.data;
+          setSpecificDetails('userQuantities', new UserQuantities(quantities, adminQuantities, userQuantities));
+        }
       });
     }
 
@@ -169,15 +171,25 @@ const Dashboard: FC = () => {
         )}
 
         {isUserQuantitiesProcessing ? (
-          <Skeleton width="100%" height="64px" />
+          <Skeleton width="100%" height="152px" />
         ) : (
           specificDetails.userQuantities &&
           isAdmin() && (
             <Card>
               <CardContent>
-                <Box display="flex" alignItems="center" justifyContent="space-between" gap="30px">
-                  <Typography whiteSpace="nowrap">Total Users: </Typography>
-                  <Typography>{specificDetails.userQuantities.quantities}</Typography>
+                <Box display="flex" gap="20px" flexDirection="column">
+                  <Box display="flex" alignItems="center" justifyContent="space-between" gap="30px">
+                    <Typography whiteSpace="nowrap">Total Users: </Typography>
+                    <Typography>{specificDetails.userQuantities.quantities}</Typography>
+                  </Box>
+                  <Box display="flex" alignItems="center" justifyContent="space-between" gap="30px">
+                    <Typography whiteSpace="nowrap">Admins: </Typography>
+                    <Typography>{specificDetails.userQuantities.adminQuantities}</Typography>
+                  </Box>
+                  <Box display="flex" alignItems="center" justifyContent="space-between" gap="30px">
+                    <Typography whiteSpace="nowrap">Users: </Typography>
+                    <Typography>{specificDetails.userQuantities.userQuantities}</Typography>
+                  </Box>
                 </Box>
               </CardContent>
             </Card>

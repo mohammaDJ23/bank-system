@@ -5,4 +5,12 @@ export class UserQuantitiesDto {
   @Expose()
   @ApiProperty()
   quantities: number;
+
+  @Expose()
+  @ApiProperty()
+  adminQuantities: number;
+
+  @Expose()
+  @ApiProperty()
+  userQuantities: number;
 }

@@ -25,7 +25,7 @@ export class BillDates {
 }
 
 export class UserQuantities {
-  constructor(public quantities: number) {}
+  constructor(public quantities: number, public adminQuantities: number, public userQuantities: number) {}
 }
 
 export interface SpecificDetailsState {
