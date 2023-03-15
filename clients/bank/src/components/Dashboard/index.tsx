@@ -1,5 +1,5 @@
 import { AxiosResponse } from 'axios';
-import { FC, useEffect, useRef } from 'react';
+import { FC, useEffect, useRef, useState } from 'react';
 import { Box, CardContent, Typography, Slider, Input } from '@mui/material';
 import { DateRange } from '@mui/icons-material';
 import { grey } from '@mui/material/colors';
@@ -40,7 +40,10 @@ const Area = (props: any) => (
   />
 );
 
+const defaultSliderStep = 1 * 24 * 60 * 60 * 1000;
+
 const Dashboard: FC = () => {
+  const [sliderStep, setSliderStep] = useState(defaultSliderStep);
   const { request, isInitialApiProcessing, isApiProcessing } = useRequest();
   const { setSpecificDetails } = useAction();
   const { specificDetails } = useSelector();
@@ -191,10 +194,17 @@ const Dashboard: FC = () => {
                     <Slider
                       disabled={isPeriodAmountProcessing}
                       value={[specificDetails.periodAmountFilter.start, specificDetails.periodAmountFilter.end]}
+                      step={sliderStep}
                       min={specificDetails.billDates.start}
                       max={specificDetails.billDates.end}
                       onChange={(event, value) => {
-                        const [start, end] = value as number[];
+                        let [start, end] = value as number[];
+
+                        if (specificDetails.billDates.end - end < 1 * 24 * 60 * 60 * 1000) {
+                          end = specificDetails.billDates.end;
+                          setSliderStep(defaultSliderStep + specificDetails.billDates.end - end);
+                        } else setSliderStep(defaultSliderStep);
+
                         const previousPeriodAmountFilter = specificDetails.periodAmountFilter;
                         const newPeriodAmountFilter = new PeriodAmountFilter(getTime(start), getTime(end));
                         setSpecificDetails('periodAmountFilter', newPeriodAmountFilter);
