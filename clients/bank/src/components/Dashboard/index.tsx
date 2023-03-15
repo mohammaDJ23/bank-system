@@ -199,10 +199,11 @@ const Dashboard: FC = () => {
                       max={specificDetails.billDates.end}
                       onChange={(event, value) => {
                         let [start, end] = value as number[];
+                        const remiderOfEndDates = specificDetails.billDates.end - end;
 
-                        if (specificDetails.billDates.end - end < 1 * 24 * 60 * 60 * 1000) {
+                        if (remiderOfEndDates < 1 * 24 * 60 * 60 * 1000) {
                           end = specificDetails.billDates.end;
-                          setSliderStep(defaultSliderStep + specificDetails.billDates.end - end);
+                          setSliderStep(defaultSliderStep + remiderOfEndDates);
                         } else setSliderStep(defaultSliderStep);
 
                         const previousPeriodAmountFilter = specificDetails.periodAmountFilter;
