@@ -9,7 +9,10 @@ import { DeleteBillDto } from 'src/dtos/delete-bill.dto';
 import { LastWeekDto } from 'src/dtos/last-week.dto';
 import { ListDto } from 'src/dtos/list.dto';
 import { PeriodAmountDto } from 'src/dtos/period-amount.dto';
-import { TotalAmountDto } from 'src/dtos/total-amount.dto';
+import {
+  TotalAmountDto,
+  TotalAmountWithoutDates,
+} from 'src/dtos/total-amount.dto';
 import { UpdateBillDto } from 'src/dtos/update-bill.dto';
 import { Repository } from 'typeorm';
 import { CreateBillDto } from '../dtos/create-bill.dto';
@@ -18,7 +21,6 @@ import { User } from '../entities/user.entity';
 import { createReadStream, existsSync, ReadStream } from 'fs';
 import { join } from 'path';
 import { Workbook } from 'exceljs';
-import { BillsPeriodDto } from 'src/dtos/bills-period.dto';
 
 @Injectable()
 export class BillService {
@@ -80,64 +82,67 @@ export class BillService {
   findAllWithoutLimitation(user: User): Promise<Bill[]> {
     return this.billRepository
       .createQueryBuilder('bill')
-      .where('bill.user.user_service_id = :userId', {
+      .innerJoinAndSelect('bill.user', 'user')
+      .where('user.user_service_id = :userId', {
         userId: user.userServiceId,
       })
       .orderBy('bill.date::TIMESTAMP', 'DESC')
       .getMany();
   }
 
-  getTotalAmount(user: User): Promise<TotalAmountDto> {
-    return this.billRepository
+  async getTotalAmount(user: User): Promise<TotalAmountDto> {
+    const data: TotalAmountDto = await this.billRepository
       .createQueryBuilder('bill')
       .innerJoinAndSelect('bill.user', 'user')
-      .select('SUM(bill.amount::NUMERIC)::VARCHAR(100)', 'totalAmount')
+      .select('COALESCE(SUM(bill.amount::BIGINT), 0)::TEXT', 'totalAmount')
+      .addSelect('COALESCE(COUNT(bill.id), 0)', 'quantities')
+      .addSelect(
+        'COALESCE(EXTRACT(EPOCH FROM MIN(bill.date)) * 1000, 0)::BIGINT',
+        'start',
+      )
+      .addSelect(
+        'COALESCE(EXTRACT(EPOCH FROM MAX(bill.date)) * 1000, 0)::BIGINT',
+        'end',
+      )
       .where('user.user_service_id = :userId', {
         userId: user.userServiceId,
       })
       .getRawOne();
+
+    return Object.assign<TotalAmountDto, Partial<TotalAmountDto>>(data, {
+      start: +data.start,
+      end: +data.end,
+    });
   }
 
-  periodAmount(body: PeriodAmountDto, user: User): Promise<TotalAmountDto> {
+  async periodAmount(
+    body: PeriodAmountDto,
+    user: User,
+  ): Promise<TotalAmountWithoutDates> {
     return this.billRepository
       .createQueryBuilder('bill')
       .innerJoinAndSelect('bill.user', 'user')
-      .select('SUM(bill.amount::NUMERIC)::VARCHAR(100)', 'totalAmount')
-      .where('bill.date::TIMESTAMP >= :start::TIMESTAMP', {
-        start: body.start,
+      .select('COALESCE(SUM(bill.amount::BIGINT), 0)::TEXT', 'totalAmount')
+      .addSelect('COALESCE(COUNT(bill.id), 0)', 'quantities')
+      .where('user.user_service_id = :userId', { userId: user.userServiceId })
+      .andWhere('bill.date::TIMESTAMP >= :start::TIMESTAMP', {
+        start: new Date(body.start),
       })
       .andWhere('bill.date::TIMESTAMP <= :end::TIMESTAMP', {
-        end: body.end,
-      })
-      .andWhere('user.user_service_id = :userId', {
-        userId: user.userServiceId,
+        end: new Date(body.end),
       })
       .getRawOne();
-  }
-
-  billsPeriod(body: BillsPeriodDto, user: User): Promise<[Bill[], number]> {
-    return this.billRepository
-      .createQueryBuilder('bill')
-      .innerJoinAndSelect('bill.user', 'user')
-      .where('bill.date::TIMESTAMP >= :start::TIMESTAMP', { start: body.start })
-      .andWhere('bill.date::TIMESTAMP <= :end::TIMESTAMP', { end: body.end })
-      .andWhere('user.user_service_id = :userId', {
-        userId: user.userServiceId,
-      })
-      .take(body.take)
-      .skip((body.page - 1) * body.take)
-      .getManyAndCount();
   }
 
   lastWeekBills(user: User): Promise<LastWeekDto[]> {
     return this.billRepository
       .createQueryBuilder('bill')
       .innerJoinAndSelect('bill.user', 'user')
-      .select('COUNT(bill.date::DATE)::INTEGER', 'count')
-      .addSelect('SUM(bill.amount::NUMERIC)::VARCHAR(100)', 'amount')
-      .addSelect('bill.date::DATE', 'date')
-      .where('bill.date::DATE >= CURRENT_DATE - 6')
-      .andWhere('bill.date::DATE <= CURRENT_DATE ')
+      .select('COUNT(bill.date::TIMESTAMP)::INTEGER', 'count')
+      .addSelect('SUM(bill.amount::NUMERIC)::TEXT', 'amount')
+      .addSelect('bill.date::TIMESTAMP', 'date')
+      .where('bill.date::TIMESTAMP >= CURRENT_DATE - 6')
+      .andWhere('bill.date::TIMESTAMP <= CURRENT_DATE ')
       .andWhere('user.user_service_id = :userId', {
         userId: user.userServiceId,
       })

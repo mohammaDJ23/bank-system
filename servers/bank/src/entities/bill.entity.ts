@@ -10,7 +10,7 @@ import { User } from './user.entity';
 
 @Entity()
 export class Bill {
-  @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn({ type: 'bigint' })
   id: number;
 
   @Column({ default: '0', length: 100 })
@@ -22,13 +22,23 @@ export class Bill {
   @Column({ length: 500 })
   description: string;
 
-  @Column({ type: 'timestamptz' })
-  date: Date;
+  @Column({
+    type: 'timestamptz',
+    transformer: {
+      from(value) {
+        return new Date(value).getTime();
+      },
+      to(value) {
+        return new Date(value);
+      },
+    },
+  })
+  date: Date | number;
 
-  @CreateDateColumn()
+  @CreateDateColumn({ type: 'timestamptz' })
   createdAt: Date;
 
-  @UpdateDateColumn()
+  @UpdateDateColumn({ type: 'timestamptz' })
   updatedAt: Date;
 
   @ManyToOne(() => User, (user) => user.bills)

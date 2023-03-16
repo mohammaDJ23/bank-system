@@ -34,7 +34,7 @@ const UpdateUserByAdminContent: FC = () => {
 
   useEffect(() => {
     if (userId) {
-      request<UserObj, number>(new UserApi(+userId)).then(response => {
+      request<UserObj, number>(new UserApi(+userId).setInitialApi()).then(response => {
         initializeForm(
           new UpdateUserByAdmin({
             id: response.data.id,
@@ -51,17 +51,15 @@ const UpdateUserByAdminContent: FC = () => {
 
   const formSubmition = useCallback(() => {
     onSubmit(() => {
-      request<UpdateUserByAdmin, UpdateUserByAdmin>(new UpdateUserByAdminApi(form)).then(
-        response => {
-          hideModal(ModalNames.CONFIRMATION);
-          resetForm();
-          notification.success({
-            message: 'Success',
-            description: 'You have updated the user successfully.',
-          });
-          if (history) history.push(`/bank/users/${form.id}`);
-        }
-      );
+      request<UpdateUserByAdmin, UpdateUserByAdmin>(new UpdateUserByAdminApi(form)).then(response => {
+        hideModal(ModalNames.CONFIRMATION);
+        resetForm();
+        notification.success({
+          message: 'Success',
+          description: 'You have updated the user successfully.',
+        });
+        if (history) history.push(`/bank/users/${form.id}`);
+      });
     });
   }, [form, history, resetForm, onSubmit, request, hideModal]);
 

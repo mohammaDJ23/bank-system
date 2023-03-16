@@ -1,14 +1,9 @@
-import {
-  IsString,
-  IsNumberString,
-  Length,
-  IsDateString,
-} from 'class-validator';
+import { IsString, IsNumberString, Length, IsNumber } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class CreateBillDto {
   @IsNumberString()
-  @Length(1, 100)
+  @Length(1, 18)
   @ApiProperty()
   amount: string;
 
@@ -22,7 +17,7 @@ export class CreateBillDto {
   @ApiProperty()
   description: string;
 
-  @IsDateString()
+  @IsNumber()
   @ApiProperty()
-  date: Date;
+  date: number;
 }

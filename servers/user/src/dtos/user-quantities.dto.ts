@@ -1,16 +1,16 @@
 import { Expose } from 'class-transformer';
 import { ApiProperty } from '@nestjs/swagger';
 
-export class LastWeekDto {
+export class UserQuantitiesDto {
   @Expose()
   @ApiProperty()
-  count: number;
+  quantities: number;
 
   @Expose()
   @ApiProperty()
-  amount: string;
+  adminQuantities: number;
 
   @Expose()
   @ApiProperty()
-  date: number;
+  userQuantities: number;
 }

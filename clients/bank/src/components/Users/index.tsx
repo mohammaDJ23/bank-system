@@ -17,24 +17,27 @@ const UsersContent: FC = () => {
   const getUsersList = useCallback(
     (options: Partial<UsersApiConstructorType> = {}) => {
       const apiData = { take, page, ...options };
-      request<[UserObj[], number], UsersApiConstructorType>(new UsersApi<UserObj>(apiData)).then(
-        res => {
-          const [userList, total] = res.data;
-          const createdList = getListInfo();
-          const constructedUserList = new (createdList.constructor as Constructor<UserList>)();
-          constructedUserList.list = Object.assign(lists, { [apiData.page]: userList });
-          constructedUserList.total = total;
-          constructedUserList.page = page;
-          setList(constructedUserList);
-        }
-      );
+      const userApi = new UsersApi<UserObj>(apiData);
+
+      if (apiData.isInitialApi) {
+        userApi.setInitialApi();
+      }
+
+      request<[UserObj[], number], UsersApiConstructorType>(userApi).then(res => {
+        const [userList, total] = res.data;
+        const createdList = getListInfo();
+        const constructedUserList = new (createdList.constructor as Constructor<UserList>)();
+        constructedUserList.list = Object.assign(lists, { [apiData.page]: userList });
+        constructedUserList.total = total;
+        constructedUserList.page = page;
+        setList(constructedUserList);
+      });
     },
     [take, page, lists, request, setList, getListInfo]
   );
 
   useEffect(() => {
-    getUsersList();
-    return () => setList(new UserList());
+    getUsersList({ isInitialApi: true });
   }, []);
 
   const changePage = useCallback(

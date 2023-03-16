@@ -1,22 +1,15 @@
 import FormContainer from '../../layout/FormContainer';
 import { Box, TextField, Button } from '@mui/material';
 import { notification } from 'antd';
-import { CreateBill } from '../../lib';
+import { CreateBill, getTime, isoDate } from '../../lib';
 import { useForm, useRequest, useFocus } from '../../hooks';
 import { FC, useCallback, useEffect } from 'react';
 import { CreateBillApi } from '../../apis';
 
 const CreateBillContent: FC = () => {
   const formMaker = useForm();
-  const {
-    getForm,
-    onChange,
-    resetForm,
-    onSubmit,
-    getInputErrorMessage,
-    isInputInValid,
-    isFormValid,
-  } = formMaker(CreateBill);
+  const { getForm, onChange, resetForm, onSubmit, getInputErrorMessage, isInputInValid, isFormValid } =
+    formMaker(CreateBill);
   const { isApiProcessing, request } = useRequest();
   const { focus } = useFocus();
   const isLoading = isApiProcessing(CreateBillApi);
@@ -24,7 +17,6 @@ const CreateBillContent: FC = () => {
 
   const formSubmition = useCallback(() => {
     onSubmit(() => {
-      onChange('date', new Date(form.date));
       request<CreateBill, CreateBill>(new CreateBillApi(form)).then(response => {
         resetForm();
         notification.success({
@@ -33,7 +25,7 @@ const CreateBillContent: FC = () => {
         });
       });
     });
-  }, [form, resetForm, onSubmit, request, onChange]);
+  }, [form, resetForm, onSubmit, request]);
 
   useEffect(() => {
     focus('amount');
@@ -78,8 +70,8 @@ const CreateBillContent: FC = () => {
           label="Date"
           type="date"
           variant="standard"
-          value={form.date}
-          onChange={event => onChange('date', event.target.value)}
+          value={isoDate(form.date)}
+          onChange={event => onChange('date', getTime(event.target.value))}
           helperText={getInputErrorMessage('date')}
           error={isInputInValid('date')}
           InputLabelProps={{ shrink: true }}

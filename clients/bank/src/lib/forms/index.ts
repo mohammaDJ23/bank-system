@@ -1,6 +1,6 @@
 import { CreateUser } from './createUser';
 import { CreateBill } from './createBill';
-import { UpdateBill } from './UpdateBill';
+import { UpdateBill } from './updateBill';
 import { UpdateUserByAdmin } from './updateUser';
 import { UpdateUserByUser } from './updateUser';
 
@@ -8,7 +8,7 @@ export * from './createUser';
 export * from './formConstructor';
 export * from './updateUser';
 export * from './createBill';
-export * from './UpdateBill';
+export * from './updateBill';
 
 export const forms = {
   CreateUser,

@@ -1,27 +1,27 @@
 import { AxiosRequestConfig, CreateAxiosDefaults } from 'axios';
-import { BillsPeriod, PeriodAmount } from '../components/Dashboard';
-import {
-  CreateBill,
-  CreateUser,
-  UpdateBill,
-  UpdateUserByAdmin,
-  UpdateUserByUser,
-  ListParams,
-  BillObj,
-} from '../lib';
+import { CreateBill, CreateUser, UpdateBill, UpdateUserByAdmin, UpdateUserByUser, ListParams, BillObj } from '../lib';
+import { PeriodAmountFilter } from '../store';
 import { RootApiObj } from './resetApi';
 
 export interface IdReq {
   id: number;
 }
 
-abstract class RootApi<D = any> implements RootApiObj<D> {
-  constructor(
-    public readonly api: AxiosRequestConfig<D>,
-    public readonly config: CreateAxiosDefaults<D> = {}
-  ) {
+export abstract class RootApi<D = any> implements RootApiObj<D> {
+  protected _isInitialApi: boolean = false;
+
+  constructor(public readonly api: AxiosRequestConfig<D>, public readonly config: CreateAxiosDefaults<D> = {}) {
     this.api = api;
     this.config = config;
+  }
+
+  get isInitialApi() {
+    return this._isInitialApi;
+  }
+
+  setInitialApi(value: boolean = true) {
+    this._isInitialApi = value;
+    return this;
   }
 }
 
@@ -111,7 +111,7 @@ export class UsersApi<T = any> extends RootApi {
   }
 }
 
-export type UsersApiConstructorType = ConstructorParameters<typeof UsersApi>[0];
+export type UsersApiConstructorType = ConstructorParameters<typeof UsersApi>[0] & Pick<RootApi, 'isInitialApi'>;
 
 export class BillsApi<T = any> extends RootApi {
   constructor(data: ListParams<T>) {
@@ -122,7 +122,7 @@ export class BillsApi<T = any> extends RootApi {
   }
 }
 
-export type BillsApiConstructorType = ConstructorParameters<typeof BillsApi>[0];
+export type BillsApiConstructorType = ConstructorParameters<typeof BillsApi>[0] & Pick<RootApi, 'isInitialApi'>;
 
 export class UserApi extends RootApi {
   constructor(id: number) {
@@ -177,23 +177,10 @@ export class TotalAmountApi extends RootApi {
   }
 }
 
-export class PeriodAmountApi extends RootApi<PeriodAmount> {
-  constructor(data: PeriodAmount) {
+export class PeriodAmountApi extends RootApi<PeriodAmountFilter> {
+  constructor(data: PeriodAmountFilter) {
     super({
       url: '/bank/bill/period-amount',
-      method: 'post',
-      data,
-      headers: {
-        'Content-type': 'application/json',
-      },
-    });
-  }
-}
-
-export class BillsPeriodApi extends RootApi<BillsPeriod> {
-  constructor(data: BillsPeriod) {
-    super({
-      url: '/bank/bills/period',
       method: 'post',
       data,
       headers: {
@@ -244,5 +231,17 @@ export class BillsExcelApi extends RootApi {
       url: '/bank/bills/excel',
       method: 'get',
     });
+  }
+}
+
+export class UserQuantitiesApi extends RootApi {
+  constructor() {
+    super(
+      {
+        url: '/user/quantities',
+        method: 'get',
+      },
+      { baseURL: process.env.USER_SERVICE }
+    );
   }
 }

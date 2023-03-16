@@ -1,33 +1,42 @@
 import { AxiosError, AxiosResponse } from 'axios';
 import { notification } from 'antd';
-import { useCallback, useEffect } from 'react';
-import { ErrorObj, Request, RequestParametersType, RootApiObj } from '../apis';
+import { useCallback } from 'react';
+import { ErrorObj, Request, RootApi, RootApiObj } from '../apis';
 import { Constructor } from '../lib';
 import { useAction } from './useActions';
 import { useSelector } from './useSelector';
 
 export function useRequest() {
   const { requestProcess } = useSelector();
-  const { cleanRequestProcess, loading, success, error } = useAction();
+  const {
+    processingApiLoading,
+    processingApiSuccess,
+    processingApiError,
+    initialProcessingApiLoading,
+    initialProcessingApiSuccess,
+    initialProcessingApiError,
+  } = useAction();
 
-  const getRequestConstructorName = useCallback(
-    <T extends RootApiObj>(requestInstance: RequestParametersType | Constructor<T>) => {
-      if (typeof requestInstance === 'function') return requestInstance.name;
-      else return requestInstance.constructor.name;
-    },
-    []
-  );
+  const getRequestConstructorName = useCallback(<T extends RootApiObj>(requestInstance: RootApi | Constructor<T>) => {
+    if (typeof requestInstance === 'function') return requestInstance.name;
+    else return requestInstance.constructor.name;
+  }, []);
 
   const request = useCallback(
-    async <R = any, D = any>(
-      requestInstance: RequestParametersType<R, D>
-    ): Promise<AxiosResponse<R, D>> => {
+    async <R = any, D = any>(requestInstance: RootApi<D>): Promise<AxiosResponse<R, D>> => {
       const requestConstructorName = getRequestConstructorName(requestInstance);
+      const isInitialApi = requestInstance.isInitialApi;
+
       try {
-        loading(requestConstructorName);
+        if (isInitialApi) initialProcessingApiLoading(requestConstructorName);
+        else processingApiLoading(requestConstructorName);
+
         const request = new Request<R, D>(requestInstance);
         const response = await request.build();
-        success(requestConstructorName);
+
+        if (isInitialApi) initialProcessingApiSuccess(requestConstructorName);
+        else processingApiSuccess(requestConstructorName);
+
         return response;
       } catch (e) {
         const err = e as AxiosError<ErrorObj> | Error;
@@ -39,68 +48,89 @@ export function useRequest() {
             : 'Something went wrong';
         message = Array.isArray(message) ? message.join(' - ') : message;
         notification.error({ message: 'Error', description: message });
-        error(requestConstructorName);
+
+        if (isInitialApi) initialProcessingApiError(requestConstructorName);
+        else processingApiError(requestConstructorName);
+
         throw err;
       }
     },
-    [loading, success, error, getRequestConstructorName]
+    [
+      processingApiLoading,
+      processingApiSuccess,
+      processingApiError,
+      initialProcessingApiLoading,
+      initialProcessingApiSuccess,
+      initialProcessingApiError,
+      getRequestConstructorName,
+    ]
   );
 
-  const isRequestProccessing = useCallback(
-    <T extends RootApiObj>(requestInstance: Constructor<T>) => {
-      return requestProcess.loadings[getRequestConstructorName(requestInstance)];
+  const isProcessingApiLoaded = useCallback(
+    <T extends RootApi>(requestInstance: Constructor<T>) => {
+      return requestProcess.processingApis.loadings[getRequestConstructorName(requestInstance)];
     },
     [requestProcess, getRequestConstructorName]
   );
 
-  const isRequestSuccess = useCallback(
-    <T extends RootApiObj>(requestInstance: Constructor<T>) => {
-      return requestProcess.successes[getRequestConstructorName(requestInstance)];
+  const isProcessingApiSuccessed = useCallback(
+    <T extends RootApi>(requestInstance: Constructor<T>) => {
+      return requestProcess.processingApis.successes[getRequestConstructorName(requestInstance)];
     },
     [requestProcess, getRequestConstructorName]
   );
 
-  const isRequestFailed = useCallback(
-    <T extends RootApiObj>(requestInstance: Constructor<T>) => {
-      return requestProcess.errors[getRequestConstructorName(requestInstance)];
+  const isProcessingApiFailed = useCallback(
+    <T extends RootApi>(requestInstance: Constructor<T>) => {
+      return requestProcess.processingApis.errors[getRequestConstructorName(requestInstance)];
+    },
+    [requestProcess, getRequestConstructorName]
+  );
+
+  const isInitialProcessingApiLoaded = useCallback(
+    <T extends RootApi>(requestInstance: Constructor<T>) => {
+      return requestProcess.initialProcessingApis.loadings[getRequestConstructorName(requestInstance)];
+    },
+    [requestProcess, getRequestConstructorName]
+  );
+
+  const isInitialProcessingApiSuccessed = useCallback(
+    <T extends RootApi>(requestInstance: Constructor<T>) => {
+      return requestProcess.initialProcessingApis.successes[getRequestConstructorName(requestInstance)];
+    },
+    [requestProcess, getRequestConstructorName]
+  );
+
+  const isInitialProcessingApiFailed = useCallback(
+    <T extends RootApi>(requestInstance: Constructor<T>) => {
+      return requestProcess.initialProcessingApis.errors[getRequestConstructorName(requestInstance)];
     },
     [requestProcess, getRequestConstructorName]
   );
 
   const isApiProcessing = useCallback(
-    <T extends RootApiObj>(requestInstance: Constructor<T>) => {
+    <T extends RootApi>(requestInstance: Constructor<T>) => {
       return (
-        isRequestProccessing(requestInstance) &&
-        !isRequestFailed(requestInstance) &&
-        !isRequestSuccess(requestInstance)
+        isProcessingApiLoaded(requestInstance) &&
+        !isProcessingApiSuccessed(requestInstance) &&
+        !isProcessingApiFailed(requestInstance)
       );
     },
-    [isRequestProccessing, isRequestFailed, isRequestSuccess]
+    [isProcessingApiLoaded, isProcessingApiSuccessed, isProcessingApiFailed]
   );
 
   const isInitialApiProcessing = useCallback(
-    <T extends RootApiObj>(requestInstance: Constructor<T>) => {
-      const proccessingRequest = isRequestProccessing(requestInstance);
+    <T extends RootApi>(requestInstance: Constructor<T>) => {
+      const isInitialApiLoaded = isInitialProcessingApiLoaded(requestInstance);
+      const isInitialApiSuccessed = isInitialProcessingApiSuccessed(requestInstance);
+      const isInitialApiFailed = isInitialProcessingApiFailed(requestInstance);
       return (
-        (!proccessingRequest &&
-          !isRequestFailed(requestInstance) &&
-          !isRequestSuccess(requestInstance)) ||
-        proccessingRequest
+        (isInitialApiLoaded && !isInitialApiSuccessed && !isInitialApiFailed) ||
+        (!isInitialApiLoaded && !isInitialApiSuccessed && !isInitialApiFailed)
       );
     },
-    [isRequestProccessing, isRequestFailed, isRequestSuccess]
+    [isInitialProcessingApiLoaded, isInitialProcessingApiSuccessed, isInitialProcessingApiFailed]
   );
-
-  useEffect(() => {
-    function cleanupRequestProccess() {
-      cleanRequestProcess();
-    }
-    window.addEventListener('popstate', cleanupRequestProccess);
-    return () => {
-      window.removeEventListener('popstate', cleanupRequestProccess);
-      cleanRequestProcess();
-    };
-  }, []);
 
   return { request, isApiProcessing, isInitialApiProcessing };
 }

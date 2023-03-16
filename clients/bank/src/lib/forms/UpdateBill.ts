@@ -1,7 +1,7 @@
 import { DefineRules, DefineVal, DefineValidation } from '../decorators';
+import { getTime } from '../utilFunctions';
 import { isReceiver, isAmount, isDescription, isDate } from '../validations';
 import { Form } from './formConstructor';
-import dateFormat from 'dateformat';
 
 export class UpdateBill extends Form {
   @DefineVal()
@@ -23,22 +23,22 @@ export class UpdateBill extends Form {
   description: string = '';
 
   @DefineRules([isDate])
-  @DefineVal()
+  @DefineVal(getTime())
   @DefineValidation()
-  date: string = new Date().toISOString();
+  date: number = getTime();
 
   constructor({
     id = 0,
     amount = '',
     receiver = '',
     description = '',
-    date = new Date().toISOString(),
+    date = getTime(),
   }: Partial<Omit<UpdateBill, keyof Form>> = {}) {
     super();
     this.id = id;
     this.amount = amount;
     this.receiver = receiver;
     this.description = description;
-    this.date = dateFormat(date, 'yyyy-mm-dd');
+    this.date = date;
   }
 }

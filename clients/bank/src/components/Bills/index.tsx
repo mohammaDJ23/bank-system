@@ -1,6 +1,6 @@
 import { usePaginationList, useRequest } from '../../hooks';
 import ListContainer from '../../layout/ListContainer';
-import { BillList, BillObj, Constructor } from '../../lib';
+import { BillList, BillObj, Constructor, getTime } from '../../lib';
 import EmptyList from '../EmptyList';
 import Skeleton from './Skeleton';
 import { BillsApi, BillsApiConstructorType } from '../../apis';
@@ -17,8 +17,17 @@ const BillsContent: FC = () => {
   const getBillsList = useCallback(
     (options: Partial<BillsApiConstructorType> = {}) => {
       const apiData = { take, page, ...options };
-      request<[BillObj[], number], BillObj>(new BillsApi<BillObj>(apiData)).then(response => {
-        const [billList, total] = response.data;
+      const billsApi = new BillsApi<BillObj>(apiData);
+
+      if (options.isInitialApi) {
+        billsApi.setInitialApi();
+      }
+
+      request<[BillObj[], number], BillObj>(billsApi).then(response => {
+        let [billList, total] = response.data;
+        billList = billList.map(bill =>
+          Object.assign<typeof bill, Partial<typeof bill>>(bill, { date: getTime(bill.date) })
+        );
         const createdList = getListInfo();
         const constructedBilllist = new (createdList.constructor as Constructor<BillList>)();
         constructedBilllist.list = Object.assign(lists, { [apiData.page]: billList });
@@ -31,8 +40,7 @@ const BillsContent: FC = () => {
   );
 
   useEffect(() => {
-    getBillsList();
-    return () => setList(new BillList());
+    getBillsList({ isInitialApi: true });
   }, []);
 
   const changePage = useCallback(

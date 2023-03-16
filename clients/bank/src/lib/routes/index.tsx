@@ -1,17 +1,17 @@
 import { lazy } from 'react';
 
-const Bill = lazy(() => import('../../Pages/Bill'));
-const Bills = lazy(() => import('../../Pages/Bills'));
-const CreateBill = lazy(() => import('../../Pages/CreateBill'));
-const CreateUser = lazy(() => import('../../Pages/CreateUser'));
-const UpdateBill = lazy(() => import('../../Pages/UpdateBill'));
-const UpdateUserByAdmin = lazy(() => import('../../Pages/UpdateUserByAdmin'));
-const UpdateUserByUser = lazy(() => import('../../Pages/UpdateUserByUser'));
-const User = lazy(() => import('../../Pages/User'));
-const Users = lazy(() => import('../../Pages/Users'));
-const Dashboard = lazy(() => import('../../Pages/Dashboard'));
-const UnAuthorized = lazy(() => import('../../Pages/UnAuthorized'));
-const NotFound = lazy(() => import('../../Pages/NotFound'));
+const Bill = lazy(() => import('../../pages/Bill'));
+const Bills = lazy(() => import('../../pages/Bills'));
+const CreateBill = lazy(() => import('../../pages/CreateBill'));
+const CreateUser = lazy(() => import('../../pages/CreateUser'));
+const UpdateBill = lazy(() => import('../../pages/UpdateBill'));
+const UpdateUserByAdmin = lazy(() => import('../../pages/UpdateUserByAdmin'));
+const UpdateUserByUser = lazy(() => import('../../pages/UpdateUserByUser'));
+const User = lazy(() => import('../../pages/User'));
+const Users = lazy(() => import('../../pages/Users'));
+const Dashboard = lazy(() => import('../../pages/Dashboard'));
+const UnAuthorized = lazy(() => import('../../pages/UnAuthorized'));
+const NotFound = lazy(() => import('../../pages/NotFound'));
 
 export enum Pathes {
   INITIAL = '/',

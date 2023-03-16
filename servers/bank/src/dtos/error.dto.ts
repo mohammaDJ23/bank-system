@@ -8,7 +8,7 @@ export class ErrorDto {
   path: string;
 
   @ApiProperty()
-  timestamp: string;
+  timestamp: number;
 
   @ApiProperty()
   statusCode: number;

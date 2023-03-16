@@ -6,40 +6,49 @@ export enum SpecificDetails {
   SET_SPECIFIC_DETAILS = 'SET_SPECIFIC_DETAILS',
 }
 
-export interface TotalAmountObj {
-  totalAmount: string;
-}
-
-export interface PeriodAmountObj {
-  periodAmount: string;
+export class TotalAmount {
+  constructor(public totalAmount: string = '0', public quantities: string = '0') {}
 }
 
 export interface BillsLastWeekObj {
   count: number;
   amount: string;
-  date: string;
+  date: number;
+}
+
+export class PeriodAmountFilter {
+  constructor(public start: number = 0, public end: number = 0) {}
+}
+
+export class BillDates {
+  constructor(public start: number = 0, public end: number = 0) {}
+}
+
+export class UserQuantities {
+  constructor(public quantities: number, public adminQuantities: number, public userQuantities: number) {}
 }
 
 export interface SpecificDetailsState {
   user: UserObj | null;
   bill: BillObj | null;
-  totalAmount: TotalAmountObj | null;
-  periodAmount: PeriodAmountObj | null;
-  billsLastWeek: BillsLastWeekObj[] | null;
+  totalAmount: TotalAmount;
+  periodAmountFilter: PeriodAmountFilter;
+  billsLastWeek: BillsLastWeekObj[];
+  billDates: BillDates;
+  userQuantities: UserQuantities | null;
 }
 
 const initialState: SpecificDetailsState = {
   user: null,
   bill: null,
-  totalAmount: null,
-  periodAmount: null,
-  billsLastWeek: null,
+  totalAmount: new TotalAmount(),
+  periodAmountFilter: new PeriodAmountFilter(),
+  billsLastWeek: [],
+  billDates: new BillDates(),
+  userQuantities: null,
 };
 
-function setSpecificDetails(
-  state: SpecificDetailsState,
-  action: SetSpecificDetailsAction
-): SpecificDetailsState {
+function setSpecificDetails(state: SpecificDetailsState, action: SetSpecificDetailsAction): SpecificDetailsState {
   return {
     ...state,
     [action.payload.key]: action.payload.data,

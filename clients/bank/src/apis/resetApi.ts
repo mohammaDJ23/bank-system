@@ -1,22 +1,12 @@
-import axios, {
-  AxiosRequestConfig,
-  CreateAxiosDefaults,
-  AxiosInstance,
-  AxiosError,
-  AxiosResponse,
-} from 'axios';
+import axios, { AxiosRequestConfig, CreateAxiosDefaults, AxiosInstance, AxiosError, AxiosResponse } from 'axios';
 import { getToken } from '../lib';
 
 export interface ErrorObj {
   statusCode: number;
   message: string;
-  timestamp: string;
+  timestamp: number;
   path: string;
 }
-
-export type RequestParametersType<R = any, D = any> = ConstructorParameters<
-  typeof Request<R, D>
->[0];
 
 export interface RootApiObj<D = any> {
   readonly api: AxiosRequestConfig<D>;

@@ -1,7 +1,7 @@
 import { DefineRules, DefineVal, CacheInput, DefineValidation } from '../decorators';
+import { getTime } from '../utilFunctions';
 import { isReceiver, isAmount, isDescription, isDate } from '../validations';
 import { Form } from './formConstructor';
-import dateFormat from 'dateformat';
 
 export class CreateBill extends Form {
   @DefineRules([isAmount])
@@ -23,16 +23,16 @@ export class CreateBill extends Form {
   description: string = '';
 
   @DefineRules([isDate])
-  @DefineVal()
+  @DefineVal(getTime())
   @CacheInput()
   @DefineValidation()
-  date: string = new Date().toISOString();
+  date: number = getTime();
 
   constructor() {
     super();
     this.amount = this.getCachedInput('amount');
     this.receiver = this.getCachedInput('receiver');
     this.description = this.getCachedInput('description');
-    this.date = dateFormat(this.getCachedInput('date'), 'yyyy-mm-dd');
+    this.date = +this.getCachedInput('date');
   }
 }

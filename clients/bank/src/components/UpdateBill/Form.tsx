@@ -1,9 +1,10 @@
-import { UpdateBill } from '../../lib';
+import { getTime, isoDate, UpdateBill } from '../../lib';
 import { FC } from 'react';
 import { Box, TextField, Button } from '@mui/material';
 import Modal from '../Modal';
 import { useAction } from '../../hooks';
 import { ModalNames } from '../../store';
+import dateFormat from 'dateformat';
 
 interface FormImportation {
   onChange: (key: keyof UpdateBill, value: any) => void;
@@ -70,8 +71,8 @@ const Form: FC<FormImportation> = ({
           label="Date"
           type="date"
           variant="standard"
-          value={form.date}
-          onChange={event => onChange('date', event.target.value)}
+          value={isoDate(form.date)}
+          onChange={event => onChange('date', getTime(event.target.value))}
           helperText={getInputErrorMessage('date')}
           error={isInputInValid('date')}
           InputLabelProps={{ shrink: true }}

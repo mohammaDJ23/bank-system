@@ -60,14 +60,7 @@ const Details: FC<DetailsImporation> = ({ bill }) => {
   return (
     <>
       <Box width="100%" display="flex" flexDirection="column" alignItems="start" gap="8px">
-        <Box
-          width="100%"
-          mb="15px"
-          display="flex"
-          gap="8px"
-          justifyContent="space-between"
-          alignItems="center"
-        >
+        <Box width="100%" mb="15px" display="flex" gap="8px" justifyContent="space-between" alignItems="center">
           <Typography fontWeight="700" fontSize="14px">
             {bill.amount}
           </Typography>
