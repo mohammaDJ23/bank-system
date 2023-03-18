@@ -63,7 +63,17 @@ function setSpecificDetails(state: SpecificDetailsState, action: SetSpecificDeta
 }
 
 function cleanState(state: SpecificDetailsState): SpecificDetailsState {
-  return { ...state, user: null, bill: null };
+  return {
+    ...state,
+    user: null,
+    bill: null,
+    totalAmount: new TotalAmount(),
+    periodAmountFilter: new PeriodAmountFilter(),
+    billsLastWeek: [],
+    lastWeekUsers: [],
+    billDates: new BillDates(),
+    userQuantities: null,
+  };
 }
 
 export function specificDetailsReducer(
