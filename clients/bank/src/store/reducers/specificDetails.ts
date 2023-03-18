@@ -16,6 +16,11 @@ export interface BillsLastWeekObj {
   date: number;
 }
 
+export interface LastWeekUsersObj {
+  count: number;
+  date: number;
+}
+
 export class PeriodAmountFilter {
   constructor(public start: number = 0, public end: number = 0) {}
 }
@@ -34,6 +39,7 @@ export interface SpecificDetailsState {
   totalAmount: TotalAmount;
   periodAmountFilter: PeriodAmountFilter;
   billsLastWeek: BillsLastWeekObj[];
+  lastWeekUsers: LastWeekUsersObj[];
   billDates: BillDates;
   userQuantities: UserQuantities | null;
 }
@@ -44,6 +50,7 @@ const initialState: SpecificDetailsState = {
   totalAmount: new TotalAmount(),
   periodAmountFilter: new PeriodAmountFilter(),
   billsLastWeek: [],
+  lastWeekUsers: [],
   billDates: new BillDates(),
   userQuantities: null,
 };

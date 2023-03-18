@@ -245,3 +245,15 @@ export class UserQuantitiesApi extends RootApi {
     );
   }
 }
+
+export class LastWeekUsersApi extends RootApi {
+  constructor() {
+    super(
+      {
+        url: '/user/last-week',
+        method: 'get',
+      },
+      { baseURL: process.env.USER_SERVICE }
+    );
+  }
+}

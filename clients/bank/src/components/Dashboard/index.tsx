@@ -3,11 +3,18 @@ import { FC, useEffect, useRef, useState } from 'react';
 import { Box, CardContent, Typography, Slider, Input } from '@mui/material';
 import { DateRange } from '@mui/icons-material';
 import { grey } from '@mui/material/colors';
-import { BillsLastWeekApi, PeriodAmountApi, TotalAmountApi, UserQuantitiesApi } from '../../apis';
+import { BillsLastWeekApi, LastWeekUsersApi, PeriodAmountApi, TotalAmountApi, UserQuantitiesApi } from '../../apis';
 import { useAction, useAuth, useRequest, useSelector } from '../../hooks';
 import MainContainer from '../../layout/MainContainer';
 import { debounce, getTime } from '../../lib';
-import { BillDates, BillsLastWeekObj, PeriodAmountFilter, TotalAmount, UserQuantities } from '../../store';
+import {
+  BillDates,
+  BillsLastWeekObj,
+  LastWeekUsersObj,
+  PeriodAmountFilter,
+  TotalAmount,
+  UserQuantities,
+} from '../../store';
 import Skeleton from '../Skeleton';
 import Card from '../Card';
 import {
@@ -66,13 +73,17 @@ const Dashboard: FC = () => {
 
   useEffect(() => {
     if (isAdmin()) {
-      Promise.allSettled<Promise<AxiosResponse<UserQuantities>>>([
+      Promise.allSettled<[Promise<AxiosResponse<UserQuantities>>, Promise<AxiosResponse<LastWeekUsersObj[]>>]>([
         request(new UserQuantitiesApi().setInitialApi()),
-      ]).then(([userQuantitiesResponse]) => {
+        request(new LastWeekUsersApi().setInitialApi()),
+      ]).then(([userQuantitiesResponse, lastWeekUsersResponse]) => {
         if (userQuantitiesResponse.status === 'fulfilled') {
           const { quantities, adminQuantities, userQuantities } = userQuantitiesResponse.value.data;
           setSpecificDetails('userQuantities', new UserQuantities(quantities, adminQuantities, userQuantities));
         }
+
+        if (lastWeekUsersResponse.status === 'fulfilled')
+          setSpecificDetails('lastWeekUsers', lastWeekUsersResponse.value.data);
       });
     }
 
