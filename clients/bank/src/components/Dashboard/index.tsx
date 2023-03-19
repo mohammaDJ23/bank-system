@@ -10,6 +10,7 @@ import { debounce, getTime } from '../../lib';
 import {
   BillDates,
   BillsLastWeekObj,
+  LastWeekReport,
   LastWeekUsersObj,
   PeriodAmountFilter,
   TotalAmount,
@@ -30,6 +31,7 @@ import { ArgumentScale, Animation, EventTracker } from '@devexpress/dx-react-cha
 import { curveCatmullRom, area } from 'd3-shape';
 import moment from 'moment';
 import { notification } from 'antd';
+import { scalePoint } from 'd3-scale';
 
 const Root = (props: Legend.RootProps) => (
   <Legend.Root {...props} sx={{ display: 'flex', margin: 'auto', flexDirection: 'row' }} />
@@ -55,6 +57,7 @@ const Dashboard: FC = () => {
   const { isAdmin } = useAuth();
   const { setSpecificDetails } = useAction();
   const { specificDetails } = useSelector();
+  const isUserAdmin = isAdmin();
   const isTotalAmountProcessing = isInitialApiProcessing(TotalAmountApi);
   const isBillsLastWeekProcessing = isInitialApiProcessing(BillsLastWeekApi);
   const isPeriodAmountProcessing = isApiProcessing(PeriodAmountApi);
@@ -72,7 +75,7 @@ const Dashboard: FC = () => {
   );
 
   useEffect(() => {
-    if (isAdmin()) {
+    if (isUserAdmin) {
       Promise.allSettled<[Promise<AxiosResponse<UserQuantities>>, Promise<AxiosResponse<LastWeekUsersObj[]>>]>([
         request(new UserQuantitiesApi().setInitialApi()),
         request(new LastWeekUsersApi().setInitialApi()),
@@ -125,6 +128,70 @@ const Dashboard: FC = () => {
     return newDate;
   }
 
+  function getChartData() {
+    let chartData: LastWeekReport[] = [];
+    let currentReport: null | LastWeekReport = null;
+    const lengthOfBillsLastWeek = specificDetails.billsLastWeek.length;
+    const lengthOfLastWeekUsers = specificDetails.lastWeekUsers.length;
+    const lengthOfReports = lengthOfBillsLastWeek || lengthOfLastWeekUsers;
+
+    for (let i = 0; i < lengthOfReports; i++) {
+      currentReport = new LastWeekReport();
+
+      if (isUserAdmin && lengthOfLastWeekUsers) {
+        currentReport.day = new Date(specificDetails.lastWeekUsers[i].date).getDay() + 1;
+        currentReport.userCounts = specificDetails.lastWeekUsers[i].count;
+      }
+
+      if (lengthOfBillsLastWeek) {
+        currentReport.day = new Date(specificDetails.billsLastWeek[i].date).getDay() + 1;
+        currentReport.billCounts = specificDetails.billsLastWeek[i].count;
+        currentReport.billAmount = specificDetails.billsLastWeek[i].amount;
+      }
+
+      chartData[i] = currentReport;
+    }
+
+    console.log(chartData);
+
+    return chartData;
+  }
+
+  function changeStartDate(event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
+    const previousPeriodAmountFilter = specificDetails.periodAmountFilter;
+    const newPeriodAmountFilter = new PeriodAmountFilter(
+      getNewDateValue(event.target.value),
+      previousPeriodAmountFilter.end
+    );
+    setSpecificDetails('periodAmountFilter', newPeriodAmountFilter);
+    periodAmountChangeRequest.current(previousPeriodAmountFilter, newPeriodAmountFilter);
+  }
+
+  function changeSlider(evnet: Event, value: number | number[]) {
+    let [start, end] = value as number[];
+    const remiderOfEndDates = specificDetails.billDates.end - end;
+
+    if (remiderOfEndDates < 1 * 24 * 60 * 60 * 1000) {
+      end = specificDetails.billDates.end;
+      setSliderStep(defaultSliderStep + remiderOfEndDates);
+    } else setSliderStep(defaultSliderStep);
+
+    const previousPeriodAmountFilter = specificDetails.periodAmountFilter;
+    const newPeriodAmountFilter = new PeriodAmountFilter(getTime(start), getTime(end));
+    setSpecificDetails('periodAmountFilter', newPeriodAmountFilter);
+    periodAmountChangeRequest.current(previousPeriodAmountFilter, newPeriodAmountFilter);
+  }
+
+  function changeEndDate(event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
+    const previousPeriodAmountFilter = specificDetails.periodAmountFilter;
+    const newPeriodAmountFilter = new PeriodAmountFilter(
+      previousPeriodAmountFilter.start,
+      getNewDateValue(event.target.value)
+    );
+    setSpecificDetails('periodAmountFilter', newPeriodAmountFilter);
+    periodAmountChangeRequest.current(previousPeriodAmountFilter, newPeriodAmountFilter);
+  }
+
   return (
     <MainContainer>
       <Box component="div" display="flex" alignItems="center" justifyContent="center" flexDirection="column" gap="16px">
@@ -133,26 +200,15 @@ const Dashboard: FC = () => {
         ) : (
           <>
             {(() => {
-              const data = specificDetails.billsLastWeek.map(item => ({
-                ...item,
-                date: new Date(item.date).getDay() + 1,
-              }));
-              const isDataExist = data.length > 0;
-
+              const chartData = getChartData();
               return (
-                isDataExist && (
+                chartData.length > 0 && (
                   <Card>
                     <CardContent>
-                      <Chart data={data} height={400}>
-                        <ArgumentScale />
-                        <ArgumentAxis
-                          showGrid
-                          tickFormat={scale => tick => {
-                            if (Number.isInteger(tick) && data.findIndex(item => item.date === Number(tick)) > -1) {
-                              return Math.floor(Number(tick)).toString();
-                            } else return '';
-                          }}
-                        />
+                      <Chart data={chartData} height={400}>
+                        {/**@ts-ignore */}
+                        <ArgumentScale factory={scalePoint} />
+                        <ArgumentAxis showGrid />
                         <ValueAxis
                           showGrid
                           tickFormat={scale => tick => {
@@ -163,10 +219,19 @@ const Dashboard: FC = () => {
                         <AreaSeries
                           color="#20a0ff"
                           name="Bills"
-                          valueField="count"
-                          argumentField="date"
+                          valueField="billCounts"
+                          argumentField="day"
                           seriesComponent={Area}
                         />
+                        {isUserAdmin && (
+                          <AreaSeries
+                            color="#ff3d00"
+                            name="Users"
+                            valueField="userCounts"
+                            argumentField="day"
+                            seriesComponent={Area}
+                          />
+                        )}
                         <Animation />
                         <EventTracker />
                         <Tooltip />
@@ -181,31 +246,31 @@ const Dashboard: FC = () => {
           </>
         )}
 
-        {isUserQuantitiesProcessing ? (
-          <Skeleton width="100%" height="152px" />
-        ) : (
-          specificDetails.userQuantities &&
-          isAdmin() && (
-            <Card>
-              <CardContent>
-                <Box display="flex" gap="20px" flexDirection="column">
-                  <Box display="flex" alignItems="center" justifyContent="space-between" gap="30px">
-                    <Typography whiteSpace="nowrap">Total Users: </Typography>
-                    <Typography>{specificDetails.userQuantities.quantities}</Typography>
+        {isUserAdmin &&
+          (isUserQuantitiesProcessing ? (
+            <Skeleton width="100%" height="152px" />
+          ) : (
+            specificDetails.userQuantities && (
+              <Card>
+                <CardContent>
+                  <Box display="flex" gap="20px" flexDirection="column">
+                    <Box display="flex" alignItems="center" justifyContent="space-between" gap="30px">
+                      <Typography whiteSpace="nowrap">Total Users: </Typography>
+                      <Typography>{specificDetails.userQuantities.quantities}</Typography>
+                    </Box>
+                    <Box display="flex" alignItems="center" justifyContent="space-between" gap="30px">
+                      <Typography whiteSpace="nowrap">Admins: </Typography>
+                      <Typography>{specificDetails.userQuantities.adminQuantities}</Typography>
+                    </Box>
+                    <Box display="flex" alignItems="center" justifyContent="space-between" gap="30px">
+                      <Typography whiteSpace="nowrap">Users: </Typography>
+                      <Typography>{specificDetails.userQuantities.userQuantities}</Typography>
+                    </Box>
                   </Box>
-                  <Box display="flex" alignItems="center" justifyContent="space-between" gap="30px">
-                    <Typography whiteSpace="nowrap">Admins: </Typography>
-                    <Typography>{specificDetails.userQuantities.adminQuantities}</Typography>
-                  </Box>
-                  <Box display="flex" alignItems="center" justifyContent="space-between" gap="30px">
-                    <Typography whiteSpace="nowrap">Users: </Typography>
-                    <Typography>{specificDetails.userQuantities.userQuantities}</Typography>
-                  </Box>
-                </Box>
-              </CardContent>
-            </Card>
-          )
-        )}
+                </CardContent>
+              </Card>
+            )
+          ))}
 
         {isTotalAmountProcessing ? (
           <Skeleton width="100%" height="128px" />
@@ -225,15 +290,7 @@ const Dashboard: FC = () => {
                       disabled={isPeriodAmountProcessing}
                       type="date"
                       value={moment(specificDetails.periodAmountFilter.start).format('YYYY-MM-DD')}
-                      onChange={event => {
-                        const previousPeriodAmountFilter = specificDetails.periodAmountFilter;
-                        const newPeriodAmountFilter = new PeriodAmountFilter(
-                          getNewDateValue(event.target.value),
-                          previousPeriodAmountFilter.end
-                        );
-                        setSpecificDetails('periodAmountFilter', newPeriodAmountFilter);
-                        periodAmountChangeRequest.current(previousPeriodAmountFilter, newPeriodAmountFilter);
-                      }}
+                      onChange={changeStartDate}
                       sx={{
                         position: 'absolute',
                         top: '7px',
@@ -247,20 +304,7 @@ const Dashboard: FC = () => {
                       step={sliderStep}
                       min={specificDetails.billDates.start}
                       max={specificDetails.billDates.end}
-                      onChange={(event, value) => {
-                        let [start, end] = value as number[];
-                        const remiderOfEndDates = specificDetails.billDates.end - end;
-
-                        if (remiderOfEndDates < 1 * 24 * 60 * 60 * 1000) {
-                          end = specificDetails.billDates.end;
-                          setSliderStep(defaultSliderStep + remiderOfEndDates);
-                        } else setSliderStep(defaultSliderStep);
-
-                        const previousPeriodAmountFilter = specificDetails.periodAmountFilter;
-                        const newPeriodAmountFilter = new PeriodAmountFilter(getTime(start), getTime(end));
-                        setSpecificDetails('periodAmountFilter', newPeriodAmountFilter);
-                        periodAmountChangeRequest.current(previousPeriodAmountFilter, newPeriodAmountFilter);
-                      }}
+                      onChange={changeSlider}
                       valueLabelDisplay="off"
                     />
                     <Box display="flex" alignItems="center" gap="5px">
@@ -273,15 +317,7 @@ const Dashboard: FC = () => {
                       disabled={isPeriodAmountProcessing}
                       type="date"
                       value={moment(specificDetails.periodAmountFilter.end).format('YYYY-MM-DD')}
-                      onChange={event => {
-                        const previousPeriodAmountFilter = specificDetails.periodAmountFilter;
-                        const newPeriodAmountFilter = new PeriodAmountFilter(
-                          previousPeriodAmountFilter.start,
-                          getNewDateValue(event.target.value)
-                        );
-                        setSpecificDetails('periodAmountFilter', newPeriodAmountFilter);
-                        periodAmountChangeRequest.current(previousPeriodAmountFilter, newPeriodAmountFilter);
-                      }}
+                      onChange={changeEndDate}
                       sx={{
                         position: 'absolute',
                         top: '7px',

@@ -6,6 +6,20 @@ export enum SpecificDetails {
   SET_SPECIFIC_DETAILS = 'SET_SPECIFIC_DETAILS',
 }
 
+export class LastWeekReport {
+  public day: number;
+  public billCounts: number;
+  public billAmount: string;
+  public userCounts: number;
+
+  constructor({ day = -1, billCounts = 0, billAmount = '0', userCounts = 0 }: Partial<LastWeekReport> = {}) {
+    this.day = day;
+    this.billCounts = billCounts;
+    this.billAmount = billAmount;
+    this.userCounts = userCounts;
+  }
+}
+
 export class TotalAmount {
   constructor(public totalAmount: string = '0', public quantities: string = '0') {}
 }
