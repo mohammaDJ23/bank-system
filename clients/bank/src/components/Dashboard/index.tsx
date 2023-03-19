@@ -49,9 +49,12 @@ const Area = (props: any) => (
   />
 );
 
-const defaultSliderStep = 1 * 24 * 60 * 60 * 1000;
+function getDefaultSliderStep() {
+  return 1 * 24 * 60 * 60 * 1000;
+}
 
 const Dashboard: FC = () => {
+  const defaultSliderStep = getDefaultSliderStep();
   const [sliderStep, setSliderStep] = useState(defaultSliderStep);
   const { request, isInitialApiProcessing, isApiProcessing } = useRequest();
   const { isAdmin } = useAuth();
