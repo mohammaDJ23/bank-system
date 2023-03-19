@@ -139,20 +139,18 @@ const Dashboard: FC = () => {
       currentReport = new LastWeekReport();
 
       if (isUserAdmin && lengthOfLastWeekUsers) {
-        currentReport.day = new Date(specificDetails.lastWeekUsers[i].date).getDay() + 1;
+        currentReport.date = moment(specificDetails.lastWeekUsers[i].date).format('l');
         currentReport.userCounts = specificDetails.lastWeekUsers[i].count;
       }
 
       if (lengthOfBillsLastWeek) {
-        currentReport.day = new Date(specificDetails.billsLastWeek[i].date).getDay() + 1;
+        currentReport.date = moment(specificDetails.lastWeekUsers[i].date).format('l');
         currentReport.billCounts = specificDetails.billsLastWeek[i].count;
         currentReport.billAmount = specificDetails.billsLastWeek[i].amount;
       }
 
       chartData[i] = currentReport;
     }
-
-    console.log(chartData);
 
     return chartData;
   }
@@ -220,7 +218,7 @@ const Dashboard: FC = () => {
                           color="#20a0ff"
                           name="Bills"
                           valueField="billCounts"
-                          argumentField="day"
+                          argumentField="date"
                           seriesComponent={Area}
                         />
                         {isUserAdmin && (
@@ -228,7 +226,7 @@ const Dashboard: FC = () => {
                             color="#ff3d00"
                             name="Users"
                             valueField="userCounts"
-                            argumentField="day"
+                            argumentField="date"
                             seriesComponent={Area}
                           />
                         )}
