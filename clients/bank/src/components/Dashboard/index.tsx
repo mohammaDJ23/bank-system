@@ -130,26 +130,21 @@ const Dashboard: FC = () => {
 
   function getChartData() {
     let chartData: LastWeekReport[] = [];
-    let currentReport: null | LastWeekReport = null;
-    const lengthOfBillsLastWeek = specificDetails.billsLastWeek.length;
-    const lengthOfLastWeekUsers = specificDetails.lastWeekUsers.length;
-    const lengthOfReports = lengthOfBillsLastWeek || lengthOfLastWeekUsers;
 
-    for (let i = 0; i < lengthOfReports; i++) {
-      currentReport = new LastWeekReport();
+    for (let i = 0; i < specificDetails.billsLastWeek.length; i++) {
+      chartData[i] = new LastWeekReport({
+        date: moment(specificDetails.billsLastWeek[i].date).format('l'),
+        billCounts: specificDetails.billsLastWeek[i].count,
+        billAmount: specificDetails.billsLastWeek[i].amount,
+      });
+    }
 
-      if (isUserAdmin && lengthOfLastWeekUsers) {
-        currentReport.date = moment(specificDetails.lastWeekUsers[i].date).format('l');
-        currentReport.userCounts = specificDetails.lastWeekUsers[i].count;
+    for (let i = 0; i < specificDetails.lastWeekUsers.length && chartData.length && isUserAdmin; i++) {
+      if (moment(chartData[i].date).format('l') === moment(specificDetails.lastWeekUsers[i].date).format('l')) {
+        chartData[i] = Object.assign<LastWeekReport, Partial<LastWeekReport>>(chartData[i], {
+          userCounts: specificDetails.lastWeekUsers[i].count,
+        });
       }
-
-      if (lengthOfBillsLastWeek) {
-        currentReport.date = moment(specificDetails.lastWeekUsers[i].date).format('l');
-        currentReport.billCounts = specificDetails.billsLastWeek[i].count;
-        currentReport.billAmount = specificDetails.billsLastWeek[i].amount;
-      }
-
-      chartData[i] = currentReport;
     }
 
     return chartData;
