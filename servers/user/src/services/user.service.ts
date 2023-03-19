@@ -18,6 +18,7 @@ import { UpdateUserByUserDto } from 'src/dtos/update-user-by-user.dto';
 import { RabbitmqService } from './rabbitmq.service';
 import { UserQuantitiesDto } from 'src/dtos/user-quantities.dto';
 import { Roles } from 'src/types/user';
+import { LastWeekDto } from 'src/dtos/last-week.dto';
 
 @Injectable()
 export class UserService {
@@ -176,5 +177,36 @@ export class UserService {
         'userQuantities',
       )
       .getRawOne();
+  }
+
+  async lastWeekUsers(): Promise<any> {
+    let data: LastWeekDto[] = await this.userRepository.query(
+      `
+        WITH lastWeek (date) AS (
+          VALUES
+            (NOW()),
+            (NOW() - INTERVAL '1 DAY'),
+            (NOW() - INTERVAL '2 DAY'),
+            (NOW() - INTERVAL '3 DAY'),
+            (NOW() - INTERVAL '4 DAY'),
+            (NOW() - INTERVAL '5 DAY'),
+            (NOW() - INTERVAL '6 DAY')
+        )
+        SELECT
+          COALESCE(EXTRACT(EPOCH FROM lastWeek.date) * 1000, 0)::BIGINT AS date,
+          COUNT(public.user.created_at)::INTEGER as count
+        FROM lastWeek
+        FULL JOIN public.user ON to_char(lastWeek.date, 'YYYY-MM-DD') = to_char(public.user.created_at, 'YYYY-MM-DD')
+        WHERE lastWeek.date IS NOT NULL
+        GROUP BY lastWeek.date
+        ORDER BY lastWeek.date ASC;
+      `,
+    );
+
+    return data.map((item) =>
+      Object.assign<LastWeekDto, Partial<LastWeekDto>>(item, {
+        date: +item.date,
+      }),
+    );
   }
 }

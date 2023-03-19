@@ -36,6 +36,7 @@ import { User } from 'src/entities/user.entity';
 import { CurrentUser } from 'src/decorators/current-user.decorator';
 import { ErrorDto } from 'src/dtos/error.dto';
 import { UserQuantitiesDto } from 'src/dtos/user-quantities.dto';
+import { LastWeekDto } from 'src/dtos/last-week.dto';
 
 @UseGuards(JwtAuthGuard)
 @Controller('user')
@@ -130,6 +131,19 @@ export class GatewayController {
   @ApiResponse({ status: HttpStatus.INTERNAL_SERVER_ERROR, type: ErrorDto })
   getUserQuantities(): Promise<UserQuantitiesDto> {
     return this.userService.getUserQuantities();
+  }
+
+  @Get('last-week')
+  @UseGuards(AdminAuthGuard)
+  @HttpCode(HttpStatus.OK)
+  @ObjectSerializer(LastWeekDto)
+  @ApiBearerAuth()
+  @ApiResponse({ status: HttpStatus.OK, type: LastWeekDto })
+  @ApiResponse({ status: HttpStatus.UNAUTHORIZED, type: ErrorDto })
+  @ApiResponse({ status: HttpStatus.NOT_FOUND, type: ErrorDto })
+  @ApiResponse({ status: HttpStatus.INTERNAL_SERVER_ERROR, type: ErrorDto })
+  getLastWeekUsers(): Promise<LastWeekDto> {
+    return this.userService.lastWeekUsers();
   }
 
   @Get(':id')

@@ -3,11 +3,19 @@ import { FC, useEffect, useRef, useState } from 'react';
 import { Box, CardContent, Typography, Slider, Input } from '@mui/material';
 import { DateRange } from '@mui/icons-material';
 import { grey } from '@mui/material/colors';
-import { BillsLastWeekApi, PeriodAmountApi, TotalAmountApi, UserQuantitiesApi } from '../../apis';
+import { BillsLastWeekApi, LastWeekUsersApi, PeriodAmountApi, TotalAmountApi, UserQuantitiesApi } from '../../apis';
 import { useAction, useAuth, useRequest, useSelector } from '../../hooks';
 import MainContainer from '../../layout/MainContainer';
 import { debounce, getTime } from '../../lib';
-import { BillDates, BillsLastWeekObj, PeriodAmountFilter, TotalAmount, UserQuantities } from '../../store';
+import {
+  BillDates,
+  BillsLastWeekObj,
+  LastWeekReport,
+  LastWeekUsersObj,
+  PeriodAmountFilter,
+  TotalAmount,
+  UserQuantities,
+} from '../../store';
 import Skeleton from '../Skeleton';
 import Card from '../Card';
 import {
@@ -23,6 +31,7 @@ import { ArgumentScale, Animation, EventTracker } from '@devexpress/dx-react-cha
 import { curveCatmullRom, area } from 'd3-shape';
 import moment from 'moment';
 import { notification } from 'antd';
+import { scalePoint } from 'd3-scale';
 
 const Root = (props: Legend.RootProps) => (
   <Legend.Root {...props} sx={{ display: 'flex', margin: 'auto', flexDirection: 'row' }} />
@@ -40,14 +49,18 @@ const Area = (props: any) => (
   />
 );
 
-const defaultSliderStep = 1 * 24 * 60 * 60 * 1000;
+function getDefaultSliderStep() {
+  return 1 * 24 * 60 * 60 * 1000;
+}
 
 const Dashboard: FC = () => {
+  const defaultSliderStep = getDefaultSliderStep();
   const [sliderStep, setSliderStep] = useState(defaultSliderStep);
   const { request, isInitialApiProcessing, isApiProcessing } = useRequest();
   const { isAdmin } = useAuth();
   const { setSpecificDetails } = useAction();
   const { specificDetails } = useSelector();
+  const isUserAdmin = isAdmin();
   const isTotalAmountProcessing = isInitialApiProcessing(TotalAmountApi);
   const isBillsLastWeekProcessing = isInitialApiProcessing(BillsLastWeekApi);
   const isPeriodAmountProcessing = isApiProcessing(PeriodAmountApi);
@@ -65,14 +78,18 @@ const Dashboard: FC = () => {
   );
 
   useEffect(() => {
-    if (isAdmin()) {
-      Promise.allSettled<Promise<AxiosResponse<UserQuantities>>>([
+    if (isUserAdmin) {
+      Promise.allSettled<[Promise<AxiosResponse<UserQuantities>>, Promise<AxiosResponse<LastWeekUsersObj[]>>]>([
         request(new UserQuantitiesApi().setInitialApi()),
-      ]).then(([userQuantitiesResponse]) => {
+        request(new LastWeekUsersApi().setInitialApi()),
+      ]).then(([userQuantitiesResponse, lastWeekUsersResponse]) => {
         if (userQuantitiesResponse.status === 'fulfilled') {
           const { quantities, adminQuantities, userQuantities } = userQuantitiesResponse.value.data;
           setSpecificDetails('userQuantities', new UserQuantities(quantities, adminQuantities, userQuantities));
         }
+
+        if (lastWeekUsersResponse.status === 'fulfilled')
+          setSpecificDetails('lastWeekUsers', lastWeekUsersResponse.value.data);
       });
     }
 
@@ -114,6 +131,63 @@ const Dashboard: FC = () => {
     return newDate;
   }
 
+  function getChartData() {
+    let chartData: LastWeekReport[] = [];
+
+    for (let i = 0; i < specificDetails.billsLastWeek.length; i++)
+      chartData[i] = new LastWeekReport({
+        date: moment(specificDetails.billsLastWeek[i].date).format('l'),
+        billCounts: specificDetails.billsLastWeek[i].count,
+        billAmount: specificDetails.billsLastWeek[i].amount,
+      });
+
+    for (let i = 0; i < chartData.length && isUserAdmin; i++)
+      lastWeekUsersLoop: for (let j = 0; j < specificDetails.lastWeekUsers.length; j++)
+        if (moment(chartData[i].date).format('l') === moment(specificDetails.lastWeekUsers[j].date).format('l')) {
+          chartData[i] = Object.assign<LastWeekReport, Partial<LastWeekReport>>(chartData[i], {
+            userCounts: specificDetails.lastWeekUsers[i].count,
+          });
+          break lastWeekUsersLoop;
+        }
+
+    return chartData;
+  }
+
+  function changeStartDate(event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
+    const previousPeriodAmountFilter = specificDetails.periodAmountFilter;
+    const newPeriodAmountFilter = new PeriodAmountFilter(
+      getNewDateValue(event.target.value),
+      previousPeriodAmountFilter.end
+    );
+    setSpecificDetails('periodAmountFilter', newPeriodAmountFilter);
+    periodAmountChangeRequest.current(previousPeriodAmountFilter, newPeriodAmountFilter);
+  }
+
+  function changeSlider(evnet: Event, value: number | number[]) {
+    let [start, end] = value as number[];
+    const remiderOfEndDates = specificDetails.billDates.end - end;
+
+    if (remiderOfEndDates < 1 * 24 * 60 * 60 * 1000) {
+      end = specificDetails.billDates.end;
+      setSliderStep(defaultSliderStep + remiderOfEndDates);
+    } else setSliderStep(defaultSliderStep);
+
+    const previousPeriodAmountFilter = specificDetails.periodAmountFilter;
+    const newPeriodAmountFilter = new PeriodAmountFilter(getTime(start), getTime(end));
+    setSpecificDetails('periodAmountFilter', newPeriodAmountFilter);
+    periodAmountChangeRequest.current(previousPeriodAmountFilter, newPeriodAmountFilter);
+  }
+
+  function changeEndDate(event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
+    const previousPeriodAmountFilter = specificDetails.periodAmountFilter;
+    const newPeriodAmountFilter = new PeriodAmountFilter(
+      previousPeriodAmountFilter.start,
+      getNewDateValue(event.target.value)
+    );
+    setSpecificDetails('periodAmountFilter', newPeriodAmountFilter);
+    periodAmountChangeRequest.current(previousPeriodAmountFilter, newPeriodAmountFilter);
+  }
+
   return (
     <MainContainer>
       <Box component="div" display="flex" alignItems="center" justifyContent="center" flexDirection="column" gap="16px">
@@ -122,26 +196,15 @@ const Dashboard: FC = () => {
         ) : (
           <>
             {(() => {
-              const data = specificDetails.billsLastWeek.map(item => ({
-                ...item,
-                date: new Date(item.date).getDay() + 1,
-              }));
-              const isDataExist = data.length > 0;
-
+              const chartData = getChartData();
               return (
-                isDataExist && (
+                chartData.length > 0 && (
                   <Card>
                     <CardContent>
-                      <Chart data={data} height={400}>
-                        <ArgumentScale />
-                        <ArgumentAxis
-                          showGrid
-                          tickFormat={scale => tick => {
-                            if (Number.isInteger(tick) && data.findIndex(item => item.date === Number(tick)) > -1) {
-                              return Math.floor(Number(tick)).toString();
-                            } else return '';
-                          }}
-                        />
+                      <Chart data={chartData} height={400}>
+                        {/**@ts-ignore */}
+                        <ArgumentScale factory={scalePoint} />
+                        <ArgumentAxis showGrid />
                         <ValueAxis
                           showGrid
                           tickFormat={scale => tick => {
@@ -152,10 +215,19 @@ const Dashboard: FC = () => {
                         <AreaSeries
                           color="#20a0ff"
                           name="Bills"
-                          valueField="count"
+                          valueField="billCounts"
                           argumentField="date"
                           seriesComponent={Area}
                         />
+                        {isUserAdmin && (
+                          <AreaSeries
+                            color="#ff3d00"
+                            name="Users"
+                            valueField="userCounts"
+                            argumentField="date"
+                            seriesComponent={Area}
+                          />
+                        )}
                         <Animation />
                         <EventTracker />
                         <Tooltip />
@@ -170,31 +242,31 @@ const Dashboard: FC = () => {
           </>
         )}
 
-        {isUserQuantitiesProcessing ? (
-          <Skeleton width="100%" height="152px" />
-        ) : (
-          specificDetails.userQuantities &&
-          isAdmin() && (
-            <Card>
-              <CardContent>
-                <Box display="flex" gap="20px" flexDirection="column">
-                  <Box display="flex" alignItems="center" justifyContent="space-between" gap="30px">
-                    <Typography whiteSpace="nowrap">Total Users: </Typography>
-                    <Typography>{specificDetails.userQuantities.quantities}</Typography>
+        {isUserAdmin &&
+          (isUserQuantitiesProcessing ? (
+            <Skeleton width="100%" height="152px" />
+          ) : (
+            specificDetails.userQuantities && (
+              <Card>
+                <CardContent>
+                  <Box display="flex" gap="20px" flexDirection="column">
+                    <Box display="flex" alignItems="center" justifyContent="space-between" gap="30px">
+                      <Typography whiteSpace="nowrap">Total Users: </Typography>
+                      <Typography>{specificDetails.userQuantities.quantities}</Typography>
+                    </Box>
+                    <Box display="flex" alignItems="center" justifyContent="space-between" gap="30px">
+                      <Typography whiteSpace="nowrap">Admins: </Typography>
+                      <Typography>{specificDetails.userQuantities.adminQuantities}</Typography>
+                    </Box>
+                    <Box display="flex" alignItems="center" justifyContent="space-between" gap="30px">
+                      <Typography whiteSpace="nowrap">Users: </Typography>
+                      <Typography>{specificDetails.userQuantities.userQuantities}</Typography>
+                    </Box>
                   </Box>
-                  <Box display="flex" alignItems="center" justifyContent="space-between" gap="30px">
-                    <Typography whiteSpace="nowrap">Admins: </Typography>
-                    <Typography>{specificDetails.userQuantities.adminQuantities}</Typography>
-                  </Box>
-                  <Box display="flex" alignItems="center" justifyContent="space-between" gap="30px">
-                    <Typography whiteSpace="nowrap">Users: </Typography>
-                    <Typography>{specificDetails.userQuantities.userQuantities}</Typography>
-                  </Box>
-                </Box>
-              </CardContent>
-            </Card>
-          )
-        )}
+                </CardContent>
+              </Card>
+            )
+          ))}
 
         {isTotalAmountProcessing ? (
           <Skeleton width="100%" height="128px" />
@@ -214,15 +286,7 @@ const Dashboard: FC = () => {
                       disabled={isPeriodAmountProcessing}
                       type="date"
                       value={moment(specificDetails.periodAmountFilter.start).format('YYYY-MM-DD')}
-                      onChange={event => {
-                        const previousPeriodAmountFilter = specificDetails.periodAmountFilter;
-                        const newPeriodAmountFilter = new PeriodAmountFilter(
-                          getNewDateValue(event.target.value),
-                          previousPeriodAmountFilter.end
-                        );
-                        setSpecificDetails('periodAmountFilter', newPeriodAmountFilter);
-                        periodAmountChangeRequest.current(previousPeriodAmountFilter, newPeriodAmountFilter);
-                      }}
+                      onChange={changeStartDate}
                       sx={{
                         position: 'absolute',
                         top: '7px',
@@ -236,20 +300,7 @@ const Dashboard: FC = () => {
                       step={sliderStep}
                       min={specificDetails.billDates.start}
                       max={specificDetails.billDates.end}
-                      onChange={(event, value) => {
-                        let [start, end] = value as number[];
-                        const remiderOfEndDates = specificDetails.billDates.end - end;
-
-                        if (remiderOfEndDates < 1 * 24 * 60 * 60 * 1000) {
-                          end = specificDetails.billDates.end;
-                          setSliderStep(defaultSliderStep + remiderOfEndDates);
-                        } else setSliderStep(defaultSliderStep);
-
-                        const previousPeriodAmountFilter = specificDetails.periodAmountFilter;
-                        const newPeriodAmountFilter = new PeriodAmountFilter(getTime(start), getTime(end));
-                        setSpecificDetails('periodAmountFilter', newPeriodAmountFilter);
-                        periodAmountChangeRequest.current(previousPeriodAmountFilter, newPeriodAmountFilter);
-                      }}
+                      onChange={changeSlider}
                       valueLabelDisplay="off"
                     />
                     <Box display="flex" alignItems="center" gap="5px">
@@ -262,15 +313,7 @@ const Dashboard: FC = () => {
                       disabled={isPeriodAmountProcessing}
                       type="date"
                       value={moment(specificDetails.periodAmountFilter.end).format('YYYY-MM-DD')}
-                      onChange={event => {
-                        const previousPeriodAmountFilter = specificDetails.periodAmountFilter;
-                        const newPeriodAmountFilter = new PeriodAmountFilter(
-                          previousPeriodAmountFilter.start,
-                          getNewDateValue(event.target.value)
-                        );
-                        setSpecificDetails('periodAmountFilter', newPeriodAmountFilter);
-                        periodAmountChangeRequest.current(previousPeriodAmountFilter, newPeriodAmountFilter);
-                      }}
+                      onChange={changeEndDate}
                       sx={{
                         position: 'absolute',
                         top: '7px',

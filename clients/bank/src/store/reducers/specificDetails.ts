@@ -6,6 +6,20 @@ export enum SpecificDetails {
   SET_SPECIFIC_DETAILS = 'SET_SPECIFIC_DETAILS',
 }
 
+export class LastWeekReport {
+  public date: string;
+  public billCounts: number;
+  public billAmount: string;
+  public userCounts: number;
+
+  constructor({ date = '0', billCounts = 0, billAmount = '0', userCounts = 0 }: Partial<LastWeekReport> = {}) {
+    this.date = date;
+    this.billCounts = billCounts;
+    this.billAmount = billAmount;
+    this.userCounts = userCounts;
+  }
+}
+
 export class TotalAmount {
   constructor(public totalAmount: string = '0', public quantities: string = '0') {}
 }
@@ -13,6 +27,11 @@ export class TotalAmount {
 export interface BillsLastWeekObj {
   count: number;
   amount: string;
+  date: number;
+}
+
+export interface LastWeekUsersObj {
+  count: number;
   date: number;
 }
 
@@ -34,6 +53,7 @@ export interface SpecificDetailsState {
   totalAmount: TotalAmount;
   periodAmountFilter: PeriodAmountFilter;
   billsLastWeek: BillsLastWeekObj[];
+  lastWeekUsers: LastWeekUsersObj[];
   billDates: BillDates;
   userQuantities: UserQuantities | null;
 }
@@ -44,6 +64,7 @@ const initialState: SpecificDetailsState = {
   totalAmount: new TotalAmount(),
   periodAmountFilter: new PeriodAmountFilter(),
   billsLastWeek: [],
+  lastWeekUsers: [],
   billDates: new BillDates(),
   userQuantities: null,
 };
@@ -56,7 +77,17 @@ function setSpecificDetails(state: SpecificDetailsState, action: SetSpecificDeta
 }
 
 function cleanState(state: SpecificDetailsState): SpecificDetailsState {
-  return { ...state, user: null, bill: null };
+  return {
+    ...state,
+    user: null,
+    bill: null,
+    totalAmount: new TotalAmount(),
+    periodAmountFilter: new PeriodAmountFilter(),
+    billsLastWeek: [],
+    lastWeekUsers: [],
+    billDates: new BillDates(),
+    userQuantities: null,
+  };
 }
 
 export function specificDetailsReducer(

@@ -134,20 +134,37 @@ export class BillService {
       .getRawOne();
   }
 
-  lastWeekBills(user: User): Promise<LastWeekDto[]> {
-    return this.billRepository
-      .createQueryBuilder('bill')
-      .innerJoinAndSelect('bill.user', 'user')
-      .select('COUNT(bill.date::TIMESTAMP)::INTEGER', 'count')
-      .addSelect('SUM(bill.amount::NUMERIC)::TEXT', 'amount')
-      .addSelect('bill.date::TIMESTAMP', 'date')
-      .where('bill.date::TIMESTAMP >= CURRENT_DATE - 6')
-      .andWhere('bill.date::TIMESTAMP <= CURRENT_DATE ')
-      .andWhere('user.user_service_id = :userId', {
-        userId: user.userServiceId,
-      })
-      .groupBy('bill.date')
-      .getRawMany();
+  async lastWeekBills(user: User): Promise<LastWeekDto[]> {
+    let data: LastWeekDto[] = await this.billRepository.query(
+      `
+        WITH lastWeek (date) AS (
+          VALUES
+            (NOW()),
+            (NOW() - INTERVAL '1 DAY'),
+            (NOW() - INTERVAL '2 DAY'),
+            (NOW() - INTERVAL '3 DAY'),
+            (NOW() - INTERVAL '4 DAY'),
+            (NOW() - INTERVAL '5 DAY'),
+            (NOW() - INTERVAL '6 DAY')
+        )
+        SELECT
+          COALESCE(EXTRACT(EPOCH FROM lastWeek.date) * 1000, 0)::BIGINT AS date,
+          COALESCE(SUM(bill.amount::BIGINT), 0)::BIGINT AS amount,
+          COUNT(bill.id)::INTEGER as count
+        FROM lastWeek
+        FULL JOIN bill ON to_char(lastWeek.date, 'YYYY-MM-DD') = to_char(bill.date, 'YYYY-MM-DD') AND bill.user_id = $1
+        WHERE lastWeek.date IS NOT NULL
+        GROUP BY lastWeek.date
+        ORDER BY lastWeek.date ASC;
+      `,
+      [user.userServiceId],
+    );
+
+    return data.map((item) =>
+      Object.assign<LastWeekDto, Partial<LastWeekDto>>(item, {
+        date: +item.date,
+      }),
+    );
   }
 
   maxBillAmounts(body: ListDto, user: User): Promise<[Bill[], number]> {
