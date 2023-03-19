@@ -131,21 +131,21 @@ const Dashboard: FC = () => {
   function getChartData() {
     let chartData: LastWeekReport[] = [];
 
-    for (let i = 0; i < specificDetails.billsLastWeek.length; i++) {
+    for (let i = 0; i < specificDetails.billsLastWeek.length; i++)
       chartData[i] = new LastWeekReport({
         date: moment(specificDetails.billsLastWeek[i].date).format('l'),
         billCounts: specificDetails.billsLastWeek[i].count,
         billAmount: specificDetails.billsLastWeek[i].amount,
       });
-    }
 
-    for (let i = 0; i < specificDetails.lastWeekUsers.length && chartData.length && isUserAdmin; i++) {
-      if (moment(chartData[i].date).format('l') === moment(specificDetails.lastWeekUsers[i].date).format('l')) {
-        chartData[i] = Object.assign<LastWeekReport, Partial<LastWeekReport>>(chartData[i], {
-          userCounts: specificDetails.lastWeekUsers[i].count,
-        });
-      }
-    }
+    for (let i = 0; i < chartData.length && isUserAdmin; i++)
+      lastWeekUsersLoop: for (let j = 0; j < specificDetails.lastWeekUsers.length; j++)
+        if (moment(chartData[i].date).format('l') === moment(specificDetails.lastWeekUsers[j].date).format('l')) {
+          chartData[i] = Object.assign<LastWeekReport, Partial<LastWeekReport>>(chartData[i], {
+            userCounts: specificDetails.lastWeekUsers[i].count,
+          });
+          break lastWeekUsersLoop;
+        }
 
     return chartData;
   }
