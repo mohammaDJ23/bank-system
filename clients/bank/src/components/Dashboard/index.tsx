@@ -60,6 +60,27 @@ const BarChart = styled(Box)(({ theme }) => ({
   },
 }));
 
+const LargSliderWrapper = styled(Box)(({ theme }) => ({
+  [theme.breakpoints.up('sm')]: {
+    display: 'block',
+    width: '100%',
+  },
+  [theme.breakpoints.down('sm')]: {
+    display: 'none',
+  },
+}));
+
+const SmallSliderWrapper = styled(Box)(({ theme }) => ({
+  [theme.breakpoints.down('sm')]: {
+    display: 'block',
+    width: '100%',
+    padding: '0 8px',
+  },
+  [theme.breakpoints.up('sm')]: {
+    display: 'none',
+  },
+}));
+
 const Root = (props: Legend.RootProps) => (
   <Legend.Root {...props} sx={{ display: 'flex', margin: 'auto', flexDirection: 'row' }} />
 );
@@ -322,56 +343,73 @@ const Dashboard: FC = () => {
           <Card>
             <CardContent>
               <Box display="flex" justifyContent="center" flexDirection="column" gap="20px">
-                {specificDetails.periodAmountFilter.start > 0 && specificDetails.periodAmountFilter.end > 0 && (
-                  <Box display="flex" alignItems="center" justifyContent="space-between" gap="30px" position="relative">
-                    <Box display="flex" alignItems="center" gap="5px">
-                      <Typography fontSize="10px" whiteSpace="nowrap">
-                        {moment(specificDetails.periodAmountFilter.start).format('ll')}
-                      </Typography>
-                      <DateRange fontSize="small" sx={{ color: grey[600] }} />
-                    </Box>
-                    <Input
-                      disabled={isPeriodAmountProcessing}
-                      type="date"
-                      value={moment(specificDetails.periodAmountFilter.start).format('YYYY-MM-DD')}
-                      onChange={changeStartDate}
-                      sx={{
-                        position: 'absolute',
-                        top: '7px',
-                        left: '-57px',
-                        opacity: '0',
-                      }}
-                    />
-                    <Slider
-                      disabled={isPeriodAmountProcessing}
-                      value={[specificDetails.periodAmountFilter.start, specificDetails.periodAmountFilter.end]}
-                      step={sliderStep}
-                      min={specificDetails.billDates.start}
-                      max={specificDetails.billDates.end}
-                      onChange={changeSlider}
-                      valueLabelDisplay="off"
-                    />
-                    <Box display="flex" alignItems="center" gap="5px">
-                      <Typography fontSize="10px" whiteSpace="nowrap">
-                        {moment(specificDetails.periodAmountFilter.end).format('ll')}
-                      </Typography>
-                      <DateRange fontSize="small" sx={{ color: grey[600] }} />
-                    </Box>
-                    <Input
-                      disabled={isPeriodAmountProcessing}
-                      type="date"
-                      value={moment(specificDetails.periodAmountFilter.end).format('YYYY-MM-DD')}
-                      onChange={changeEndDate}
-                      sx={{
-                        position: 'absolute',
-                        top: '7px',
-                        right: '0px',
-                        opacity: '0',
-                        width: '20px',
-                      }}
-                    />
-                  </Box>
-                )}
+                {specificDetails.periodAmountFilter.start > 0 &&
+                  specificDetails.periodAmountFilter.end > 0 &&
+                  (() => {
+                    const slider = (
+                      <Slider
+                        disabled={isPeriodAmountProcessing}
+                        value={[specificDetails.periodAmountFilter.start, specificDetails.periodAmountFilter.end]}
+                        step={sliderStep}
+                        min={specificDetails.billDates.start}
+                        max={specificDetails.billDates.end}
+                        onChange={changeSlider}
+                        valueLabelDisplay="off"
+                      />
+                    );
+
+                    return (
+                      <Box>
+                        <SmallSliderWrapper>{slider}</SmallSliderWrapper>
+                        <Box
+                          display="flex"
+                          alignItems="center"
+                          justifyContent="space-between"
+                          gap="30px"
+                          position="relative"
+                        >
+                          <Box display="flex" alignItems="center" gap="5px">
+                            <Typography fontSize="10px" whiteSpace="nowrap">
+                              {moment(specificDetails.periodAmountFilter.start).format('ll')}
+                            </Typography>
+                            <DateRange fontSize="small" sx={{ color: grey[600] }} />
+                          </Box>
+                          <Input
+                            disabled={isPeriodAmountProcessing}
+                            type="date"
+                            value={moment(specificDetails.periodAmountFilter.start).format('YYYY-MM-DD')}
+                            onChange={changeStartDate}
+                            sx={{
+                              position: 'absolute',
+                              top: '7px',
+                              left: '-57px',
+                              opacity: '0',
+                            }}
+                          />
+                          <LargSliderWrapper>{slider}</LargSliderWrapper>
+                          <Box display="flex" alignItems="center" gap="5px">
+                            <Typography fontSize="10px" whiteSpace="nowrap">
+                              {moment(specificDetails.periodAmountFilter.end).format('ll')}
+                            </Typography>
+                            <DateRange fontSize="small" sx={{ color: grey[600] }} />
+                          </Box>
+                          <Input
+                            disabled={isPeriodAmountProcessing}
+                            type="date"
+                            value={moment(specificDetails.periodAmountFilter.end).format('YYYY-MM-DD')}
+                            onChange={changeEndDate}
+                            sx={{
+                              position: 'absolute',
+                              top: '7px',
+                              right: '0px',
+                              opacity: '0',
+                              width: '20px',
+                            }}
+                          />
+                        </Box>
+                      </Box>
+                    );
+                  })()}
                 <Box display="flex" alignItems="center" justifyContent="space-between" gap="20px">
                   <Typography whiteSpace="nowrap">Total Amount: </Typography>
                   <Typography>{specificDetails.totalAmount.totalAmount}</Typography>
