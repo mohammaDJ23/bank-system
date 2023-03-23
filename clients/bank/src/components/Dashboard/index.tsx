@@ -1,6 +1,6 @@
 import { AxiosResponse } from 'axios';
 import { FC, useEffect, useRef, useState } from 'react';
-import { Box, CardContent, Typography, Slider, Input } from '@mui/material';
+import { Box, CardContent, Typography, Slider, Input, styled } from '@mui/material';
 import { DateRange } from '@mui/icons-material';
 import { grey } from '@mui/material/colors';
 import { BillsLastWeekApi, LastWeekUsersApi, PeriodAmountApi, TotalAmountApi, UserQuantitiesApi } from '../../apis';
@@ -26,12 +26,39 @@ import {
   Title,
   Legend,
   Tooltip,
+  BarSeries,
 } from '@devexpress/dx-react-chart-material-ui';
-import { ArgumentScale, Animation, EventTracker } from '@devexpress/dx-react-chart';
+import { ArgumentScale, Animation, EventTracker, Stack } from '@devexpress/dx-react-chart';
 import { curveCatmullRom, area } from 'd3-shape';
 import moment from 'moment';
 import { notification } from 'antd';
 import { scalePoint } from 'd3-scale';
+
+const AreaChart = styled(Box)(({ theme }) => ({
+  [theme.breakpoints.down('sm')]: {
+    opacity: '0',
+    visibility: 'hidden',
+    height: '0',
+  },
+  [theme.breakpoints.up('sm')]: {
+    opacity: '1',
+    visibility: 'visible',
+    height: 'auto',
+  },
+}));
+
+const BarChart = styled(Box)(({ theme }) => ({
+  [theme.breakpoints.down('sm')]: {
+    opacity: '1',
+    visibility: 'visible',
+    height: 'auto',
+  },
+  [theme.breakpoints.up('sm')]: {
+    opacity: '0',
+    visibility: 'hidden',
+    height: '0',
+  },
+}));
 
 const Root = (props: Legend.RootProps) => (
   <Legend.Root {...props} sx={{ display: 'flex', margin: 'auto', flexDirection: 'row' }} />
@@ -46,6 +73,13 @@ const Area = (props: any) => (
       .y1(({ val }: any) => val)
       .y0(({ startVal }: any) => startVal)
       .curve(curveCatmullRom)}
+  />
+);
+
+const BarChartText = (props: Legend.LabelProps) => (
+  <Legend.Label
+    {...props}
+    style={{ fontSize: '12px', textAlign: 'center', padding: '10px', fontWeight: 'bold', wordBreak: 'break-word' }}
   />
 );
 
@@ -201,39 +235,61 @@ const Dashboard: FC = () => {
                 chartData.length > 0 && (
                   <Card>
                     <CardContent>
-                      <Chart data={chartData} height={400}>
-                        {/**@ts-ignore */}
-                        <ArgumentScale factory={scalePoint} />
-                        <ArgumentAxis showGrid />
-                        <ValueAxis
-                          showGrid
-                          tickFormat={scale => tick => {
-                            if (Number.isInteger(tick)) return Math.floor(Number(tick)).toString();
-                            else return '';
-                          }}
-                        />
-                        <AreaSeries
-                          color="#20a0ff"
-                          name="Bills"
-                          valueField="billCounts"
-                          argumentField="date"
-                          seriesComponent={Area}
-                        />
-                        {isUserAdmin && (
+                      <AreaChart>
+                        <Chart data={chartData} height={400}>
+                          {/**@ts-ignore*/}
+                          <ArgumentScale factory={scalePoint} />
+                          <ArgumentAxis showGrid />
+                          <ValueAxis
+                            showGrid
+                            tickFormat={scale => tick => {
+                              if (Number.isInteger(tick)) return Math.floor(Number(tick)).toString();
+                              else return '';
+                            }}
+                          />
                           <AreaSeries
-                            color="#ff3d00"
-                            name="Users"
-                            valueField="userCounts"
+                            color="#20a0ff"
+                            name="Bills"
+                            valueField="billCounts"
                             argumentField="date"
                             seriesComponent={Area}
                           />
-                        )}
-                        <Animation />
-                        <EventTracker />
-                        <Tooltip />
-                        <Legend position="bottom" rootComponent={Root} labelComponent={Label} />
-                        <Title text="The Previous Week Reports" />
-                      </Chart>
+                          {isUserAdmin && (
+                            <AreaSeries
+                              color="#ff3d00"
+                              name="Users"
+                              valueField="userCounts"
+                              argumentField="date"
+                              seriesComponent={Area}
+                            />
+                          )}
+                          <Animation />
+                          <EventTracker />
+                          <Tooltip />
+                          <Legend position="bottom" rootComponent={Root} labelComponent={Label} />
+                          <Title text="The Previous Week Reports" />
+                        </Chart>
+                      </AreaChart>
+                      <BarChart>
+                        <Chart data={chartData} height={400} rotated>
+                          <ArgumentAxis showGrid />
+                          <ValueAxis
+                            showGrid
+                            tickFormat={scale => tick => {
+                              if (Number.isInteger(tick)) return Math.floor(Number(tick)).toString();
+                              else return '';
+                            }}
+                          />
+                          <BarSeries color="#20a0ff" name="Bills" valueField="billCounts" argumentField="date" />
+                          {isUserAdmin && (
+                            <BarSeries color="#ff3d00" name="Users" valueField="userCounts" argumentField="date" />
+                          )}
+                          <Animation />
+                          <Legend position="bottom" rootComponent={Root} labelComponent={Label} />
+                          <Title text="The Previous Week Reports" textComponent={BarChartText} />
+                          <Stack />
+                        </Chart>
+                      </BarChart>
                     </CardContent>
                   </Card>
                 )
