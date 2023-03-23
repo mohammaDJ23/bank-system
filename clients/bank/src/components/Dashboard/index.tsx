@@ -76,13 +76,6 @@ const Area = (props: any) => (
   />
 );
 
-const BarChartText = (props: Legend.LabelProps) => (
-  <Legend.Label
-    {...props}
-    style={{ fontSize: '12px', textAlign: 'center', padding: '10px', fontWeight: 'bold', wordBreak: 'break-word' }}
-  />
-);
-
 function getDefaultSliderStep() {
   return 1 * 24 * 60 * 60 * 1000;
 }
@@ -286,7 +279,6 @@ const Dashboard: FC = () => {
                           )}
                           <Animation />
                           <Legend position="bottom" rootComponent={Root} labelComponent={Label} />
-                          <Title text="The Previous Week Reports" textComponent={BarChartText} />
                           <Stack />
                         </Chart>
                       </BarChart>
