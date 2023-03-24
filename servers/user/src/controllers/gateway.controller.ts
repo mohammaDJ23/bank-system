@@ -155,7 +155,7 @@ export class GatewayController {
   @ApiResponse({ status: HttpStatus.UNAUTHORIZED, type: ErrorDto })
   @ApiResponse({ status: HttpStatus.NOT_FOUND, type: ErrorDto })
   @ApiResponse({ status: HttpStatus.INTERNAL_SERVER_ERROR, type: ErrorDto })
-  findOne(@Param('id', ParseIntPipe) id: number): Promise<User> {
-    return this.userService.findOne(id);
+  findOne(@Param('id', ParseIntPipe) id: number, @CurrentUser() user: User): Promise<User> {
+    return this.userService.findOne(id, user);
   }
 }
