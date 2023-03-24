@@ -5,6 +5,7 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
   ManyToOne,
+  JoinColumn,
 } from 'typeorm';
 import { User } from './user.entity';
 
@@ -42,5 +43,6 @@ export class Bill {
   updatedAt: Date;
 
   @ManyToOne(() => User, (user) => user.bills)
+  @JoinColumn({ name: 'user_id', referencedColumnName: 'userServiceId' })
   user: User;
 }
