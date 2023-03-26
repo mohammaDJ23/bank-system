@@ -8,11 +8,12 @@ import Skeleton from './Skeleton';
 import { UpdateUserByAdminApi, UserApi } from '../../apis';
 import { notification } from 'antd';
 import { ModalNames } from '../../store';
+import NotFound from './NotFound';
 
 const UpdateUserByAdminContent: FC = () => {
   const params = useParams();
-  const { hideModal } = useAction();
-  const { history } = useSelector();
+  const { hideModal, setSpecificDetails } = useAction();
+  const { history, specificDetails } = useSelector();
   const { request, isApiProcessing, isInitialApiProcessing } = useRequest();
   const formMaker = useForm();
   const {
@@ -35,6 +36,7 @@ const UpdateUserByAdminContent: FC = () => {
   useEffect(() => {
     if (userId) {
       request<UserObj, number>(new UserApi(+userId).setInitialApi()).then(response => {
+        setSpecificDetails('user', response.data);
         initializeForm(
           new UpdateUserByAdmin({
             id: response.data.id,
@@ -67,7 +69,7 @@ const UpdateUserByAdminContent: FC = () => {
     <FormContainer>
       {isUserProcessing ? (
         <Skeleton />
-      ) : (
+      ) : specificDetails.user ? (
         <Form
           isLoading={isFormProcessing}
           form={form}
@@ -80,6 +82,8 @@ const UpdateUserByAdminContent: FC = () => {
           isInputInValid={isInputInValid}
           isFormValid={isFormValid}
         />
+      ) : (
+        <NotFound />
       )}
     </FormContainer>
   );
