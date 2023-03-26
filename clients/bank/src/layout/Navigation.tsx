@@ -9,6 +9,7 @@ import Divider from '@mui/material/Divider';
 import IconButton from '@mui/material/IconButton';
 import MenuIcon from '@mui/icons-material/Menu';
 import DashboardIcon from '@mui/icons-material/Dashboard';
+import PersonIcon from '@mui/icons-material/Person';
 import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
@@ -122,7 +123,7 @@ const Navigation: FC<PropsWithChildren> = ({ children }) => {
     if (isUserInfoExist) {
       navigationItems.unshift({
         title: `${userInfo.firstName} ${userInfo.lastName}`,
-        icon: <DashboardIcon />,
+        icon: <PersonIcon />,
         path: Pathes.USER,
         redirectPath: Pathes.USER.replace(':id', userInfo.id.toString()) as Pathes,
         role: UserRoles.USER,
