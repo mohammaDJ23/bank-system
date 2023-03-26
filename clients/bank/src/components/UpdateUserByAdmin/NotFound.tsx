@@ -9,7 +9,7 @@ const NotFound: FC = () => {
     <Box display="flex" alignItems="center" justifyContent="center" flexDirection="column" gap="12px" mt="20px">
       <Typography>Not found the user</Typography>
       <Button onClick={() => navigate('/bank/users')} sx={{ textTransform: 'capitalize' }} variant="contained">
-        Back To User List
+        Navigate To User List
       </Button>
     </Box>
   );

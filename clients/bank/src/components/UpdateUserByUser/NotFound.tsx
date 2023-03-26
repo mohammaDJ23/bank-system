@@ -18,7 +18,7 @@ const NotFound: FC = () => {
           sx={{ textTransform: 'capitalize' }}
           variant="contained"
         >
-          Back To User The Page
+          Navigate To User The Page
         </Button>
       )}
     </Box>
