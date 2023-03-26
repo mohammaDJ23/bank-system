@@ -18,7 +18,6 @@ const NotFound: FC = () => {
         </Button>
       ) : (
         isUserInfoExist && (
-          /**@ts-ignore */
           <Button
             onClick={() => navigate(`/bank/users/${userInfo.id}`)}
             sx={{ textTransform: 'capitalize' }}
