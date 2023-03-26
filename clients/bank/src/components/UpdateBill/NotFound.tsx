@@ -1,5 +1,4 @@
-import { Box, Typography } from '@mui/material';
-import { Button } from 'element-react';
+import { Box, Typography, Button } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { FC } from 'react';
 
@@ -9,9 +8,8 @@ const NotFound: FC = () => {
   return (
     <Box display="flex" alignItems="center" justifyContent="center" flexDirection="column" gap="12px" mt="20px">
       <Typography>Not found the bill</Typography>
-      {/**@ts-ignore */}
-      <Button onClick={() => navigate('/bank/create-bill')} type="primary">
-        Create A New Bill
+      <Button onClick={() => navigate('/bank/bills')} sx={{ textTransform: 'capitalize' }} variant="contained">
+        Back To Bill List
       </Button>
     </Box>
   );
