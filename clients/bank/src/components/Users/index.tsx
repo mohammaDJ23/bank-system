@@ -1,6 +1,6 @@
 import ListContainer from '../../layout/ListContainer';
 import { Constructor, UserList, UserObj } from '../../lib';
-import EmptyList from '../EmptyList';
+import EmptyList from './EmptyList';
 import List from './List';
 import Skeleton from './Skeleton';
 import { FC, useCallback, useEffect } from 'react';

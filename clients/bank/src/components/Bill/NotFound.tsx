@@ -8,8 +8,8 @@ const NotFound: FC = () => {
   return (
     <Box display="flex" alignItems="center" justifyContent="center" flexDirection="column" gap="12px" mt="20px">
       <Typography>Not found the bill</Typography>
-      <Button onClick={() => navigate('/bank/create-bill')} sx={{ textTransform: 'capitalize' }} variant="contained">
-        Create A New Bill
+      <Button onClick={() => navigate('/bank/bills')} sx={{ textTransform: 'capitalize' }} variant="contained">
+        Back to Bill List
       </Button>
     </Box>
   );
