@@ -35,10 +35,6 @@ export function getTokenInfo() {
   return decodeToken<TokenInfo>(getToken());
 }
 
-export function isUserInfoExist() {
-  return !!getTokenInfo();
-}
-
 export function isUserAuthenticated() {
   return !!getToken();
 }

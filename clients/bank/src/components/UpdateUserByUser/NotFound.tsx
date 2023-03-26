@@ -6,13 +6,14 @@ import { useAuth } from '../../hooks';
 
 const NotFound: FC = () => {
   const navigate = useNavigate();
-  const { getTokenInfo, isUserInfoExist } = useAuth();
+  const { getTokenInfo } = useAuth();
   const userInfo = getTokenInfo();
+  const isUserInfoExist = !!userInfo;
 
   return (
     <Box display="flex" alignItems="center" justifyContent="center" flexDirection="column" gap="12px" mt="20px">
       <Typography>Not found the user</Typography>
-      {isUserInfoExist() && (
+      {isUserInfoExist && (
         /**@ts-ignore */
         <Button onClick={() => navigate(`/bank/users/${userInfo.id}`)} type="primary">
           Navigate To The User Page
