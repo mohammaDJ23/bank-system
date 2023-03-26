@@ -12,7 +12,6 @@ import DashboardIcon from '@mui/icons-material/Dashboard';
 import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
-import ListItemText from '@mui/material/ListItemText';
 import SupervisorAccountIcon from '@mui/icons-material/SupervisorAccount';
 import GroupAddIcon from '@mui/icons-material/GroupAdd';
 import AddCardIcon from '@mui/icons-material/AddCard';
@@ -87,27 +86,37 @@ const Navigation: FC<PropsWithChildren> = ({ children }) => {
         title: 'Dashboard',
         icon: <DashboardIcon />,
         path: Pathes.DASHBOARD,
+        redirectPath: Pathes.DASHBOARD,
         role: UserRoles.USER,
       },
       {
         title: 'Create user',
         icon: <GroupAddIcon />,
         path: Pathes.CREATE_USER,
+        redirectPath: Pathes.CREATE_USER,
         role: UserRoles.ADMIN,
       },
       {
         title: 'Create bill',
         icon: <AddCardIcon />,
         path: Pathes.CREATE_BILL,
+        redirectPath: Pathes.CREATE_BILL,
         role: UserRoles.USER,
       },
       {
         title: 'users',
         icon: <SupervisorAccountIcon />,
         path: Pathes.USERS,
+        redirectPath: Pathes.USERS,
         role: UserRoles.ADMIN,
       },
-      { title: 'bills', icon: <CreditCardIcon />, path: Pathes.BILLS, role: UserRoles.USER },
+      {
+        title: 'bills',
+        icon: <CreditCardIcon />,
+        path: Pathes.BILLS,
+        redirectPath: Pathes.BILLS,
+        role: UserRoles.USER,
+      },
     ];
 
     if (isUserInfoExist) {
@@ -115,6 +124,7 @@ const Navigation: FC<PropsWithChildren> = ({ children }) => {
         title: `${userInfo.firstName} ${userInfo.lastName}`,
         icon: <DashboardIcon />,
         path: Pathes.USER,
+        redirectPath: Pathes.USER.replace(':id', userInfo.id.toString()) as Pathes,
         role: UserRoles.USER,
       });
     }
@@ -170,7 +180,7 @@ const Navigation: FC<PropsWithChildren> = ({ children }) => {
                   <ListItem
                     onClick={() => {
                       setOpen(false);
-                      if (!isSamePath(item)) navigate(item.path);
+                      if (!isSamePath(item)) navigate(item.redirectPath);
                     }}
                     key={index}
                     disablePadding
