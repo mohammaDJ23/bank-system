@@ -14,7 +14,7 @@ const NotFound: FC = () => {
       <Typography>Not found the user</Typography>
       {isAdmin() ? (
         <Button onClick={() => navigate('/bank/users')} sx={{ textTransform: 'capitalize' }} variant="contained">
-          Navigate To User List
+          Navigate To The User List
         </Button>
       ) : (
         isUserInfoExist && (
