@@ -12,6 +12,11 @@ export interface UserObj {
   updatedAt: Date;
 }
 
+export interface UserWithBillInfoObj extends UserObj {
+  billCounts: string;
+  billAmounts: string;
+}
+
 export class UserList implements ListInstance {
   constructor(
     public list: ListObj<UserObj> = {},
