@@ -21,11 +21,15 @@ import { User } from '../entities/user.entity';
 import { createReadStream, existsSync, ReadStream } from 'fs';
 import { join } from 'path';
 import { Workbook } from 'exceljs';
+import { RmqContext } from '@nestjs/microservices';
+import { RabbitmqService } from './rabbitmq.service';
+import { BillCountAndTotalAmountDto } from 'src/dtos/bill-count-and-total-amount.dto';
 
 @Injectable()
 export class BillService {
   constructor(
     @InjectRepository(Bill) private readonly billRepository: Repository<Bill>,
+    private readonly rabbitMqService: RabbitmqService,
   ) {}
 
   createBill(body: CreateBillDto, user: User): Promise<Bill> {
@@ -230,5 +234,27 @@ export class BillService {
       await this.makeBillReports(billReportsFileName, user);
 
     return this.getSteamableFile(billReportsFileName);
+  }
+
+  async getBillCountAndTotalAmount(
+    user: User,
+    context: RmqContext,
+  ): Promise<BillCountAndTotalAmountDto> {
+    try {
+      const data = await this.billRepository
+        .createQueryBuilder('bill')
+        .leftJoinAndSelect('bill.user', 'user')
+        .select('COUNT(bill.id)', 'billCounts')
+        .addSelect(
+          'COALESCE(SUM(bill.amount::BIGINT), 0)::BIGINT',
+          'billAmounts',
+        )
+        .where('user.user_service_id = :userId', { userId: user.id })
+        .getRawOne();
+      this.rabbitMqService.applyAcknowledgment(context);
+      return data;
+    } catch (error) {
+      throw error;
+    }
   }
 }

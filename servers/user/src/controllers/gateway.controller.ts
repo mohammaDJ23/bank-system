@@ -15,7 +15,7 @@ import {
 import { UserService } from '../services/user.service';
 import { CreateUserDto } from '../dtos/create-user.dto';
 import { FindAllDto } from '../dtos/find-all.dto';
-import { UserDto } from '../dtos/user.dto';
+import { UserDto, UserWithBillInfoDto } from '../dtos/user.dto';
 import {
   ListSerializer,
   ObjectSerializer,
@@ -148,14 +148,17 @@ export class GatewayController {
 
   @Get(':id')
   @HttpCode(HttpStatus.OK)
-  @ObjectSerializer(UserDto)
+  @ObjectSerializer(UserWithBillInfoDto)
   @ApiParam({ name: 'id', type: Number })
   @ApiBearerAuth()
-  @ApiResponse({ status: HttpStatus.OK, type: UserDto })
+  @ApiResponse({ status: HttpStatus.OK, type: UserWithBillInfoDto })
   @ApiResponse({ status: HttpStatus.UNAUTHORIZED, type: ErrorDto })
   @ApiResponse({ status: HttpStatus.NOT_FOUND, type: ErrorDto })
   @ApiResponse({ status: HttpStatus.INTERNAL_SERVER_ERROR, type: ErrorDto })
-  findOne(@Param('id', ParseIntPipe) id: number, @CurrentUser() user: User): Promise<User> {
+  findOne(
+    @Param('id', ParseIntPipe) id: number,
+    @CurrentUser() user: User,
+  ): Promise<UserWithBillInfoDto> {
     return this.userService.findOne(id, user);
   }
 }
