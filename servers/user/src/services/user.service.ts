@@ -20,7 +20,6 @@ import { RabbitmqService } from './rabbitmq.service';
 import { UserQuantitiesDto } from 'src/dtos/user-quantities.dto';
 import { Roles } from 'src/types/user';
 import { LastWeekDto } from 'src/dtos/last-week.dto';
-import { UserWithBillInfoDto } from 'src/dtos/user.dto';
 
 @Injectable()
 export class UserService {
@@ -116,20 +115,13 @@ export class UserService {
     return user;
   }
 
-  async findOne(id: number, user: User): Promise<UserWithBillInfoDto> {
+  async findOne(id: number, user: User): Promise<User> {
     const findedUser = await this.findById(id);
 
     if (!findedUser || (user.role !== Roles.ADMIN && user.id !== findedUser.id))
       throw new NotFoundException('Could not found the user.');
 
-    const billCountAndTotalAmount: Pick<
-      UserWithBillInfoDto,
-      'billCounts' | 'billAmounts'
-    > = await this.clientProxy
-      .send('get_bill_count_and_total_amount', findedUser)
-      .toPromise();
-
-    return Object.assign(findedUser, billCountAndTotalAmount);
+    return findedUser;
   }
 
   async findById(id: number, context?: RmqContext): Promise<User> {

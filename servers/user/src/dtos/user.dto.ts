@@ -37,13 +37,3 @@ export class UserDto {
   @ApiProperty()
   updatedAt: Date;
 }
-
-export class UserWithBillInfoDto extends UserDto {
-  @Expose()
-  @ApiProperty()
-  billCounts: string;
-
-  @Expose()
-  @ApiProperty()
-  billAmounts: string;
-}
