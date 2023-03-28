@@ -148,10 +148,10 @@ export class GatewayController {
 
   @Get(':id')
   @HttpCode(HttpStatus.OK)
-  @ObjectSerializer(User)
+  @ObjectSerializer(UserDto)
   @ApiParam({ name: 'id', type: Number })
   @ApiBearerAuth()
-  @ApiResponse({ status: HttpStatus.OK, type: User })
+  @ApiResponse({ status: HttpStatus.OK, type: UserDto })
   @ApiResponse({ status: HttpStatus.UNAUTHORIZED, type: ErrorDto })
   @ApiResponse({ status: HttpStatus.NOT_FOUND, type: ErrorDto })
   @ApiResponse({ status: HttpStatus.INTERNAL_SERVER_ERROR, type: ErrorDto })
