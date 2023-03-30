@@ -42,12 +42,17 @@ import { PeriodAmountDto } from 'src/dtos/period-amount.dto';
 import { LastWeekDto } from 'src/dtos/last-week.dto';
 import { ListDto } from 'src/dtos/list.dto';
 import { ErrorDto } from 'src/dtos/error.dto';
+import { UserWithBillInfoDto } from 'src/dtos/user-with-bill-info.dto';
+import { UserService } from 'src/services/user.service';
 
 @UseGuards(JwtAuthGuard)
 @Controller('bank')
 @ApiTags('bank')
 export class GatewayController {
-  constructor(private readonly billService: BillService) {}
+  constructor(
+    private readonly billService: BillService,
+    private readonly userService: UserService,
+  ) {}
 
   @Post('bill/create')
   @HttpCode(HttpStatus.CREATED)
@@ -205,5 +210,21 @@ export class GatewayController {
     @CurrentUser() user: User,
   ): Promise<Bill> {
     return this.billService.findOne(id, user);
+  }
+
+  @Get('user/:id')
+  @HttpCode(HttpStatus.OK)
+  @ObjectSerializer(UserWithBillInfoDto)
+  @ApiParam({ name: 'id', type: 'number' })
+  @ApiBearerAuth()
+  @ApiResponse({ status: HttpStatus.OK, type: UserWithBillInfoDto })
+  @ApiResponse({ status: HttpStatus.UNAUTHORIZED, type: ErrorDto })
+  @ApiResponse({ status: HttpStatus.NOT_FOUND, type: ErrorDto })
+  @ApiResponse({ status: HttpStatus.INTERNAL_SERVER_ERROR, type: ErrorDto })
+  getUserWithBillInfo(
+    @Param('id', ParseIntPipe) id: number,
+    @CurrentUser() user: User,
+  ): Promise<UserWithBillInfoDto> {
+    return this.userService.getUserWithBillInfo(id, user);
   }
 }

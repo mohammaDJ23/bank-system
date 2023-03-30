@@ -1,7 +1,7 @@
 import { usePaginationList, useRequest } from '../../hooks';
 import ListContainer from '../../layout/ListContainer';
 import { BillList, BillObj, Constructor, getTime } from '../../lib';
-import EmptyList from '../EmptyList';
+import EmptyList from './EmptyList';
 import Skeleton from './Skeleton';
 import { BillsApi, BillsApiConstructorType } from '../../apis';
 import List from './List';

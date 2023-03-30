@@ -1,4 +1,4 @@
-import { BillObj, UserObj } from '../../lib';
+import { BillObj, UserObj, UserWithBillInfoObj } from '../../lib';
 import { RootActions, SetSpecificDetailsAction } from '../actions';
 import { ClearState } from './clearState';
 
@@ -49,6 +49,7 @@ export class UserQuantities {
 
 export interface SpecificDetailsState {
   user: UserObj | null;
+  userWithBillInfo: UserWithBillInfoObj | null;
   bill: BillObj | null;
   totalAmount: TotalAmount;
   periodAmountFilter: PeriodAmountFilter;
@@ -60,6 +61,7 @@ export interface SpecificDetailsState {
 
 const initialState: SpecificDetailsState = {
   user: null,
+  userWithBillInfo: null,
   bill: null,
   totalAmount: new TotalAmount(),
   periodAmountFilter: new PeriodAmountFilter(),
@@ -80,6 +82,7 @@ function cleanState(state: SpecificDetailsState): SpecificDetailsState {
   return {
     ...state,
     user: null,
+    userWithBillInfo: null,
     bill: null,
     totalAmount: new TotalAmount(),
     periodAmountFilter: new PeriodAmountFilter(),

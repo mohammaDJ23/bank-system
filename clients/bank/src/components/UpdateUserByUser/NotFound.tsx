@@ -5,27 +5,21 @@ import { useAuth } from '../../hooks';
 
 const NotFound: FC = () => {
   const navigate = useNavigate();
-  const { getTokenInfo, isAdmin } = useAuth();
+  const { getTokenInfo } = useAuth();
   const userInfo = getTokenInfo();
   const isUserInfoExist = !!userInfo;
 
   return (
     <Box display="flex" alignItems="center" justifyContent="center" flexDirection="column" gap="12px" mt="20px">
       <Typography>Not found the user</Typography>
-      {isAdmin() ? (
-        <Button onClick={() => navigate('/bank/users')} sx={{ textTransform: 'capitalize' }} variant="contained">
-          Navigate To The User List
+      {isUserInfoExist && (
+        <Button
+          onClick={() => navigate(`/bank/users/${userInfo.id}`)}
+          sx={{ textTransform: 'capitalize' }}
+          variant="contained"
+        >
+          Navigate To The User Page
         </Button>
-      ) : (
-        isUserInfoExist && (
-          <Button
-            onClick={() => navigate(`/bank/users/${userInfo.id}`)}
-            sx={{ textTransform: 'capitalize' }}
-            variant="contained"
-          >
-            Navigate To The User Page
-          </Button>
-        )
       )}
     </Box>
   );

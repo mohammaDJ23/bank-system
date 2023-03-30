@@ -5,6 +5,7 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
   ManyToOne,
+  JoinColumn,
 } from 'typeorm';
 import { User } from './user.entity';
 
@@ -13,7 +14,7 @@ export class Bill {
   @PrimaryGeneratedColumn({ type: 'bigint' })
   id: number;
 
-  @Column({ default: '0', length: 100 })
+  @Column({ default: '0', length: 18 })
   amount: string;
 
   @Column({ length: 100 })
@@ -42,5 +43,6 @@ export class Bill {
   updatedAt: Date;
 
   @ManyToOne(() => User, (user) => user.bills)
+  @JoinColumn({ name: 'user_id', referencedColumnName: 'userServiceId' })
   user: User;
 }

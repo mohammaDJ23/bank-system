@@ -8,11 +8,12 @@ import { useParams } from 'react-router-dom';
 import { notification } from 'antd';
 import Skeleton from './Skeleton';
 import { BillApi, UpdateBillApi } from '../../apis';
+import NotFound from './NotFound';
 
 const UpdateBillContent: FC = () => {
   const params = useParams();
-  const { hideModal } = useAction();
-  const { history } = useSelector();
+  const { hideModal, setSpecificDetails } = useAction();
+  const { history, specificDetails } = useSelector();
   const { request, isApiProcessing, isInitialApiProcessing } = useRequest();
   const formMaker = useForm();
   const {
@@ -35,6 +36,7 @@ const UpdateBillContent: FC = () => {
     const billId = params.id;
     if (billId) {
       request<BillObj, number>(new BillApi(+billId).setInitialApi()).then(response => {
+        setSpecificDetails('bill', response.data);
         initializeForm(
           new UpdateBill({
             id: response.data.id,
@@ -66,7 +68,7 @@ const UpdateBillContent: FC = () => {
     <FormContainer>
       {isBillProcessing ? (
         <Skeleton />
-      ) : (
+      ) : specificDetails.bill ? (
         <Form
           onChange={onChange}
           onSubmitWithConfirmation={confirmation}
@@ -79,6 +81,8 @@ const UpdateBillContent: FC = () => {
           form={form}
           isLoading={isFormProcessing}
         />
+      ) : (
+        <NotFound />
       )}
     </FormContainer>
   );

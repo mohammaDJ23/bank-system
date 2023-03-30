@@ -4,6 +4,7 @@ import {
   NotFoundException,
   Inject,
   BadRequestException,
+  ForbiddenException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -114,12 +115,13 @@ export class UserService {
     return user;
   }
 
-  async findOne(id: number): Promise<User> {
-    const user = await this.findById(id);
+  async findOne(id: number, user: User): Promise<User> {
+    const findedUser = await this.findById(id);
 
-    if (!user) throw new NotFoundException('Could not found the user.');
+    if (!findedUser || (user.role !== Roles.ADMIN && user.id !== findedUser.id))
+      throw new NotFoundException('Could not found the user.');
 
-    return user;
+    return findedUser;
   }
 
   async findById(id: number, context?: RmqContext): Promise<User> {

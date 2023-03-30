@@ -3,8 +3,8 @@ import DefaultContainer from '../../layout/DefaultContainer';
 import { useParams } from 'react-router-dom';
 import { useAction, useRequest, useSelector } from '../../hooks';
 import Skeleton from './Skeleton';
-import { UserObj } from '../../lib';
-import { UserApi } from '../../apis';
+import { UserObj, UserWithBillInfoObj } from '../../lib';
+import { UserWithBillInfoApi } from '../../apis';
 import NotFound from './NotFound';
 import Details from './Details';
 
@@ -13,14 +13,14 @@ const UserContent: FC = () => {
   const params = useParams();
   const { setSpecificDetails } = useAction();
   const { specificDetails } = useSelector();
-  const isUserProcessing = isInitialApiProcessing(UserApi);
+  const isUserProcessing = isInitialApiProcessing(UserWithBillInfoApi);
   const userId = params.id;
-  const user = specificDetails.user;
+  const user = specificDetails.userWithBillInfo;
 
   useEffect(() => {
     if (userId) {
-      request<UserObj, number>(new UserApi(+userId).setInitialApi()).then(response => {
-        setSpecificDetails('user', response.data);
+      request<UserWithBillInfoObj, number>(new UserWithBillInfoApi(+userId).setInitialApi()).then(response => {
+        setSpecificDetails('userWithBillInfo', response.data);
       });
     }
   }, []);

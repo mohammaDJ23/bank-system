@@ -9,10 +9,10 @@ import Divider from '@mui/material/Divider';
 import IconButton from '@mui/material/IconButton';
 import MenuIcon from '@mui/icons-material/Menu';
 import DashboardIcon from '@mui/icons-material/Dashboard';
+import PersonIcon from '@mui/icons-material/Person';
 import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
-import ListItemText from '@mui/material/ListItemText';
 import SupervisorAccountIcon from '@mui/icons-material/SupervisorAccount';
 import GroupAddIcon from '@mui/icons-material/GroupAdd';
 import AddCardIcon from '@mui/icons-material/AddCard';
@@ -62,7 +62,7 @@ const DrawerHeader = styled('div')(({ theme }) => ({
   padding: '16px 14px 15px 14px',
 }));
 
-const StyledListItemText = styled(ListItemText)<StyledListItemTextAttr>(({ theme, active }) => ({
+const StyledListItemText = styled(Typography)<StyledListItemTextAttr>(({ theme, active }) => ({
   color: active ? '#20a0ff' : 'inherit',
 }));
 
@@ -74,44 +74,70 @@ const Navigation: FC<PropsWithChildren> = ({ children }) => {
   const [open, setOpen] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
-  const { isAdmin, isUser, isUserAuthenticated } = useAuth();
+  const { isAdmin, isUser, isUserAuthenticated, getTokenInfo } = useAuth();
+  const userInfo = getTokenInfo();
+  const isUserInfoExist = !!userInfo;
   const isUserLoggedIn = isUserAuthenticated();
   const activeRoute = routes.find(route => matchPath(route.path, location.pathname));
   const activeRouteTitle = activeRoute?.title || 'Bank system';
 
-  const navigationItems = [
-    {
-      title: 'Dashboard',
-      icon: <DashboardIcon />,
-      path: Pathes.DASHBOARD,
-      role: UserRoles.USER,
-    },
-    {
-      title: 'Create user',
-      icon: <GroupAddIcon />,
-      path: Pathes.CREATE_USER,
-      role: UserRoles.ADMIN,
-    },
-    {
-      title: 'Create bill',
-      icon: <AddCardIcon />,
-      path: Pathes.CREATE_BILL,
-      role: UserRoles.USER,
-    },
-    {
-      title: 'users',
-      icon: <SupervisorAccountIcon />,
-      path: Pathes.USERS,
-      role: UserRoles.ADMIN,
-    },
-    { title: 'bills', icon: <CreditCardIcon />, path: Pathes.BILLS, role: UserRoles.USER },
-  ];
+  function getNavigationItems() {
+    const navigationItems = [
+      {
+        title: 'Dashboard',
+        icon: <DashboardIcon />,
+        path: Pathes.DASHBOARD,
+        redirectPath: Pathes.DASHBOARD,
+        role: UserRoles.USER,
+      },
+      {
+        title: 'Create user',
+        icon: <GroupAddIcon />,
+        path: Pathes.CREATE_USER,
+        redirectPath: Pathes.CREATE_USER,
+        role: UserRoles.ADMIN,
+      },
+      {
+        title: 'Create bill',
+        icon: <AddCardIcon />,
+        path: Pathes.CREATE_BILL,
+        redirectPath: Pathes.CREATE_BILL,
+        role: UserRoles.USER,
+      },
+      {
+        title: 'users',
+        icon: <SupervisorAccountIcon />,
+        path: Pathes.USERS,
+        redirectPath: Pathes.USERS,
+        role: UserRoles.ADMIN,
+      },
+      {
+        title: 'bills',
+        icon: <CreditCardIcon />,
+        path: Pathes.BILLS,
+        redirectPath: Pathes.BILLS,
+        role: UserRoles.USER,
+      },
+    ];
 
-  function isSamePath(item: typeof navigationItems[number]) {
+    if (isUserInfoExist) {
+      navigationItems.unshift({
+        title: `${userInfo.firstName} ${userInfo.lastName}`,
+        icon: <PersonIcon />,
+        path: Pathes.USER,
+        redirectPath: Pathes.USER.replace(':id', userInfo.id.toString()) as Pathes,
+        role: UserRoles.USER,
+      });
+    }
+
+    return navigationItems;
+  }
+
+  function isSamePath(item: ReturnType<typeof getNavigationItems>[number]) {
     return item.path === activeRoute?.path;
   }
 
-  function isPathActive(item: typeof navigationItems[number]) {
+  function isPathActive(item: ReturnType<typeof getNavigationItems>[number]) {
     const isActive = isSamePath(item);
     return isActive ? isActive.toString() : undefined;
   }
@@ -150,21 +176,31 @@ const Navigation: FC<PropsWithChildren> = ({ children }) => {
             <Divider />
 
             <List>
-              {navigationItems.map((item, index) => {
+              {getNavigationItems().map((item, index) => {
                 const navigationEl = (
                   <ListItem
                     onClick={() => {
                       setOpen(false);
-                      if (!isSamePath(item)) navigate(item.path);
+                      if (!isSamePath(item)) navigate(item.redirectPath);
                     }}
                     key={index}
                     disablePadding
                   >
                     <ListItemButton>
-                      <StyledListItemIcon active={isPathActive(item)}>
-                        {item.icon}
-                      </StyledListItemIcon>
-                      <StyledListItemText active={isPathActive(item)} primary={item.title} />
+                      <StyledListItemIcon active={isPathActive(item)}>{item.icon}</StyledListItemIcon>
+                      <Box
+                        component="div"
+                        sx={{
+                          overflow: 'hidden',
+                          textOverflow: 'ellipsis',
+                          width: '10rem',
+                          maxWidth: '10rem',
+                        }}
+                      >
+                        <StyledListItemText fontSize="1rem" marginY="4px" noWrap active={isPathActive(item)}>
+                          {item.title}
+                        </StyledListItemText>
+                      </Box>
                     </ListItemButton>
                   </ListItem>
                 );
