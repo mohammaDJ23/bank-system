@@ -257,3 +257,12 @@ export class LastWeekUsersApi extends RootApi {
     );
   }
 }
+
+export class UserWithBillInfoApi extends RootApi {
+  constructor(id: number) {
+    super({
+      url: `/bank/user/${id}`,
+      method: 'get',
+    });
+  }
+}

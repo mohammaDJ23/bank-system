@@ -7,11 +7,11 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { FC, useCallback, useState } from 'react';
 import { useAction, useAuth, useRequest, useSelector } from '../../hooks';
 import { DeleteUserApi, IdReq } from '../../apis';
-import { UserObj } from '../../lib';
+import { UserWithBillInfoObj, UserObj } from '../../lib';
 import { ModalNames } from '../../store';
 
 interface DetailsImporation {
-  user: UserObj;
+  user: UserWithBillInfoObj;
 }
 
 const Details: FC<DetailsImporation> = ({ user }) => {
@@ -94,6 +94,12 @@ const Details: FC<DetailsImporation> = ({ user }) => {
         </Typography>
         <Typography fontSize="12px" color="">
           role: {user.role}
+        </Typography>
+        <Typography fontSize="12px" color="">
+          total bill quantities: {user.bill.counts}
+        </Typography>
+        <Typography fontSize="12px" color="">
+          total bill amounts: {user.bill.amounts}
         </Typography>
         <Typography fontSize="12px" color="">
           created at: {moment(user.createdAt).format('LLLL')}

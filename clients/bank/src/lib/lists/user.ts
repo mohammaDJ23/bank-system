@@ -13,8 +13,10 @@ export interface UserObj {
 }
 
 export interface UserWithBillInfoObj extends UserObj {
-  billCounts: string;
-  billAmounts: string;
+  bill: {
+    counts: string;
+    amounts: string;
+  };
 }
 
 export class UserList implements ListInstance {
