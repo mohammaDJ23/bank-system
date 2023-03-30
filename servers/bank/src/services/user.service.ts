@@ -78,7 +78,7 @@ export class UserService {
     const [response]: UserWithBillInfoDto[] = await this.userService.query(
       `
         SELECT 
-          public.user.id AS id,
+          public.user.user_service_id AS id,
           public.user.first_name AS "firstName",
           public.user.last_name AS "lastName",
           public.user.email AS email,
