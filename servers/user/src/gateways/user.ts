@@ -7,7 +7,7 @@ import {
 import { Server } from 'socket.io';
 import { UserService } from 'src/services/user.service';
 
-@WebSocketGateway({ namespace: 'user/connections' })
+@WebSocketGateway({ path: '/socket/user-connection' })
 export class UserConnectionGateWay
   implements OnGatewayConnection, OnGatewayDisconnect
 {
@@ -17,10 +17,10 @@ export class UserConnectionGateWay
   constructor(private readonly userService: UserService) {}
 
   handleConnection(client: any, ...args: any[]) {
-    console.log('user connected', client);
+    console.log('user connected');
   }
 
   handleDisconnect(client: any) {
-    console.log('user disconnected', client);
+    console.log('user disconnected');
   }
 }
