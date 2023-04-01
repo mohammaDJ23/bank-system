@@ -3,6 +3,7 @@ import { MicroserviceOptions, Transport } from '@nestjs/microservices';
 import { AppModule } from './modules/app.module';
 import { RabbitMqQueue } from './types/rabbitmq';
 import { swagger } from './libs/swagger';
+import { AuthAdapter } from './adapters';
 
 require('dotenv').config();
 
@@ -21,8 +22,15 @@ async function bootstrap() {
     },
   });
 
-  app.enableCors();
+  app.enableCors({
+    origin: [
+      process.env.CLIENT_CONTAINER_URL,
+      process.env.CLIENT_AUTH_URL,
+      process.env.CLIENT_BANK_URL,
+    ],
+  });
   swagger(app);
+  app.useWebSocketAdapter(new AuthAdapter(app));
   await app.startAllMicroservices();
   await app.listen(process.env.PORT);
 }
