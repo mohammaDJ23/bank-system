@@ -11,7 +11,10 @@ import { UserService } from 'src/services/user.service';
 import { JwtSocketAuthGuard } from 'src/guards/jwt-socket-auth.guard';
 import { CustomSocket } from 'src/adapters';
 
-@WebSocketGateway({ path: '/socket/user-connection', cors: { origin: '*' } })
+@WebSocketGateway({
+  path: '/socket/user-connection',
+  cors: { origin: process.env.CLIENT_CONTAINER_URL },
+})
 export class UserConnectionGateWay
   implements OnGatewayConnection, OnGatewayDisconnect
 {
