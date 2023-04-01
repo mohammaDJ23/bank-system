@@ -16,7 +16,12 @@ export class JwtSocketAuthGuard implements CanActivate {
 
     if (bearerToken) {
       const [_, token] = bearerToken.split(' ');
-      console.log(token);
-    } else return false;
+      return this.jwtService
+        .verifyAsync(token)
+        .then((user) => true)
+        .catch((reason) => false);
+    }
+
+    return false;
   }
 }
