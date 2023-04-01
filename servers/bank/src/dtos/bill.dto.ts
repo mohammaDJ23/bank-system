@@ -4,7 +4,7 @@ import { ApiProperty } from '@nestjs/swagger';
 export class BillDto {
   @Expose()
   @ApiProperty()
-  id: number;
+  id: string;
 
   @Expose()
   @ApiProperty()

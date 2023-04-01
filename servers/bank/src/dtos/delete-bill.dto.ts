@@ -1,8 +1,8 @@
-import { IsNumber } from 'class-validator';
+import { IsNumberString } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class DeleteBillDto {
-  @IsNumber()
+  @IsNumberString()
   @ApiProperty()
-  id: number;
+  id: string;
 }

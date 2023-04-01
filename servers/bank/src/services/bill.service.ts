@@ -47,11 +47,11 @@ export class BillService {
     return bill;
   }
 
-  findOne(id: number, user: User): Promise<Bill> {
+  findOne(id: string, user: User): Promise<Bill> {
     return this.findById(id, user.userServiceId);
   }
 
-  async findById(billId: number, userId: number): Promise<Bill> {
+  async findById(billId: string, userId: number): Promise<Bill> {
     const bill = await this.billRepository
       .createQueryBuilder('bill')
       .innerJoinAndSelect('bill.user', 'user')

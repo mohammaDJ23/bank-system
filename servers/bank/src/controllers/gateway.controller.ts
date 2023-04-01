@@ -206,7 +206,7 @@ export class GatewayController {
   @ApiResponse({ status: HttpStatus.NOT_FOUND, type: ErrorDto })
   @ApiResponse({ status: HttpStatus.INTERNAL_SERVER_ERROR, type: ErrorDto })
   findOneBill(
-    @Param('id', ParseIntPipe) id: number,
+    @Param('id') id: string,
     @CurrentUser() user: User,
   ): Promise<Bill> {
     return this.billService.findOne(id, user);

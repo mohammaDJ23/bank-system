@@ -50,7 +50,7 @@ const Details: FC<DetailsImporation> = ({ bill }) => {
 
   const deleteBill = useCallback(() => {
     if (billId) {
-      request(new DeleteBillApi(+billId))
+      request(new DeleteBillApi(billId))
         .then(() => {
           hideModal(ModalNames.CONFIRMATION);
           navigate('/bank/bills');

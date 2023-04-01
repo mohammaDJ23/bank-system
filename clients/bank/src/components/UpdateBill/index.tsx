@@ -35,7 +35,7 @@ const UpdateBillContent: FC = () => {
   useEffect(() => {
     const billId = params.id;
     if (billId) {
-      request<BillObj, number>(new BillApi(+billId).setInitialApi()).then(response => {
+      request<BillObj, number>(new BillApi(billId).setInitialApi()).then(response => {
         setSpecificDetails('bill', response.data);
         initializeForm(
           new UpdateBill({
