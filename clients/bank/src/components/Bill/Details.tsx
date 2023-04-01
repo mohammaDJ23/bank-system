@@ -50,10 +50,12 @@ const Details: FC<DetailsImporation> = ({ bill }) => {
 
   const deleteBill = useCallback(() => {
     if (billId) {
-      request(new DeleteBillApi(+billId)).then(() => {
-        hideModal(ModalNames.CONFIRMATION);
-        navigate('/bank/bills');
-      });
+      request(new DeleteBillApi(+billId))
+        .then(() => {
+          hideModal(ModalNames.CONFIRMATION);
+          navigate('/bank/bills');
+        })
+        .catch(err => hideModal(ModalNames.CONFIRMATION));
     }
   }, [billId, request, hideModal, navigate]);
 
