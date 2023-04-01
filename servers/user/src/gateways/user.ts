@@ -1,13 +1,16 @@
 import {
+  SubscribeMessage,
   WebSocketGateway,
   WebSocketServer,
   OnGatewayConnection,
   OnGatewayDisconnect,
 } from '@nestjs/websockets';
+import { UseGuards } from '@nestjs/common';
 import { Server } from 'socket.io';
 import { UserService } from 'src/services/user.service';
+import { JwtSocketAuthGuard } from 'src/guards/jwt-socket-auth.guard';
 
-@WebSocketGateway({ path: '/socket/user-connection' })
+@WebSocketGateway({ path: '/socket/user-connection', cors: { origin: '*' } })
 export class UserConnectionGateWay
   implements OnGatewayConnection, OnGatewayDisconnect
 {
