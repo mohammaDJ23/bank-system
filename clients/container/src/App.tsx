@@ -3,6 +3,7 @@ import Auth from './components/Auth';
 import Bank from './components/Bank';
 import UnAuthorized from './components/UnAuthorized';
 import { pathes } from './lib';
+import './lib/socket';
 
 function App() {
   return (

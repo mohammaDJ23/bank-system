@@ -14,6 +14,7 @@ import { GatewayController } from '../controllers/gateway.controller';
 import { MessagePatternController } from '../controllers/message-patterns.controller';
 import { RabbitMqQueue, RabbitMqServices } from '../types/rabbitmq';
 import { RabbitmqService } from 'src/services/rabbitmq.service';
+import { UserConnectionGateWay } from 'src/gateways';
 
 @Module({
   imports: [
@@ -79,6 +80,7 @@ import { RabbitmqService } from 'src/services/rabbitmq.service';
         whitelist: true,
       }),
     },
+    UserConnectionGateWay,
   ],
 })
 export class AppModule {}
