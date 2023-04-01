@@ -18,7 +18,7 @@ export function useInitialMicro(mount: Mount) {
 
       onParentNavigate(location.pathname);
     }
-  }, [location, navigate, mount]);
+  }, []);
 
   return { ref };
 }
