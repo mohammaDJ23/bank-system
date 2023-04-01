@@ -9,6 +9,7 @@ import { UseGuards } from '@nestjs/common';
 import { Server } from 'socket.io';
 import { UserService } from 'src/services/user.service';
 import { JwtSocketAuthGuard } from 'src/guards/jwt-socket-auth.guard';
+import { CustomSocket } from 'src/adapters';
 
 @WebSocketGateway({ path: '/socket/user-connection', cors: { origin: '*' } })
 export class UserConnectionGateWay
@@ -19,11 +20,11 @@ export class UserConnectionGateWay
 
   constructor(private readonly userService: UserService) {}
 
-  handleConnection(client: any, ...args: any[]) {
+  handleConnection(client: CustomSocket) {
     console.log('user connected');
   }
 
-  handleDisconnect(client: any) {
+  handleDisconnect(client: CustomSocket) {
     console.log('user disconnected');
   }
 }

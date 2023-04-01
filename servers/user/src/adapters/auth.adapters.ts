@@ -1,9 +1,14 @@
 import { UnauthorizedException } from '@nestjs/common';
 import { IoAdapter } from '@nestjs/platform-socket.io';
 import { Socket, Server } from 'socket.io';
+import { User } from 'src/entities/user.entity';
 
 export interface CustomSocket extends Socket {
-  user: {};
+  user: Pick<User, 'id' | 'email' | 'firstName' | 'lastName' | 'role'> & {
+    expiration: number;
+    iat: number;
+    exp: number;
+  };
 }
 
 export class AuthAdapter extends IoAdapter {
@@ -16,7 +21,6 @@ export class AuthAdapter extends IoAdapter {
       if (bearerToken) {
         const [_, token] = bearerToken.split(' ');
         console.log(token);
-        socket.user = {};
         next();
       } else
         next(new UnauthorizedException('No token is provided for socket.'));

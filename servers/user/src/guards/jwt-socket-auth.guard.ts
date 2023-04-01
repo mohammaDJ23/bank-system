@@ -1,7 +1,7 @@
 import { Injectable, CanActivate, ExecutionContext } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { Observable } from 'rxjs';
-import { Socket } from 'socket.io';
+import { CustomSocket } from 'src/adapters';
 
 @Injectable()
 export class JwtSocketAuthGuard implements CanActivate {
@@ -11,14 +11,17 @@ export class JwtSocketAuthGuard implements CanActivate {
     context: ExecutionContext,
   ): boolean | Promise<boolean> | Observable<boolean> {
     const webSocket = context.switchToWs();
-    const socket: Socket = webSocket.getClient();
+    const socket: CustomSocket = webSocket.getClient();
     const bearerToken = socket.handshake.headers.authorization;
 
     if (bearerToken) {
       const [_, token] = bearerToken.split(' ');
       return this.jwtService
         .verifyAsync(token)
-        .then((user) => true)
+        .then((user) => {
+          socket.user = user;
+          return true;
+        })
         .catch((reason) => false);
     }
 
