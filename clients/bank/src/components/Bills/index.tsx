@@ -46,9 +46,9 @@ const BillsContent: FC = () => {
 
   const changePage = useCallback(
     (newPage: number) => {
-      if (newPage === page || isBillsApiProcessing) return;
-
       onPageChange(newPage);
+
+      if (newPage === page || isBillsApiProcessing) return;
 
       if (!lists[newPage]) {
         getBillsList({ page: newPage });

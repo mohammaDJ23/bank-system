@@ -5,8 +5,6 @@ const ClearStateProvider: FC<PropsWithChildren> = ({ children }) => {
   const { clearState } = useAction();
 
   useEffect(() => {
-    clearState();
-
     function clearStateProcess() {
       clearState();
     }
