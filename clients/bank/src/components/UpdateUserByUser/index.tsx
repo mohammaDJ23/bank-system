@@ -52,15 +52,17 @@ const UpdateUserByUserContent: FC = () => {
 
   const formSubmition = useCallback(() => {
     onSubmit(() => {
-      request<UpdateUserByUser, UpdateUserByUser>(new UpdateUserByUserApi(form)).then(response => {
-        hideModal(ModalNames.CONFIRMATION);
-        resetForm();
-        notification.success({
-          message: 'Success',
-          description: 'You have updated the user successfully.',
-        });
-        if (history) history.push(`/bank/users/${form.id}`);
-      });
+      request<UpdateUserByUser, UpdateUserByUser>(new UpdateUserByUserApi(form))
+        .then(response => {
+          hideModal(ModalNames.CONFIRMATION);
+          resetForm();
+          notification.success({
+            message: 'Success',
+            description: 'You have updated the user successfully.',
+          });
+          if (history) history.push(`/bank/users/${form.id}`);
+        })
+        .catch(err => hideModal(ModalNames.CONFIRMATION));
     });
   }, [form, history, resetForm, onSubmit, request, hideModal]);
 

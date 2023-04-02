@@ -2,9 +2,9 @@ import { IsString, IsNumber, IsNumberString, Length } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class UpdateBillDto {
-  @IsNumber()
+  @IsNumberString()
   @ApiProperty()
-  id: number;
+  id: string;
 
   @IsNumberString()
   @Length(1, 18)

@@ -35,7 +35,7 @@ const UpdateBillContent: FC = () => {
   useEffect(() => {
     const billId = params.id;
     if (billId) {
-      request<BillObj, number>(new BillApi(+billId).setInitialApi()).then(response => {
+      request<BillObj, number>(new BillApi(billId).setInitialApi()).then(response => {
         setSpecificDetails('bill', response.data);
         initializeForm(
           new UpdateBill({
@@ -52,15 +52,17 @@ const UpdateBillContent: FC = () => {
 
   const formSubmition = useCallback(() => {
     onSubmit(() => {
-      request<UpdateBill, UpdateBill>(new UpdateBillApi(form)).then(response => {
-        hideModal(ModalNames.CONFIRMATION);
-        resetForm();
-        notification.success({
-          message: 'Success',
-          description: 'You have updated the bill successfully.',
-        });
-        if (history) history.push(`/bank/bills/${form.id}`);
-      });
+      request<UpdateBill, UpdateBill>(new UpdateBillApi(form))
+        .then(response => {
+          hideModal(ModalNames.CONFIRMATION);
+          resetForm();
+          notification.success({
+            message: 'Success',
+            description: 'You have updated the bill successfully.',
+          });
+          if (history) history.push(`/bank/bills/${form.id}`);
+        })
+        .catch(err => hideModal(ModalNames.CONFIRMATION));
     });
   }, [form, history, resetForm, onSubmit, request, hideModal]);
 

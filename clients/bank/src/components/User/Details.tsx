@@ -57,10 +57,12 @@ const Details: FC<DetailsImporation> = ({ user }) => {
 
   const deleteUser = useCallback(() => {
     if (userId) {
-      request<UserObj, IdReq>(new DeleteUserApi(+userId)).then(response => {
-        hideModal(ModalNames.CONFIRMATION);
-        navigate('/bank/users');
-      });
+      request<UserObj, IdReq>(new DeleteUserApi(+userId))
+        .then(response => {
+          hideModal(ModalNames.CONFIRMATION);
+          navigate('/bank/users');
+        })
+        .catch(err => hideModal(ModalNames.CONFIRMATION));
     }
   }, [userId, request, hideModal, navigate]);
 

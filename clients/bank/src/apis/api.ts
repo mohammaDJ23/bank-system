@@ -3,8 +3,8 @@ import { CreateBill, CreateUser, UpdateBill, UpdateUserByAdmin, UpdateUserByUser
 import { PeriodAmountFilter } from '../store';
 import { RootApiObj } from './resetApi';
 
-export interface IdReq {
-  id: number;
+export interface IdReq<T = number | string> {
+  id: T;
 }
 
 export abstract class RootApi<D = any> implements RootApiObj<D> {
@@ -137,7 +137,7 @@ export class UserApi extends RootApi {
 }
 
 export class BillApi extends RootApi {
-  constructor(id: number) {
+  constructor(id: string) {
     super({
       url: `/bank/bill/${id}`,
       method: 'get',
@@ -146,7 +146,7 @@ export class BillApi extends RootApi {
 }
 
 export class DeleteBillApi extends RootApi<IdReq> {
-  constructor(id: number) {
+  constructor(id: string) {
     super({
       url: `/bank/bill/delete`,
       method: 'delete',
