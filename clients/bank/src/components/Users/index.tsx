@@ -10,11 +10,12 @@ import { Navigate, useLocation } from 'react-router-dom';
 
 const UsersContent: FC = () => {
   const location = useLocation();
-  const { request, isInitialApiProcessing } = useRequest();
+  const { request, isInitialApiProcessing, isApiProcessing } = useRequest();
   const listMaker = usePaginationList();
   const { setList, onPageChange, getFullInfo, getListInfo } = listMaker(UserList);
   const { list, isListEmpty, count, page, take, lists } = getFullInfo();
-  const isLoading = isInitialApiProcessing(UsersApi);
+  const isInitialUsersApiProcessing = isInitialApiProcessing(UsersApi);
+  const isUsersApiProcessing = isApiProcessing(UsersApi);
   const previousUser = location.state?.previousUser;
   const isPreviousUserExist = !!previousUser;
 
@@ -27,13 +28,13 @@ const UsersContent: FC = () => {
         userApi.setInitialApi();
       }
 
-      request<[UserObj[], number], UsersApiConstructorType>(userApi).then(res => {
-        const [userList, total] = res.data;
+      request<[UserObj[], number], UsersApiConstructorType>(userApi).then(response => {
+        const [userList, total] = response.data;
         const createdList = getListInfo();
         const constructedUserList = new (createdList.constructor as Constructor<UserList>)();
         constructedUserList.list = Object.assign(lists, { [apiData.page]: userList });
         constructedUserList.total = total;
-        constructedUserList.page = page;
+        constructedUserList.page = apiData.page;
         setList(constructedUserList);
       });
     },
@@ -47,15 +48,15 @@ const UsersContent: FC = () => {
 
   const changePage = useCallback(
     (newPage: number) => {
-      if (newPage === page || isLoading) return;
-
       onPageChange(newPage);
 
-      if (!list[newPage]) {
+      if (newPage === page || isUsersApiProcessing) return;
+
+      if (!lists[newPage]) {
         getUsersList({ page: newPage });
       }
     },
-    [page, isLoading, list, getUsersList, onPageChange]
+    [page, isUsersApiProcessing, lists, getUsersList, onPageChange]
   );
 
   if (isPreviousUserExist) {
@@ -64,7 +65,7 @@ const UsersContent: FC = () => {
 
   return (
     <ListContainer>
-      {isLoading ? (
+      {isInitialUsersApiProcessing || isUsersApiProcessing ? (
         <Skeleton take={take} />
       ) : isListEmpty ? (
         <EmptyList />
