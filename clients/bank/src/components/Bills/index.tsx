@@ -8,11 +8,12 @@ import List from './List';
 import { FC, useCallback, useEffect } from 'react';
 
 const BillsContent: FC = () => {
-  const { request, isInitialApiProcessing } = useRequest();
+  const { request, isInitialApiProcessing, isApiProcessing } = useRequest();
   const listMaker = usePaginationList();
   const { setList, onPageChange, getFullInfo, getListInfo } = listMaker(BillList);
   const { list, isListEmpty, count, page, take, lists } = getFullInfo();
-  const isLoading = isInitialApiProcessing(BillsApi);
+  const isInitialBillsApiProcessing = isInitialApiProcessing(BillsApi);
+  const isBillsApiProcessing = isApiProcessing(BillsApi);
 
   const getBillsList = useCallback(
     (options: Partial<BillsApiConstructorType> = {}) => {
@@ -45,7 +46,7 @@ const BillsContent: FC = () => {
 
   const changePage = useCallback(
     (newPage: number) => {
-      if (newPage === page || isLoading) return;
+      if (newPage === page || isBillsApiProcessing) return;
 
       onPageChange(newPage);
 
@@ -53,12 +54,12 @@ const BillsContent: FC = () => {
         getBillsList({ page: newPage });
       }
     },
-    [page, isLoading, lists, getBillsList, onPageChange]
+    [page, isBillsApiProcessing, lists, getBillsList, onPageChange]
   );
 
   return (
     <ListContainer>
-      {isLoading ? (
+      {isInitialBillsApiProcessing || isBillsApiProcessing ? (
         <Skeleton take={take} />
       ) : isListEmpty ? (
         <EmptyList />
