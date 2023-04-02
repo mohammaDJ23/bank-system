@@ -11,13 +11,12 @@ import { Navigate, useLocation } from 'react-router-dom';
 const UsersContent: FC = () => {
   const location = useLocation();
   const { request, isInitialApiProcessing, isApiProcessing } = useRequest();
-  const listMaker = usePaginationList();
-  const { setList, onPageChange, getFullInfo, getListInfo } = listMaker(UserList);
+  const { setList, onPageChange, getFullInfo, getListInfo } = usePaginationList(UserList);
   const { list, isListEmpty, count, page, take, lists } = getFullInfo();
   const isInitialUsersApiProcessing = isInitialApiProcessing(UsersApi);
   const isUsersApiProcessing = isApiProcessing(UsersApi);
-  const previousUser = location.state?.previousUser;
-  const isPreviousUserExist = !!previousUser;
+  const previousUserId: string | undefined = location.state?.previousUserId;
+  const isPreviousUserExist = !!previousUserId;
 
   const getUsersList = useCallback(
     (options: Partial<UsersApiConstructorType> = {}) => {
@@ -60,7 +59,7 @@ const UsersContent: FC = () => {
   );
 
   if (isPreviousUserExist) {
-    return <Navigate to={Pathes.USER.replace(':id', location.state.previousUser)} />;
+    return <Navigate to={Pathes.USER.replace(':id', previousUserId)} />;
   }
 
   return (

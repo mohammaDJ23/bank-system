@@ -9,8 +9,7 @@ import { FC, useCallback, useEffect } from 'react';
 
 const BillsContent: FC = () => {
   const { request, isInitialApiProcessing, isApiProcessing } = useRequest();
-  const listMaker = usePaginationList();
-  const { setList, onPageChange, getFullInfo, getListInfo } = listMaker(BillList);
+  const { setList, onPageChange, getFullInfo, getListInfo } = usePaginationList(BillList);
   const { list, isListEmpty, count, page, take, lists } = getFullInfo();
   const isInitialBillsApiProcessing = isInitialApiProcessing(BillsApi);
   const isBillsApiProcessing = isApiProcessing(BillsApi);
@@ -20,7 +19,7 @@ const BillsContent: FC = () => {
       const apiData = { take, page, ...options };
       const billsApi = new BillsApi<BillObj>(apiData);
 
-      if (options.isInitialApi) {
+      if (apiData.isInitialApi) {
         billsApi.setInitialApi();
       }
 

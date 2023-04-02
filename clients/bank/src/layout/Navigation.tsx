@@ -137,7 +137,7 @@ const Navigation: FC<PropsWithChildren> = ({ children }) => {
         icon: <PersonIcon />,
         path: Pathes.USER,
         redirectPath: Pathes.USERS,
-        navigateOptions: { state: { previousUser: userInfo.id } },
+        navigateOptions: { state: { previousUserId: userInfo.id } },
         role: UserRoles.USER,
         activationOptions: [userInfo.id === +(params.id as string)],
       });
