@@ -26,9 +26,6 @@ const BillsContent: FC = () => {
 
       request<[BillObj[], number], BillObj>(billsApi).then(response => {
         let [billList, total] = response.data;
-        billList = billList.map(bill =>
-          Object.assign<typeof bill, Partial<typeof bill>>(bill, { date: getTime(bill.date) })
-        );
         const createdList = getListInfo();
         const constructedBilllist = new (createdList.constructor as Constructor<BillList>)();
         constructedBilllist.list = Object.assign(lists, { [apiData.page]: billList });
