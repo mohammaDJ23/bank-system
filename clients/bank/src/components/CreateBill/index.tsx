@@ -7,12 +7,11 @@ import { FC, useCallback, useEffect } from 'react';
 import { CreateBillApi } from '../../apis';
 
 const CreateBillContent: FC = () => {
-  const formMaker = useForm();
   const { getForm, onChange, resetForm, onSubmit, getInputErrorMessage, isInputInValid, isFormValid } =
-    formMaker(CreateBill);
+    useForm(CreateBill);
   const { isApiProcessing, request } = useRequest();
   const { focus } = useFocus();
-  const isLoading = isApiProcessing(CreateBillApi);
+  const isCreateBillApiProcessing = isApiProcessing(CreateBillApi);
   const form = getForm();
 
   const formSubmition = useCallback(() => {
@@ -53,7 +52,7 @@ const CreateBillContent: FC = () => {
           onChange={event => onChange('amount', event.target.value)}
           helperText={getInputErrorMessage('amount')}
           error={isInputInValid('amount')}
-          disabled={isLoading}
+          disabled={isCreateBillApiProcessing}
           name="amount"
         />
         <TextField
@@ -64,7 +63,7 @@ const CreateBillContent: FC = () => {
           onChange={event => onChange('receiver', event.target.value)}
           helperText={getInputErrorMessage('receiver')}
           error={isInputInValid('receiver')}
-          disabled={isLoading}
+          disabled={isCreateBillApiProcessing}
         />
         <TextField
           label="Date"
@@ -75,7 +74,7 @@ const CreateBillContent: FC = () => {
           helperText={getInputErrorMessage('date')}
           error={isInputInValid('date')}
           InputLabelProps={{ shrink: true }}
-          disabled={isLoading}
+          disabled={isCreateBillApiProcessing}
         />
         <TextField
           label="Description"
@@ -87,11 +86,11 @@ const CreateBillContent: FC = () => {
           onChange={event => onChange('description', event.target.value)}
           helperText={getInputErrorMessage('description')}
           error={isInputInValid('description')}
-          disabled={isLoading}
+          disabled={isCreateBillApiProcessing}
         />
         <Box component="div" display="flex" alignItems="center" gap="10px" marginTop="20px">
           <Button
-            disabled={isLoading || !isFormValid()}
+            disabled={isCreateBillApiProcessing || !isFormValid()}
             variant="contained"
             size="small"
             type="submit"
@@ -100,7 +99,7 @@ const CreateBillContent: FC = () => {
             Create
           </Button>
           <Button
-            disabled={isLoading}
+            disabled={isCreateBillApiProcessing}
             variant="outlined"
             size="small"
             type="button"
