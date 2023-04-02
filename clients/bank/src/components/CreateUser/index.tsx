@@ -1,14 +1,5 @@
 import FormContainer from '../../layout/FormContainer';
-import {
-  Box,
-  TextField,
-  Button,
-  Select,
-  FormControl,
-  MenuItem,
-  InputLabel,
-  FormHelperText,
-} from '@mui/material';
+import { Box, TextField, Button, Select, FormControl, MenuItem, InputLabel, FormHelperText } from '@mui/material';
 import { notification } from 'antd';
 import { CreateUser } from '../../lib';
 import { useAuth, useForm, useRequest, useFocus } from '../../hooks';
@@ -17,19 +8,11 @@ import { FC, useCallback, useEffect } from 'react';
 
 const CreateUserContent: FC = () => {
   const { getUserRoles } = useAuth();
-  const formMaker = useForm();
-  const {
-    getForm,
-    onChange,
-    resetForm,
-    onSubmit,
-    isFormValid,
-    getInputErrorMessage,
-    isInputInValid,
-  } = formMaker(CreateUser);
+  const { getForm, onChange, resetForm, onSubmit, isFormValid, getInputErrorMessage, isInputInValid } =
+    useForm(CreateUser);
   const { isApiProcessing, request } = useRequest();
   const { focus } = useFocus();
-  const isLoading = isApiProcessing(CreateUserApi);
+  const isCreateUserApiProcessing = isApiProcessing(CreateUserApi);
   const form = getForm();
 
   const formSubmition = useCallback(() => {
@@ -70,7 +53,7 @@ const CreateUserContent: FC = () => {
           onChange={event => onChange('firstName', event.target.value)}
           helperText={getInputErrorMessage('firstName')}
           error={isInputInValid('firstName')}
-          disabled={isLoading}
+          disabled={isCreateUserApiProcessing}
           name="firstName"
         />
         <TextField
@@ -81,7 +64,7 @@ const CreateUserContent: FC = () => {
           onChange={event => onChange('lastName', event.target.value)}
           helperText={getInputErrorMessage('lastName')}
           error={isInputInValid('lastName')}
-          disabled={isLoading}
+          disabled={isCreateUserApiProcessing}
         />
         <TextField
           label="Email"
@@ -91,7 +74,7 @@ const CreateUserContent: FC = () => {
           onChange={event => onChange('email', event.target.value)}
           helperText={getInputErrorMessage('email')}
           error={isInputInValid('email')}
-          disabled={isLoading}
+          disabled={isCreateUserApiProcessing}
         />
         <TextField
           label="Password"
@@ -101,7 +84,7 @@ const CreateUserContent: FC = () => {
           onChange={event => onChange('password', event.target.value)}
           helperText={getInputErrorMessage('password')}
           error={isInputInValid('password')}
-          disabled={isLoading}
+          disabled={isCreateUserApiProcessing}
         />
         <TextField
           label="Phone"
@@ -111,11 +94,12 @@ const CreateUserContent: FC = () => {
           onChange={event => onChange('phone', event.target.value)}
           helperText={getInputErrorMessage('phone')}
           error={isInputInValid('phone')}
-          disabled={isLoading}
+          disabled={isCreateUserApiProcessing}
         />
         <FormControl variant="standard">
           <InputLabel id="role">Role</InputLabel>
           <Select
+            disabled={isCreateUserApiProcessing}
             labelId="role"
             id="role"
             value={form.role}
@@ -129,13 +113,11 @@ const CreateUserContent: FC = () => {
               </MenuItem>
             ))}
           </Select>
-          {isInputInValid('role') && (
-            <FormHelperText>{getInputErrorMessage('role')}</FormHelperText>
-          )}
+          {isInputInValid('role') && <FormHelperText>{getInputErrorMessage('role')}</FormHelperText>}
         </FormControl>
         <Box component="div" display="flex" alignItems="center" gap="10px" marginTop="20px">
           <Button
-            disabled={isLoading || !isFormValid()}
+            disabled={isCreateUserApiProcessing || !isFormValid()}
             variant="contained"
             size="small"
             type="submit"
@@ -144,7 +126,7 @@ const CreateUserContent: FC = () => {
             Create
           </Button>
           <Button
-            disabled={isLoading}
+            disabled={isCreateUserApiProcessing}
             variant="outlined"
             size="small"
             type="button"
