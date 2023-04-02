@@ -159,8 +159,9 @@ const Dashboard: FC = () => {
 
   function getNewDateValue(value: string) {
     let newDate = getTime(value);
-    const startDate = specificDetails.billDates.start;
-    const endDate = specificDetails.billDates.end;
+    const billDates = specificDetails.billDates as BillDates;
+    const startDate = billDates.start;
+    const endDate = billDates.end;
     if (newDate < startDate) {
       notification.warning({
         message: 'Warning',
@@ -202,7 +203,7 @@ const Dashboard: FC = () => {
   }
 
   function changeStartDate(event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
-    const previousPeriodAmountFilter = specificDetails.periodAmountFilter;
+    const previousPeriodAmountFilter = specificDetails.periodAmountFilter as PeriodAmountFilter;
     const newPeriodAmountFilter = new PeriodAmountFilter(
       getNewDateValue(event.target.value),
       previousPeriodAmountFilter.end
@@ -213,10 +214,11 @@ const Dashboard: FC = () => {
 
   function changeSlider(evnet: Event, value: number | number[]) {
     let [start, end] = value as number[];
-    const remiderOfEndDates = specificDetails.billDates.end - end;
+    const BillDates = specificDetails.billDates as BillDates;
+    const remiderOfEndDates = BillDates.end - end;
 
     if (remiderOfEndDates < 1 * 24 * 60 * 60 * 1000) {
-      end = specificDetails.billDates.end;
+      end = BillDates.end;
       setSliderStep(defaultSliderStep + remiderOfEndDates);
     } else setSliderStep(defaultSliderStep);
 
@@ -227,7 +229,7 @@ const Dashboard: FC = () => {
   }
 
   function changeEndDate(event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
-    const previousPeriodAmountFilter = specificDetails.periodAmountFilter;
+    const previousPeriodAmountFilter = specificDetails.periodAmountFilter as PeriodAmountFilter;
     const newPeriodAmountFilter = new PeriodAmountFilter(
       previousPeriodAmountFilter.start,
       getNewDateValue(event.target.value)
@@ -340,87 +342,91 @@ const Dashboard: FC = () => {
         {isTotalAmountProcessing ? (
           <Skeleton width="100%" height="128px" />
         ) : (
-          <Card>
-            <CardContent>
-              <Box display="flex" justifyContent="center" flexDirection="column" gap="20px">
-                {specificDetails.periodAmountFilter.start > 0 &&
-                  specificDetails.periodAmountFilter.end > 0 &&
-                  (() => {
-                    const slider = (
-                      <Slider
-                        disabled={isPeriodAmountProcessing}
-                        value={[specificDetails.periodAmountFilter.start, specificDetails.periodAmountFilter.end]}
-                        step={sliderStep}
-                        min={specificDetails.billDates.start}
-                        max={specificDetails.billDates.end}
-                        onChange={changeSlider}
-                        valueLabelDisplay="off"
-                      />
-                    );
+          specificDetails.totalAmount &&
+          specificDetails.periodAmountFilter &&
+          specificDetails.billDates && (
+            <Card>
+              <CardContent>
+                <Box display="flex" justifyContent="center" flexDirection="column" gap="20px">
+                  {specificDetails.periodAmountFilter.start > 0 &&
+                    specificDetails.periodAmountFilter.end > 0 &&
+                    (() => {
+                      const slider = (
+                        <Slider
+                          disabled={isPeriodAmountProcessing}
+                          value={[specificDetails.periodAmountFilter.start, specificDetails.periodAmountFilter.end]}
+                          step={sliderStep}
+                          min={specificDetails.billDates.start}
+                          max={specificDetails.billDates.end}
+                          onChange={changeSlider}
+                          valueLabelDisplay="off"
+                        />
+                      );
 
-                    return (
-                      <Box>
-                        <SmallSliderWrapper>{slider}</SmallSliderWrapper>
-                        <Box
-                          display="flex"
-                          alignItems="center"
-                          justifyContent="space-between"
-                          gap="30px"
-                          position="relative"
-                        >
-                          <Box display="flex" alignItems="center" gap="5px">
-                            <Typography fontSize="10px" whiteSpace="nowrap">
-                              {moment(specificDetails.periodAmountFilter.start).format('ll')}
-                            </Typography>
-                            <DateRange fontSize="small" sx={{ color: grey[600] }} />
+                      return (
+                        <Box>
+                          <SmallSliderWrapper>{slider}</SmallSliderWrapper>
+                          <Box
+                            display="flex"
+                            alignItems="center"
+                            justifyContent="space-between"
+                            gap="30px"
+                            position="relative"
+                          >
+                            <Box display="flex" alignItems="center" gap="5px">
+                              <Typography fontSize="10px" whiteSpace="nowrap">
+                                {moment(specificDetails.periodAmountFilter.start).format('ll')}
+                              </Typography>
+                              <DateRange fontSize="small" sx={{ color: grey[600] }} />
+                            </Box>
+                            <Input
+                              disabled={isPeriodAmountProcessing}
+                              type="date"
+                              value={moment(specificDetails.periodAmountFilter.start).format('YYYY-MM-DD')}
+                              onChange={changeStartDate}
+                              sx={{
+                                position: 'absolute',
+                                top: '7px',
+                                left: '-57px',
+                                opacity: '0',
+                              }}
+                            />
+                            <LargSliderWrapper>{slider}</LargSliderWrapper>
+                            <Box display="flex" alignItems="center" gap="5px">
+                              <Typography fontSize="10px" whiteSpace="nowrap">
+                                {moment(specificDetails.periodAmountFilter.end).format('ll')}
+                              </Typography>
+                              <DateRange fontSize="small" sx={{ color: grey[600] }} />
+                            </Box>
+                            <Input
+                              disabled={isPeriodAmountProcessing}
+                              type="date"
+                              value={moment(specificDetails.periodAmountFilter.end).format('YYYY-MM-DD')}
+                              onChange={changeEndDate}
+                              sx={{
+                                position: 'absolute',
+                                top: '7px',
+                                right: '0px',
+                                opacity: '0',
+                                width: '20px',
+                              }}
+                            />
                           </Box>
-                          <Input
-                            disabled={isPeriodAmountProcessing}
-                            type="date"
-                            value={moment(specificDetails.periodAmountFilter.start).format('YYYY-MM-DD')}
-                            onChange={changeStartDate}
-                            sx={{
-                              position: 'absolute',
-                              top: '7px',
-                              left: '-57px',
-                              opacity: '0',
-                            }}
-                          />
-                          <LargSliderWrapper>{slider}</LargSliderWrapper>
-                          <Box display="flex" alignItems="center" gap="5px">
-                            <Typography fontSize="10px" whiteSpace="nowrap">
-                              {moment(specificDetails.periodAmountFilter.end).format('ll')}
-                            </Typography>
-                            <DateRange fontSize="small" sx={{ color: grey[600] }} />
-                          </Box>
-                          <Input
-                            disabled={isPeriodAmountProcessing}
-                            type="date"
-                            value={moment(specificDetails.periodAmountFilter.end).format('YYYY-MM-DD')}
-                            onChange={changeEndDate}
-                            sx={{
-                              position: 'absolute',
-                              top: '7px',
-                              right: '0px',
-                              opacity: '0',
-                              width: '20px',
-                            }}
-                          />
                         </Box>
-                      </Box>
-                    );
-                  })()}
-                <Box display="flex" alignItems="center" justifyContent="space-between" gap="20px">
-                  <Typography whiteSpace="nowrap">Total Amount: </Typography>
-                  <Typography>{specificDetails.totalAmount.totalAmount}</Typography>
+                      );
+                    })()}
+                  <Box display="flex" alignItems="center" justifyContent="space-between" gap="20px">
+                    <Typography whiteSpace="nowrap">Total Amount: </Typography>
+                    <Typography>{specificDetails.totalAmount.totalAmount}</Typography>
+                  </Box>
+                  <Box display="flex" alignItems="center" justifyContent="space-between" gap="20px">
+                    <Typography whiteSpace="nowrap">Bill quantities: </Typography>
+                    <Typography>{specificDetails.totalAmount.quantities}</Typography>
+                  </Box>
                 </Box>
-                <Box display="flex" alignItems="center" justifyContent="space-between" gap="20px">
-                  <Typography whiteSpace="nowrap">Bill quantities: </Typography>
-                  <Typography>{specificDetails.totalAmount.quantities}</Typography>
-                </Box>
-              </Box>
-            </CardContent>
-          </Card>
+              </CardContent>
+            </Card>
+          )
         )}
       </Box>
     </MainContainer>
