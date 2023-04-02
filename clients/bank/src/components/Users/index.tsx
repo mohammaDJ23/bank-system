@@ -1,18 +1,22 @@
 import ListContainer from '../../layout/ListContainer';
-import { Constructor, UserList, UserObj } from '../../lib';
+import { Constructor, Pathes, UserList, UserObj } from '../../lib';
 import EmptyList from './EmptyList';
 import List from './List';
 import Skeleton from './Skeleton';
 import { FC, useCallback, useEffect } from 'react';
 import { usePaginationList, useRequest } from '../../hooks';
 import { UsersApi, UsersApiConstructorType } from '../../apis';
+import { Navigate, useLocation } from 'react-router-dom';
 
 const UsersContent: FC = () => {
+  const location = useLocation();
   const { request, isInitialApiProcessing } = useRequest();
   const listMaker = usePaginationList();
   const { setList, onPageChange, getFullInfo, getListInfo } = listMaker(UserList);
   const { list, isListEmpty, count, page, take, lists } = getFullInfo();
   const isLoading = isInitialApiProcessing(UsersApi);
+  const previousUser = location.state?.previousUser;
+  const isPreviousUserExist = !!previousUser;
 
   const getUsersList = useCallback(
     (options: Partial<UsersApiConstructorType> = {}) => {
@@ -37,6 +41,7 @@ const UsersContent: FC = () => {
   );
 
   useEffect(() => {
+    if (isPreviousUserExist) return;
     getUsersList({ isInitialApi: true });
   }, []);
 
@@ -52,6 +57,10 @@ const UsersContent: FC = () => {
     },
     [page, isLoading, list, getUsersList, onPageChange]
   );
+
+  if (isPreviousUserExist) {
+    return <Navigate to={Pathes.USER.replace(':id', location.state.previousUser)} />;
+  }
 
   return (
     <ListContainer>

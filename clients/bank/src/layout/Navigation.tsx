@@ -1,5 +1,5 @@
 import { PropsWithChildren, FC, useState } from 'react';
-import { useLocation, useNavigate, matchPath } from 'react-router-dom';
+import { useLocation, useNavigate, matchPath, useParams, NavigateOptions } from 'react-router-dom';
 import Drawer from '@mui/material/Drawer';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
@@ -28,6 +28,16 @@ interface StyledListItemTextAttr {
 
 interface StyledListItemIconAttr {
   active: string | undefined;
+}
+
+interface NavigationItemObj {
+  title: string;
+  icon: JSX.Element;
+  path: Pathes;
+  redirectPath: Pathes;
+  role: UserRoles;
+  activationOptions?: boolean[];
+  navigateOptions?: NavigateOptions;
 }
 
 const AppBar = styled('div')(({ theme }) => ({
@@ -74,6 +84,7 @@ const Navigation: FC<PropsWithChildren> = ({ children }) => {
   const [open, setOpen] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
+  const params = useParams();
   const { isAdmin, isUser, isUserAuthenticated, getTokenInfo } = useAuth();
   const userInfo = getTokenInfo();
   const isUserInfoExist = !!userInfo;
@@ -82,7 +93,7 @@ const Navigation: FC<PropsWithChildren> = ({ children }) => {
   const activeRouteTitle = activeRoute?.title || 'Bank system';
 
   function getNavigationItems() {
-    const navigationItems = [
+    const navigationItems: NavigationItemObj[] = [
       {
         title: 'Dashboard',
         icon: <DashboardIcon />,
@@ -125,12 +136,21 @@ const Navigation: FC<PropsWithChildren> = ({ children }) => {
         title: `${userInfo.firstName} ${userInfo.lastName}`,
         icon: <PersonIcon />,
         path: Pathes.USER,
-        redirectPath: Pathes.USER.replace(':id', userInfo.id.toString()) as Pathes,
+        redirectPath: Pathes.USERS,
+        navigateOptions: { state: { previousUser: userInfo.id } },
         role: UserRoles.USER,
+        activationOptions: [userInfo.id === +(params.id as string)],
       });
     }
 
     return navigationItems;
+  }
+
+  function isActivationOptionsActive(item: ReturnType<typeof getNavigationItems>[number]) {
+    let isActive = true;
+    for (let i = 0; item.activationOptions && i < item.activationOptions.length; i++)
+      isActive = isActive && item.activationOptions[i];
+    return isActive;
   }
 
   function isSamePath(item: ReturnType<typeof getNavigationItems>[number]) {
@@ -138,7 +158,7 @@ const Navigation: FC<PropsWithChildren> = ({ children }) => {
   }
 
   function isPathActive(item: ReturnType<typeof getNavigationItems>[number]) {
-    const isActive = isSamePath(item);
+    const isActive = isSamePath(item) && isActivationOptionsActive(item);
     return isActive ? isActive.toString() : undefined;
   }
 
@@ -181,7 +201,7 @@ const Navigation: FC<PropsWithChildren> = ({ children }) => {
                   <ListItem
                     onClick={() => {
                       setOpen(false);
-                      if (!isSamePath(item)) navigate(item.redirectPath);
+                      if (!isPathActive(item)) navigate(item.redirectPath, item.navigateOptions);
                     }}
                     key={index}
                     disablePadding
