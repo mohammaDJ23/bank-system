@@ -5,7 +5,7 @@ import { Form } from './formConstructor';
 
 export class UpdateBill extends Form {
   @DefineVal()
-  id: number = 0;
+  id: string = '0';
 
   @DefineRules([isAmount])
   @DefineVal()
@@ -28,7 +28,7 @@ export class UpdateBill extends Form {
   date: number = getTime();
 
   constructor({
-    id = 0,
+    id = '0',
     amount = '',
     receiver = '',
     description = '',
