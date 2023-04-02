@@ -13,7 +13,7 @@ const BillContent: FC = () => {
   const { isInitialApiProcessing, request } = useRequest();
   const { setSpecificDetails } = useAction();
   const { specificDetails } = useSelector();
-  const isBillProcessing = isInitialApiProcessing(BillApi);
+  const isInitialBillApiProcessing = isInitialApiProcessing(BillApi);
   const billId = params.id;
   const bill = specificDetails.bill;
 
@@ -27,7 +27,7 @@ const BillContent: FC = () => {
 
   return (
     <DefaultContainer>
-      {isBillProcessing ? <Skeleton /> : bill ? <Details bill={bill} /> : <NotFound />}
+      {isInitialBillApiProcessing ? <Skeleton /> : bill ? <Details bill={bill} /> : <NotFound />}
     </DefaultContainer>
   );
 };
