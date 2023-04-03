@@ -15,16 +15,12 @@ import './assets/styles/index.scss';
 import 'ant-design-vue/dist/antd.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
-const history = createWebHistory();
-export let router = createRouter({ history, routes });
+const isDevelopment = process.env.NODE_ENV === 'development';
 
-function mount(element, { history, onChildNavigate, initialPath }) {
-  history = history || createMemoryHistory(initialPath || '/');
+const history = isDevelopment ? createWebHistory() : createMemoryHistory(window.location.pathname);
+export const router = createRouter({ history, routes });
 
-  router.afterEach(guard => {
-    onChildNavigate && onChildNavigate(guard.path);
-  });
-
+function mount(element) {
   const app = createApp(App);
   const vuetify = createVuetify({
     components,
@@ -44,20 +40,11 @@ function mount(element, { history, onChildNavigate, initialPath }) {
   app.use(vuetify);
 
   app.mount(element);
-
-  return {
-    onParentNavigate: function (path) {
-      if (history.location !== path) {
-        history.push(path);
-      }
-    },
-  };
 }
 
-if (process.env.NODE_ENV === 'development') {
+if (isDevelopment) {
   const element = document.querySelector('#_auth-service');
-
-  if (element) mount(element, { history });
+  if (element) mount(element);
 }
 
 export { mount };

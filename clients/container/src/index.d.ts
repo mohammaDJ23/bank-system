@@ -12,7 +12,11 @@ interface MountExportation {
 }
 
 interface Mount {
-  (element: Element, options: MountOptions): MountExportation;
+  (element: Element): void;
+}
+
+interface RedirectionDetailObj {
+  path: string;
 }
 
 declare module 'auth/AuthApp' {
