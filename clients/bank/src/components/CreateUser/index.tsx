@@ -77,6 +77,7 @@ const CreateUserContent: FC = () => {
           type="password"
           variant="standard"
           value={form.password}
+          autoComplete="off"
           onChange={event => createUserFormInstance.onChange('password', event.target.value)}
           helperText={createUserFormInstance.getInputErrorMessage('password')}
           error={createUserFormInstance.isInputInValid('password')}
