@@ -1,5 +1,5 @@
 import ListContainer from '../../layout/ListContainer';
-import { Constructor, Pathes, UserList, UserObj } from '../../lib';
+import { Pathes, UserList, UserObj } from '../../lib';
 import EmptyList from './EmptyList';
 import List from './List';
 import Skeleton from './Skeleton';
@@ -11,8 +11,8 @@ import { Navigate, useLocation } from 'react-router-dom';
 const UsersContent: FC = () => {
   const location = useLocation();
   const { request, isInitialApiProcessing, isApiProcessing } = useRequest();
-  const { setList, onPageChange, getFullInfo, getListInfo } = usePaginationList(UserList);
-  const { list, isListEmpty, count, page, take, lists } = getFullInfo();
+  const userListInstance = usePaginationList(UserList);
+  const userListInfo = userListInstance.getFullInfo();
   const isInitialUsersApiProcessing = isInitialApiProcessing(UsersApi);
   const isUsersApiProcessing = isApiProcessing(UsersApi);
   const previousUserId: string | undefined = location.state?.previousUserId;
@@ -20,7 +20,7 @@ const UsersContent: FC = () => {
 
   const getUsersList = useCallback(
     (options: Partial<UsersApiConstructorType> = {}) => {
-      const apiData = { take, page, ...options };
+      const apiData = { take: userListInfo.take, page: userListInfo.page, ...options };
       const userApi = new UsersApi<UserObj>(apiData);
 
       if (apiData.isInitialApi) {
@@ -28,16 +28,11 @@ const UsersContent: FC = () => {
       }
 
       request<[UserObj[], number], UsersApiConstructorType>(userApi).then(response => {
-        const [userList, total] = response.data;
-        const createdList = getListInfo();
-        const constructedUserList = new (createdList.constructor as Constructor<UserList>)();
-        constructedUserList.list = Object.assign(lists, { [apiData.page]: userList });
-        constructedUserList.total = total;
-        constructedUserList.page = apiData.page;
-        setList(constructedUserList);
+        const [list, total] = response.data;
+        userListInstance.insertNewList({ total, list, page: apiData.page });
       });
     },
-    [take, page, lists, request, setList, getListInfo]
+    [userListInfo, userListInstance, request]
   );
 
   useEffect(() => {
@@ -47,15 +42,13 @@ const UsersContent: FC = () => {
 
   const changePage = useCallback(
     (newPage: number) => {
-      onPageChange(newPage);
+      userListInstance.onPageChange(newPage);
 
-      if (newPage === page || isUsersApiProcessing) return;
+      if (userListInstance.isNewPageEqualToCurrentPage(newPage) || isUsersApiProcessing) return;
 
-      if (!lists[newPage]) {
-        getUsersList({ page: newPage });
-      }
+      getUsersList({ page: newPage });
     },
-    [page, isUsersApiProcessing, lists, getUsersList, onPageChange]
+    [userListInstance, isUsersApiProcessing, getUsersList]
   );
 
   if (isPreviousUserExist) {
@@ -65,11 +58,11 @@ const UsersContent: FC = () => {
   return (
     <ListContainer>
       {isInitialUsersApiProcessing || isUsersApiProcessing ? (
-        <Skeleton take={take} />
-      ) : isListEmpty ? (
+        <Skeleton take={userListInfo.take} />
+      ) : userListInstance.isListEmpty() ? (
         <EmptyList />
       ) : (
-        <List list={list} count={count} take={take} page={page} onPageChange={changePage} />
+        <List listInstance={userListInstance} onPageChange={changePage} />
       )}
     </ListContainer>
   );

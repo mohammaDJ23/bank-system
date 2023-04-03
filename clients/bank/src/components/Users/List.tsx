@@ -2,40 +2,33 @@ import { FC } from 'react';
 import { List, ListItem, ListItemText, ListItemButton, Box, Card } from '@mui/material';
 import moment from 'moment';
 import { useNavigate } from 'react-router-dom';
-import { UserObj } from '../../lib';
+import { Pathes, UserObj } from '../../lib';
 import CountBadge from '../CountBadge';
 import Pagination from '../Pagination';
+import { usePaginationList } from '../../hooks';
 
 interface UserListImportation {
-  list: UserObj[];
-  count: number;
-  page: number;
-  take: number;
+  listInstance: ReturnType<typeof usePaginationList<UserObj>>;
   onPageChange: (newPage: number) => void;
 }
 
-const UserList: FC<UserListImportation> = ({ list, take, count, page, onPageChange }) => {
+const UserList: FC<UserListImportation> = ({ listInstance, onPageChange }) => {
   const navigate = useNavigate();
+  const listInfo = listInstance.getFullInfo();
 
   return (
     <>
       <List>
-        {list.map((user, index) => (
+        {listInfo.list.map((user, index) => (
           <Card
             key={index}
             variant="outlined"
             sx={{ my: '20px', position: 'relative', overflow: 'visible' }}
-            onClick={() => navigate(`/bank/users/${user.id}`)}
+            onClick={() => navigate(Pathes.USER.replace(':id', user.id.toString()))}
           >
             <ListItemButton>
               <ListItem disablePadding sx={{ my: '10px' }}>
-                <Box
-                  display="flex"
-                  flexDirection="column"
-                  alignItems="start"
-                  width="100%"
-                  gap="10px"
-                >
+                <Box display="flex" flexDirection="column" alignItems="start" width="100%" gap="10px">
                   <Box component="div">
                     <ListItemText
                       primaryTypographyProps={{ fontSize: '14px', mb: '10px' }}
@@ -70,14 +63,14 @@ const UserList: FC<UserListImportation> = ({ list, take, count, page, onPageChan
                     />
                   </Box>
                 </Box>
-                <CountBadge take={take} page={page} index={index} />
+                <CountBadge take={listInfo.take} page={listInfo.page} index={index} />
               </ListItem>
             </ListItemButton>
           </Card>
         ))}
       </List>
 
-      <Pagination page={page} count={count} onPageChange={onPageChange} />
+      <Pagination page={listInfo.page} count={listInfo.count} onPageChange={onPageChange} />
     </>
   );
 };

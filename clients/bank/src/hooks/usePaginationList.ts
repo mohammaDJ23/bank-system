@@ -1,6 +1,12 @@
 import { useMemo } from 'react';
-import { ListInstance, ListInstanceConstructor } from '../lib';
+import { Constructor, ListInstance, ListInstanceConstructor } from '../lib';
 import { useAction, useSelector } from './';
+
+interface InsertNewListOptions<T = any> {
+  page?: number;
+  list: T[];
+  total: number;
+}
 
 export function usePaginationList<T>(listInstance: ListInstanceConstructor<ListInstance<T>>) {
   const { setPaginationList, changePaginationListPage } = useAction();
@@ -19,7 +25,7 @@ export function usePaginationList<T>(listInstance: ListInstanceConstructor<ListI
         }
       }
 
-      function getListInfo(): InstanceType<typeof listInstance> {
+      function getListInstance(): InstanceType<typeof listInstance> {
         return paginationList[listInstance.name];
       }
 
@@ -29,28 +35,28 @@ export function usePaginationList<T>(listInstance: ListInstanceConstructor<ListI
       }
 
       function getCurrentList() {
-        const listInfo = getListInfo();
-        return listInfo.list[listInfo.page] || [];
+        const listInstance = getListInstance();
+        return listInstance.list[listInstance.page] || [];
       }
 
       function getCount() {
-        const listInfo = getListInfo();
-        return Math.ceil(listInfo.total / listInfo.take);
+        const listInstance = getListInstance();
+        return Math.ceil(listInstance.total / listInstance.take);
       }
 
       function getPage() {
-        const listInfo = getListInfo();
-        return listInfo.page;
+        const listInstance = getListInstance();
+        return listInstance.page;
       }
 
       function getTake() {
-        const listInfo = getListInfo();
-        return listInfo.take;
+        const listInstance = getListInstance();
+        return listInstance.take;
       }
 
       function getTotal() {
-        const listInfo = getListInfo();
-        return listInfo.total;
+        const listInstance = getListInstance();
+        return listInstance.total;
       }
 
       function getFullInfo() {
@@ -61,14 +67,31 @@ export function usePaginationList<T>(listInstance: ListInstanceConstructor<ListI
           total: getTotal(),
           count: getCount(),
           isListEmpty: isListEmpty(),
-          lists: getListInfo().list,
+          lists: getListInstance().list,
         };
+      }
+
+      function insertNewList({ page, total, list }: InsertNewListOptions<T>) {
+        const listInfo = getFullInfo();
+
+        page = page || listInfo.page;
+
+        const constructedList = new (listInstance.constructor as Constructor<ListInstance<T>>)();
+        constructedList.list = Object.assign(listInfo.lists, { [page]: list });
+        constructedList.total = total;
+        constructedList.page = page;
+        setList(constructedList);
+      }
+
+      function isNewPageEqualToCurrentPage(newPage: number) {
+        const listInfo = getFullInfo();
+        return newPage === listInfo.page;
       }
 
       return {
         setList,
         onPageChange,
-        getListInfo,
+        getListInstance,
         isListEmpty,
         getCurrentList,
         getCount,
@@ -76,6 +99,8 @@ export function usePaginationList<T>(listInstance: ListInstanceConstructor<ListI
         getTake,
         getTotal,
         getFullInfo,
+        insertNewList,
+        isNewPageEqualToCurrentPage,
       };
     },
     [listContainer, paginationList, listInstance, setPaginationList, changePaginationListPage]
