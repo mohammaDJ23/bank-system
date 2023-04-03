@@ -192,7 +192,9 @@ const Dashboard: FC = () => {
 
     for (let i = 0; i < chartData.length && isUserAdmin; i++)
       lastWeekUsersLoop: for (let j = 0; j < specificDetails.lastWeekUsers.length; j++)
-        if (moment(chartData[i].date).format('l') === moment(specificDetails.lastWeekUsers[j].date).format('l')) {
+        if (
+          moment(new Date(chartData[i].date)).format('l') === moment(specificDetails.lastWeekUsers[j].date).format('l')
+        ) {
           chartData[i] = Object.assign<LastWeekReport, Partial<LastWeekReport>>(chartData[i], {
             userCounts: specificDetails.lastWeekUsers[i].count,
           });
