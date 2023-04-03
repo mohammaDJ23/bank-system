@@ -1,13 +1,12 @@
-import { Box, Typography, Menu, MenuItem, IconButton } from '@mui/material';
+import { Box, Typography, Menu, MenuItem, IconButton, Button } from '@mui/material';
 import { MoreVert } from '@mui/icons-material';
 import moment from 'moment';
-import { Button } from 'element-react';
 import Modal from '../Modal';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { FC, useCallback, useState } from 'react';
 import { useAction, useAuth, useRequest, useSelector } from '../../hooks';
 import { DeleteUserApi, IdReq } from '../../apis';
-import { UserWithBillInfoObj, UserObj } from '../../lib';
+import { UserWithBillInfoObj, UserObj, Pathes } from '../../lib';
 import { ModalNames } from '../../store';
 
 interface DetailsImporation {
@@ -18,20 +17,19 @@ const Details: FC<DetailsImporation> = ({ user }) => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
   const navigate = useNavigate();
-  const params = useParams();
   const { showModal, hideModal } = useAction();
   const { modals } = useSelector();
   const { isApiProcessing, request } = useRequest();
   const { isAdmin } = useAuth();
-  const isDeletingUserProcessing = isApiProcessing(DeleteUserApi);
+  const isDeleteUserApiProcessing = isApiProcessing(DeleteUserApi);
   const options = [
     {
       label: 'Update',
-      path: isAdmin() ? `/bank/admin/update-user/${user.id}` : `/bank/update-user/${user.id}`,
+      path: isAdmin()
+        ? Pathes.UPDATE_USER_BY_ADMIN.replace(':id', user.id.toString())
+        : Pathes.UPDATE_USER.replace(':id', user.id.toString()),
     },
   ];
-
-  const userId = params.id;
 
   const onMenuOpen = useCallback((event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
@@ -56,15 +54,13 @@ const Details: FC<DetailsImporation> = ({ user }) => {
   }, [showModal]);
 
   const deleteUser = useCallback(() => {
-    if (userId) {
-      request<UserObj, IdReq>(new DeleteUserApi(+userId))
-        .then(response => {
-          hideModal(ModalNames.CONFIRMATION);
-          navigate('/bank/users');
-        })
-        .catch(err => hideModal(ModalNames.CONFIRMATION));
-    }
-  }, [userId, request, hideModal, navigate]);
+    request<UserObj, IdReq>(new DeleteUserApi(user.id))
+      .then(response => {
+        hideModal(ModalNames.CONFIRMATION);
+        navigate(Pathes.USERS);
+      })
+      .catch(err => hideModal(ModalNames.CONFIRMATION));
+  }, [user, request, hideModal, navigate]);
 
   return (
     <>
@@ -112,14 +108,15 @@ const Details: FC<DetailsImporation> = ({ user }) => {
           </Typography>
         )}
         <Box mt="30px">
-          {/**@ts-ignore */}
           <Button
-            disabled={isDeletingUserProcessing}
-            loading={isDeletingUserProcessing}
+            disabled={isDeleteUserApiProcessing}
             onClick={onDeleteAccount}
-            type="danger"
+            variant="contained"
+            color="error"
+            size="small"
+            sx={{ textTransform: 'capitalize' }}
           >
-            Deleting the account
+            Delete the account
           </Button>
         </Box>
       </Box>
@@ -127,7 +124,7 @@ const Details: FC<DetailsImporation> = ({ user }) => {
       <Modal
         title="Deleting the Account"
         body="Are you sure do delete the user account?"
-        isLoading={isDeletingUserProcessing}
+        isLoading={isDeleteUserApiProcessing}
         isActive={modals[ModalNames.CONFIRMATION]}
         onCancel={() => hideModal(ModalNames.CONFIRMATION)}
         onConfirm={() => deleteUser()}
