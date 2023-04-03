@@ -1,14 +1,5 @@
 import FormContainer from '../../layout/FormContainer';
-import {
-  Box,
-  TextField,
-  Button,
-  Select,
-  FormControl,
-  MenuItem,
-  InputLabel,
-  FormHelperText,
-} from '@mui/material';
+import { Box, TextField, Button, Select, FormControl, MenuItem, InputLabel, FormHelperText } from '@mui/material';
 import { notification } from 'antd';
 import { CreateUser } from '../../lib';
 import { useAuth, useForm, useRequest, useFocus } from '../../hooks';
@@ -17,32 +8,20 @@ import { FC, useCallback, useEffect } from 'react';
 
 const CreateUserContent: FC = () => {
   const { getUserRoles } = useAuth();
-  const formMaker = useForm();
-  const {
-    getForm,
-    onChange,
-    resetForm,
-    onSubmit,
-    isFormValid,
-    getInputErrorMessage,
-    isInputInValid,
-  } = formMaker(CreateUser);
+  const createUserFormInstance = useForm(CreateUser);
   const { isApiProcessing, request } = useRequest();
   const { focus } = useFocus();
-  const isLoading = isApiProcessing(CreateUserApi);
-  const form = getForm();
+  const isCreateUserApiProcessing = isApiProcessing(CreateUserApi);
+  const form = createUserFormInstance.getForm();
 
   const formSubmition = useCallback(() => {
-    onSubmit(() => {
+    createUserFormInstance.onSubmit(() => {
       request<CreateUser, CreateUser>(new CreateUserApi(form)).then(response => {
-        resetForm();
-        notification.success({
-          message: 'Success',
-          description: 'Your have created a new user successfully.',
-        });
+        createUserFormInstance.resetForm();
+        notification.success({ message: 'Success', description: 'Your have created a new user successfully.' });
       });
     });
-  }, [form, resetForm, onSubmit, request]);
+  }, [createUserFormInstance, form, request]);
 
   useEffect(() => {
     focus('firstName');
@@ -67,10 +46,10 @@ const CreateUserContent: FC = () => {
           variant="standard"
           type="text"
           value={form.firstName}
-          onChange={event => onChange('firstName', event.target.value)}
-          helperText={getInputErrorMessage('firstName')}
-          error={isInputInValid('firstName')}
-          disabled={isLoading}
+          onChange={event => createUserFormInstance.onChange('firstName', event.target.value)}
+          helperText={createUserFormInstance.getInputErrorMessage('firstName')}
+          error={createUserFormInstance.isInputInValid('firstName')}
+          disabled={isCreateUserApiProcessing}
           name="firstName"
         />
         <TextField
@@ -78,50 +57,52 @@ const CreateUserContent: FC = () => {
           variant="standard"
           type="text"
           value={form.lastName}
-          onChange={event => onChange('lastName', event.target.value)}
-          helperText={getInputErrorMessage('lastName')}
-          error={isInputInValid('lastName')}
-          disabled={isLoading}
+          onChange={event => createUserFormInstance.onChange('lastName', event.target.value)}
+          helperText={createUserFormInstance.getInputErrorMessage('lastName')}
+          error={createUserFormInstance.isInputInValid('lastName')}
+          disabled={isCreateUserApiProcessing}
         />
         <TextField
           label="Email"
           type="email"
           variant="standard"
           value={form.email}
-          onChange={event => onChange('email', event.target.value)}
-          helperText={getInputErrorMessage('email')}
-          error={isInputInValid('email')}
-          disabled={isLoading}
+          onChange={event => createUserFormInstance.onChange('email', event.target.value)}
+          helperText={createUserFormInstance.getInputErrorMessage('email')}
+          error={createUserFormInstance.isInputInValid('email')}
+          disabled={isCreateUserApiProcessing}
         />
         <TextField
           label="Password"
           type="password"
           variant="standard"
           value={form.password}
-          onChange={event => onChange('password', event.target.value)}
-          helperText={getInputErrorMessage('password')}
-          error={isInputInValid('password')}
-          disabled={isLoading}
+          autoComplete="off"
+          onChange={event => createUserFormInstance.onChange('password', event.target.value)}
+          helperText={createUserFormInstance.getInputErrorMessage('password')}
+          error={createUserFormInstance.isInputInValid('password')}
+          disabled={isCreateUserApiProcessing}
         />
         <TextField
           label="Phone"
           type="text"
           variant="standard"
           value={form.phone}
-          onChange={event => onChange('phone', event.target.value)}
-          helperText={getInputErrorMessage('phone')}
-          error={isInputInValid('phone')}
-          disabled={isLoading}
+          onChange={event => createUserFormInstance.onChange('phone', event.target.value)}
+          helperText={createUserFormInstance.getInputErrorMessage('phone')}
+          error={createUserFormInstance.isInputInValid('phone')}
+          disabled={isCreateUserApiProcessing}
         />
         <FormControl variant="standard">
           <InputLabel id="role">Role</InputLabel>
           <Select
+            disabled={isCreateUserApiProcessing}
             labelId="role"
             id="role"
             value={form.role}
-            onChange={event => onChange('role', event.target.value)}
+            onChange={event => createUserFormInstance.onChange('role', event.target.value)}
             label="Role"
-            error={isInputInValid('role')}
+            error={createUserFormInstance.isInputInValid('role')}
           >
             {getUserRoles().map(el => (
               <MenuItem key={el.value} value={el.value}>
@@ -129,13 +110,13 @@ const CreateUserContent: FC = () => {
               </MenuItem>
             ))}
           </Select>
-          {isInputInValid('role') && (
-            <FormHelperText>{getInputErrorMessage('role')}</FormHelperText>
+          {createUserFormInstance.isInputInValid('role') && (
+            <FormHelperText>{createUserFormInstance.getInputErrorMessage('role')}</FormHelperText>
           )}
         </FormControl>
         <Box component="div" display="flex" alignItems="center" gap="10px" marginTop="20px">
           <Button
-            disabled={isLoading || !isFormValid()}
+            disabled={isCreateUserApiProcessing || !createUserFormInstance.isFormValid()}
             variant="contained"
             size="small"
             type="submit"
@@ -144,12 +125,12 @@ const CreateUserContent: FC = () => {
             Create
           </Button>
           <Button
-            disabled={isLoading}
+            disabled={isCreateUserApiProcessing}
             variant="outlined"
             size="small"
             type="button"
             sx={{ textTransform: 'capitalize' }}
-            onClick={() => resetForm()}
+            onClick={() => createUserFormInstance.resetForm()}
           >
             Reset
           </Button>

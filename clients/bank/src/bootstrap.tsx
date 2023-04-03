@@ -4,44 +4,19 @@ import ReactDOM from 'react-dom/client';
 import { BrowserHistory, createBrowserHistory, createMemoryHistory } from 'history';
 import App from './App';
 
-interface OnChildNavigate {
-  (path: string): void;
-}
-
-interface OnParentNavigate {
-  (path: string): void;
-}
-
 interface MountOptions {
-  onChildNavigate?: OnChildNavigate;
-  history?: BrowserHistory;
-  initialPath?: string;
+  history: BrowserHistory;
 }
 
-interface MountExportation {
-  onParentNavigate: OnParentNavigate;
-}
-
-function mount(el: Element, mountOptions: MountOptions): MountExportation {
+function mount(el: Element, mountOptions: Partial<MountOptions> = {}) {
   const history =
     mountOptions.history ||
     createMemoryHistory({
-      initialEntries: [mountOptions.initialPath || '/'],
+      initialEntries: [window.location.pathname],
     });
-
-  history.listen(update => {
-    const onChildNavigate = mountOptions?.onChildNavigate;
-    if (onChildNavigate) onChildNavigate(update.location.pathname);
-  });
 
   const root = ReactDOM.createRoot(el);
   root.render(<App history={history} />);
-
-  return {
-    onParentNavigate(path) {
-      if (history.location.pathname !== path) history.push(path);
-    },
-  };
 }
 
 if (process.env.NODE_ENV === 'development') {

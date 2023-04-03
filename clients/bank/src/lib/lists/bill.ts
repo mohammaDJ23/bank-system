@@ -1,7 +1,7 @@
 import { ListInstance, ListObj } from './list';
 
 export interface BillObj {
-  id: number;
+  id: string;
   amount: string;
   receiver: string;
   description: string;

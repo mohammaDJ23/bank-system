@@ -1,66 +1,68 @@
 import ListContainer from '../../layout/ListContainer';
-import { Constructor, UserList, UserObj } from '../../lib';
+import { Pathes, UserList, UserObj } from '../../lib';
 import EmptyList from './EmptyList';
 import List from './List';
 import Skeleton from './Skeleton';
 import { FC, useCallback, useEffect } from 'react';
 import { usePaginationList, useRequest } from '../../hooks';
 import { UsersApi, UsersApiConstructorType } from '../../apis';
+import { Navigate, useLocation } from 'react-router-dom';
 
 const UsersContent: FC = () => {
-  const { request, isInitialApiProcessing } = useRequest();
-  const listMaker = usePaginationList();
-  const { setList, onPageChange, getFullInfo, getListInfo } = listMaker(UserList);
-  const { list, isListEmpty, count, page, take, lists } = getFullInfo();
-  const isLoading = isInitialApiProcessing(UsersApi);
+  const location = useLocation();
+  const { request, isInitialApiProcessing, isApiProcessing } = useRequest();
+  const userListInstance = usePaginationList(UserList);
+  const userListInfo = userListInstance.getFullInfo();
+  const isInitialUsersApiProcessing = isInitialApiProcessing(UsersApi);
+  const isUsersApiProcessing = isApiProcessing(UsersApi);
+  const previousUserId: string | undefined = location.state?.previousUserId;
+  const isPreviousUserExist = !!previousUserId;
 
   const getUsersList = useCallback(
     (options: Partial<UsersApiConstructorType> = {}) => {
-      const apiData = { take, page, ...options };
+      const apiData = { take: userListInfo.take, page: userListInfo.page, ...options };
       const userApi = new UsersApi<UserObj>(apiData);
 
       if (apiData.isInitialApi) {
         userApi.setInitialApi();
       }
 
-      request<[UserObj[], number], UsersApiConstructorType>(userApi).then(res => {
-        const [userList, total] = res.data;
-        const createdList = getListInfo();
-        const constructedUserList = new (createdList.constructor as Constructor<UserList>)();
-        constructedUserList.list = Object.assign(lists, { [apiData.page]: userList });
-        constructedUserList.total = total;
-        constructedUserList.page = page;
-        setList(constructedUserList);
+      request<[UserObj[], number], UsersApiConstructorType>(userApi).then(response => {
+        const [list, total] = response.data;
+        userListInstance.insertNewList({ total, list, page: apiData.page });
       });
     },
-    [take, page, lists, request, setList, getListInfo]
+    [userListInfo, userListInstance, request]
   );
 
   useEffect(() => {
+    if (isPreviousUserExist) return;
     getUsersList({ isInitialApi: true });
   }, []);
 
   const changePage = useCallback(
     (newPage: number) => {
-      if (newPage === page || isLoading) return;
+      userListInstance.onPageChange(newPage);
 
-      onPageChange(newPage);
+      if (userListInstance.isNewPageEqualToCurrentPage(newPage) || isUsersApiProcessing) return;
 
-      if (!list[newPage]) {
-        getUsersList({ page: newPage });
-      }
+      if (!userListInstance.isNewPageExist(newPage)) getUsersList({ page: newPage });
     },
-    [page, isLoading, list, getUsersList, onPageChange]
+    [userListInstance, isUsersApiProcessing, getUsersList]
   );
+
+  if (isPreviousUserExist) {
+    return <Navigate to={Pathes.USER.replace(':id', previousUserId)} />;
+  }
 
   return (
     <ListContainer>
-      {isLoading ? (
-        <Skeleton take={take} />
-      ) : isListEmpty ? (
+      {isInitialUsersApiProcessing || isUsersApiProcessing ? (
+        <Skeleton take={userListInfo.take} />
+      ) : userListInstance.isListEmpty() ? (
         <EmptyList />
       ) : (
-        <List list={list} count={count} take={take} page={page} onPageChange={changePage} />
+        <List listInstance={userListInstance} onPageChange={changePage} />
       )}
     </ListContainer>
   );

@@ -1,45 +1,38 @@
-import { FC } from 'react';
-import { getUserRoles, UpdateUserByAdmin } from '../../lib';
+import { FC, useCallback } from 'react';
+import { getUserRoles, Pathes, UpdateUserByAdmin } from '../../lib';
 import Modal from '../Modal';
 import { ModalNames } from '../../store';
-import { useAction } from '../../hooks';
-import {
-  Box,
-  TextField,
-  Button,
-  Select,
-  FormControl,
-  MenuItem,
-  InputLabel,
-  FormHelperText,
-} from '@mui/material';
+import { useAction, useForm, useRequest } from '../../hooks';
+import { Box, TextField, Button, Select, FormControl, MenuItem, InputLabel, FormHelperText } from '@mui/material';
+import { UpdateUserByAdminApi } from '../../apis';
+import { notification } from 'antd';
+import { useNavigate, useParams } from 'react-router-dom';
 
 interface FormImportation {
-  onChange: (key: keyof UpdateUserByAdmin, value: any) => void;
-  form: UpdateUserByAdmin;
-  isLoading: boolean;
-  onSubmitWithConfirmation: () => void;
-  resetForm: () => void;
-  isConfirmationModalActive: boolean;
-  onSubmit: () => void;
-  getInputErrorMessage: (key: keyof UpdateUserByAdmin) => string | undefined;
-  isInputInValid: (key: keyof UpdateUserByAdmin) => boolean;
-  isFormValid: () => boolean;
+  formInstance: ReturnType<typeof useForm<UpdateUserByAdmin>>;
 }
 
-const Form: FC<FormImportation> = ({
-  form,
-  isLoading,
-  isConfirmationModalActive,
-  onChange,
-  onSubmitWithConfirmation,
-  resetForm,
-  onSubmit,
-  getInputErrorMessage,
-  isInputInValid,
-  isFormValid,
-}) => {
+const Form: FC<FormImportation> = ({ formInstance }) => {
+  const params = useParams();
+  const navigate = useNavigate();
   const { hideModal } = useAction();
+  const { request, isApiProcessing } = useRequest();
+  const isUpdateUserByAdminApiProcessing = isApiProcessing(UpdateUserByAdminApi);
+  const form = formInstance.getForm();
+
+  const formSubmition = useCallback(() => {
+    formInstance.onSubmit(() => {
+      request<UpdateUserByAdmin, UpdateUserByAdmin>(new UpdateUserByAdminApi(form))
+        .then(response => {
+          const userId = params.id as string;
+          hideModal(ModalNames.CONFIRMATION);
+          formInstance.resetForm();
+          notification.success({ message: 'Success', description: 'You have updated the user successfully.' });
+          navigate(Pathes.USER.replace(':id', userId));
+        })
+        .catch(err => hideModal(ModalNames.CONFIRMATION));
+    });
+  }, [formInstance, form, params, navigate, request, hideModal]);
 
   return (
     <>
@@ -52,7 +45,7 @@ const Form: FC<FormImportation> = ({
         gap="20px"
         onSubmit={event => {
           event.preventDefault();
-          onSubmitWithConfirmation();
+          formInstance.confirmation();
         }}
       >
         <TextField
@@ -60,40 +53,40 @@ const Form: FC<FormImportation> = ({
           variant="standard"
           type="text"
           value={form.firstName}
-          onChange={event => onChange('firstName', event.target.value)}
-          helperText={getInputErrorMessage('firstName')}
-          error={isInputInValid('firstName')}
-          disabled={isLoading}
+          onChange={event => formInstance.onChange('firstName', event.target.value)}
+          helperText={formInstance.getInputErrorMessage('firstName')}
+          error={formInstance.isInputInValid('firstName')}
+          disabled={isUpdateUserByAdminApiProcessing}
         />
         <TextField
           label="Last Name"
           variant="standard"
           type="text"
           value={form.lastName}
-          onChange={event => onChange('lastName', event.target.value)}
-          helperText={getInputErrorMessage('lastName')}
-          error={isInputInValid('lastName')}
-          disabled={isLoading}
+          onChange={event => formInstance.onChange('lastName', event.target.value)}
+          helperText={formInstance.getInputErrorMessage('lastName')}
+          error={formInstance.isInputInValid('lastName')}
+          disabled={isUpdateUserByAdminApiProcessing}
         />
         <TextField
           label="Email"
           type="email"
           variant="standard"
           value={form.email}
-          onChange={event => onChange('email', event.target.value)}
-          helperText={getInputErrorMessage('email')}
-          error={isInputInValid('email')}
-          disabled={isLoading}
+          onChange={event => formInstance.onChange('email', event.target.value)}
+          helperText={formInstance.getInputErrorMessage('email')}
+          error={formInstance.isInputInValid('email')}
+          disabled={isUpdateUserByAdminApiProcessing}
         />
         <TextField
           label="Phone"
           type="text"
           variant="standard"
           value={form.phone}
-          onChange={event => onChange('phone', event.target.value)}
-          helperText={getInputErrorMessage('phone')}
-          error={isInputInValid('phone')}
-          disabled={isLoading}
+          onChange={event => formInstance.onChange('phone', event.target.value)}
+          helperText={formInstance.getInputErrorMessage('phone')}
+          error={formInstance.isInputInValid('phone')}
+          disabled={isUpdateUserByAdminApiProcessing}
         />
         <FormControl variant="standard">
           <InputLabel id="role">Role</InputLabel>
@@ -101,9 +94,9 @@ const Form: FC<FormImportation> = ({
             labelId="role"
             id="role"
             value={form.role}
-            onChange={event => onChange('role', event.target.value)}
+            onChange={event => formInstance.onChange('role', event.target.value)}
             label="Role"
-            error={isInputInValid('role')}
+            error={formInstance.isInputInValid('role')}
           >
             {getUserRoles().map(el => (
               <MenuItem key={el.value} value={el.value}>
@@ -111,13 +104,13 @@ const Form: FC<FormImportation> = ({
               </MenuItem>
             ))}
           </Select>
-          {isInputInValid('role') && (
-            <FormHelperText>{getInputErrorMessage('role')}</FormHelperText>
+          {formInstance.isInputInValid('role') && (
+            <FormHelperText>{formInstance.getInputErrorMessage('role')}</FormHelperText>
           )}
         </FormControl>
         <Box component="div" display="flex" alignItems="center" gap="10px" marginTop="20px">
           <Button
-            disabled={isLoading || !isFormValid()}
+            disabled={isUpdateUserByAdminApiProcessing || !formInstance.isFormValid()}
             variant="contained"
             size="small"
             type="submit"
@@ -126,23 +119,22 @@ const Form: FC<FormImportation> = ({
             Update
           </Button>
           <Button
-            disabled={isLoading}
+            disabled={isUpdateUserByAdminApiProcessing}
             variant="outlined"
             size="small"
             type="button"
             sx={{ textTransform: 'capitalize' }}
-            onClick={() => resetForm()}
+            onClick={() => formInstance.resetForm()}
           >
             Reset
           </Button>
         </Box>
       </Box>
-
       <Modal
-        isLoading={isLoading}
-        isActive={isConfirmationModalActive}
+        isLoading={isUpdateUserByAdminApiProcessing}
+        isActive={formInstance.isConfirmationActive()}
         onCancel={() => hideModal(ModalNames.CONFIRMATION)}
-        onConfirm={() => onSubmit()}
+        onConfirm={formSubmition}
       />
     </>
   );

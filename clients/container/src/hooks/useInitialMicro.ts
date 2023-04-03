@@ -1,22 +1,18 @@
 import { useEffect, useRef } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 export function useInitialMicro(mount: Mount) {
   const ref = useRef<HTMLDivElement | null>(null);
   const navigate = useNavigate();
-  const location = useLocation();
 
   useEffect(() => {
     if (ref.current) {
-      const { onParentNavigate } = mount(ref.current, {
-        onChildNavigate: function (path) {
-          navigate(path);
-        },
+      mount(ref.current);
 
-        initialPath: location.pathname,
+      /**@ts-ignore */
+      window.addEventListener('child-redirection', (event: CustomEvent<RedirectionDetailObj>) => {
+        navigate(event.detail.path);
       });
-
-      onParentNavigate(location.pathname);
     }
   }, []);
 

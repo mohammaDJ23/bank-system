@@ -21,10 +21,10 @@ export class LastWeekReport {
 }
 
 export class TotalAmount {
-  constructor(public totalAmount: string = '0', public quantities: string = '0') {}
+  constructor(public totalAmount: string, public quantities: string) {}
 }
 
-export interface BillsLastWeekObj {
+export interface LastWeekBillsObj {
   count: number;
   amount: string;
   date: number;
@@ -36,11 +36,11 @@ export interface LastWeekUsersObj {
 }
 
 export class PeriodAmountFilter {
-  constructor(public start: number = 0, public end: number = 0) {}
+  constructor(public start: number, public end: number) {}
 }
 
 export class BillDates {
-  constructor(public start: number = 0, public end: number = 0) {}
+  constructor(public start: number, public end: number) {}
 }
 
 export class UserQuantities {
@@ -51,11 +51,11 @@ export interface SpecificDetailsState {
   user: UserObj | null;
   userWithBillInfo: UserWithBillInfoObj | null;
   bill: BillObj | null;
-  totalAmount: TotalAmount;
-  periodAmountFilter: PeriodAmountFilter;
-  billsLastWeek: BillsLastWeekObj[];
+  totalAmount: TotalAmount | null;
+  periodAmountFilter: PeriodAmountFilter | null;
+  lastWeekBills: LastWeekBillsObj[];
   lastWeekUsers: LastWeekUsersObj[];
-  billDates: BillDates;
+  billDates: BillDates | null;
   userQuantities: UserQuantities | null;
 }
 
@@ -63,11 +63,11 @@ const initialState: SpecificDetailsState = {
   user: null,
   userWithBillInfo: null,
   bill: null,
-  totalAmount: new TotalAmount(),
-  periodAmountFilter: new PeriodAmountFilter(),
-  billsLastWeek: [],
+  totalAmount: null,
+  periodAmountFilter: null,
+  lastWeekBills: [],
   lastWeekUsers: [],
-  billDates: new BillDates(),
+  billDates: null,
   userQuantities: null,
 };
 
@@ -84,11 +84,11 @@ function cleanState(state: SpecificDetailsState): SpecificDetailsState {
     user: null,
     userWithBillInfo: null,
     bill: null,
-    totalAmount: new TotalAmount(),
-    periodAmountFilter: new PeriodAmountFilter(),
-    billsLastWeek: [],
+    totalAmount: null,
+    periodAmountFilter: null,
+    lastWeekBills: [],
     lastWeekUsers: [],
-    billDates: new BillDates(),
+    billDates: null,
     userQuantities: null,
   };
 }

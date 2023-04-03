@@ -1,5 +1,6 @@
 import { FC } from 'react';
-import { Button, Dialog } from 'element-react';
+import { Dialog } from 'element-react';
+import { Button } from '@mui/material';
 
 interface ModalImportation {
   title: string | JSX.Element;
@@ -25,7 +26,7 @@ const Modal: FC<Partial<ModalImportation>> = ({
       title={title}
       size="tiny"
       visible={isActive}
-      onCancel={onCancel}
+      onCancel={isLoading ? () => {} : onCancel}
       lockScroll={false}
       style={{ maxWidth: '484px', width: '100%' }}
     >
@@ -35,15 +36,19 @@ const Modal: FC<Partial<ModalImportation>> = ({
       </Dialog.Body>
       {/**@ts-ignore */}
       <Dialog.Footer className="dialog-footer">
-        {/**@ts-ignore */}
-        <Button loading={isLoading} disabled={isLoading} onClick={isLoading ? () => {} : onCancel}>
+        <Button
+          sx={{ textTransform: 'capitalize', marginRight: '15px' }}
+          variant="outlined"
+          size="small"
+          disabled={isLoading}
+          onClick={isLoading ? () => {} : onCancel}
+        >
           Cancel
         </Button>
-
-        {/**@ts-ignore */}
         <Button
-          type="primary"
-          loading={isLoading}
+          sx={{ textTransform: 'capitalize' }}
+          variant="contained"
+          size="small"
           disabled={isLoading}
           onClick={isLoading ? () => {} : onConfirm}
         >

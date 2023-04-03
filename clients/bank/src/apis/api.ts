@@ -190,7 +190,7 @@ export class PeriodAmountApi extends RootApi<PeriodAmountFilter> {
   }
 }
 
-export class BillsLastWeekApi extends RootApi {
+export class LastWeekBillsApi extends RootApi {
   constructor() {
     super({
       url: '/bank/bills/last-week',

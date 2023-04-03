@@ -2,6 +2,7 @@ import { Box, Typography, Button } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { FC } from 'react';
 import { useAuth } from '../../hooks';
+import { Pathes } from '../../lib';
 
 const NotFound: FC = () => {
   const navigate = useNavigate();
@@ -13,15 +14,21 @@ const NotFound: FC = () => {
     <Box display="flex" alignItems="center" justifyContent="center" flexDirection="column" gap="12px" mt="20px">
       <Typography>Not found the user</Typography>
       {isAdmin() ? (
-        <Button onClick={() => navigate('/bank/users')} sx={{ textTransform: 'capitalize' }} variant="contained">
+        <Button
+          onClick={() => navigate(Pathes.USERS)}
+          sx={{ textTransform: 'capitalize' }}
+          size="small"
+          variant="contained"
+        >
           Navigate To The User List
         </Button>
       ) : (
         isUserInfoExist && (
           <Button
-            onClick={() => navigate(`/bank/users/${userInfo.id}`)}
+            onClick={() => navigate(Pathes.USER.replace(':id', userInfo.id.toString()))}
             sx={{ textTransform: 'capitalize' }}
             variant="contained"
+            size="small"
           >
             Navigate To The User Page
           </Button>

@@ -13,10 +13,7 @@ const initialState: ListContainerState = {
   element: null,
 };
 
-function setListContainerElement(
-  state: ListContainerState,
-  action: SetListContainerElementAction
-): ListContainerState {
+function setListContainerElement(state: ListContainerState, action: SetListContainerElementAction): ListContainerState {
   return {
     ...state,
     element: action.payload.element,

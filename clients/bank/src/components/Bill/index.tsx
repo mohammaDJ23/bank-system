@@ -13,13 +13,13 @@ const BillContent: FC = () => {
   const { isInitialApiProcessing, request } = useRequest();
   const { setSpecificDetails } = useAction();
   const { specificDetails } = useSelector();
-  const isBillProcessing = isInitialApiProcessing(BillApi);
-  const billId = params.id;
+  const isInitialBillApiProcessing = isInitialApiProcessing(BillApi);
   const bill = specificDetails.bill;
 
   useEffect(() => {
+    const billId = params.id;
     if (billId) {
-      request<BillObj, number>(new BillApi(billId).setInitialApi()).then(response => {
+      request<BillObj, string>(new BillApi(billId).setInitialApi()).then(response => {
         setSpecificDetails('bill', response.data);
       });
     }
@@ -27,7 +27,7 @@ const BillContent: FC = () => {
 
   return (
     <DefaultContainer>
-      {isBillProcessing ? <Skeleton /> : bill ? <Details bill={bill} /> : <NotFound />}
+      {isInitialBillApiProcessing ? <Skeleton /> : bill ? <Details bill={bill} /> : <NotFound />}
     </DefaultContainer>
   );
 };

@@ -3,7 +3,7 @@ import DefaultContainer from '../../layout/DefaultContainer';
 import { useParams } from 'react-router-dom';
 import { useAction, useRequest, useSelector } from '../../hooks';
 import Skeleton from './Skeleton';
-import { UserObj, UserWithBillInfoObj } from '../../lib';
+import { UserWithBillInfoObj } from '../../lib';
 import { UserWithBillInfoApi } from '../../apis';
 import NotFound from './NotFound';
 import Details from './Details';
@@ -13,11 +13,11 @@ const UserContent: FC = () => {
   const params = useParams();
   const { setSpecificDetails } = useAction();
   const { specificDetails } = useSelector();
-  const isUserProcessing = isInitialApiProcessing(UserWithBillInfoApi);
-  const userId = params.id;
+  const isUserWithBillInfoApiProcessing = isInitialApiProcessing(UserWithBillInfoApi);
   const user = specificDetails.userWithBillInfo;
 
   useEffect(() => {
+    const userId = params.id;
     if (userId) {
       request<UserWithBillInfoObj, number>(new UserWithBillInfoApi(+userId).setInitialApi()).then(response => {
         setSpecificDetails('userWithBillInfo', response.data);
@@ -27,7 +27,7 @@ const UserContent: FC = () => {
 
   return (
     <DefaultContainer>
-      {isUserProcessing ? <Skeleton /> : user ? <Details user={user} /> : <NotFound />}
+      {isUserWithBillInfoApiProcessing ? <Skeleton /> : user ? <Details user={user} /> : <NotFound />}
     </DefaultContainer>
   );
 };

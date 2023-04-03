@@ -14,6 +14,7 @@ import { Provider } from 'react-redux';
 import { store } from './store';
 import HistoryProvider from './components/hoc/HistoryProvider';
 import AuthProtectionProvider from './lib/providers/AuthProtectionProvider';
+import RedirectionProvider from './lib/providers/RedirectionProvider';
 
 interface AppImportation {
   history: BrowserHistory | MemoryHistory;
@@ -31,17 +32,19 @@ const App: FC<AppImportation> = props => {
                 key={route.path}
                 path={route.path}
                 element={
-                  route.needAuth ? (
-                    <AuthProtectionProvider>
+                  <RedirectionProvider>
+                    {route.needAuth ? (
+                      <AuthProtectionProvider>
+                        <Navigation>
+                          <Suspense fallback={<LoadingFallback />}>{route.element}</Suspense>
+                        </Navigation>
+                      </AuthProtectionProvider>
+                    ) : (
                       <Navigation>
                         <Suspense fallback={<LoadingFallback />}>{route.element}</Suspense>
                       </Navigation>
-                    </AuthProtectionProvider>
-                  ) : (
-                    <Navigation>
-                      <Suspense fallback={<LoadingFallback />}>{route.element}</Suspense>
-                    </Navigation>
-                  )
+                    )}
+                  </RedirectionProvider>
                 }
               />
             ))}
