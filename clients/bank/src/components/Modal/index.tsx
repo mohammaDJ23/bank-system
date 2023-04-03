@@ -37,8 +37,9 @@ const Modal: FC<Partial<ModalImportation>> = ({
       {/**@ts-ignore */}
       <Dialog.Footer className="dialog-footer">
         <Button
-          sx={{ textTransform: 'capitalize' }}
+          sx={{ textTransform: 'capitalize', marginRight: '15px' }}
           variant="outlined"
+          size="small"
           disabled={isLoading}
           onClick={isLoading ? () => {} : onCancel}
         >
@@ -47,6 +48,7 @@ const Modal: FC<Partial<ModalImportation>> = ({
         <Button
           sx={{ textTransform: 'capitalize' }}
           variant="contained"
+          size="small"
           disabled={isLoading}
           onClick={isLoading ? () => {} : onConfirm}
         >

@@ -1,37 +1,38 @@
-import { getTime, isoDate, UpdateBill } from '../../lib';
-import { FC } from 'react';
+import { getTime, isoDate, Pathes, UpdateBill } from '../../lib';
+import { FC, useCallback } from 'react';
 import { Box, TextField, Button } from '@mui/material';
 import Modal from '../Modal';
-import { useAction } from '../../hooks';
+import { useAction, useForm, useRequest } from '../../hooks';
 import { ModalNames } from '../../store';
-import dateFormat from 'dateformat';
+import { UpdateBillApi } from '../../apis';
+import { notification } from 'antd';
+import { useNavigate, useParams } from 'react-router-dom';
 
 interface FormImportation {
-  onChange: (key: keyof UpdateBill, value: any) => void;
-  form: UpdateBill;
-  isLoading: boolean;
-  onSubmitWithConfirmation: () => void;
-  formSubmition: () => void;
-  resetForm: () => void;
-  getInputErrorMessage: (key: keyof UpdateBill) => string | undefined;
-  isInputInValid: (key: keyof UpdateBill) => boolean;
-  isFormValid: () => boolean;
-  isConfirmationActive: boolean;
+  formInstance: ReturnType<typeof useForm<UpdateBill>>;
 }
 
-const Form: FC<FormImportation> = ({
-  onChange,
-  onSubmitWithConfirmation,
-  resetForm,
-  formSubmition,
-  getInputErrorMessage,
-  isInputInValid,
-  isFormValid,
-  form,
-  isLoading,
-  isConfirmationActive,
-}) => {
+const Form: FC<FormImportation> = ({ formInstance }) => {
+  const params = useParams();
   const { hideModal } = useAction();
+  const navigate = useNavigate();
+  const { isApiProcessing, request } = useRequest();
+  const isUpdateBillApiProcessing = isApiProcessing(UpdateBillApi);
+  const form = formInstance.getForm();
+
+  const formSubmition = useCallback(() => {
+    const billId = params.id as string;
+    formInstance.onSubmit(() => {
+      request<UpdateBill, UpdateBill>(new UpdateBillApi(form))
+        .then(response => {
+          hideModal(ModalNames.CONFIRMATION);
+          formInstance.resetForm();
+          notification.success({ message: 'Success', description: 'You have updated the bill successfully.' });
+          navigate(Pathes.BILL.replace(':id', billId));
+        })
+        .catch(err => hideModal(ModalNames.CONFIRMATION));
+    });
+  }, [form, formInstance, params, request, hideModal, navigate]);
 
   return (
     <>
@@ -44,7 +45,7 @@ const Form: FC<FormImportation> = ({
         gap="20px"
         onSubmit={event => {
           event.preventDefault();
-          onSubmitWithConfirmation();
+          formInstance.confirmation();
         }}
       >
         <TextField
@@ -52,31 +53,31 @@ const Form: FC<FormImportation> = ({
           variant="standard"
           type="number"
           value={form.amount}
-          onChange={event => onChange('amount', event.target.value)}
-          helperText={getInputErrorMessage('amount')}
-          error={isInputInValid('amount')}
-          disabled={isLoading}
+          onChange={event => formInstance.onChange('amount', event.target.value)}
+          helperText={formInstance.getInputErrorMessage('amount')}
+          error={formInstance.isInputInValid('amount')}
+          disabled={isUpdateBillApiProcessing}
         />
         <TextField
           label="Receiver"
           variant="standard"
           type="text"
           value={form.receiver}
-          onChange={event => onChange('receiver', event.target.value)}
-          helperText={getInputErrorMessage('receiver')}
-          error={isInputInValid('receiver')}
-          disabled={isLoading}
+          onChange={event => formInstance.onChange('receiver', event.target.value)}
+          helperText={formInstance.getInputErrorMessage('receiver')}
+          error={formInstance.isInputInValid('receiver')}
+          disabled={isUpdateBillApiProcessing}
         />
         <TextField
           label="Date"
           type="date"
           variant="standard"
           value={isoDate(form.date)}
-          onChange={event => onChange('date', getTime(event.target.value))}
-          helperText={getInputErrorMessage('date')}
-          error={isInputInValid('date')}
+          onChange={event => formInstance.onChange('date', getTime(event.target.value))}
+          helperText={formInstance.getInputErrorMessage('date')}
+          error={formInstance.isInputInValid('date')}
           InputLabelProps={{ shrink: true }}
-          disabled={isLoading}
+          disabled={isUpdateBillApiProcessing}
         />
         <TextField
           label="Description"
@@ -85,14 +86,14 @@ const Form: FC<FormImportation> = ({
           multiline
           variant="standard"
           value={form.description}
-          onChange={event => onChange('description', event.target.value)}
-          helperText={getInputErrorMessage('description')}
-          error={isInputInValid('description')}
-          disabled={isLoading}
+          onChange={event => formInstance.onChange('description', event.target.value)}
+          helperText={formInstance.getInputErrorMessage('description')}
+          error={formInstance.isInputInValid('description')}
+          disabled={isUpdateBillApiProcessing}
         />
         <Box component="div" display="flex" alignItems="center" gap="10px" marginTop="20px">
           <Button
-            disabled={isLoading || !isFormValid()}
+            disabled={isUpdateBillApiProcessing || !formInstance.isFormValid()}
             variant="contained"
             size="small"
             type="submit"
@@ -101,20 +102,20 @@ const Form: FC<FormImportation> = ({
             Update
           </Button>
           <Button
-            disabled={isLoading}
+            disabled={isUpdateBillApiProcessing}
             variant="outlined"
             size="small"
             type="button"
             sx={{ textTransform: 'capitalize' }}
-            onClick={() => resetForm()}
+            onClick={() => formInstance.resetForm()}
           >
             Reset
           </Button>
         </Box>
       </Box>
       <Modal
-        isLoading={isLoading}
-        isActive={isConfirmationActive}
+        isLoading={isUpdateBillApiProcessing}
+        isActive={formInstance.isConfirmationActive()}
         onCancel={() => hideModal(ModalNames.CONFIRMATION)}
         onConfirm={formSubmition}
       />
