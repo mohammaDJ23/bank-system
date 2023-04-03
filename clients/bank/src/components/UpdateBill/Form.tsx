@@ -21,10 +21,10 @@ const Form: FC<FormImportation> = ({ formInstance }) => {
   const form = formInstance.getForm();
 
   const formSubmition = useCallback(() => {
-    const billId = params.id as string;
     formInstance.onSubmit(() => {
       request<UpdateBill, UpdateBill>(new UpdateBillApi(form))
         .then(response => {
+          const billId = params.id as string;
           hideModal(ModalNames.CONFIRMATION);
           formInstance.resetForm();
           notification.success({ message: 'Success', description: 'You have updated the bill successfully.' });
