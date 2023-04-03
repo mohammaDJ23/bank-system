@@ -36,12 +36,7 @@ export const routes = [
   { title: 'Users', path: Pathes.USERS, element: <Users />, needAuth: true },
   { title: 'Create bill', path: Pathes.CREATE_BILL, element: <CreateBill />, needAuth: true },
   { title: 'Create user', path: Pathes.CREATE_USER, element: <CreateUser />, needAuth: true },
-  {
-    title: 'Update user by admin',
-    path: Pathes.UPDATE_USER_BY_ADMIN,
-    element: <UpdateUserByAdmin />,
-    needAuth: true,
-  },
+  { title: 'Update user by admin', path: Pathes.UPDATE_USER_BY_ADMIN, element: <UpdateUserByAdmin />, needAuth: true },
   { title: 'Update bill', path: Pathes.UPDATE_BILL, element: <UpdateBill />, needAuth: true },
   { title: 'Update user', path: Pathes.UPDATE_USER, element: <UpdateUserByUser />, needAuth: true },
   { title: 'User', path: Pathes.USER, element: <User />, needAuth: true },

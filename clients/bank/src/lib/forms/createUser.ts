@@ -53,7 +53,7 @@ export class CreateUser extends Form {
     this.firstName = this.getCachedInput('firstName');
     this.lastName = this.getCachedInput('lastName');
     this.email = this.getCachedInput('email');
-    this.password = '';
+    this.password = this.password;
     this.phone = this.getCachedInput('phone');
     this.role = this.getCachedInput('role');
   }

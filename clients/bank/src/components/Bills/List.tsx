@@ -4,28 +4,27 @@ import { useNavigate } from 'react-router-dom';
 import moment from 'moment';
 import CountBadge from '../CountBadge';
 import Pagination from '../Pagination';
-import { BillObj } from '../../lib';
+import { BillObj, Pathes } from '../../lib';
+import { usePaginationList } from '../../hooks';
 
 interface BillListImportation {
-  list: BillObj[];
-  take: number;
-  page: number;
-  count: number;
+  listInstance: ReturnType<typeof usePaginationList<BillObj>>;
   onPageChange: (newPage: number) => void;
 }
 
-const BillList: FC<BillListImportation> = ({ list, take, page, count, onPageChange }) => {
+const BillList: FC<BillListImportation> = ({ listInstance, onPageChange }) => {
   const navigate = useNavigate();
+  const listInfo = listInstance.getFullInfo();
 
   return (
     <>
       <List>
-        {list.map((bill, index) => (
+        {listInfo.list.map((bill, index) => (
           <Card
             key={index}
             variant="outlined"
             sx={{ my: '20px', position: 'relative', overflow: 'visible' }}
-            onClick={() => navigate(`/bank/bills/${bill.id}`)}
+            onClick={() => navigate(Pathes.BILL.replace(':id', bill.id))}
           >
             <ListItemButton>
               <ListItem disablePadding sx={{ my: '10px' }}>
@@ -52,14 +51,14 @@ const BillList: FC<BillListImportation> = ({ list, take, page, count, onPageChan
                   </Box>
                 </Box>
 
-                <CountBadge index={index} page={page} take={take} />
+                <CountBadge index={index} page={listInfo.page} take={listInfo.take} />
               </ListItem>
             </ListItemButton>
           </Card>
         ))}
       </List>
 
-      <Pagination page={page} count={count} onPageChange={onPageChange} />
+      <Pagination page={listInfo.page} count={listInfo.count} onPageChange={onPageChange} />
     </>
   );
 };

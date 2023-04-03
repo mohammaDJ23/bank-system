@@ -9,7 +9,12 @@ const NotFound: FC = () => {
   return (
     <Box display="flex" alignItems="center" justifyContent="center" flexDirection="column" gap="12px" mt="20px">
       <Typography>Not found the bill</Typography>
-      <Button onClick={() => navigate(Pathes.BILLS)} sx={{ textTransform: 'capitalize' }} variant="contained">
+      <Button
+        onClick={() => navigate(Pathes.BILLS)}
+        sx={{ textTransform: 'capitalize' }}
+        size="small"
+        variant="contained"
+      >
         Navigate To The Bill List
       </Button>
     </Box>

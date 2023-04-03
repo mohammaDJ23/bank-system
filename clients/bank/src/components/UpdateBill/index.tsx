@@ -13,7 +13,7 @@ const UpdateBillContent: FC = () => {
   const { setSpecificDetails } = useAction();
   const { specificDetails } = useSelector();
   const { request, isInitialApiProcessing } = useRequest();
-  const updateBillInstance = useForm(UpdateBill);
+  const updateBillFormInstance = useForm(UpdateBill);
   const isInitialBillApiProcessing = isInitialApiProcessing(BillApi);
 
   useEffect(() => {
@@ -21,7 +21,7 @@ const UpdateBillContent: FC = () => {
     if (billId) {
       request<BillObj, string>(new BillApi(billId).setInitialApi()).then(response => {
         setSpecificDetails('bill', response.data);
-        updateBillInstance.initializeForm(
+        updateBillFormInstance.initializeForm(
           new UpdateBill({
             id: response.data.id,
             amount: response.data.amount,
@@ -39,7 +39,7 @@ const UpdateBillContent: FC = () => {
       {isInitialBillApiProcessing ? (
         <Skeleton />
       ) : specificDetails.bill ? (
-        <Form formInstance={updateBillInstance} />
+        <Form formInstance={updateBillFormInstance} />
       ) : (
         <NotFound />
       )}

@@ -14,12 +14,12 @@ const BillContent: FC = () => {
   const { setSpecificDetails } = useAction();
   const { specificDetails } = useSelector();
   const isInitialBillApiProcessing = isInitialApiProcessing(BillApi);
-  const billId = params.id;
   const bill = specificDetails.bill;
 
   useEffect(() => {
+    const billId = params.id;
     if (billId) {
-      request<BillObj, number>(new BillApi(billId).setInitialApi()).then(response => {
+      request<BillObj, string>(new BillApi(billId).setInitialApi()).then(response => {
         setSpecificDetails('bill', response.data);
       });
     }

@@ -7,24 +7,20 @@ import { FC, useCallback, useEffect } from 'react';
 import { CreateBillApi } from '../../apis';
 
 const CreateBillContent: FC = () => {
-  const { getForm, onChange, resetForm, onSubmit, getInputErrorMessage, isInputInValid, isFormValid } =
-    useForm(CreateBill);
+  const createBillFromInstance = useForm(CreateBill);
   const { isApiProcessing, request } = useRequest();
   const { focus } = useFocus();
   const isCreateBillApiProcessing = isApiProcessing(CreateBillApi);
-  const form = getForm();
+  const form = createBillFromInstance.getForm();
 
   const formSubmition = useCallback(() => {
-    onSubmit(() => {
+    createBillFromInstance.onSubmit(() => {
       request<CreateBill, CreateBill>(new CreateBillApi(form)).then(response => {
-        resetForm();
-        notification.success({
-          message: 'Success',
-          description: 'Your bill was created successfully.',
-        });
+        createBillFromInstance.resetForm();
+        notification.success({ message: 'Success', description: 'Your bill was created successfully.' });
       });
     });
-  }, [form, resetForm, onSubmit, request]);
+  }, [createBillFromInstance, form, request]);
 
   useEffect(() => {
     focus('amount');
@@ -49,9 +45,9 @@ const CreateBillContent: FC = () => {
           variant="standard"
           type="number"
           value={form.amount}
-          onChange={event => onChange('amount', event.target.value)}
-          helperText={getInputErrorMessage('amount')}
-          error={isInputInValid('amount')}
+          onChange={event => createBillFromInstance.onChange('amount', event.target.value)}
+          helperText={createBillFromInstance.getInputErrorMessage('amount')}
+          error={createBillFromInstance.isInputInValid('amount')}
           disabled={isCreateBillApiProcessing}
           name="amount"
         />
@@ -60,9 +56,9 @@ const CreateBillContent: FC = () => {
           variant="standard"
           type="text"
           value={form.receiver}
-          onChange={event => onChange('receiver', event.target.value)}
-          helperText={getInputErrorMessage('receiver')}
-          error={isInputInValid('receiver')}
+          onChange={event => createBillFromInstance.onChange('receiver', event.target.value)}
+          helperText={createBillFromInstance.getInputErrorMessage('receiver')}
+          error={createBillFromInstance.isInputInValid('receiver')}
           disabled={isCreateBillApiProcessing}
         />
         <TextField
@@ -70,9 +66,9 @@ const CreateBillContent: FC = () => {
           type="date"
           variant="standard"
           value={isoDate(form.date)}
-          onChange={event => onChange('date', getTime(event.target.value))}
-          helperText={getInputErrorMessage('date')}
-          error={isInputInValid('date')}
+          onChange={event => createBillFromInstance.onChange('date', getTime(event.target.value))}
+          helperText={createBillFromInstance.getInputErrorMessage('date')}
+          error={createBillFromInstance.isInputInValid('date')}
           InputLabelProps={{ shrink: true }}
           disabled={isCreateBillApiProcessing}
         />
@@ -83,14 +79,14 @@ const CreateBillContent: FC = () => {
           multiline
           variant="standard"
           value={form.description}
-          onChange={event => onChange('description', event.target.value)}
-          helperText={getInputErrorMessage('description')}
-          error={isInputInValid('description')}
+          onChange={event => createBillFromInstance.onChange('description', event.target.value)}
+          helperText={createBillFromInstance.getInputErrorMessage('description')}
+          error={createBillFromInstance.isInputInValid('description')}
           disabled={isCreateBillApiProcessing}
         />
         <Box component="div" display="flex" alignItems="center" gap="10px" marginTop="20px">
           <Button
-            disabled={isCreateBillApiProcessing || !isFormValid()}
+            disabled={isCreateBillApiProcessing || !createBillFromInstance.isFormValid()}
             variant="contained"
             size="small"
             type="submit"
@@ -104,7 +100,7 @@ const CreateBillContent: FC = () => {
             size="small"
             type="button"
             sx={{ textTransform: 'capitalize' }}
-            onClick={() => resetForm()}
+            onClick={() => createBillFromInstance.resetForm()}
           >
             Reset
           </Button>

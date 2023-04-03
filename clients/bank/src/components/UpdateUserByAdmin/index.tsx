@@ -13,7 +13,7 @@ const UpdateUserByAdminContent: FC = () => {
   const { setSpecificDetails } = useAction();
   const { specificDetails } = useSelector();
   const { request, isInitialApiProcessing } = useRequest();
-  const updateUserByAdminInstance = useForm(UpdateUserByAdmin);
+  const updateUserByAdminFormInstance = useForm(UpdateUserByAdmin);
   const isInitialUserApiProcessing = isInitialApiProcessing(UserApi);
 
   useEffect(() => {
@@ -21,7 +21,7 @@ const UpdateUserByAdminContent: FC = () => {
     if (userId) {
       request<UserObj, number>(new UserApi(+userId).setInitialApi()).then(response => {
         setSpecificDetails('user', response.data);
-        updateUserByAdminInstance.initializeForm(
+        updateUserByAdminFormInstance.initializeForm(
           new UpdateUserByAdmin({
             id: response.data.id,
             firstName: response.data.firstName,
@@ -40,7 +40,7 @@ const UpdateUserByAdminContent: FC = () => {
       {isInitialUserApiProcessing ? (
         <Skeleton />
       ) : specificDetails.user ? (
-        <Form formInstance={updateUserByAdminInstance} />
+        <Form formInstance={updateUserByAdminFormInstance} />
       ) : (
         <NotFound />
       )}

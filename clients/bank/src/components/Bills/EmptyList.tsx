@@ -9,7 +9,12 @@ const EmptyList: FC = () => {
   return (
     <Box display="flex" alignItems="center" justifyContent="center" flexDirection="column" gap="12px" mt="20px">
       <Typography>Empty List</Typography>
-      <Button onClick={() => navigate(Pathes.CREATE_BILL)} sx={{ textTransform: 'capitalize' }} variant="contained">
+      <Button
+        onClick={() => navigate(Pathes.CREATE_BILL)}
+        sx={{ textTransform: 'capitalize' }}
+        size="small"
+        variant="contained"
+      >
         Create A New Bill
       </Button>
     </Box>

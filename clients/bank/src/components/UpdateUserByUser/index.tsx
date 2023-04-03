@@ -13,7 +13,7 @@ const UpdateUserByUserContent: FC = () => {
   const { setSpecificDetails } = useAction();
   const { specificDetails } = useSelector();
   const { request, isInitialApiProcessing } = useRequest();
-  const updateUserByUserInstance = useForm(UpdateUserByUser);
+  const updateUserByUserFormInstance = useForm(UpdateUserByUser);
   const isInitialUserApiProcessing = isInitialApiProcessing(UserApi);
 
   useEffect(() => {
@@ -21,7 +21,7 @@ const UpdateUserByUserContent: FC = () => {
     if (userId) {
       request<UserObj, number>(new UserApi(+userId).setInitialApi()).then(response => {
         setSpecificDetails('user', response.data);
-        updateUserByUserInstance.initializeForm(
+        updateUserByUserFormInstance.initializeForm(
           new UpdateUserByUser({
             id: response.data.id,
             firstName: response.data.firstName,
@@ -39,7 +39,7 @@ const UpdateUserByUserContent: FC = () => {
       {isInitialUserApiProcessing ? (
         <Skeleton />
       ) : specificDetails.user ? (
-        <Form formInstance={updateUserByUserInstance} />
+        <Form formInstance={updateUserByUserFormInstance} />
       ) : (
         <NotFound />
       )}

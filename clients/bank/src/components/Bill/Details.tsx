@@ -7,7 +7,7 @@ import { FC, useCallback, useState } from 'react';
 import { useAction, useRequest, useSelector } from '../../hooks';
 import { BillObj, Pathes } from '../../lib';
 import { ModalNames } from '../../store';
-import { DeleteBillApi } from '../../apis';
+import { DeleteBillApi, IdReq } from '../../apis';
 
 interface DetailsImporation {
   bill: BillObj;
@@ -21,8 +21,7 @@ const Details: FC<DetailsImporation> = ({ bill }) => {
   const { modals } = useSelector();
   const { isApiProcessing, request } = useRequest();
   const isDeleteBillApiProcessing = isApiProcessing(DeleteBillApi);
-  const billId = bill.id;
-  const options = [{ label: 'Update', path: Pathes.UPDATE_BILL.replace(':id', billId) }];
+  const options = [{ label: 'Update', path: Pathes.UPDATE_BILL.replace(':id', bill.id) }];
 
   const onMenuOpen = useCallback((event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
@@ -47,15 +46,13 @@ const Details: FC<DetailsImporation> = ({ bill }) => {
   }, [showModal]);
 
   const deleteBill = useCallback(() => {
-    if (billId) {
-      request(new DeleteBillApi(billId))
-        .then(() => {
-          hideModal(ModalNames.CONFIRMATION);
-          navigate(Pathes.BILLS);
-        })
-        .catch(err => hideModal(ModalNames.CONFIRMATION));
-    }
-  }, [billId, request, hideModal, navigate]);
+    request<BillObj, IdReq>(new DeleteBillApi(bill.id))
+      .then(() => {
+        hideModal(ModalNames.CONFIRMATION);
+        navigate(Pathes.BILLS);
+      })
+      .catch(err => hideModal(ModalNames.CONFIRMATION));
+  }, [bill, request, hideModal, navigate]);
 
   return (
     <>
@@ -98,6 +95,7 @@ const Details: FC<DetailsImporation> = ({ bill }) => {
             onClick={onDeleteBill}
             variant="contained"
             color="error"
+            size="small"
             sx={{ textTransform: 'capitalize' }}
           >
             Delete the bill
