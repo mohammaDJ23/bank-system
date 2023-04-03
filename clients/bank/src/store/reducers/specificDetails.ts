@@ -24,7 +24,7 @@ export class TotalAmount {
   constructor(public totalAmount: string, public quantities: string) {}
 }
 
-export interface BillsLastWeekObj {
+export interface LastWeekBillsObj {
   count: number;
   amount: string;
   date: number;
@@ -53,7 +53,7 @@ export interface SpecificDetailsState {
   bill: BillObj | null;
   totalAmount: TotalAmount | null;
   periodAmountFilter: PeriodAmountFilter | null;
-  billsLastWeek: BillsLastWeekObj[];
+  lastWeekBills: LastWeekBillsObj[];
   lastWeekUsers: LastWeekUsersObj[];
   billDates: BillDates | null;
   userQuantities: UserQuantities | null;
@@ -65,7 +65,7 @@ const initialState: SpecificDetailsState = {
   bill: null,
   totalAmount: null,
   periodAmountFilter: null,
-  billsLastWeek: [],
+  lastWeekBills: [],
   lastWeekUsers: [],
   billDates: null,
   userQuantities: null,
@@ -86,7 +86,7 @@ function cleanState(state: SpecificDetailsState): SpecificDetailsState {
     bill: null,
     totalAmount: null,
     periodAmountFilter: null,
-    billsLastWeek: [],
+    lastWeekBills: [],
     lastWeekUsers: [],
     billDates: null,
     userQuantities: null,

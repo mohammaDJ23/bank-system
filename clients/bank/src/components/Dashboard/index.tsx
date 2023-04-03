@@ -3,13 +3,13 @@ import { FC, useEffect, useRef, useState } from 'react';
 import { Box, CardContent, Typography, Slider, Input, styled } from '@mui/material';
 import { DateRange } from '@mui/icons-material';
 import { grey } from '@mui/material/colors';
-import { BillsLastWeekApi, LastWeekUsersApi, PeriodAmountApi, TotalAmountApi, UserQuantitiesApi } from '../../apis';
+import { LastWeekBillsApi, LastWeekUsersApi, PeriodAmountApi, TotalAmountApi, UserQuantitiesApi } from '../../apis';
 import { useAction, useAuth, useRequest, useSelector } from '../../hooks';
 import MainContainer from '../../layout/MainContainer';
 import { debounce, getTime } from '../../lib';
 import {
   BillDates,
-  BillsLastWeekObj,
+  LastWeekBillsObj,
   LastWeekReport,
   LastWeekUsersObj,
   PeriodAmountFilter,
@@ -109,10 +109,10 @@ const Dashboard: FC = () => {
   const { setSpecificDetails } = useAction();
   const { specificDetails } = useSelector();
   const isUserAdmin = isAdmin();
-  const isTotalAmountProcessing = isInitialApiProcessing(TotalAmountApi);
-  const isBillsLastWeekProcessing = isInitialApiProcessing(BillsLastWeekApi);
-  const isPeriodAmountProcessing = isApiProcessing(PeriodAmountApi);
-  const isUserQuantitiesProcessing = isInitialApiProcessing(UserQuantitiesApi);
+  const isInitialTotalAmountApiProcessing = isInitialApiProcessing(TotalAmountApi);
+  const isInitialLastWeekBillsApiProcessing = isInitialApiProcessing(LastWeekBillsApi);
+  const isPeriodAmountApiProcessing = isApiProcessing(PeriodAmountApi);
+  const isInitialUserQuantitiesApiProcessing = isInitialApiProcessing(UserQuantitiesApi);
 
   const periodAmountChangeRequest = useRef(
     debounce(500, (previousPeriodAmountFilter: PeriodAmountFilter, newPeriodAmountFilter: PeriodAmountFilter) => {
@@ -141,10 +141,10 @@ const Dashboard: FC = () => {
       });
     }
 
-    Promise.allSettled<[Promise<AxiosResponse<TotalAmount & BillDates>>, Promise<AxiosResponse<BillsLastWeekObj[]>>]>([
+    Promise.allSettled<[Promise<AxiosResponse<TotalAmount & BillDates>>, Promise<AxiosResponse<LastWeekBillsObj[]>>]>([
       request(new TotalAmountApi().setInitialApi()),
-      request(new BillsLastWeekApi().setInitialApi()),
-    ]).then(([totalAmountResponse, billsLastWeekResponse]) => {
+      request(new LastWeekBillsApi().setInitialApi()),
+    ]).then(([totalAmountResponse, lastWeekBillsResponse]) => {
       if (totalAmountResponse.status === 'fulfilled') {
         const { start, end, totalAmount, quantities } = totalAmountResponse.value.data;
         setSpecificDetails('totalAmount', new TotalAmount(totalAmount, quantities));
@@ -152,8 +152,8 @@ const Dashboard: FC = () => {
         setSpecificDetails('periodAmountFilter', new PeriodAmountFilter(start, end));
       }
 
-      if (billsLastWeekResponse.status === 'fulfilled')
-        setSpecificDetails('billsLastWeek', billsLastWeekResponse.value.data);
+      if (lastWeekBillsResponse.status === 'fulfilled')
+        setSpecificDetails('lastWeekBills', lastWeekBillsResponse.value.data);
     });
   }, []);
 
@@ -183,11 +183,11 @@ const Dashboard: FC = () => {
   function getChartData() {
     let chartData: LastWeekReport[] = [];
 
-    for (let i = 0; i < specificDetails.billsLastWeek.length; i++)
+    for (let i = 0; i < specificDetails.lastWeekBills.length; i++)
       chartData[i] = new LastWeekReport({
-        date: moment(specificDetails.billsLastWeek[i].date).format('l'),
-        billCounts: specificDetails.billsLastWeek[i].count,
-        billAmount: specificDetails.billsLastWeek[i].amount,
+        date: moment(specificDetails.lastWeekBills[i].date).format('l'),
+        billCounts: specificDetails.lastWeekBills[i].count,
+        billAmount: specificDetails.lastWeekBills[i].amount,
       });
 
     for (let i = 0; i < chartData.length && isUserAdmin; i++)
@@ -217,7 +217,7 @@ const Dashboard: FC = () => {
     const BillDates = specificDetails.billDates as BillDates;
     const remiderOfEndDates = BillDates.end - end;
 
-    if (remiderOfEndDates < 1 * 24 * 60 * 60 * 1000) {
+    if (remiderOfEndDates < defaultSliderStep) {
       end = BillDates.end;
       setSliderStep(defaultSliderStep + remiderOfEndDates);
     } else setSliderStep(defaultSliderStep);
@@ -241,7 +241,7 @@ const Dashboard: FC = () => {
   return (
     <MainContainer>
       <Box component="div" display="flex" alignItems="center" justifyContent="center" flexDirection="column" gap="16px">
-        {isBillsLastWeekProcessing ? (
+        {isInitialLastWeekBillsApiProcessing ? (
           <Skeleton height="440px" width="100%" />
         ) : (
           <>
@@ -314,7 +314,7 @@ const Dashboard: FC = () => {
         )}
 
         {isUserAdmin &&
-          (isUserQuantitiesProcessing ? (
+          (isInitialUserQuantitiesApiProcessing ? (
             <Skeleton width="100%" height="152px" />
           ) : (
             specificDetails.userQuantities && (
@@ -339,7 +339,7 @@ const Dashboard: FC = () => {
             )
           ))}
 
-        {isTotalAmountProcessing ? (
+        {isInitialTotalAmountApiProcessing ? (
           <Skeleton width="100%" height="128px" />
         ) : (
           specificDetails.totalAmount &&
@@ -348,73 +348,71 @@ const Dashboard: FC = () => {
             <Card>
               <CardContent>
                 <Box display="flex" justifyContent="center" flexDirection="column" gap="20px">
-                  {specificDetails.periodAmountFilter.start > 0 &&
-                    specificDetails.periodAmountFilter.end > 0 &&
-                    (() => {
-                      const slider = (
-                        <Slider
-                          disabled={isPeriodAmountProcessing}
-                          value={[specificDetails.periodAmountFilter.start, specificDetails.periodAmountFilter.end]}
-                          step={sliderStep}
-                          min={specificDetails.billDates.start}
-                          max={specificDetails.billDates.end}
-                          onChange={changeSlider}
-                          valueLabelDisplay="off"
-                        />
-                      );
+                  {(() => {
+                    const slider = (
+                      <Slider
+                        disabled={isPeriodAmountApiProcessing}
+                        value={[specificDetails.periodAmountFilter.start, specificDetails.periodAmountFilter.end]}
+                        step={sliderStep}
+                        min={specificDetails.billDates.start}
+                        max={specificDetails.billDates.end}
+                        onChange={changeSlider}
+                        valueLabelDisplay="off"
+                      />
+                    );
 
-                      return (
-                        <Box>
-                          <SmallSliderWrapper>{slider}</SmallSliderWrapper>
-                          <Box
-                            display="flex"
-                            alignItems="center"
-                            justifyContent="space-between"
-                            gap="30px"
-                            position="relative"
-                          >
-                            <Box display="flex" alignItems="center" gap="5px">
-                              <Typography fontSize="10px" whiteSpace="nowrap">
-                                {moment(specificDetails.periodAmountFilter.start).format('ll')}
-                              </Typography>
-                              <DateRange fontSize="small" sx={{ color: grey[600] }} />
-                            </Box>
-                            <Input
-                              disabled={isPeriodAmountProcessing}
-                              type="date"
-                              value={moment(specificDetails.periodAmountFilter.start).format('YYYY-MM-DD')}
-                              onChange={changeStartDate}
-                              sx={{
-                                position: 'absolute',
-                                top: '7px',
-                                left: '-57px',
-                                opacity: '0',
-                              }}
-                            />
-                            <LargSliderWrapper>{slider}</LargSliderWrapper>
-                            <Box display="flex" alignItems="center" gap="5px">
-                              <Typography fontSize="10px" whiteSpace="nowrap">
-                                {moment(specificDetails.periodAmountFilter.end).format('ll')}
-                              </Typography>
-                              <DateRange fontSize="small" sx={{ color: grey[600] }} />
-                            </Box>
-                            <Input
-                              disabled={isPeriodAmountProcessing}
-                              type="date"
-                              value={moment(specificDetails.periodAmountFilter.end).format('YYYY-MM-DD')}
-                              onChange={changeEndDate}
-                              sx={{
-                                position: 'absolute',
-                                top: '7px',
-                                right: '0px',
-                                opacity: '0',
-                                width: '20px',
-                              }}
-                            />
+                    return (
+                      <Box>
+                        <SmallSliderWrapper>{slider}</SmallSliderWrapper>
+                        <Box
+                          display="flex"
+                          alignItems="center"
+                          justifyContent="space-between"
+                          gap="30px"
+                          position="relative"
+                        >
+                          <Box display="flex" alignItems="center" gap="5px">
+                            <Typography fontSize="10px" whiteSpace="nowrap">
+                              {moment(specificDetails.periodAmountFilter.start).format('ll')}
+                            </Typography>
+                            <DateRange fontSize="small" sx={{ color: grey[600] }} />
                           </Box>
+                          <Input
+                            disabled={isPeriodAmountApiProcessing}
+                            type="date"
+                            value={moment(specificDetails.periodAmountFilter.start).format('YYYY-MM-DD')}
+                            onChange={changeStartDate}
+                            sx={{
+                              position: 'absolute',
+                              top: '7px',
+                              left: '-57px',
+                              opacity: '0',
+                            }}
+                          />
+                          <LargSliderWrapper>{slider}</LargSliderWrapper>
+                          <Box display="flex" alignItems="center" gap="5px">
+                            <Typography fontSize="10px" whiteSpace="nowrap">
+                              {moment(specificDetails.periodAmountFilter.end).format('ll')}
+                            </Typography>
+                            <DateRange fontSize="small" sx={{ color: grey[600] }} />
+                          </Box>
+                          <Input
+                            disabled={isPeriodAmountApiProcessing}
+                            type="date"
+                            value={moment(specificDetails.periodAmountFilter.end).format('YYYY-MM-DD')}
+                            onChange={changeEndDate}
+                            sx={{
+                              position: 'absolute',
+                              top: '7px',
+                              right: '0px',
+                              opacity: '0',
+                              width: '20px',
+                            }}
+                          />
                         </Box>
-                      );
-                    })()}
+                      </Box>
+                    );
+                  })()}
                   <Box display="flex" alignItems="center" justifyContent="space-between" gap="20px">
                     <Typography whiteSpace="nowrap">Total Amount: </Typography>
                     <Typography>{specificDetails.totalAmount.totalAmount}</Typography>
