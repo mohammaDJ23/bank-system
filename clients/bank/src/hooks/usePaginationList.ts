@@ -30,8 +30,8 @@ export function usePaginationList<T>(listInstance: ListInstanceConstructor<ListI
       }
 
       function isListEmpty(): boolean {
-        const list = getCurrentList();
-        return list.length <= 0;
+        const listInstance = getListInstance();
+        return Object.keys(listInstance.list).length <= 0;
       }
 
       function getCurrentList() {
@@ -72,6 +72,7 @@ export function usePaginationList<T>(listInstance: ListInstanceConstructor<ListI
       }
 
       function insertNewList({ page, total, list }: InsertNewListOptions<T>) {
+        const listInstance = getListInstance();
         const listInfo = getFullInfo();
 
         page = page || listInfo.page;
@@ -88,6 +89,11 @@ export function usePaginationList<T>(listInstance: ListInstanceConstructor<ListI
         return newPage === listInfo.page;
       }
 
+      function isNewPageExist(newPage: number) {
+        const listInfo = getFullInfo();
+        return !!listInfo.lists[newPage];
+      }
+
       return {
         setList,
         onPageChange,
@@ -101,6 +107,7 @@ export function usePaginationList<T>(listInstance: ListInstanceConstructor<ListI
         getFullInfo,
         insertNewList,
         isNewPageEqualToCurrentPage,
+        isNewPageExist,
       };
     },
     [listContainer, paginationList, listInstance, setPaginationList, changePaginationListPage]

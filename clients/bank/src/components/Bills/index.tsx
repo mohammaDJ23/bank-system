@@ -41,7 +41,7 @@ const BillsContent: FC = () => {
 
       if (billListInstance.isNewPageEqualToCurrentPage(newPage) || isBillsApiProcessing) return;
 
-      getBillsList({ page: newPage });
+      if (!billListInstance.isNewPageExist(newPage)) getBillsList({ page: newPage });
     },
     [isBillsApiProcessing, billListInstance, getBillsList]
   );

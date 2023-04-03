@@ -46,7 +46,7 @@ const UsersContent: FC = () => {
 
       if (userListInstance.isNewPageEqualToCurrentPage(newPage) || isUsersApiProcessing) return;
 
-      getUsersList({ page: newPage });
+      if (!userListInstance.isNewPageExist(newPage)) getUsersList({ page: newPage });
     },
     [userListInstance, isUsersApiProcessing, getUsersList]
   );
