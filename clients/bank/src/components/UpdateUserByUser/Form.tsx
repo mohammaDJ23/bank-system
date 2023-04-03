@@ -1,36 +1,38 @@
-import { FC } from 'react';
-import { UpdateUserByUser } from '../../lib';
+import { FC, useCallback } from 'react';
+import { Pathes, UpdateUserByUser } from '../../lib';
 import Modal from '../Modal';
 import { ModalNames } from '../../store';
-import { useAction } from '../../hooks';
+import { useAction, useForm, useRequest } from '../../hooks';
 import { Box, TextField, Button } from '@mui/material';
+import { UpdateUserByUserApi } from '../../apis';
+import { notification } from 'antd';
+import { useNavigate, useParams } from 'react-router-dom';
 
 interface FormImportation {
-  onChange: (key: keyof UpdateUserByUser, value: any) => void;
-  form: UpdateUserByUser;
-  isLoading: boolean;
-  onSubmitWithConfirmation: () => void;
-  resetForm: () => void;
-  isConfirmationModalActive: boolean;
-  onSubmit: () => void;
-  getInputErrorMessage: (key: keyof UpdateUserByUser) => string | undefined;
-  isInputInValid: (key: keyof UpdateUserByUser) => boolean;
-  isFormValid: () => boolean;
+  formInstance: ReturnType<typeof useForm<UpdateUserByUser>>;
 }
 
-const Form: FC<FormImportation> = ({
-  form,
-  isLoading,
-  isConfirmationModalActive,
-  onChange,
-  onSubmitWithConfirmation,
-  resetForm,
-  onSubmit,
-  getInputErrorMessage,
-  isInputInValid,
-  isFormValid,
-}) => {
+const Form: FC<FormImportation> = ({ formInstance }) => {
+  const params = useParams();
+  const navigate = useNavigate();
   const { hideModal } = useAction();
+  const { request, isApiProcessing } = useRequest();
+  const isUpdateUserByUserApiProcessing = isApiProcessing(UpdateUserByUserApi);
+  const form = formInstance.getForm();
+
+  const formSubmition = useCallback(() => {
+    formInstance.onSubmit(() => {
+      request<UpdateUserByUser, UpdateUserByUser>(new UpdateUserByUserApi(form))
+        .then(response => {
+          const userId = params.id as string;
+          hideModal(ModalNames.CONFIRMATION);
+          formInstance.resetForm();
+          notification.success({ message: 'Success', description: 'You have updated the user successfully.' });
+          navigate(Pathes.USER.replace(':id', userId));
+        })
+        .catch(err => hideModal(ModalNames.CONFIRMATION));
+    });
+  }, [form, formInstance, params, request, hideModal, navigate]);
 
   return (
     <>
@@ -43,7 +45,7 @@ const Form: FC<FormImportation> = ({
         gap="20px"
         onSubmit={event => {
           event.preventDefault();
-          onSubmitWithConfirmation();
+          formInstance.confirmation();
         }}
       >
         <TextField
@@ -51,44 +53,44 @@ const Form: FC<FormImportation> = ({
           variant="standard"
           type="text"
           value={form.firstName}
-          onChange={event => onChange('firstName', event.target.value)}
-          helperText={getInputErrorMessage('firstName')}
-          error={isInputInValid('firstName')}
-          disabled={isLoading}
+          onChange={event => formInstance.onChange('firstName', event.target.value)}
+          helperText={formInstance.getInputErrorMessage('firstName')}
+          error={formInstance.isInputInValid('firstName')}
+          disabled={isUpdateUserByUserApiProcessing}
         />
         <TextField
           label="Last Name"
           variant="standard"
           type="text"
           value={form.lastName}
-          onChange={event => onChange('lastName', event.target.value)}
-          helperText={getInputErrorMessage('lastName')}
-          error={isInputInValid('lastName')}
-          disabled={isLoading}
+          onChange={event => formInstance.onChange('lastName', event.target.value)}
+          helperText={formInstance.getInputErrorMessage('lastName')}
+          error={formInstance.isInputInValid('lastName')}
+          disabled={isUpdateUserByUserApiProcessing}
         />
         <TextField
           label="Email"
           type="email"
           variant="standard"
           value={form.email}
-          onChange={event => onChange('email', event.target.value)}
-          helperText={getInputErrorMessage('email')}
-          error={isInputInValid('email')}
-          disabled={isLoading}
+          onChange={event => formInstance.onChange('email', event.target.value)}
+          helperText={formInstance.getInputErrorMessage('email')}
+          error={formInstance.isInputInValid('email')}
+          disabled={isUpdateUserByUserApiProcessing}
         />
         <TextField
           label="Phone"
           type="text"
           variant="standard"
           value={form.phone}
-          onChange={event => onChange('phone', event.target.value)}
-          helperText={getInputErrorMessage('phone')}
-          error={isInputInValid('phone')}
-          disabled={isLoading}
+          onChange={event => formInstance.onChange('phone', event.target.value)}
+          helperText={formInstance.getInputErrorMessage('phone')}
+          error={formInstance.isInputInValid('phone')}
+          disabled={isUpdateUserByUserApiProcessing}
         />
         <Box component="div" display="flex" alignItems="center" gap="10px" marginTop="20px">
           <Button
-            disabled={isLoading || !isFormValid()}
+            disabled={isUpdateUserByUserApiProcessing || !formInstance.isFormValid()}
             variant="contained"
             size="small"
             type="submit"
@@ -97,23 +99,22 @@ const Form: FC<FormImportation> = ({
             Update
           </Button>
           <Button
-            disabled={isLoading}
+            disabled={isUpdateUserByUserApiProcessing}
             variant="outlined"
             size="small"
             type="button"
             sx={{ textTransform: 'capitalize' }}
-            onClick={() => resetForm()}
+            onClick={() => formInstance.resetForm()}
           >
             Reset
           </Button>
         </Box>
       </Box>
-
       <Modal
-        isLoading={isLoading}
-        isActive={isConfirmationModalActive}
+        isLoading={isUpdateUserByUserApiProcessing}
+        isActive={formInstance.isConfirmationActive()}
         onCancel={() => hideModal(ModalNames.CONFIRMATION)}
-        onConfirm={() => onSubmit()}
+        onConfirm={formSubmition}
       />
     </>
   );
