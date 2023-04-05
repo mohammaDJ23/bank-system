@@ -2,7 +2,6 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { RmqContext } from '@nestjs/microservices';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UserWithBillInfoDto } from 'src/dtos/user-with-bill-info.dto';
-import { Bill } from 'src/entities/bill.entity';
 import { Roles } from 'src/types/user';
 import { Repository } from 'typeorm';
 import { User } from '../entities/user.entity';
@@ -12,7 +11,6 @@ import { RabbitmqService } from './rabbitmq.service';
 export class UserService {
   constructor(
     @InjectRepository(User) private readonly userService: Repository<User>,
-    @InjectRepository(Bill) private readonly billService: Repository<Bill>,
     private readonly rabbitmqService: RabbitmqService,
   ) {}
 

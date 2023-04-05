@@ -1,3 +1,5 @@
+<template></template>
+
 <script setup>
 import { onBeforeMount } from 'vue';
 import { useRedirect } from '../hooks';
