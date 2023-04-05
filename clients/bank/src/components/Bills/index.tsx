@@ -25,7 +25,7 @@ const BillsContent: FC = () => {
 
       request<[BillObj[], number], BillObj>(billsApi).then(response => {
         const [list, total] = response.data;
-        billListInstance.insertNewList({ list, total, page: apiData.page });
+        if (list.length > 0 || total > 0) billListInstance.insertNewList({ list, total, page: apiData.page });
       });
     },
     [billListInfo, billListInstance, request]
