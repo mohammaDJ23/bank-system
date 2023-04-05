@@ -29,7 +29,7 @@ const UsersContent: FC = () => {
 
       request<[UserObj[], number], UsersApiConstructorType>(userApi).then(response => {
         const [list, total] = response.data;
-        if (list.length > 0 || total > 0) userListInstance.insertNewList({ total, list, page: apiData.page });
+        userListInstance.insertNewList({ total, list, page: apiData.page });
       });
     },
     [userListInfo, userListInstance, request]
