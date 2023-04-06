@@ -36,20 +36,32 @@ export class UserService {
 
   async update(payload: User, context: RmqContext): Promise<void> {
     try {
-      let user = await this.findById(payload.id);
-      user.email = payload.email;
-      user.firstName = payload.firstName;
-      user.lastName = payload.lastName;
-      user.password = payload.password;
-      user.phone = payload.phone;
-      user.role = payload.role;
-      user.userServiceId = payload.id;
-      user.updatedAt = payload.updatedAt;
-      user.createdAt = payload.createdAt;
-      user = this.userService.create(user);
-      await this.userService.update(
-        { userServiceId: user.userServiceId },
-        user,
+      await this.userService.query(
+        `
+          UPDATE public.user
+          SET 
+            email = $1,
+            first_name = $2,
+            last_name = $3,
+            password = $4,
+            phone = $5,
+            role = $6,
+            user_service_id = $7,
+            updated_at = $8,
+            created_at = $9
+          WHERE public.user.user_service_id = $7;
+        `,
+        [
+          payload.email,
+          payload.firstName,
+          payload.lastName,
+          payload.password,
+          payload.phone,
+          payload.role,
+          payload.id,
+          payload.createdAt,
+          payload.updatedAt,
+        ],
       );
       this.rabbitmqService.applyAcknowledgment(context);
     } catch (error) {
