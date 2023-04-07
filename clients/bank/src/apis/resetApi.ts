@@ -1,5 +1,6 @@
 import axios, { AxiosRequestConfig, CreateAxiosDefaults, AxiosInstance, AxiosError, AxiosResponse } from 'axios';
-import { getToken } from '../lib';
+import { history } from '../App';
+import { getToken, LocalStorage, Pathes } from '../lib';
 
 export interface ErrorObj {
   statusCode: number;
@@ -20,12 +21,37 @@ export class Request<R = any, D = any> implements RootApiObj<D> {
 
   constructor({ api, config = {} }: RootApiObj<D>) {
     this.api = api;
-    this.config = {
-      baseURL: process.env.BANK_SERVICE,
-      headers: { Authorization: `Bearer ${getToken()}` },
-      ...config,
-    };
-    this.axiosInstance = axios.create(this.config);
+    this.axiosInstance = axios.create(config);
+
+    this.requestInterceptors();
+    this.responseInterceptors();
+  }
+
+  requestInterceptors() {
+    this.axiosInstance.interceptors.request.use(
+      config => {
+        if (config.headers) {
+          config.headers.Authorization = `Bearer ${getToken()}`;
+        }
+
+        return config;
+      },
+      error => Promise.reject(error)
+    );
+  }
+
+  responseInterceptors() {
+    this.axiosInstance.interceptors.response.use(
+      response => response,
+      (error: AxiosError<ErrorObj>) => {
+        if (error.response?.data?.statusCode === 401) {
+          LocalStorage.clear();
+          history.push(Pathes.UNAUTHORIZED);
+        }
+
+        return Promise.reject(error);
+      }
+    );
   }
 
   async build(): Promise<AxiosResponse<R, D>> {

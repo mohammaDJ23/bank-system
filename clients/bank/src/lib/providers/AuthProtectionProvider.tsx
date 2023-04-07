@@ -4,11 +4,7 @@ import { isUserAuthenticated } from '../auth';
 import { Pathes } from '../routes';
 
 const AuthProtectionProvider: FC<PropsWithChildren> = ({ children }) => {
-  return isUserAuthenticated() ? (
-    <Fragment>{children}</Fragment>
-  ) : (
-    <Navigate to={Pathes.UNAUTHORIZED} />
-  );
+  return isUserAuthenticated() ? <Fragment>{children}</Fragment> : <Navigate to={Pathes.UNAUTHORIZED} />;
 };
 
 export default AuthProtectionProvider;

@@ -1,27 +1,17 @@
 /// <reference path="./index.d.ts" />
 
 import ReactDOM from 'react-dom/client';
-import { BrowserHistory, createBrowserHistory, createMemoryHistory } from 'history';
 import App from './App';
+import { isDevelopment } from './lib';
 
-interface MountOptions {
-  history: BrowserHistory;
-}
-
-function mount(el: Element, mountOptions: Partial<MountOptions> = {}) {
-  const history =
-    mountOptions.history ||
-    createMemoryHistory({
-      initialEntries: [window.location.pathname],
-    });
-
+function mount(el: Element) {
   const root = ReactDOM.createRoot(el);
-  root.render(<App history={history} />);
+  root.render(<App />);
 }
 
-if (process.env.NODE_ENV === 'development') {
+if (isDevelopment()) {
   const el = document.querySelector('#_bank-service');
-  if (el) mount(el, { history: createBrowserHistory() });
+  if (el) mount(el);
 }
 
 export { mount };

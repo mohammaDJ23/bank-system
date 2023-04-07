@@ -240,79 +240,74 @@ const Dashboard: FC = () => {
     periodAmountChangeRequest.current(previousPeriodAmountFilter, newPeriodAmountFilter);
   }
 
+  const chartData = getChartData();
+
   return (
     <MainContainer>
       <Box component="div" display="flex" alignItems="center" justifyContent="center" flexDirection="column" gap="16px">
         {isInitialLastWeekBillsApiProcessing ? (
           <Skeleton height="440px" width="100%" />
         ) : (
-          <>
-            {(() => {
-              const chartData = getChartData();
-              return (
-                chartData.length > 0 && (
-                  <Card>
-                    <CardContent>
-                      <AreaChart>
-                        <Chart data={chartData} height={400}>
-                          {/**@ts-ignore*/}
-                          <ArgumentScale factory={scalePoint} />
-                          <ArgumentAxis showGrid />
-                          <ValueAxis
-                            showGrid
-                            tickFormat={scale => tick => {
-                              if (Number.isInteger(tick)) return Math.floor(Number(tick)).toString();
-                              else return '';
-                            }}
-                          />
-                          <AreaSeries
-                            color="#20a0ff"
-                            name="Bills"
-                            valueField="billCounts"
-                            argumentField="date"
-                            seriesComponent={Area}
-                          />
-                          {isUserAdmin && (
-                            <AreaSeries
-                              color="#ff3d00"
-                              name="Users"
-                              valueField="userCounts"
-                              argumentField="date"
-                              seriesComponent={Area}
-                            />
-                          )}
-                          <Animation />
-                          <EventTracker />
-                          <Tooltip />
-                          <Legend position="bottom" rootComponent={Root} labelComponent={Label} />
-                          <Title text="The Previous Week Reports" />
-                        </Chart>
-                      </AreaChart>
-                      <BarChart>
-                        <Chart data={chartData} height={400} rotated>
-                          <ArgumentAxis showGrid />
-                          <ValueAxis
-                            showGrid
-                            tickFormat={scale => tick => {
-                              if (Number.isInteger(tick)) return Math.floor(Number(tick)).toString();
-                              else return '';
-                            }}
-                          />
-                          <BarSeries color="#20a0ff" name="Bills" valueField="billCounts" argumentField="date" />
-                          {isUserAdmin && (
-                            <BarSeries color="#ff3d00" name="Users" valueField="userCounts" argumentField="date" />
-                          )}
-                          <Animation />
-                          <Legend position="bottom" rootComponent={Root} labelComponent={Label} />
-                          <Stack />
-                        </Chart>
-                      </BarChart>
-                    </CardContent>
-                  </Card>
-                )
-              );
-            })()}
-          </>
+          chartData.length > 0 && (
+            <Card>
+              <CardContent>
+                <AreaChart>
+                  <Chart data={chartData} height={400}>
+                    {/**@ts-ignore*/}
+                    <ArgumentScale factory={scalePoint} />
+                    <ArgumentAxis showGrid />
+                    <ValueAxis
+                      showGrid
+                      tickFormat={scale => tick => {
+                        if (Number.isInteger(tick)) return Math.floor(Number(tick)).toString();
+                        else return '';
+                      }}
+                    />
+                    <AreaSeries
+                      color="#20a0ff"
+                      name="Bills"
+                      valueField="billCounts"
+                      argumentField="date"
+                      seriesComponent={Area}
+                    />
+                    {isUserAdmin && (
+                      <AreaSeries
+                        color="#ff3d00"
+                        name="Users"
+                        valueField="userCounts"
+                        argumentField="date"
+                        seriesComponent={Area}
+                      />
+                    )}
+                    <Animation />
+                    <EventTracker />
+                    <Tooltip />
+                    <Legend position="bottom" rootComponent={Root} labelComponent={Label} />
+                    <Title text="The Previous Week Reports" />
+                  </Chart>
+                </AreaChart>
+                <BarChart>
+                  <Chart data={chartData} height={400} rotated>
+                    <ArgumentAxis showGrid />
+                    <ValueAxis
+                      showGrid
+                      tickFormat={scale => tick => {
+                        if (Number.isInteger(tick)) return Math.floor(Number(tick)).toString();
+                        else return '';
+                      }}
+                    />
+                    <BarSeries color="#20a0ff" name="Bills" valueField="billCounts" argumentField="date" />
+                    {isUserAdmin && (
+                      <BarSeries color="#ff3d00" name="Users" valueField="userCounts" argumentField="date" />
+                    )}
+                    <Animation />
+                    <Legend position="bottom" rootComponent={Root} labelComponent={Label} />
+                    <Stack />
+                  </Chart>
+                </BarChart>
+              </CardContent>
+            </Card>
+          )
         )}
 
         {isUserAdmin &&

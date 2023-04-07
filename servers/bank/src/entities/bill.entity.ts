@@ -14,7 +14,7 @@ export class Bill {
   @PrimaryGeneratedColumn({ type: 'bigint' })
   id: number;
 
-  @Column({ default: '0', length: 18 })
+  @Column({ length: 18 })
   amount: string;
 
   @Column({ length: 100 })
