@@ -12,16 +12,16 @@ export class User {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
+  @Column({ length: 45 })
   firstName: string;
 
-  @Column()
+  @Column({ length: 45 })
   lastName: string;
 
   @Column({ unique: true })
   email: string;
 
-  @Column()
+  @Column({ length: 45 })
   password: string;
 
   @Column()
@@ -34,9 +34,9 @@ export class User {
   })
   role: string;
 
-  @CreateDateColumn()
+  @CreateDateColumn({ type: 'timestamptz' })
   createdAt: Date;
 
-  @UpdateDateColumn()
+  @UpdateDateColumn({ type: 'timestamptz' })
   updatedAt: Date;
 }

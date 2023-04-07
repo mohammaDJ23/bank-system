@@ -5,12 +5,12 @@ export class ResetPassword {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
+  @Column({ type: 'int' })
   userId: number;
 
   @Column({ unique: true })
   token: string;
 
-  @Column()
+  @Column({ type: 'timestamptz' })
   expiration: Date;
 }
