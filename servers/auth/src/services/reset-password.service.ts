@@ -37,17 +37,16 @@ export class ResetPasswordService {
   ): Promise<MessageDto> {
     const randomString = randomBytes(32).toString('hex');
     const token = await hash(randomString, 10);
-
     const expiration = new Date(
       new Date().getTime() + +process.env.RESET_PASSWORD_EXPIRATION,
     );
 
-    const resetPasswordInfo = { token, expiration, userId: currentUser.id };
-
-    const resetPassword =
-      this.resetPasswordRepository.create(resetPasswordInfo);
-
-    await this.resetPasswordRepository.save(resetPassword);
+    await this.resetPasswordRepository
+      .createQueryBuilder()
+      .insert()
+      .into(ResetPassword)
+      .values({ token, expiration, userId: currentUser.id })
+      .execute();
 
     const mailerOptions = {
       from: process.env.MAILER_USER,
