@@ -13,7 +13,7 @@ export class AuthService {
     const isPasswordsEqual = await compare(body.password, currentUser.password);
 
     if (!isPasswordsEqual)
-      throw new NotFoundException(`The password is wrong.`);
+      throw new NotFoundException(`Could not found the user.`);
 
     const userInfo = {
       id: currentUser.id,
