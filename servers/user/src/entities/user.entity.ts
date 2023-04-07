@@ -18,13 +18,13 @@ export class User {
   @Column({ length: 45 })
   lastName: string;
 
-  @Column({ unique: true })
+  @Column({ unique: true, length: 256 })
   email: string;
 
   @Column({ length: 45 })
   password: string;
 
-  @Column()
+  @Column({ length: 12 })
   phone: string;
 
   @Column({
