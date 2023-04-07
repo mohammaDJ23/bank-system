@@ -1,12 +1,12 @@
 import { AxiosResponse } from 'axios';
 import { FC, useEffect, useRef, useState } from 'react';
-import { Box, CardContent, Typography, Slider, Input, styled, Button } from '@mui/material';
+import { Box, CardContent, Typography, Slider, Input, styled } from '@mui/material';
 import { DateRange } from '@mui/icons-material';
 import { grey } from '@mui/material/colors';
 import { LastWeekBillsApi, LastWeekUsersApi, PeriodAmountApi, TotalAmountApi, UserQuantitiesApi } from '../../apis';
 import { useAction, useAuth, useRequest, useSelector } from '../../hooks';
 import MainContainer from '../../layout/MainContainer';
-import { debounce, getTime, Pathes } from '../../lib';
+import { debounce, getTime } from '../../lib';
 import {
   BillDates,
   LastWeekBillsObj,
@@ -33,7 +33,6 @@ import { curveCatmullRom, area } from 'd3-shape';
 import moment from 'moment';
 import { notification } from 'antd';
 import { scalePoint } from 'd3-scale';
-import { useNavigate } from 'react-router-dom';
 
 const AreaChart = styled(Box)(({ theme }) => ({
   [theme.breakpoints.down('sm')]: {
@@ -110,7 +109,6 @@ const Dashboard: FC = () => {
   const { setSpecificDetails } = useAction();
   const { specificDetails } = useSelector();
   const isUserAdmin = isAdmin();
-  const navigate = useNavigate();
   const isInitialTotalAmountApiProcessing = isInitialApiProcessing(TotalAmountApi);
   const isInitialLastWeekBillsApiProcessing = isInitialApiProcessing(LastWeekBillsApi);
   const isPeriodAmountApiProcessing = isApiProcessing(PeriodAmountApi);
@@ -428,23 +426,6 @@ const Dashboard: FC = () => {
           )
         )}
       </Box>
-      {chartData.length <= 0 &&
-        !specificDetails.userQuantities &&
-        !specificDetails.totalAmount &&
-        !specificDetails.periodAmountFilter &&
-        !specificDetails.billDates && (
-          <Box display="flex" alignItems="center" justifyContent="center" flexDirection="column" gap="12px" mt="20px">
-            <Typography>Empty dashboard</Typography>
-            <Button
-              onClick={() => navigate(Pathes.CREATE_BILL)}
-              sx={{ textTransform: 'capitalize' }}
-              size="small"
-              variant="contained"
-            >
-              Create a new bill
-            </Button>
-          </Box>
-        )}
     </MainContainer>
   );
 };
