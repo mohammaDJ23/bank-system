@@ -1,5 +1,6 @@
 import axios, { AxiosRequestConfig, CreateAxiosDefaults, AxiosInstance, AxiosError, AxiosResponse } from 'axios';
-import { getToken } from '../lib';
+import { history } from '../App';
+import { getToken, LocalStorage, Pathes } from '../lib';
 
 export interface ErrorObj {
   statusCode: number;
@@ -26,6 +27,22 @@ export class Request<R = any, D = any> implements RootApiObj<D> {
       ...config,
     };
     this.axiosInstance = axios.create(this.config);
+
+    this.responseInterceptors();
+  }
+
+  responseInterceptors() {
+    this.axiosInstance.interceptors.response.use(
+      response => response,
+      (error: AxiosError<ErrorObj>) => {
+        if (error.response?.data?.statusCode === 401) {
+          LocalStorage.clear();
+          history.push(Pathes.UNAUTHORIZED);
+        }
+
+        return Promise.reject(error);
+      }
+    );
   }
 
   async build(): Promise<AxiosResponse<R, D>> {
