@@ -21,14 +21,23 @@ export class Request<R = any, D = any> implements RootApiObj<D> {
 
   constructor({ api, config = {} }: RootApiObj<D>) {
     this.api = api;
-    this.config = {
-      baseURL: process.env.BANK_SERVICE,
-      headers: { Authorization: `Bearer ${getToken()}` },
-      ...config,
-    };
-    this.axiosInstance = axios.create(this.config);
+    this.axiosInstance = axios.create(config);
 
+    this.requestInterceptors();
     this.responseInterceptors();
+  }
+
+  requestInterceptors() {
+    this.axiosInstance.interceptors.request.use(
+      config => {
+        if (config.headers) {
+          config.headers.Authorization = `Bearer ${getToken()}`;
+        }
+
+        return config;
+      },
+      error => Promise.reject(error)
+    );
   }
 
   responseInterceptors() {
