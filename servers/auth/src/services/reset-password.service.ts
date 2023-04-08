@@ -71,31 +71,20 @@ export class ResetPasswordService {
   async resetPassword(body: ResetPasswordDto): Promise<MessageDto> {
     const actualPassword = body.password.toString().toLowerCase();
     const confirmedPassword = body.confirmedPassword.toString().toLowerCase();
-
     if (actualPassword !== confirmedPassword)
       throw new BadRequestException('The passwords are not equal.');
 
     const resetPassword = await this.findResetPasswordByToken(body.token);
-
     if (!resetPassword) throw new NotFoundException('Provided invalid token.');
 
     const isTokenExpired = new Date() > new Date(resetPassword.expiration);
-
     if (isTokenExpired)
       throw new BadRequestException('The token used has been expired.');
 
-    const user = await this.userService.findById(resetPassword.userId);
-
-    if (!user) throw new NotFoundException('Could not found the user.');
-
     const hashedPassword = await hash(body.password, 10);
-
-    const updatedUser = Object.assign<User, Partial<User>>(user, {
+    const user = await this.userService.updatePartial(resetPassword.userId, {
       password: hashedPassword,
     });
-
-    await this.userService.update(updatedUser, user);
-    await this.resetPasswordRepository.remove(resetPassword);
 
     const mailerOptions = {
       from: process.env.MAILER_USER,
@@ -107,7 +96,6 @@ export class ResetPasswordService {
         link: `${process.env.CLIENT_CONTAINER_URL}/auth/login`,
       },
     };
-
     await this.mailerService.sendMail(mailerOptions);
 
     return { message: 'Your password has been changed.' };

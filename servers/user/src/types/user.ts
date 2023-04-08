@@ -1,3 +1,5 @@
+import { User } from 'src/entities/user.entity';
+
 export interface EncryptedUser {
   id: number;
   email: string;
@@ -10,4 +12,9 @@ export interface EncryptedUser {
 export enum Roles {
   ADMIN = 'admin',
   USER = 'user',
+}
+
+export interface UpdateUserPartialObj {
+  id: number;
+  user: Partial<User>;
 }
