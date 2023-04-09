@@ -23,7 +23,7 @@ import { CronJobsController, GatewayController } from '../controllers';
 import { UserService } from '../services/user.service';
 import { ResetPasswordService } from '../services/reset-password.service';
 import { AuthService } from '../services/auth.service';
-import { CurrentUserMiddleWare } from '../middlewares/current-user.middleware';
+import { CurrentUserMiddleWare } from '../middlewares';
 
 @Module({
   imports: [
