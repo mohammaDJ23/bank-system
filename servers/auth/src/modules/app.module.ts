@@ -8,7 +8,7 @@ import { ConfigModule } from '@nestjs/config';
 import { PassportModule } from '@nestjs/passport';
 import { APP_FILTER, APP_PIPE } from '@nestjs/core';
 import { ClientsModule, Transport } from '@nestjs/microservices';
-import { AllExceptionFilter } from '../filters/catch.filter';
+import { AllExceptionFilter } from '../filters';
 import { JwtModule } from '@nestjs/jwt';
 import { JwtStrategy } from '../strategies/jwt.strategy';
 import { TypeOrmModule } from '@nestjs/typeorm';
