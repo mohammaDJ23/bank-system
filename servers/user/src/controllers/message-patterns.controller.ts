@@ -6,32 +6,24 @@ import {
   RmqContext,
 } from '@nestjs/microservices';
 import { UserService } from '../services/user.service';
-import { UpdateUserDto } from '../dtos/update-user.dto';
 import { User } from 'src/entities/user.entity';
+import { UpdateUserPartialObj } from 'src/types/user';
 
 @Controller()
 export class MessagePatternController {
-  constructor(private readonly appService: UserService) {}
+  constructor(private readonly userService: UserService) {}
 
-  @MessagePattern('update_user')
-  update(
-    @Payload() payload: Record<'updatedUser' | 'user', User>,
+  @MessagePattern('update_user_partial')
+  updatePartial(
+    @Payload() payload: UpdateUserPartialObj,
     @Ctx() context: RmqContext,
   ): Promise<User> {
-    return this.appService.update(payload.updatedUser, payload.user, context);
-  }
-
-  @MessagePattern('find_and_update_user')
-  findAndUpdate(
-    @Payload() payload: UpdateUserDto,
-    @Ctx() context: RmqContext,
-  ): Promise<User> {
-    return this.appService.findAndUpdate(payload, context);
+    return this.userService.updatePartial(payload, context);
   }
 
   @MessagePattern('find_user_by_id')
   findById(@Payload() id: number, @Ctx() context: RmqContext): Promise<User> {
-    return this.appService.findById(id, context);
+    return this.userService.findById(id, context);
   }
 
   @MessagePattern('find_user_by_email')
@@ -39,6 +31,6 @@ export class MessagePatternController {
     @Payload() email: string,
     @Ctx() context: RmqContext,
   ): Promise<User> {
-    return this.appService.findByEmail(email, context);
+    return this.userService.findByEmail(email, context);
   }
 }

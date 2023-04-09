@@ -17,7 +17,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 
 const isDevelopment = process.env.NODE_ENV === 'development';
 
-const history = isDevelopment ? createWebHistory() : createMemoryHistory(window.location.pathname);
+export const history = isDevelopment ? createWebHistory() : createMemoryHistory(window.location.pathname);
 export const router = createRouter({ history, routes });
 
 function mount(element) {

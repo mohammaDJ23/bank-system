@@ -15,7 +15,7 @@ watch(route, to => {
   const childRedirectionEvent = new CustomEvent('child-redirection', {
     bubbles: true,
     cancelable: true,
-    detail: { path: to.path },
+    detail: { path: to.fullPath },
   });
   window.dispatchEvent(childRedirectionEvent);
 });

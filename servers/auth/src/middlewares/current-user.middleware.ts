@@ -5,8 +5,8 @@ import {
   BadRequestException,
 } from '@nestjs/common';
 import { NextFunction, Response } from 'express';
-import { UserService } from '../services/user.service';
-import { Request } from '../types/overwrites';
+import { UserService } from '../services';
+import { Request } from '../types';
 
 @Injectable()
 export class CurrentUserMiddleWare implements NestMiddleware {

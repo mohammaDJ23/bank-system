@@ -4,7 +4,6 @@ import {
   NotFoundException,
   Inject,
   BadRequestException,
-  ForbiddenException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -18,8 +17,9 @@ import { RabbitMqServices } from '../types/rabbitmq';
 import { UpdateUserByUserDto } from 'src/dtos/update-user-by-user.dto';
 import { RabbitmqService } from './rabbitmq.service';
 import { UserQuantitiesDto } from 'src/dtos/user-quantities.dto';
-import { Roles } from 'src/types/user';
+import { Roles, UpdateUserPartialObj } from 'src/types/user';
 import { LastWeekDto } from 'src/dtos/last-week.dto';
+import camelcase from 'camelcase';
 
 @Injectable()
 export class UserService {
@@ -89,6 +89,36 @@ export class UserService {
       return user;
     } catch (error) {
       throw error;
+    }
+  }
+
+  async updatePartial(
+    payload: UpdateUserPartialObj,
+    context: RmqContext,
+  ): Promise<User> {
+    try {
+      const updateResult = await this.userRepository
+        .createQueryBuilder()
+        .update(User)
+        .set(payload.user)
+        .where('id = :userId')
+        .setParameters({ userId: payload.id })
+        .returning('*')
+        .execute();
+
+      this.rabbitmqService.applyAcknowledgment(context);
+
+      let user = updateResult.raw as User[];
+
+      if (!user.length)
+        throw new NotFoundException('Could not found the user.');
+
+      return user.reduce((acc, val) => {
+        for (const key in val) acc[camelcase(key)] = val[key];
+        return acc;
+      }, {} as User);
+    } catch (error) {
+      throw new RpcException(error);
     }
   }
 
