@@ -1,7 +1,7 @@
 import { Request as Req } from 'express';
 import { User } from 'src/entities';
 
-export interface EncryptedUser {
+export interface EncryptedUserObj {
   id: number;
   email: string;
   firstName: string;
