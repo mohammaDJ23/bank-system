@@ -4,11 +4,10 @@ import { LoginDto } from '../dtos/login.dto';
 import { MessageDto } from '../dtos/message.dto';
 import { ForgotPasswordDto } from '../dtos/forgot-password.dto';
 import { TokenDto } from '../dtos/token.dto';
-import { ObjectSerializer } from '../decorators/serializer.decorator';
+import { ObjectSerializer, CurrentUser } from '../decorators';
 import { ResetPasswordDto } from '../dtos/reset-password.dto';
 import { ResetPasswordService } from '../services/reset-password.service';
 import { AuthService } from '../services/auth.service';
-import { CurrentUser } from '../decorators/current-user.decorator';
 import { User } from '../entities/user.entity';
 import { ErrorDto } from 'src/dtos/error.dto';
 
