@@ -13,7 +13,7 @@ import { JwtModule } from '@nestjs/jwt';
 import { JwtStrategy } from '../strategies/jwt.strategy';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { CustomNamingStrategy } from '../strategies/naming.strategy';
-import { ResetPassword } from '../entities/reset-password.entity';
+import { ResetPassword } from '../entities';
 import { join } from 'path';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { EjsAdapter } from '@nestjs-modules/mailer/dist/adapters/ejs.adapter';

@@ -8,10 +8,9 @@ import { MailerService } from '@nestjs-modules/mailer';
 import { Repository } from 'typeorm';
 import { hash } from 'bcrypt';
 import { randomBytes } from 'crypto';
-import { ResetPassword } from 'src/entities/reset-password.entity';
 import { UserService } from './user.service';
 import { MessageDto, ForgotPasswordDto, ResetPasswordDto } from 'src/dtos';
-import { User } from 'src/entities/user.entity';
+import { User, ResetPassword } from 'src/entities';
 
 @Injectable()
 export class ResetPasswordService {
