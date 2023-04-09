@@ -17,7 +17,7 @@ import { join } from 'path';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { EjsAdapter } from '@nestjs-modules/mailer/dist/adapters/ejs.adapter';
 import { ScheduleModule } from '@nestjs/schedule';
-import { RabbitMqQueue, RabbitMqServices } from '../types/rabbitmq';
+import { RabbitMqQueue, RabbitMqServices } from '../types';
 import { CronJobsController, GatewayController } from '../controllers';
 import { UserService, ResetPasswordService, AuthService } from '../services';
 import { CurrentUserMiddleWare } from '../middlewares';

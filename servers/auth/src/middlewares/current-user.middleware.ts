@@ -6,7 +6,7 @@ import {
 } from '@nestjs/common';
 import { NextFunction, Response } from 'express';
 import { UserService } from '../services';
-import { Request } from '../types/overwrites';
+import { Request } from '../types';
 
 @Injectable()
 export class CurrentUserMiddleWare implements NestMiddleware {

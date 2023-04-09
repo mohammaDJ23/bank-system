@@ -1,8 +1,7 @@
 import { Injectable, Inject } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import { User } from 'src/entities';
-import { RabbitMqServices } from 'src/types/rabbitmq';
-import { UpdateUserPartialObj } from 'src/types/user';
+import { RabbitMqServices, UpdateUserPartialObj } from 'src/types';
 
 @Injectable()
 export class UserService {
