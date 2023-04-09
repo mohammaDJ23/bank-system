@@ -5,7 +5,7 @@ import {
   BadRequestException,
 } from '@nestjs/common';
 import { NextFunction, Response } from 'express';
-import { UserService } from '../services/user.service';
+import { UserService } from '../services';
 import { Request } from '../types/overwrites';
 
 @Injectable()

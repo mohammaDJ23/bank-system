@@ -9,8 +9,7 @@ import {
   ErrorDto,
 } from '../dtos';
 import { ObjectSerializer, CurrentUser } from '../decorators';
-import { ResetPasswordService } from '../services/reset-password.service';
-import { AuthService } from '../services/auth.service';
+import { ResetPasswordService, AuthService } from '../services';
 import { User } from '../entities';
 
 @Controller('auth')

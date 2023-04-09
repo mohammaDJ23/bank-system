@@ -20,9 +20,7 @@ import { EjsAdapter } from '@nestjs-modules/mailer/dist/adapters/ejs.adapter';
 import { ScheduleModule } from '@nestjs/schedule';
 import { RabbitMqQueue, RabbitMqServices } from '../types/rabbitmq';
 import { CronJobsController, GatewayController } from '../controllers';
-import { UserService } from '../services/user.service';
-import { ResetPasswordService } from '../services/reset-password.service';
-import { AuthService } from '../services/auth.service';
+import { UserService, ResetPasswordService, AuthService } from '../services';
 import { CurrentUserMiddleWare } from '../middlewares';
 
 @Module({

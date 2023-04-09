@@ -1,6 +1,6 @@
 import { Controller } from '@nestjs/common';
 import { Cron, CronExpression } from '@nestjs/schedule';
-import { ResetPasswordService } from '../services/reset-password.service';
+import { ResetPasswordService } from '../services';
 
 @Controller()
 export class CronJobsController {
