@@ -25,13 +25,7 @@
         required
       ></v-text-field>
       <div class="d-flex align-center gap-2 flex-wrap mt-3">
-        <v-btn
-          color="primary"
-          class="text-capitalize"
-          size="small"
-          type="submit"
-          :disabled="isFormProcessing"
-        >
+        <v-btn color="primary" class="text-capitalize" size="small" type="submit" :disabled="isFormProcessing">
           Login
         </v-btn>
         <v-btn
@@ -51,7 +45,7 @@
 </template>
 
 <script setup>
-import { reactive, onMounted, ref, onBeforeMount } from 'vue';
+import { reactive, onMounted, ref } from 'vue';
 import Card from './Card.vue';
 import { LocalStorage, Login, pathes } from '../lib';
 import { useFocus, useRequest, useRedirect } from '../hooks';
@@ -67,12 +61,6 @@ const { redirect } = useRedirect();
 const { focus } = useFocus();
 const isFormProcessing = isApiProcessing(LoginApi);
 const isUserLoggedIn = isUserAuthenticated();
-
-onBeforeMount(() => {
-  if (isUserLoggedIn) {
-    redirect(pathes.initial);
-  }
-});
 
 onMounted(() => {
   focus('email');
