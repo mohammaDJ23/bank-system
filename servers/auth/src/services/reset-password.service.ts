@@ -10,9 +10,7 @@ import { hash } from 'bcrypt';
 import { randomBytes } from 'crypto';
 import { ResetPassword } from 'src/entities/reset-password.entity';
 import { UserService } from './user.service';
-import { MessageDto } from 'src/dtos/message.dto';
-import { ForgotPasswordDto } from 'src/dtos/forgot-password.dto';
-import { ResetPasswordDto } from 'src/dtos/reset-password.dto';
+import { MessageDto, ForgotPasswordDto, ResetPasswordDto } from 'src/dtos';
 import { User } from 'src/entities/user.entity';
 
 @Injectable()
