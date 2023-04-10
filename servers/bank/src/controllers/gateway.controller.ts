@@ -21,16 +21,12 @@ import {
   ApiBearerAuth,
   ApiParam,
 } from '@nestjs/swagger';
-import { CurrentUser } from '../decorators/current-user.decorator';
+import { CurrentUser, ObjectSerializer, ListSerializer } from '../decorators';
 import { BillDto } from '../dtos/bill.dto';
 import { CreateBillDto } from '../dtos/create-bill.dto';
 import { Bill } from '../entities/bill.entity';
 import { User } from '../entities/user.entity';
 import { JwtAuthGuard } from '../guards/jwt-auth.guard';
-import {
-  ObjectSerializer,
-  ListSerializer,
-} from '../decorators/serializer.decorator';
 import { BillService } from 'src/services/bill.service';
 import { UpdateBillDto } from 'src/dtos/update-bill.dto';
 import { DeleteBillDto } from 'src/dtos/delete-bill.dto';
