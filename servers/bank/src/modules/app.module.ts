@@ -6,7 +6,7 @@ import { ClientsModule } from '@nestjs/microservices';
 import { PassportModule } from '@nestjs/passport';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Bill, User } from '../entities';
-import { AllExceptionFilter } from '../filters/catch.filter';
+import { AllExceptionFilter } from '../filters';
 import { GatewayController, MessagePatternController } from '../controllers';
 import { JwtStrategy } from '../strategies/jwt.strategy';
 import { CustomNamingStrategy } from '../strategies/naming.strategy';
