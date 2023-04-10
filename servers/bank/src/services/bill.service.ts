@@ -5,17 +5,17 @@ import {
   StreamableFile,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { DeleteBillDto } from 'src/dtos/delete-bill.dto';
-import { LastWeekDto } from 'src/dtos/last-week.dto';
-import { ListDto } from 'src/dtos/list.dto';
-import { PeriodAmountDto } from 'src/dtos/period-amount.dto';
 import {
+  DeleteBillDto,
+  LastWeekDto,
+  ListDto,
+  PeriodAmountDto,
   TotalAmountDto,
   TotalAmountWithoutDates,
-} from 'src/dtos/total-amount.dto';
-import { UpdateBillDto } from 'src/dtos/update-bill.dto';
+  UpdateBillDto,
+  CreateBillDto,
+} from 'src/dtos';
 import { Repository } from 'typeorm';
-import { CreateBillDto } from '../dtos/create-bill.dto';
 import { Bill } from '../entities/bill.entity';
 import { User } from '../entities/user.entity';
 import { createReadStream, existsSync, ReadStream } from 'fs';

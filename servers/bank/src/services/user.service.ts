@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { RmqContext } from '@nestjs/microservices';
 import { InjectRepository } from '@nestjs/typeorm';
-import { UserWithBillInfoDto } from 'src/dtos/user-with-bill-info.dto';
+import { UserWithBillInfoDto } from 'src/dtos';
 import { Roles } from 'src/types/user';
 import { Repository } from 'typeorm';
 import { User } from '../entities/user.entity';

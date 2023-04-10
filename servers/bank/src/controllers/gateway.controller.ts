@@ -22,23 +22,23 @@ import {
   ApiParam,
 } from '@nestjs/swagger';
 import { CurrentUser, ObjectSerializer, ListSerializer } from '../decorators';
-import { BillDto } from '../dtos/bill.dto';
-import { CreateBillDto } from '../dtos/create-bill.dto';
+import {
+  BillDto,
+  CreateBillDto,
+  UpdateBillDto,
+  DeleteBillDto,
+  TotalAmountDto,
+  TotalAmountWithoutDates,
+  PeriodAmountDto,
+  LastWeekDto,
+  ListDto,
+  ErrorDto,
+  UserWithBillInfoDto,
+} from '../dtos';
 import { Bill } from '../entities/bill.entity';
 import { User } from '../entities/user.entity';
 import { JwtAuthGuard } from '../guards/jwt-auth.guard';
 import { BillService } from 'src/services/bill.service';
-import { UpdateBillDto } from 'src/dtos/update-bill.dto';
-import { DeleteBillDto } from 'src/dtos/delete-bill.dto';
-import {
-  TotalAmountDto,
-  TotalAmountWithoutDates,
-} from 'src/dtos/total-amount.dto';
-import { PeriodAmountDto } from 'src/dtos/period-amount.dto';
-import { LastWeekDto } from 'src/dtos/last-week.dto';
-import { ListDto } from 'src/dtos/list.dto';
-import { ErrorDto } from 'src/dtos/error.dto';
-import { UserWithBillInfoDto } from 'src/dtos/user-with-bill-info.dto';
 import { UserService } from 'src/services/user.service';
 
 @UseGuards(JwtAuthGuard)
