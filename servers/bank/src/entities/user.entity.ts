@@ -7,7 +7,7 @@ import {
   UpdateDateColumn,
   OneToMany,
 } from 'typeorm';
-import { Bill } from '../entities/bill.entity';
+import { Bill } from '../entities';
 
 @Entity()
 export class User {

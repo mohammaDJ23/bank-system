@@ -1,6 +1,6 @@
 import { Controller } from '@nestjs/common';
 import { Ctx, EventPattern, Payload, RmqContext } from '@nestjs/microservices';
-import { User } from '../entities/user.entity';
+import { User } from '../entities';
 import { UserService } from 'src/services/user.service';
 
 @Controller()

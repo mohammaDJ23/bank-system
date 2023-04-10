@@ -4,7 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { UserWithBillInfoDto } from 'src/dtos';
 import { Roles } from 'src/types/user';
 import { Repository } from 'typeorm';
-import { User } from '../entities/user.entity';
+import { User } from '../entities';
 import { RabbitmqService } from './rabbitmq.service';
 
 @Injectable()

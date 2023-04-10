@@ -16,8 +16,7 @@ import {
   CreateBillDto,
 } from 'src/dtos';
 import { Repository } from 'typeorm';
-import { Bill } from '../entities/bill.entity';
-import { User } from '../entities/user.entity';
+import { Bill, User } from '../entities';
 import { createReadStream, existsSync, ReadStream } from 'fs';
 import { join } from 'path';
 import { Workbook } from 'exceljs';
