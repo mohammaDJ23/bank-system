@@ -41,10 +41,16 @@ export class BillService {
   }
 
   async updateBill(body: UpdateBillDto, user: User): Promise<Bill> {
-    let bill = await this.findById(body.id, user.userServiceId);
-    bill = Object.assign(bill, body);
-    bill = this.billRepository.create(bill);
-    return this.billRepository.save(bill);
+    const updateResult = await this.billRepository
+      .createQueryBuilder('bill')
+      .update(Bill)
+      .set(body)
+      .where('bill.user_id = :userId')
+      .andWhere('bill.id = :billId')
+      .setParameters({ userId: user.userServiceId, billId: body.id })
+      .returning('*')
+      .execute();
+    return updateResult.raw[0];
   }
 
   async deleteBill(body: DeleteBillDto, user: User): Promise<Bill> {
