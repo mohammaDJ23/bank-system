@@ -223,38 +223,6 @@ export class LastWeekBillsApi extends RootApi {
   }
 }
 
-export class BillsMaxAmountsApi extends RootApi<ListParams<BillObj>> {
-  constructor(data: ListParams<BillObj>) {
-    super(
-      {
-        url: '/bank/bills/max-amounts',
-        method: 'post',
-        data,
-        headers: {
-          'Content-type': 'application/json',
-        },
-      },
-      { baseURL: process.env.BANK_SERVICE }
-    );
-  }
-}
-
-export class BillsMinAmountsApi extends RootApi<ListParams<BillObj>> {
-  constructor(data: ListParams<BillObj>) {
-    super(
-      {
-        url: '/bank/bills/min-amounts',
-        method: 'post',
-        data,
-        headers: {
-          'Content-type': 'application/json',
-        },
-      },
-      { baseURL: process.env.BANK_SERVICE }
-    );
-  }
-}
-
 export class BillsExcelApi extends RootApi {
   constructor() {
     super(

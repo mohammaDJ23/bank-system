@@ -135,36 +135,6 @@ export class GatewayController {
     return this.billService.lastWeekBills(user);
   }
 
-  @Post('bills/max-amounts')
-  @HttpCode(HttpStatus.OK)
-  @ListSerializer(BillDto)
-  @ApiBody({ type: ListDto })
-  @ApiBearerAuth()
-  @ApiResponse({ status: HttpStatus.OK, type: BillDto, isArray: true })
-  @ApiResponse({ status: HttpStatus.UNAUTHORIZED, type: ErrorDto })
-  @ApiResponse({ status: HttpStatus.INTERNAL_SERVER_ERROR, type: ErrorDto })
-  maxBillAmounts(
-    @Body() body: ListDto,
-    @CurrentUser() user: User,
-  ): Promise<[Bill[], number]> {
-    return this.billService.maxBillAmounts(body, user);
-  }
-
-  @Post('bills/min-amounts')
-  @HttpCode(HttpStatus.OK)
-  @ListSerializer(BillDto)
-  @ApiBody({ type: ListDto })
-  @ApiBearerAuth()
-  @ApiResponse({ status: HttpStatus.OK, type: BillDto, isArray: true })
-  @ApiResponse({ status: HttpStatus.UNAUTHORIZED, type: ErrorDto })
-  @ApiResponse({ status: HttpStatus.INTERNAL_SERVER_ERROR, type: ErrorDto })
-  minBillAmounts(
-    @Body() body: ListDto,
-    @CurrentUser() user: User,
-  ): Promise<[Bill[], number]> {
-    return this.billService.minBillAmounts(body, user);
-  }
-
   @Get('bills/excel')
   @HttpCode(HttpStatus.OK)
   @Header('Content-Type', 'application/json')

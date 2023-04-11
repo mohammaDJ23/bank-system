@@ -8,7 +8,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import {
   DeleteBillDto,
   LastWeekDto,
-  ListDto,
   PeriodAmountDto,
   TotalAmountDto,
   TotalAmountWithoutDates,
@@ -167,28 +166,6 @@ export class BillService {
       `,
       [user.userServiceId],
     );
-  }
-
-  maxBillAmounts(body: ListDto, user: User): Promise<[Bill[], number]> {
-    return this.billRepository
-      .createQueryBuilder('bill')
-      .innerJoinAndSelect('bill.user', 'user')
-      .where('user.user_service_id = :userId', { userId: user.userServiceId })
-      .orderBy('bill.amount', 'DESC')
-      .take(body.take)
-      .skip((body.page - 1) * body.take)
-      .getManyAndCount();
-  }
-
-  minBillAmounts(body: ListDto, user: User): Promise<[Bill[], number]> {
-    return this.billRepository
-      .createQueryBuilder('bill')
-      .innerJoinAndSelect('bill.user', 'user')
-      .where('user.user_service_id = :userId', { userId: user.userServiceId })
-      .orderBy('bill.amount', 'ASC')
-      .take(body.take)
-      .skip((body.page - 1) * body.take)
-      .getManyAndCount();
   }
 
   async makeBillReports(fileName: string, user: User): Promise<void> {
