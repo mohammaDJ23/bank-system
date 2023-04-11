@@ -34,6 +34,7 @@ import {
   ListDto,
   ErrorDto,
   UserWithBillInfoDto,
+  CreatedBillDto,
 } from '../dtos';
 import { Bill, User } from '../entities';
 import { JwtAuthGuard } from '../guards';
@@ -50,10 +51,10 @@ export class GatewayController {
 
   @Post('bill/create')
   @HttpCode(HttpStatus.CREATED)
-  @ObjectSerializer(BillDto)
+  @ObjectSerializer(CreatedBillDto)
   @ApiBody({ type: CreateBillDto })
   @ApiBearerAuth()
-  @ApiResponse({ status: HttpStatus.CREATED, type: BillDto })
+  @ApiResponse({ status: HttpStatus.CREATED, type: CreatedBillDto })
   @ApiResponse({ status: HttpStatus.UNAUTHORIZED, type: ErrorDto })
   @ApiResponse({ status: HttpStatus.INTERNAL_SERVER_ERROR, type: ErrorDto })
   createBill(

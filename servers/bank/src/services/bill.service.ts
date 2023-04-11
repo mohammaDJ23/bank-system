@@ -27,10 +27,17 @@ export class BillService {
     @InjectRepository(Bill) private readonly billRepository: Repository<Bill>,
   ) {}
 
-  createBill(body: CreateBillDto, user: User): Promise<Bill> {
+  async createBill(body: CreateBillDto, user: User): Promise<Bill> {
     const createdBill = this.billRepository.create(body);
     createdBill.user = user;
-    return this.billRepository.save(createdBill);
+    const insertResult = await this.billRepository
+      .createQueryBuilder()
+      .insert()
+      .into(Bill)
+      .values(createdBill)
+      .returning('*')
+      .execute();
+    return insertResult.raw[0];
   }
 
   async updateBill(body: UpdateBillDto, user: User): Promise<Bill> {

@@ -9,3 +9,4 @@ export * from './total-amount.dto';
 export * from './update-bill.dto';
 export * from './user-with-bill-info.dto';
 export * from './user.dto';
+export * from './created-bill.dto';
