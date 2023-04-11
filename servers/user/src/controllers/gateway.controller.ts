@@ -16,10 +16,7 @@ import { UserService } from '../services/user.service';
 import { CreateUserDto } from '../dtos/create-user.dto';
 import { FindAllDto } from '../dtos/find-all.dto';
 import { UserDto } from '../dtos/user.dto';
-import {
-  ListSerializer,
-  ObjectSerializer,
-} from '../decorators/serializer.decorator';
+import { ListSerializer, ObjectSerializer, CurrentUser } from '../decorators';
 import {
   ApiBody,
   ApiResponse,
@@ -33,7 +30,6 @@ import { AdminAuthGuard } from '../guards/admin-auth.guard';
 import { UpdateUserByUserDto } from '../dtos/update-user-by-user.dto';
 import { UpdateUserByAdminDto } from '../dtos/update-user-by-admin.dto';
 import { User } from 'src/entities/user.entity';
-import { CurrentUser } from 'src/decorators/current-user.decorator';
 import { ErrorDto } from 'src/dtos/error.dto';
 import { UserQuantitiesDto } from 'src/dtos/user-quantities.dto';
 import { LastWeekDto } from 'src/dtos/last-week.dto';
