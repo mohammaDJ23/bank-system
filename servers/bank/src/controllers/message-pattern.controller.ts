@@ -1,7 +1,7 @@
 import { Controller } from '@nestjs/common';
 import { Ctx, EventPattern, Payload, RmqContext } from '@nestjs/microservices';
 import { User } from '../entities';
-import { UserService } from 'src/services/user.service';
+import { UserService } from 'src/services';
 
 @Controller()
 export class MessagePatternController {

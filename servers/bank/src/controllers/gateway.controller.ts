@@ -37,8 +37,7 @@ import {
 } from '../dtos';
 import { Bill, User } from '../entities';
 import { JwtAuthGuard } from '../guards';
-import { BillService } from 'src/services/bill.service';
-import { UserService } from 'src/services/user.service';
+import { BillService, UserService } from 'src/services';
 
 @UseGuards(JwtAuthGuard)
 @Controller('bank')

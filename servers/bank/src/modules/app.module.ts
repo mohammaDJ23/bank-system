@@ -10,9 +10,7 @@ import { AllExceptionFilter } from '../filters';
 import { GatewayController, MessagePatternController } from '../controllers';
 import { JwtStrategy } from '../strategies/jwt.strategy';
 import { CustomNamingStrategy } from '../strategies/naming.strategy';
-import { BillService } from 'src/services/bill.service';
-import { UserService } from 'src/services/user.service';
-import { RabbitmqService } from 'src/services/rabbitmq.service';
+import { BillService, UserService, RabbitmqService } from 'src/services';
 
 @Module({
   imports: [
