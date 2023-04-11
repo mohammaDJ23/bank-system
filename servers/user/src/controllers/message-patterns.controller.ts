@@ -6,7 +6,7 @@ import {
   RmqContext,
 } from '@nestjs/microservices';
 import { UserService } from '../services/user.service';
-import { User } from 'src/entities/user.entity';
+import { User } from 'src/entities';
 import { UpdateUserPartialObj } from 'src/types/user';
 
 @Controller()

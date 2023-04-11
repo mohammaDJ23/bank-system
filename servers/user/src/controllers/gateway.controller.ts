@@ -34,7 +34,7 @@ import {
 } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../guards/jwt-auth.guard';
 import { AdminAuthGuard } from '../guards/admin-auth.guard';
-import { User } from 'src/entities/user.entity';
+import { User } from 'src/entities';
 
 @UseGuards(JwtAuthGuard)
 @Controller('user')

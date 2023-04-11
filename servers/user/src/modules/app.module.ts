@@ -3,7 +3,7 @@ import { ConfigModule } from '@nestjs/config';
 import { ClientsModule, Transport } from '@nestjs/microservices';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserService } from '../services/user.service';
-import { User } from '../entities/user.entity';
+import { User } from '../entities';
 import { CustomNamingStrategy } from '../strategies/naming.strategy';
 import { AllExceptionFilter } from '../filters/catch.filter';
 import { APP_FILTER, APP_PIPE } from '@nestjs/core';

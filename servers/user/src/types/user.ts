@@ -1,4 +1,4 @@
-import { User } from 'src/entities/user.entity';
+import { User } from 'src/entities';
 
 export interface EncryptedUser {
   id: number;

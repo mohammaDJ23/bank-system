@@ -1,5 +1,5 @@
 import { ExecutionContext } from '@nestjs/common';
-import { User } from '../entities/user.entity';
+import { User } from '../entities';
 import { getRequest } from './request';
 
 export function getCurrentUser(context: ExecutionContext): User {

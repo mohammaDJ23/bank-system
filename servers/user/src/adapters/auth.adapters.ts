@@ -2,7 +2,7 @@ import { INestApplication, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { IoAdapter } from '@nestjs/platform-socket.io';
 import { Socket, Server } from 'socket.io';
-import { User } from 'src/entities/user.entity';
+import { User } from 'src/entities';
 
 export interface CustomSocket extends Socket {
   user: Pick<User, 'id' | 'email' | 'firstName' | 'lastName' | 'role'> & {

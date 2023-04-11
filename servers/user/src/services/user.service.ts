@@ -15,7 +15,7 @@ import {
   UserQuantitiesDto,
   LastWeekDto,
 } from '../dtos';
-import { User } from '../entities/user.entity';
+import { User } from '../entities';
 import { hash } from 'bcrypt';
 import { ClientProxy, RmqContext, RpcException } from '@nestjs/microservices';
 import { RabbitMqServices } from '../types/rabbitmq';
