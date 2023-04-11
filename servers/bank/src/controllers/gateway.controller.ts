@@ -36,7 +36,7 @@ import {
   UserWithBillInfoDto,
 } from '../dtos';
 import { Bill, User } from '../entities';
-import { JwtAuthGuard } from '../guards/jwt-auth.guard';
+import { JwtAuthGuard } from '../guards';
 import { BillService } from 'src/services/bill.service';
 import { UserService } from 'src/services/user.service';
 
