@@ -96,11 +96,10 @@ export class BillService {
   findAllWithoutLimitation(user: User): Promise<Bill[]> {
     return this.billRepository
       .createQueryBuilder('bill')
-      .innerJoinAndSelect('bill.user', 'user')
-      .where('user.user_service_id = :userId', {
-        userId: user.userServiceId,
-      })
-      .orderBy('bill.date::TIMESTAMP', 'DESC')
+      .leftJoinAndSelect('bill.user', 'user')
+      .where('user.user_service_id = :userId')
+      .orderBy('bill.date', 'DESC')
+      .setParameters({ userId: user.userServiceId })
       .getMany();
   }
 
