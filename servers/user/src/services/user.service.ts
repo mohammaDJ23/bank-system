@@ -7,18 +7,20 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { CreateUserDto } from '../dtos/create-user.dto';
+import {
+  CreateUserDto,
+  UpdateUserDto,
+  DeleteAccountDto,
+  UpdateUserByUserDto,
+  UserQuantitiesDto,
+  LastWeekDto,
+} from '../dtos';
 import { User } from '../entities/user.entity';
 import { hash } from 'bcrypt';
 import { ClientProxy, RmqContext, RpcException } from '@nestjs/microservices';
-import { UpdateUserDto } from '../dtos/update-user.dto';
-import { DeleteAccountDto } from '../dtos/delete-account.dto';
 import { RabbitMqServices } from '../types/rabbitmq';
-import { UpdateUserByUserDto } from 'src/dtos/update-user-by-user.dto';
 import { RabbitmqService } from './rabbitmq.service';
-import { UserQuantitiesDto } from 'src/dtos/user-quantities.dto';
 import { Roles, UpdateUserPartialObj } from 'src/types/user';
-import { LastWeekDto } from 'src/dtos/last-week.dto';
 import camelcase from 'camelcase';
 
 @Injectable()

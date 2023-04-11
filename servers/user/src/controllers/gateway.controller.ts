@@ -13,9 +13,17 @@ import {
   Query,
 } from '@nestjs/common';
 import { UserService } from '../services/user.service';
-import { CreateUserDto } from '../dtos/create-user.dto';
-import { FindAllDto } from '../dtos/find-all.dto';
-import { UserDto } from '../dtos/user.dto';
+import {
+  CreateUserDto,
+  FindAllDto,
+  UserDto,
+  DeleteAccountDto,
+  UpdateUserByUserDto,
+  UpdateUserByAdminDto,
+  ErrorDto,
+  UserQuantitiesDto,
+  LastWeekDto,
+} from '../dtos';
 import { ListSerializer, ObjectSerializer, CurrentUser } from '../decorators';
 import {
   ApiBody,
@@ -24,15 +32,9 @@ import {
   ApiBearerAuth,
   ApiParam,
 } from '@nestjs/swagger';
-import { DeleteAccountDto } from '../dtos/delete-account.dto';
 import { JwtAuthGuard } from '../guards/jwt-auth.guard';
 import { AdminAuthGuard } from '../guards/admin-auth.guard';
-import { UpdateUserByUserDto } from '../dtos/update-user-by-user.dto';
-import { UpdateUserByAdminDto } from '../dtos/update-user-by-admin.dto';
 import { User } from 'src/entities/user.entity';
-import { ErrorDto } from 'src/dtos/error.dto';
-import { UserQuantitiesDto } from 'src/dtos/user-quantities.dto';
-import { LastWeekDto } from 'src/dtos/last-week.dto';
 
 @UseGuards(JwtAuthGuard)
 @Controller('user')
