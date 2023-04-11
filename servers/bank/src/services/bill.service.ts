@@ -143,7 +143,7 @@ export class BillService {
   }
 
   async lastWeekBills(user: User): Promise<LastWeekDto[]> {
-    let data: LastWeekDto[] = await this.billRepository.query(
+    return this.billRepository.query(
       `
         WITH lastWeek (date) AS (
           VALUES
@@ -166,12 +166,6 @@ export class BillService {
         ORDER BY lastWeek.date ASC;
       `,
       [user.userServiceId],
-    );
-
-    return data.map((item) =>
-      Object.assign<LastWeekDto, Partial<LastWeekDto>>(item, {
-        date: +item.date,
-      }),
     );
   }
 
