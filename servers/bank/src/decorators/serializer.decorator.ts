@@ -5,7 +5,7 @@ import {
   ObjectSerial,
   SerialConstructor,
   ClassConstructor,
-} from 'src/types/serializer';
+} from 'src/types';
 
 export function serializer(serialConstructor: SerialConstructor) {
   return UseInterceptors(new SerializeInterceptor(serialConstructor));
