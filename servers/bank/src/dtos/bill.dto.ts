@@ -30,7 +30,7 @@ export class BillDto {
   @ApiProperty()
   updatedAt: Date;
 
-  @Transform(({ obj }) => obj.user.id)
+  @Transform(({ obj }) => obj.user.userServiceId)
   @Expose()
   @ApiProperty()
   userId: number;

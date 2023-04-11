@@ -65,20 +65,15 @@ export class BillService {
     return deleteResult.raw[0];
   }
 
-  findOne(id: string, user: User): Promise<Bill> {
-    return this.findById(id, user.userServiceId);
-  }
-
-  async findById(billId: string, userId: number): Promise<Bill> {
+  async findById(billId: string, user: User): Promise<Bill> {
     const bill = await this.billRepository
       .createQueryBuilder('bill')
-      .innerJoinAndSelect('bill.user', 'user')
-      .where('user.user_service_id = :userId', { userId })
-      .andWhere('bill.id = :billId', { billId })
+      .leftJoinAndSelect('bill.user', 'user')
+      .where('user.user_service_id = :userId')
+      .andWhere('bill.id = :billId')
+      .setParameters({ billId, userId: user.userServiceId })
       .getOne();
-
     if (!bill) throw new NotFoundException('Could not found the bill.');
-
     return bill;
   }
 
