@@ -84,11 +84,12 @@ export class BillService {
   ): Promise<[Bill[], number]> {
     return this.billRepository
       .createQueryBuilder('bill')
-      .innerJoinAndSelect('bill.user', 'user')
-      .where('user.user_service_id = :userId', { userId: user.userServiceId })
+      .leftJoinAndSelect('bill.user', 'user')
+      .where('user.user_service_id = :userId')
       .orderBy('bill.date', 'DESC')
       .take(take)
       .skip((page - 1) * take)
+      .setParameters({ userId: user.userServiceId })
       .getManyAndCount();
   }
 

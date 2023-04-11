@@ -185,7 +185,7 @@ export class GatewayController {
   @ApiResponse({ status: HttpStatus.OK, type: BillDto, isArray: true })
   @ApiResponse({ status: HttpStatus.UNAUTHORIZED, type: ErrorDto })
   @ApiResponse({ status: HttpStatus.INTERNAL_SERVER_ERROR, type: ErrorDto })
-  findAllBills(
+  findAll(
     @Query('page') page: number,
     @Query('take') take: number,
     @CurrentUser() user: User,
