@@ -1,6 +1,6 @@
 import { Injectable, CanActivate, ExecutionContext } from '@nestjs/common';
 import { Observable } from 'rxjs';
-import { getCurrentUser } from 'src/libs/current-user';
+import { getCurrentUser } from 'src/libs';
 import { Roles } from 'src/types/user';
 
 @Injectable()
