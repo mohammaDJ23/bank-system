@@ -104,9 +104,9 @@ export class BillService {
   }
 
   async getTotalAmount(user: User): Promise<TotalAmountDto> {
-    const data: TotalAmountDto = await this.billRepository
+    return this.billRepository
       .createQueryBuilder('bill')
-      .innerJoinAndSelect('bill.user', 'user')
+      .leftJoinAndSelect('bill.user', 'user')
       .select('COALESCE(SUM(bill.amount::BIGINT), 0)::TEXT', 'totalAmount')
       .addSelect('COALESCE(COUNT(bill.id), 0)', 'quantities')
       .addSelect(
@@ -117,15 +117,9 @@ export class BillService {
         'COALESCE(EXTRACT(EPOCH FROM MAX(bill.date)) * 1000, 0)::BIGINT',
         'end',
       )
-      .where('user.user_service_id = :userId', {
-        userId: user.userServiceId,
-      })
+      .where('user.user_service_id = :userId')
+      .setParameters({ userId: user.userServiceId })
       .getRawOne();
-
-    return Object.assign<TotalAmountDto, Partial<TotalAmountDto>>(data, {
-      start: +data.start,
-      end: +data.end,
-    });
   }
 
   async periodAmount(
