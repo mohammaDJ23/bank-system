@@ -12,7 +12,7 @@ import {
   ParseIntPipe,
   Query,
 } from '@nestjs/common';
-import { UserService } from '../services/user.service';
+import { UserService } from '../services';
 import {
   CreateUserDto,
   FindAllDto,

@@ -5,7 +5,7 @@ import {
   Payload,
   RmqContext,
 } from '@nestjs/microservices';
-import { UserService } from '../services/user.service';
+import { UserService } from '../services';
 import { User } from 'src/entities';
 import { UpdateUserPartialObj } from 'src/types/user';
 

@@ -2,7 +2,7 @@ import { Module, ValidationPipe } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { ClientsModule, Transport } from '@nestjs/microservices';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { UserService } from '../services/user.service';
+import { UserService, RabbitmqService } from '../services';
 import { User } from '../entities';
 import { CustomNamingStrategy } from '../strategies/naming.strategy';
 import { AllExceptionFilter } from '../filters';
@@ -12,7 +12,6 @@ import { JwtModule } from '@nestjs/jwt';
 import { JwtStrategy } from '../strategies/jwt.strategy';
 import { GatewayController, MessagePatternController } from '../controllers';
 import { RabbitMqQueue, RabbitMqServices } from '../types/rabbitmq';
-import { RabbitmqService } from 'src/services/rabbitmq.service';
 import { UserConnectionGateWay } from 'src/gateways';
 
 @Module({
