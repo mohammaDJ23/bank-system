@@ -32,8 +32,7 @@ import {
   ApiBearerAuth,
   ApiParam,
 } from '@nestjs/swagger';
-import { JwtAuthGuard } from '../guards/jwt-auth.guard';
-import { AdminAuthGuard } from '../guards/admin-auth.guard';
+import { JwtAuthGuard, AdminAuthGuard } from '../guards';
 import { User } from 'src/entities';
 
 @UseGuards(JwtAuthGuard)
