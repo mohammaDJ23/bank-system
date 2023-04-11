@@ -36,6 +36,7 @@ import {
   UserWithBillInfoDto,
   CreatedBillDto,
   UpdatedBillDto,
+  DeletedBillDto,
 } from '../dtos';
 import { Bill, User } from '../entities';
 import { JwtAuthGuard } from '../guards';
@@ -83,10 +84,10 @@ export class GatewayController {
 
   @Delete('bill/delete')
   @HttpCode(HttpStatus.OK)
-  @ObjectSerializer(BillDto)
+  @ObjectSerializer(DeletedBillDto)
   @ApiBody({ type: DeleteBillDto })
   @ApiBearerAuth()
-  @ApiResponse({ status: HttpStatus.OK, type: BillDto })
+  @ApiResponse({ status: HttpStatus.OK, type: DeletedBillDto })
   @ApiResponse({ status: HttpStatus.UNAUTHORIZED, type: ErrorDto })
   @ApiResponse({ status: HttpStatus.NOT_FOUND, type: ErrorDto })
   @ApiResponse({ status: HttpStatus.INTERNAL_SERVER_ERROR, type: ErrorDto })

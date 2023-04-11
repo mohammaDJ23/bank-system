@@ -54,9 +54,15 @@ export class BillService {
   }
 
   async deleteBill(body: DeleteBillDto, user: User): Promise<Bill> {
-    const bill = await this.findById(body.id, user.userServiceId);
-    await this.billRepository.delete({ id: bill.id });
-    return bill;
+    const deleteResult = await this.billRepository
+      .createQueryBuilder('bill')
+      .delete()
+      .where('bill.user_id = :userId')
+      .andWhere('bill.id = :billId')
+      .setParameters({ userId: user.userServiceId, billId: body.id })
+      .returning('*')
+      .execute();
+    return deleteResult.raw[0];
   }
 
   findOne(id: string, user: User): Promise<Bill> {
