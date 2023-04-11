@@ -1,7 +1,7 @@
 import { NestFactory } from '@nestjs/core';
 import { MicroserviceOptions, Transport } from '@nestjs/microservices';
 import { AppModule } from './modules';
-import { RabbitMqQueue } from './types/rabbitmq';
+import { RabbitMqQueue } from './types';
 import { swagger } from './libs';
 import { AuthAdapter } from './adapters';
 

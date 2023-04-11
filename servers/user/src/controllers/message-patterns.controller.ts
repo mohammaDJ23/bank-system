@@ -7,7 +7,7 @@ import {
 } from '@nestjs/microservices';
 import { UserService } from '../services';
 import { User } from 'src/entities';
-import { UpdateUserPartialObj } from 'src/types/user';
+import { UpdateUserPartialObj } from 'src/types';
 
 @Controller()
 export class MessagePatternController {

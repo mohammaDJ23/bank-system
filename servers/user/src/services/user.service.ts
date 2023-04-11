@@ -18,9 +18,8 @@ import {
 import { User } from '../entities';
 import { hash } from 'bcrypt';
 import { ClientProxy, RmqContext, RpcException } from '@nestjs/microservices';
-import { RabbitMqServices } from '../types/rabbitmq';
+import { RabbitMqServices, Roles, UpdateUserPartialObj } from '../types';
 import { RabbitmqService } from './rabbitmq.service';
-import { Roles, UpdateUserPartialObj } from 'src/types/user';
 import camelcase from 'camelcase';
 
 @Injectable()

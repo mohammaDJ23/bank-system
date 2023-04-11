@@ -10,7 +10,7 @@ import { APP_FILTER, APP_PIPE } from '@nestjs/core';
 import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
 import { GatewayController, MessagePatternController } from '../controllers';
-import { RabbitMqQueue, RabbitMqServices } from '../types/rabbitmq';
+import { RabbitMqQueue, RabbitMqServices } from '../types';
 import { UserConnectionGateWay } from 'src/gateways';
 
 @Module({

@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsString, Matches, Length, IsNumber, IsEnum } from 'class-validator';
-import { Roles } from 'src/types/user';
+import { Roles } from 'src/types';
 
 export class UpdateUserByAdminDto {
   @IsNumber()
