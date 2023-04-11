@@ -128,14 +128,15 @@ export class BillService {
   ): Promise<TotalAmountWithoutDates> {
     return this.billRepository
       .createQueryBuilder('bill')
-      .innerJoinAndSelect('bill.user', 'user')
+      .leftJoinAndSelect('bill.user', 'user')
       .select('COALESCE(SUM(bill.amount::BIGINT), 0)::TEXT', 'totalAmount')
       .addSelect('COALESCE(COUNT(bill.id), 0)', 'quantities')
-      .where('user.user_service_id = :userId', { userId: user.userServiceId })
-      .andWhere('bill.date::TIMESTAMP >= :start::TIMESTAMP', {
+      .where('user.user_service_id = :userId')
+      .andWhere('bill.date::TIMESTAMP >= :start::TIMESTAMP')
+      .andWhere('bill.date::TIMESTAMP <= :end::TIMESTAMP')
+      .setParameters({
+        userId: user.userServiceId,
         start: new Date(body.start),
-      })
-      .andWhere('bill.date::TIMESTAMP <= :end::TIMESTAMP', {
         end: new Date(body.end),
       })
       .getRawOne();
