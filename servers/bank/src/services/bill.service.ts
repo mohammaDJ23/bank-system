@@ -16,7 +16,8 @@ import {
 } from 'src/dtos';
 import { Repository } from 'typeorm';
 import { Bill, User } from '../entities';
-import { createReadStream, existsSync, ReadStream } from 'fs';
+import { createReadStream, existsSync, readFileSync } from 'fs';
+import { mkdir } from 'fs/promises';
 import { join } from 'path';
 import { Workbook } from 'exceljs';
 
@@ -92,16 +93,6 @@ export class BillService {
       .getManyAndCount();
   }
 
-  findAllWithoutLimitation(user: User): Promise<Bill[]> {
-    return this.billRepository
-      .createQueryBuilder('bill')
-      .leftJoinAndSelect('bill.user', 'user')
-      .where('user.user_service_id = :userId')
-      .orderBy('bill.date', 'DESC')
-      .setParameters({ userId: user.userServiceId })
-      .getMany();
-  }
-
   async getTotalAmount(user: User): Promise<TotalAmountDto> {
     return this.billRepository
       .createQueryBuilder('bill')
@@ -168,46 +159,43 @@ export class BillService {
     );
   }
 
-  async makeBillReports(fileName: string, user: User): Promise<void> {
-    const bills = await this.findAllWithoutLimitation(user);
+  async getBillReports(user: User): Promise<StreamableFile> {
+    const fileName = `${user.firstName}-${user.lastName}-${user.userServiceId}.xlsx`;
+    const path = join(process.cwd(), '/src', '/reports');
+    const filePath = join(path, fileName);
+
+    if (!existsSync(path)) {
+      await mkdir(path, { recursive: true });
+    }
+
     const workbook = new Workbook();
     const workSheet = workbook.addWorksheet('bills');
+    const billPropertiesMap = this.billRepository.metadata.propertiesMap;
+    const propertyNames = Object.values(billPropertiesMap);
+    workSheet.columns = propertyNames.map((propertyName) => ({
+      header: propertyName,
+      key: propertyName,
+      width: 20,
+    }));
 
+    const bills = await this.billRepository
+      .createQueryBuilder('bill')
+      .where('bill.user_id = :userId')
+      .orderBy('bill.date', 'DESC')
+      .setParameters({ userId: user.userServiceId })
+      .getMany();
     if (bills.length) {
-      workSheet.columns = Object.keys(bills[0]).map((item) => {
-        return { header: item, key: item, width: 20 };
-      });
-
       workSheet.addRows(bills);
     }
 
-    await workbook.xlsx.writeFile(fileName);
-  }
+    await workbook.xlsx.writeFile(filePath);
 
-  createReadStream(fileName: string): ReadStream {
-    return createReadStream(join(process.cwd(), fileName));
-  }
-
-  async getSteamableFile(fileName: string): Promise<StreamableFile> {
-    const readedFile = this.createReadStream(fileName);
-
-    readedFile.on('error', (err: Error) => {
-      throw new InternalServerErrorException(err.message);
+    const readedFile = createReadStream(filePath);
+    return new Promise<StreamableFile>((resolve, reject) => {
+      readedFile.on('ready', () => resolve(new StreamableFile(readedFile)));
+      readedFile.on('error', (err: Error) =>
+        reject(new InternalServerErrorException(err.message)),
+      );
     });
-
-    return new Promise<StreamableFile>((resolve) =>
-      readedFile.on('ready', () => {
-        resolve(new StreamableFile(readedFile));
-      }),
-    );
-  }
-
-  async getBillReports(user: User): Promise<StreamableFile> {
-    const billReportsFileName = 'bill-reports.xlsx';
-
-    if (!existsSync(billReportsFileName))
-      await this.makeBillReports(billReportsFileName, user);
-
-    return this.getSteamableFile(billReportsFileName);
   }
 }
