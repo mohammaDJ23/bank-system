@@ -75,7 +75,12 @@ export class UserService {
 
   async delete(payload: User, context: RmqContext): Promise<void> {
     try {
-      await this.userService.delete({ userServiceId: payload.id });
+      await this.userService
+        .createQueryBuilder('public.user')
+        .delete()
+        .where('public.user.user_service_id = :userId')
+        .setParameters({ userId: payload.id })
+        .execute();
       this.rabbitmqService.applyAcknowledgment(context);
     } catch (error) {
       throw error;
