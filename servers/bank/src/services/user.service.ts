@@ -1,5 +1,5 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { RmqContext } from '@nestjs/microservices';
+import { RmqContext, RpcException } from '@nestjs/microservices';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UserWithBillInfoDto } from 'src/dtos';
 import { Roles } from 'src/types';
@@ -34,7 +34,7 @@ export class UserService {
         .execute();
       this.rabbitmqService.applyAcknowledgment(context);
     } catch (error) {
-      throw error;
+      throw new RpcException(error);
     }
   }
 
@@ -69,7 +69,7 @@ export class UserService {
       );
       this.rabbitmqService.applyAcknowledgment(context);
     } catch (error) {
-      throw error;
+      throw new RpcException(error);
     }
   }
 
@@ -83,7 +83,7 @@ export class UserService {
         .execute();
       this.rabbitmqService.applyAcknowledgment(context);
     } catch (error) {
-      throw error;
+      throw new RpcException(error);
     }
   }
 
