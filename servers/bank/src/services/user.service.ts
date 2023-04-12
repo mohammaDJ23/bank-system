@@ -23,11 +23,15 @@ export class UserService {
 
   async create(payload: User, context: RmqContext): Promise<void> {
     try {
-      let user = Object.assign<User, Partial<User>>(payload, {
+      payload = Object.assign<User, Partial<User>>(payload, {
         userServiceId: payload.id,
       });
-      user = this.userService.create(user);
-      await this.userService.save(user);
+      await this.userService
+        .createQueryBuilder()
+        .insert()
+        .into(User)
+        .values(payload)
+        .execute();
       this.rabbitmqService.applyAcknowledgment(context);
     } catch (error) {
       throw error;

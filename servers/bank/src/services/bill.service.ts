@@ -16,7 +16,7 @@ import {
 } from 'src/dtos';
 import { Repository } from 'typeorm';
 import { Bill, User } from '../entities';
-import { createReadStream, existsSync, readFileSync } from 'fs';
+import { createReadStream, existsSync } from 'fs';
 import { mkdir } from 'fs/promises';
 import { join } from 'path';
 import { Workbook } from 'exceljs';
