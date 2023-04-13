@@ -1,4 +1,4 @@
-import { Roles } from 'src/types/user';
+import { Roles } from 'src/types';
 import {
   Entity,
   Column,
@@ -7,7 +7,7 @@ import {
   UpdateDateColumn,
   OneToMany,
 } from 'typeorm';
-import { Bill } from '../entities/bill.entity';
+import { Bill } from '../entities';
 
 @Entity()
 export class User {

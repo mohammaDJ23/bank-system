@@ -1,11 +1,11 @@
 import { UseInterceptors } from '@nestjs/common';
-import { SerializeInterceptor } from 'src/interceptors/serialize.interceptor';
+import { SerializeInterceptor } from 'src/interceptors';
 import {
   ArraySerial,
   ObjectSerial,
   SerialConstructor,
   ClassConstructor,
-} from 'src/types/serializer';
+} from 'src/types';
 
 export function serializer(serialConstructor: SerialConstructor) {
   return UseInterceptors(new SerializeInterceptor(serialConstructor));

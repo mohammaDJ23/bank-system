@@ -9,7 +9,7 @@ import { HttpArgumentsHost } from '@nestjs/common/interfaces/features/arguments-
 import { AbstractHttpAdapter, HttpAdapterHost } from '@nestjs/core';
 import { MESSAGES } from '@nestjs/core/constants';
 import { RpcException } from '@nestjs/microservices';
-import { Exception } from 'src/types/exception';
+import { Exception } from 'src/types';
 
 @Catch()
 export class AllExceptionFilter implements ExceptionFilter {

@@ -2,18 +2,15 @@ import { Module, ValidationPipe } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { ClientsModule, Transport } from '@nestjs/microservices';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { UserService } from '../services/user.service';
-import { User } from '../entities/user.entity';
-import { CustomNamingStrategy } from '../strategies/naming.strategy';
-import { AllExceptionFilter } from '../filters/catch.filter';
+import { UserService, RabbitmqService } from '../services';
+import { User } from '../entities';
+import { CustomNamingStrategy, JwtStrategy } from '../strategies';
+import { AllExceptionFilter } from '../filters';
 import { APP_FILTER, APP_PIPE } from '@nestjs/core';
 import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
-import { JwtStrategy } from '../strategies/jwt.strategy';
-import { GatewayController } from '../controllers/gateway.controller';
-import { MessagePatternController } from '../controllers/message-patterns.controller';
-import { RabbitMqQueue, RabbitMqServices } from '../types/rabbitmq';
-import { RabbitmqService } from 'src/services/rabbitmq.service';
+import { GatewayController, MessagePatternController } from '../controllers';
+import { RabbitMqQueue, RabbitMqServices } from '../types';
 import { UserConnectionGateWay } from 'src/gateways';
 
 @Module({

@@ -12,14 +12,24 @@ import {
   ParseIntPipe,
   Query,
 } from '@nestjs/common';
-import { UserService } from '../services/user.service';
-import { CreateUserDto } from '../dtos/create-user.dto';
-import { FindAllDto } from '../dtos/find-all.dto';
-import { UserDto } from '../dtos/user.dto';
+import { UserService } from '../services';
+import {
+  CreateUserDto,
+  FindAllDto,
+  UserDto,
+  DeleteAccountDto,
+  UpdateUserByUserDto,
+  UpdateUserByAdminDto,
+  ErrorDto,
+  UserQuantitiesDto,
+  LastWeekDto,
+} from '../dtos';
 import {
   ListSerializer,
   ObjectSerializer,
-} from '../decorators/serializer.decorator';
+  CurrentUser,
+  ArraySerializer,
+} from '../decorators';
 import {
   ApiBody,
   ApiResponse,
@@ -27,16 +37,8 @@ import {
   ApiBearerAuth,
   ApiParam,
 } from '@nestjs/swagger';
-import { DeleteAccountDto } from '../dtos/delete-account.dto';
-import { JwtAuthGuard } from '../guards/jwt-auth.guard';
-import { AdminAuthGuard } from '../guards/admin-auth.guard';
-import { UpdateUserByUserDto } from '../dtos/update-user-by-user.dto';
-import { UpdateUserByAdminDto } from '../dtos/update-user-by-admin.dto';
-import { User } from 'src/entities/user.entity';
-import { CurrentUser } from 'src/decorators/current-user.decorator';
-import { ErrorDto } from 'src/dtos/error.dto';
-import { UserQuantitiesDto } from 'src/dtos/user-quantities.dto';
-import { LastWeekDto } from 'src/dtos/last-week.dto';
+import { JwtAuthGuard, AdminAuthGuard } from '../guards';
+import { User } from 'src/entities';
 
 @UseGuards(JwtAuthGuard)
 @Controller('user')
@@ -86,8 +88,11 @@ export class GatewayController {
   @ApiResponse({ status: HttpStatus.CONFLICT, type: ErrorDto })
   @ApiResponse({ status: HttpStatus.NOT_FOUND, type: ErrorDto })
   @ApiResponse({ status: HttpStatus.INTERNAL_SERVER_ERROR, type: ErrorDto })
-  updateByAdmin(@Body() body: UpdateUserByAdminDto): Promise<User> {
-    return this.userService.findAndUpdate(body);
+  updateByAdmin(
+    @Body() body: UpdateUserByAdminDto,
+    @CurrentUser() user: User,
+  ): Promise<User> {
+    return this.userService.updateByAdmin(body, user);
   }
 
   @Delete('delete')
@@ -100,8 +105,8 @@ export class GatewayController {
   @ApiResponse({ status: HttpStatus.UNAUTHORIZED, type: ErrorDto })
   @ApiResponse({ status: HttpStatus.NOT_FOUND, type: ErrorDto })
   @ApiResponse({ status: HttpStatus.INTERNAL_SERVER_ERROR, type: ErrorDto })
-  remove(@Body() body: DeleteAccountDto): Promise<User> {
-    return this.userService.remove(body);
+  delete(@Body() body: DeleteAccountDto): Promise<User> {
+    return this.userService.delete(body);
   }
 
   @Get('all')
@@ -136,13 +141,13 @@ export class GatewayController {
   @Get('last-week')
   @UseGuards(AdminAuthGuard)
   @HttpCode(HttpStatus.OK)
-  @ObjectSerializer(LastWeekDto)
+  @ArraySerializer(LastWeekDto)
   @ApiBearerAuth()
   @ApiResponse({ status: HttpStatus.OK, type: LastWeekDto })
   @ApiResponse({ status: HttpStatus.UNAUTHORIZED, type: ErrorDto })
   @ApiResponse({ status: HttpStatus.NOT_FOUND, type: ErrorDto })
   @ApiResponse({ status: HttpStatus.INTERNAL_SERVER_ERROR, type: ErrorDto })
-  getLastWeekUsers(): Promise<LastWeekDto> {
+  getLastWeekUsers(): Promise<LastWeekDto[]> {
     return this.userService.lastWeekUsers();
   }
 

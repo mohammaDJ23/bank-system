@@ -1,4 +1,4 @@
-import { Roles } from 'src/types/user';
+import { Roles } from 'src/types';
 import {
   Entity,
   Column,

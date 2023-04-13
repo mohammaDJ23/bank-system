@@ -5,20 +5,19 @@ import {
   StreamableFile,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { DeleteBillDto } from 'src/dtos/delete-bill.dto';
-import { LastWeekDto } from 'src/dtos/last-week.dto';
-import { ListDto } from 'src/dtos/list.dto';
-import { PeriodAmountDto } from 'src/dtos/period-amount.dto';
 import {
+  DeleteBillDto,
+  LastWeekDto,
+  PeriodAmountDto,
   TotalAmountDto,
   TotalAmountWithoutDates,
-} from 'src/dtos/total-amount.dto';
-import { UpdateBillDto } from 'src/dtos/update-bill.dto';
+  UpdateBillDto,
+  CreateBillDto,
+} from 'src/dtos';
 import { Repository } from 'typeorm';
-import { CreateBillDto } from '../dtos/create-bill.dto';
-import { Bill } from '../entities/bill.entity';
-import { User } from '../entities/user.entity';
-import { createReadStream, existsSync, ReadStream } from 'fs';
+import { Bill, User } from '../entities';
+import { createReadStream, existsSync } from 'fs';
+import { mkdir } from 'fs/promises';
 import { join } from 'path';
 import { Workbook } from 'exceljs';
 
@@ -28,39 +27,53 @@ export class BillService {
     @InjectRepository(Bill) private readonly billRepository: Repository<Bill>,
   ) {}
 
-  createBill(body: CreateBillDto, user: User): Promise<Bill> {
+  async createBill(body: CreateBillDto, user: User): Promise<Bill> {
     const createdBill = this.billRepository.create(body);
     createdBill.user = user;
-    return this.billRepository.save(createdBill);
+    const insertResult = await this.billRepository
+      .createQueryBuilder()
+      .insert()
+      .into(Bill)
+      .values(createdBill)
+      .returning('*')
+      .execute();
+    return insertResult.raw[0];
   }
 
   async updateBill(body: UpdateBillDto, user: User): Promise<Bill> {
-    let bill = await this.findById(body.id, user.userServiceId);
-    bill = Object.assign(bill, body);
-    bill = this.billRepository.create(bill);
-    return this.billRepository.save(bill);
+    const updateResult = await this.billRepository
+      .createQueryBuilder('bill')
+      .update(Bill)
+      .set(body)
+      .where('bill.user_id = :userId')
+      .andWhere('bill.id = :billId')
+      .setParameters({ userId: user.userServiceId, billId: body.id })
+      .returning('*')
+      .execute();
+    return updateResult.raw[0];
   }
 
   async deleteBill(body: DeleteBillDto, user: User): Promise<Bill> {
-    const bill = await this.findById(body.id, user.userServiceId);
-    await this.billRepository.delete({ id: bill.id });
-    return bill;
+    const deleteResult = await this.billRepository
+      .createQueryBuilder('bill')
+      .delete()
+      .where('bill.user_id = :userId')
+      .andWhere('bill.id = :billId')
+      .setParameters({ userId: user.userServiceId, billId: body.id })
+      .returning('*')
+      .execute();
+    return deleteResult.raw[0];
   }
 
-  findOne(id: string, user: User): Promise<Bill> {
-    return this.findById(id, user.userServiceId);
-  }
-
-  async findById(billId: string, userId: number): Promise<Bill> {
+  async findById(billId: string, user: User): Promise<Bill> {
     const bill = await this.billRepository
       .createQueryBuilder('bill')
-      .innerJoinAndSelect('bill.user', 'user')
-      .where('user.user_service_id = :userId', { userId })
-      .andWhere('bill.id = :billId', { billId })
+      .leftJoinAndSelect('bill.user', 'user')
+      .where('user.user_service_id = :userId')
+      .andWhere('bill.id = :billId')
+      .setParameters({ billId, userId: user.userServiceId })
       .getOne();
-
     if (!bill) throw new NotFoundException('Could not found the bill.');
-
     return bill;
   }
 
@@ -71,29 +84,19 @@ export class BillService {
   ): Promise<[Bill[], number]> {
     return this.billRepository
       .createQueryBuilder('bill')
-      .innerJoinAndSelect('bill.user', 'user')
-      .where('user.user_service_id = :userId', { userId: user.userServiceId })
+      .leftJoinAndSelect('bill.user', 'user')
+      .where('user.user_service_id = :userId')
       .orderBy('bill.date', 'DESC')
       .take(take)
       .skip((page - 1) * take)
+      .setParameters({ userId: user.userServiceId })
       .getManyAndCount();
   }
 
-  findAllWithoutLimitation(user: User): Promise<Bill[]> {
+  async getTotalAmount(user: User): Promise<TotalAmountDto> {
     return this.billRepository
       .createQueryBuilder('bill')
-      .innerJoinAndSelect('bill.user', 'user')
-      .where('user.user_service_id = :userId', {
-        userId: user.userServiceId,
-      })
-      .orderBy('bill.date::TIMESTAMP', 'DESC')
-      .getMany();
-  }
-
-  async getTotalAmount(user: User): Promise<TotalAmountDto> {
-    const data: TotalAmountDto = await this.billRepository
-      .createQueryBuilder('bill')
-      .innerJoinAndSelect('bill.user', 'user')
+      .leftJoinAndSelect('bill.user', 'user')
       .select('COALESCE(SUM(bill.amount::BIGINT), 0)::TEXT', 'totalAmount')
       .addSelect('COALESCE(COUNT(bill.id), 0)', 'quantities')
       .addSelect(
@@ -104,15 +107,9 @@ export class BillService {
         'COALESCE(EXTRACT(EPOCH FROM MAX(bill.date)) * 1000, 0)::BIGINT',
         'end',
       )
-      .where('user.user_service_id = :userId', {
-        userId: user.userServiceId,
-      })
+      .where('user.user_service_id = :userId')
+      .setParameters({ userId: user.userServiceId })
       .getRawOne();
-
-    return Object.assign<TotalAmountDto, Partial<TotalAmountDto>>(data, {
-      start: +data.start,
-      end: +data.end,
-    });
   }
 
   async periodAmount(
@@ -121,21 +118,22 @@ export class BillService {
   ): Promise<TotalAmountWithoutDates> {
     return this.billRepository
       .createQueryBuilder('bill')
-      .innerJoinAndSelect('bill.user', 'user')
+      .leftJoinAndSelect('bill.user', 'user')
       .select('COALESCE(SUM(bill.amount::BIGINT), 0)::TEXT', 'totalAmount')
       .addSelect('COALESCE(COUNT(bill.id), 0)', 'quantities')
-      .where('user.user_service_id = :userId', { userId: user.userServiceId })
-      .andWhere('bill.date::TIMESTAMP >= :start::TIMESTAMP', {
+      .where('user.user_service_id = :userId')
+      .andWhere('bill.date::TIMESTAMP >= :start::TIMESTAMP')
+      .andWhere('bill.date::TIMESTAMP <= :end::TIMESTAMP')
+      .setParameters({
+        userId: user.userServiceId,
         start: new Date(body.start),
-      })
-      .andWhere('bill.date::TIMESTAMP <= :end::TIMESTAMP', {
         end: new Date(body.end),
       })
       .getRawOne();
   }
 
   async lastWeekBills(user: User): Promise<LastWeekDto[]> {
-    let data: LastWeekDto[] = await this.billRepository.query(
+    return this.billRepository.query(
       `
         WITH lastWeek (date) AS (
           VALUES
@@ -159,76 +157,45 @@ export class BillService {
       `,
       [user.userServiceId],
     );
-
-    return data.map((item) =>
-      Object.assign<LastWeekDto, Partial<LastWeekDto>>(item, {
-        date: +item.date,
-      }),
-    );
-  }
-
-  maxBillAmounts(body: ListDto, user: User): Promise<[Bill[], number]> {
-    return this.billRepository
-      .createQueryBuilder('bill')
-      .innerJoinAndSelect('bill.user', 'user')
-      .where('user.user_service_id = :userId', { userId: user.userServiceId })
-      .orderBy('bill.amount', 'DESC')
-      .take(body.take)
-      .skip((body.page - 1) * body.take)
-      .getManyAndCount();
-  }
-
-  minBillAmounts(body: ListDto, user: User): Promise<[Bill[], number]> {
-    return this.billRepository
-      .createQueryBuilder('bill')
-      .innerJoinAndSelect('bill.user', 'user')
-      .where('user.user_service_id = :userId', { userId: user.userServiceId })
-      .orderBy('bill.amount', 'ASC')
-      .take(body.take)
-      .skip((body.page - 1) * body.take)
-      .getManyAndCount();
-  }
-
-  async makeBillReports(fileName: string, user: User): Promise<void> {
-    const bills = await this.findAllWithoutLimitation(user);
-    const workbook = new Workbook();
-    const workSheet = workbook.addWorksheet('bills');
-
-    if (bills.length) {
-      workSheet.columns = Object.keys(bills[0]).map((item) => {
-        return { header: item, key: item, width: 20 };
-      });
-
-      workSheet.addRows(bills);
-    }
-
-    await workbook.xlsx.writeFile(fileName);
-  }
-
-  createReadStream(fileName: string): ReadStream {
-    return createReadStream(join(process.cwd(), fileName));
-  }
-
-  async getSteamableFile(fileName: string): Promise<StreamableFile> {
-    const readedFile = this.createReadStream(fileName);
-
-    readedFile.on('error', (err: Error) => {
-      throw new InternalServerErrorException(err.message);
-    });
-
-    return new Promise<StreamableFile>((resolve) =>
-      readedFile.on('ready', () => {
-        resolve(new StreamableFile(readedFile));
-      }),
-    );
   }
 
   async getBillReports(user: User): Promise<StreamableFile> {
-    const billReportsFileName = 'bill-reports.xlsx';
+    const fileName = `${user.firstName}-${user.lastName}-${user.userServiceId}.xlsx`;
+    const path = join(process.cwd(), '/src', '/reports');
+    const filePath = join(path, fileName);
 
-    if (!existsSync(billReportsFileName))
-      await this.makeBillReports(billReportsFileName, user);
+    if (!existsSync(path)) {
+      await mkdir(path, { recursive: true });
+    }
 
-    return this.getSteamableFile(billReportsFileName);
+    const workbook = new Workbook();
+    const workSheet = workbook.addWorksheet('bills');
+    const billPropertiesMap = this.billRepository.metadata.propertiesMap;
+    const propertyNames = Object.values(billPropertiesMap);
+    workSheet.columns = propertyNames.map((propertyName) => ({
+      header: propertyName,
+      key: propertyName,
+      width: 20,
+    }));
+
+    const bills = await this.billRepository
+      .createQueryBuilder('bill')
+      .where('bill.user_id = :userId')
+      .orderBy('bill.date', 'DESC')
+      .setParameters({ userId: user.userServiceId })
+      .getMany();
+    if (bills.length) {
+      workSheet.addRows(bills);
+    }
+
+    await workbook.xlsx.writeFile(filePath);
+
+    const readedFile = createReadStream(filePath);
+    return new Promise<StreamableFile>((resolve, reject) => {
+      readedFile.on('ready', () => resolve(new StreamableFile(readedFile)));
+      readedFile.on('error', (err: Error) =>
+        reject(new InternalServerErrorException(err.message)),
+      );
+    });
   }
 }

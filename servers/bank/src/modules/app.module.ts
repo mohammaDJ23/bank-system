@@ -5,16 +5,11 @@ import { JwtModule } from '@nestjs/jwt';
 import { ClientsModule } from '@nestjs/microservices';
 import { PassportModule } from '@nestjs/passport';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { Bill } from '../entities/bill.entity';
-import { User } from '../entities/user.entity';
-import { AllExceptionFilter } from '../filters/catch.filter';
-import { GatewayController } from '../controllers/gateway.controller';
-import { MessagePatternController } from '../controllers/message-pattern.controller';
-import { JwtStrategy } from '../strategies/jwt.strategy';
-import { CustomNamingStrategy } from '../strategies/naming.strategy';
-import { BillService } from 'src/services/bill.service';
-import { UserService } from 'src/services/user.service';
-import { RabbitmqService } from 'src/services/rabbitmq.service';
+import { Bill, User } from '../entities';
+import { AllExceptionFilter } from '../filters';
+import { GatewayController, MessagePatternController } from '../controllers';
+import { JwtStrategy, CustomNamingStrategy } from '../strategies';
+import { BillService, UserService, RabbitmqService } from 'src/services';
 
 @Module({
   imports: [

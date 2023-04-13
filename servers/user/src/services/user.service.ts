@@ -7,19 +7,19 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { CreateUserDto } from '../dtos/create-user.dto';
-import { User } from '../entities/user.entity';
+import {
+  CreateUserDto,
+  DeleteAccountDto,
+  UpdateUserByUserDto,
+  UserQuantitiesDto,
+  LastWeekDto,
+  UpdateUserByAdminDto,
+} from '../dtos';
+import { User } from '../entities';
 import { hash } from 'bcrypt';
 import { ClientProxy, RmqContext, RpcException } from '@nestjs/microservices';
-import { UpdateUserDto } from '../dtos/update-user.dto';
-import { DeleteAccountDto } from '../dtos/delete-account.dto';
-import { RabbitMqServices } from '../types/rabbitmq';
-import { UpdateUserByUserDto } from 'src/dtos/update-user-by-user.dto';
+import { RabbitMqServices, Roles, UpdatedUserPartialObj } from '../types';
 import { RabbitmqService } from './rabbitmq.service';
-import { UserQuantitiesDto } from 'src/dtos/user-quantities.dto';
-import { Roles, UpdateUserPartialObj } from 'src/types/user';
-import { LastWeekDto } from 'src/dtos/last-week.dto';
-import camelcase from 'camelcase';
 
 @Injectable()
 export class UserService {
@@ -41,101 +41,60 @@ export class UserService {
     return user;
   }
 
-  updateByUser(
+  async updateByUser(
     body: UpdateUserByUserDto,
     currentUser: User,
-    context?: RmqContext,
   ): Promise<User> {
-    const isSameUser =
-      body.id.toString().toLowerCase() ===
-      currentUser.id.toString().toLowerCase();
-
-    if (!isSameUser)
+    if (body.id !== currentUser.id)
       throw new BadRequestException('Could not update a different user.');
-
-    return this.update(body, currentUser, context);
+    return this.update(body, currentUser);
   }
 
-  async findAndUpdate(
-    body: Partial<UpdateUserDto>,
-    context?: RmqContext,
+  async updateByAdmin(
+    body: UpdateUserByAdminDto,
+    currentUser: User,
   ): Promise<User> {
-    let user = await this.findById(body.id);
-
-    if (!user)
-      throw new RpcException(
-        new NotFoundException('Could not found the user.'),
-      );
-
-    return this.update(body, user, context);
+    if (body.id === currentUser.id) return this.update(body, currentUser);
+    return this.update(body);
   }
 
-  async update(
-    body: User | Partial<UpdateUserDto>,
-    user: User,
-    context?: RmqContext,
-  ): Promise<User> {
-    try {
-      const existedUser = await this.existedUser(body);
-      user.updatedAt = new Date();
-      user = this.userRepository.create(Object.assign(user, body));
-      user = await this.userRepository.save(user);
-      await this.clientProxy.emit('updated_user', user).toPromise();
-
-      if (context) {
-        this.rabbitmqService.applyAcknowledgment(context);
-      }
-
-      return user;
-    } catch (error) {
-      throw error;
-    }
-  }
-
-  async updatePartial(
-    payload: UpdateUserPartialObj,
+  async updatePartialForMicroservices(
+    payload: UpdatedUserPartialObj,
     context: RmqContext,
   ): Promise<User> {
     try {
-      const updateResult = await this.userRepository
-        .createQueryBuilder()
-        .update(User)
-        .set(payload.user)
-        .where('id = :userId')
-        .setParameters({ userId: payload.id })
-        .returning('*')
-        .execute();
-
+      const udpatedUser = await this.update(payload);
       this.rabbitmqService.applyAcknowledgment(context);
-
-      let user = updateResult.raw as User[];
-
-      if (!user.length)
-        throw new NotFoundException('Could not found the user.');
-
-      return user.reduce((acc, val) => {
-        for (const key in val) acc[camelcase(key)] = val[key];
-        return acc;
-      }, {} as User);
+      return udpatedUser;
     } catch (error) {
       throw new RpcException(error);
     }
   }
 
-  async existedUser(user: User | Partial<UpdateUserDto>): Promise<User> {
-    const existedUser = await this.userRepository
-      .createQueryBuilder('user')
-      .where('user.id != :id', { id: user.id })
-      .andWhere('user.email = :email', { email: user.email })
-      .getOne();
+  async update(updatedUser: UpdatedUserPartialObj, user?: User) {
+    if (!user) {
+      user = await this.findById(updatedUser.id);
+      if (!user) throw new NotFoundException('Could not found the user.');
+    }
 
-    if (existedUser)
-      throw new RpcException(new ConflictException('Choose another email.'));
+    if (updatedUser.email) {
+      let findedUser = await this.userRepository
+        .createQueryBuilder('user')
+        .where('user.id != :userId')
+        .andWhere('user.email = :userEmail')
+        .setParameters({ userId: updatedUser.id, userEmail: updatedUser.email })
+        .getOne();
+      if (findedUser) throw new ConflictException('The user already exist.');
+    }
 
-    return existedUser;
+    user.updatedAt = new Date();
+    user = this.userRepository.create(Object.assign(user, updatedUser));
+    user = await this.userRepository.save(user);
+    await this.clientProxy.emit('updated_user', user).toPromise();
+    return user;
   }
 
-  async remove(body: DeleteAccountDto): Promise<User> {
+  async delete(body: DeleteAccountDto): Promise<User> {
     let user = await this.findById(body.id);
 
     if (!user) throw new NotFoundException('Could not found the user.');
@@ -146,45 +105,52 @@ export class UserService {
   }
 
   async findOne(id: number, user: User): Promise<User> {
+    const notFoundException = new NotFoundException(
+      'Could not found the user.',
+    );
+    if (user.role !== Roles.ADMIN && user.id !== id) throw notFoundException;
     const findedUser = await this.findById(id);
-
-    if (!findedUser || (user.role !== Roles.ADMIN && user.id !== findedUser.id))
-      throw new NotFoundException('Could not found the user.');
-
+    if (!findedUser) throw notFoundException;
     return findedUser;
   }
 
-  async findById(id: number, context?: RmqContext): Promise<User> {
+  findById(id: number): Promise<User> {
+    return this.userRepository
+      .createQueryBuilder('user')
+      .where('user.id = :id', { id })
+      .getOne();
+  }
+
+  async findByIdForMicroservices(
+    id: number,
+    context: RmqContext,
+  ): Promise<User> {
     try {
-      const user = await this.userRepository
-        .createQueryBuilder('user')
-        .where('user.id = :id', { id })
-        .getOne();
-
-      if (context) {
-        this.rabbitmqService.applyAcknowledgment(context);
-      }
-
+      const user = await this.findById(id);
+      this.rabbitmqService.applyAcknowledgment(context);
       return user;
     } catch (error) {
-      throw error;
+      throw new RpcException(error);
     }
   }
 
-  async findByEmail(email: string, context?: RmqContext): Promise<User> {
+  async findByEmail(email: string): Promise<User> {
+    return this.userRepository
+      .createQueryBuilder('user')
+      .where('user.email = :email', { email })
+      .getOne();
+  }
+
+  async findByEmailForMicroservices(
+    email: string,
+    context: RmqContext,
+  ): Promise<User> {
     try {
-      const user = await this.userRepository
-        .createQueryBuilder('user')
-        .where('user.email = :email', { email })
-        .getOne();
-
-      if (context) {
-        this.rabbitmqService.applyAcknowledgment(context);
-      }
-
+      const user = await this.findByEmail(email);
+      this.rabbitmqService.applyAcknowledgment(context);
       return user;
     } catch (error) {
-      throw error;
+      throw new RpcException(error);
     }
   }
 
@@ -201,18 +167,19 @@ export class UserService {
       .createQueryBuilder('user')
       .select('COALESCE(COUNT(user.id), 0)::INTEGER', 'quantities')
       .addSelect(
-        `COALESCE(SUM((user.role = '${Roles.ADMIN}')::INTEGER), 0)::INTEGER`,
+        `COALESCE(SUM((user.role = :admin)::INTEGER), 0)::INTEGER`,
         'adminQuantities',
       )
       .addSelect(
-        `COALESCE(SUM((user.role = '${Roles.USER}')::INTEGER), 0)::INTEGER`,
+        `COALESCE(SUM((user.role = :user)::INTEGER), 0)::INTEGER`,
         'userQuantities',
       )
+      .setParameters({ admin: Roles.ADMIN, user: Roles.USER })
       .getRawOne();
   }
 
-  async lastWeekUsers(): Promise<any> {
-    let data: LastWeekDto[] = await this.userRepository.query(
+  async lastWeekUsers(): Promise<LastWeekDto[]> {
+    return this.userRepository.query(
       `
         WITH lastWeek (date) AS (
           VALUES
@@ -233,12 +200,6 @@ export class UserService {
         GROUP BY lastWeek.date
         ORDER BY lastWeek.date ASC;
       `,
-    );
-
-    return data.map((item) =>
-      Object.assign<LastWeekDto, Partial<LastWeekDto>>(item, {
-        date: +item.date,
-      }),
     );
   }
 }

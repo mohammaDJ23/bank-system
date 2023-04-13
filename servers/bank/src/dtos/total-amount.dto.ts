@@ -1,4 +1,4 @@
-import { Expose } from 'class-transformer';
+import { Expose, Transform } from 'class-transformer';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class TotalAmountDto {
@@ -6,10 +6,12 @@ export class TotalAmountDto {
   @ApiProperty()
   totalAmount: string;
 
+  @Transform(({ obj }) => +obj.start)
   @Expose()
   @ApiProperty()
   start: number;
 
+  @Transform(({ obj }) => +obj.end)
   @Expose()
   @ApiProperty()
   end: number;

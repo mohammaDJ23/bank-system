@@ -1,10 +1,10 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { RmqContext } from '@nestjs/microservices';
+import { RmqContext, RpcException } from '@nestjs/microservices';
 import { InjectRepository } from '@nestjs/typeorm';
-import { UserWithBillInfoDto } from 'src/dtos/user-with-bill-info.dto';
-import { Roles } from 'src/types/user';
+import { UserWithBillInfoDto } from 'src/dtos';
+import { Roles } from 'src/types';
 import { Repository } from 'typeorm';
-import { User } from '../entities/user.entity';
+import { User } from '../entities';
 import { RabbitmqService } from './rabbitmq.service';
 
 @Injectable()
@@ -23,14 +23,18 @@ export class UserService {
 
   async create(payload: User, context: RmqContext): Promise<void> {
     try {
-      let user = Object.assign<User, Partial<User>>(payload, {
+      payload = Object.assign<User, Partial<User>>(payload, {
         userServiceId: payload.id,
       });
-      user = this.userService.create(user);
-      await this.userService.save(user);
+      await this.userService
+        .createQueryBuilder()
+        .insert()
+        .into(User)
+        .values(payload)
+        .execute();
       this.rabbitmqService.applyAcknowledgment(context);
     } catch (error) {
-      throw error;
+      throw new RpcException(error);
     }
   }
 
@@ -47,8 +51,7 @@ export class UserService {
             phone = $5,
             role = $6,
             user_service_id = $7,
-            updated_at = $8,
-            created_at = $9
+            updated_at = $8
           WHERE public.user.user_service_id = $7;
         `,
         [
@@ -59,22 +62,26 @@ export class UserService {
           payload.phone,
           payload.role,
           payload.id,
-          payload.createdAt,
           payload.updatedAt,
         ],
       );
       this.rabbitmqService.applyAcknowledgment(context);
     } catch (error) {
-      throw error;
+      throw new RpcException(error);
     }
   }
 
   async delete(payload: User, context: RmqContext): Promise<void> {
     try {
-      await this.userService.delete({ userServiceId: payload.id });
+      await this.userService
+        .createQueryBuilder('public.user')
+        .delete()
+        .where('public.user.user_service_id = :userId')
+        .setParameters({ userId: payload.id })
+        .execute();
       this.rabbitmqService.applyAcknowledgment(context);
     } catch (error) {
-      throw error;
+      throw new RpcException(error);
     }
   }
 

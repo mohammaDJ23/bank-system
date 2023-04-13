@@ -1,7 +1,7 @@
 import { Injectable, Inject } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import { User } from 'src/entities';
-import { RabbitMqServices, UpdateUserPartialObj } from 'src/types';
+import { RabbitMqServices, UpdatedUserPartialObj } from 'src/types';
 
 @Injectable()
 export class UserService {
@@ -21,9 +21,9 @@ export class UserService {
       .toPromise();
   }
 
-  updatePartial(id: number, user: Partial<User>): Promise<User> {
+  updatePartial(updatedUser: UpdatedUserPartialObj): Promise<User> {
     return this.clientProxy
-      .send<User, UpdateUserPartialObj>('update_user_partial', { id, user })
+      .send<User, UpdatedUserPartialObj>('update_user_partial', updatedUser)
       .toPromise();
   }
 }

@@ -18,9 +18,10 @@ import GroupAddIcon from '@mui/icons-material/GroupAdd';
 import AddCardIcon from '@mui/icons-material/AddCard';
 import CreditCardIcon from '@mui/icons-material/CreditCard';
 import CloseIcon from '@mui/icons-material/Close';
+import LogoutIcon from '@mui/icons-material/Logout';
 import { styled } from '@mui/material/styles';
-import { Pathes, routes, UserRoles } from '../lib';
-import { useAuth } from '../hooks';
+import { LocalStorage, Pathes, routes, UserRoles } from '../lib';
+import { useAuth, useSelector } from '../hooks';
 
 interface StyledListItemTextAttr {
   active: string | undefined;
@@ -33,11 +34,12 @@ interface StyledListItemIconAttr {
 interface NavigationItemObj {
   title: string;
   icon: JSX.Element;
-  path: Pathes;
-  redirectPath: Pathes;
   role: UserRoles;
+  path?: Pathes;
+  redirectPath?: Pathes;
   activationOptions?: boolean[];
   navigateOptions?: NavigateOptions;
+  onClick?: () => void;
 }
 
 const AppBar = styled('div')(({ theme }) => ({
@@ -84,6 +86,7 @@ const Navigation: FC<PropsWithChildren> = ({ children }) => {
   const [open, setOpen] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
+  const { history } = useSelector();
   const params = useParams();
   const { isAdmin, isUser, isUserAuthenticated, getTokenInfo } = useAuth();
   const userInfo = getTokenInfo();
@@ -116,18 +119,27 @@ const Navigation: FC<PropsWithChildren> = ({ children }) => {
         role: UserRoles.USER,
       },
       {
-        title: 'users',
+        title: 'Users',
         icon: <SupervisorAccountIcon />,
         path: Pathes.USERS,
         redirectPath: Pathes.USERS,
         role: UserRoles.ADMIN,
       },
       {
-        title: 'bills',
+        title: 'Bills',
         icon: <CreditCardIcon />,
         path: Pathes.BILLS,
         redirectPath: Pathes.BILLS,
         role: UserRoles.USER,
+      },
+      {
+        title: 'Logout',
+        icon: <LogoutIcon />,
+        role: UserRoles.USER,
+        onClick: () => {
+          LocalStorage.clear();
+          if (history) history.push(Pathes.UNAUTHORIZED);
+        },
       },
     ];
 
@@ -201,7 +213,11 @@ const Navigation: FC<PropsWithChildren> = ({ children }) => {
                   <ListItem
                     onClick={() => {
                       setOpen(false);
-                      if (!isPathActive(item)) navigate(item.redirectPath, item.navigateOptions);
+
+                      if (item.path && item.redirectPath && !isPathActive(item))
+                        navigate(item.redirectPath, item.navigateOptions);
+
+                      if (item.onClick) item.onClick.call({});
                     }}
                     key={index}
                     disablePadding

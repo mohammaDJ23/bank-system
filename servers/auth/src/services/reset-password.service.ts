@@ -79,7 +79,8 @@ export class ResetPasswordService {
       throw new BadRequestException('The token used has been expired.');
 
     const hashedPassword = await hash(body.password, 10);
-    const user = await this.userService.updatePartial(resetPassword.userId, {
+    const user = await this.userService.updatePartial({
+      id: resetPassword.userId,
       password: hashedPassword,
     });
 
