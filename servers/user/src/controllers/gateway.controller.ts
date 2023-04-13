@@ -100,8 +100,8 @@ export class GatewayController {
   @ApiResponse({ status: HttpStatus.UNAUTHORIZED, type: ErrorDto })
   @ApiResponse({ status: HttpStatus.NOT_FOUND, type: ErrorDto })
   @ApiResponse({ status: HttpStatus.INTERNAL_SERVER_ERROR, type: ErrorDto })
-  remove(@Body() body: DeleteAccountDto): Promise<User> {
-    return this.userService.remove(body);
+  delete(@Body() body: DeleteAccountDto): Promise<User> {
+    return this.userService.delete(body);
   }
 
   @Get('all')

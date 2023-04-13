@@ -94,7 +94,7 @@ export class UserService {
     return user;
   }
 
-  async remove(body: DeleteAccountDto): Promise<User> {
+  async delete(body: DeleteAccountDto): Promise<User> {
     let user = await this.findById(body.id);
 
     if (!user) throw new NotFoundException('Could not found the user.');
