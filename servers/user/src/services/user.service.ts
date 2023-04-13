@@ -105,11 +105,12 @@ export class UserService {
   }
 
   async findOne(id: number, user: User): Promise<User> {
+    const notFoundException = new NotFoundException(
+      'Could not found the user.',
+    );
+    if (user.role !== Roles.ADMIN && user.id !== id) throw notFoundException;
     const findedUser = await this.findById(id);
-
-    if (!findedUser || (user.role !== Roles.ADMIN && user.id !== findedUser.id))
-      throw new NotFoundException('Could not found the user.');
-
+    if (!findedUser) throw notFoundException;
     return findedUser;
   }
 
