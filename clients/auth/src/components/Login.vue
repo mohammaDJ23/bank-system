@@ -23,6 +23,7 @@
         type="password"
         name="password"
         required
+        autocomplete="off"
       ></v-text-field>
       <div class="d-flex align-center gap-2 flex-wrap mt-3">
         <v-btn color="primary" class="text-capitalize" size="small" type="submit" :disabled="isFormProcessing">
