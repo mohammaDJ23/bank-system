@@ -7,7 +7,7 @@ import {
 } from '@nestjs/microservices';
 import { UserService } from '../services';
 import { User } from 'src/entities';
-import { UpdateUserPartialObj } from 'src/types';
+import { UpdatedUserPartialObj } from 'src/types';
 
 @Controller()
 export class MessagePatternController {
@@ -15,10 +15,10 @@ export class MessagePatternController {
 
   @MessagePattern('update_user_partial')
   updatePartial(
-    @Payload() payload: UpdateUserPartialObj,
+    @Payload() payload: UpdatedUserPartialObj,
     @Ctx() context: RmqContext,
   ): Promise<User> {
-    return this.userService.updatePartial(payload, context);
+    return this.userService.updatePartialForMicroservices(payload, context);
   }
 
   @MessagePattern('find_user_by_id')

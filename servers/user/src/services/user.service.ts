@@ -9,7 +9,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import {
   CreateUserDto,
-  UpdateUserDto,
   DeleteAccountDto,
   UpdateUserByUserDto,
   UserQuantitiesDto,
@@ -19,9 +18,8 @@ import {
 import { User } from '../entities';
 import { hash } from 'bcrypt';
 import { ClientProxy, RmqContext, RpcException } from '@nestjs/microservices';
-import { RabbitMqServices, Roles, UpdateUserPartialObj } from '../types';
+import { RabbitMqServices, Roles, UpdatedUserPartialObj } from '../types';
 import { RabbitmqService } from './rabbitmq.service';
-import camelcase from 'camelcase';
 
 @Injectable()
 export class UserService {
@@ -49,7 +47,6 @@ export class UserService {
   ): Promise<User> {
     if (body.id !== currentUser.id)
       throw new BadRequestException('Could not update a different user.');
-
     return this.update(body, currentUser);
   }
 
@@ -57,75 +54,44 @@ export class UserService {
     body: UpdateUserByAdminDto,
     currentUser: User,
   ): Promise<User> {
-    if (body.id === currentUser.id) {
-      return this.update(body, currentUser);
-    }
-
-    const findedUser = await this.findById(body.id);
-
-    if (!findedUser) throw new NotFoundException('Could not found the user.');
-
-    return this.update(body, findedUser);
+    if (body.id === currentUser.id) return this.update(body, currentUser);
+    return this.update(body);
   }
 
-  async update(body: UpdateUserByAdminDto | UpdateUserByUserDto, user: User) {
-    let findedUser = await this.userRepository
-      .createQueryBuilder('user')
-      .where('user.id != :userId')
-      .andWhere('user.email = :userEmail')
-      .setParameters({ userId: body.id, userEmail: body.email })
-      .getOne();
-
-    if (findedUser) throw new ConflictException('The user already exist.');
-
-    user.updatedAt = new Date();
-    user = this.userRepository.create(Object.assign(user, body));
-    user = await this.userRepository.save(user);
-    await this.clientProxy.emit('updated_user', user).toPromise();
-    return user;
-  }
-
-  async updatePartial(
-    payload: UpdateUserPartialObj,
+  async updatePartialForMicroservices(
+    payload: UpdatedUserPartialObj,
     context: RmqContext,
   ): Promise<User> {
     try {
-      const updateResult = await this.userRepository
-        .createQueryBuilder()
-        .update(User)
-        .set(payload.user)
-        .where('id = :userId')
-        .setParameters({ userId: payload.id })
-        .returning('*')
-        .execute();
-
+      const udpatedUser = await this.update(payload);
       this.rabbitmqService.applyAcknowledgment(context);
-
-      let user = updateResult.raw as User[];
-
-      if (!user.length)
-        throw new NotFoundException('Could not found the user.');
-
-      return user.reduce((acc, val) => {
-        for (const key in val) acc[camelcase(key)] = val[key];
-        return acc;
-      }, {} as User);
+      return udpatedUser;
     } catch (error) {
       throw new RpcException(error);
     }
   }
 
-  async existedUser(user: User | Partial<UpdateUserDto>): Promise<User> {
-    const existedUser = await this.userRepository
-      .createQueryBuilder('user')
-      .where('user.id != :id', { id: user.id })
-      .andWhere('user.email = :email', { email: user.email })
-      .getOne();
+  async update(updatedUser: UpdatedUserPartialObj, user?: User) {
+    if (!user) {
+      user = await this.findById(updatedUser.id);
+      if (!user) throw new NotFoundException('Could not found the user.');
+    }
 
-    if (existedUser)
-      throw new RpcException(new ConflictException('Choose another email.'));
+    if (updatedUser.email) {
+      let findedUser = await this.userRepository
+        .createQueryBuilder('user')
+        .where('user.id != :userId')
+        .andWhere('user.email = :userEmail')
+        .setParameters({ userId: updatedUser.id, userEmail: updatedUser.email })
+        .getOne();
+      if (findedUser) throw new ConflictException('The user already exist.');
+    }
 
-    return existedUser;
+    user.updatedAt = new Date();
+    user = this.userRepository.create(Object.assign(user, updatedUser));
+    user = await this.userRepository.save(user);
+    await this.clientProxy.emit('updated_user', user).toPromise();
+    return user;
   }
 
   async remove(body: DeleteAccountDto): Promise<User> {

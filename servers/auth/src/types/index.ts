@@ -15,9 +15,8 @@ export enum Roles {
   USER = 'user',
 }
 
-export interface UpdateUserPartialObj {
+export interface UpdatedUserPartialObj extends Partial<User> {
   id: number;
-  user: Partial<User>;
 }
 
 export interface Request extends Req {
