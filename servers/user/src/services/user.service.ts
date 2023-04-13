@@ -42,10 +42,9 @@ export class UserService {
     return user;
   }
 
-  updateByUser(
+  async updateByUser(
     body: UpdateUserByUserDto,
     currentUser: User,
-    context?: RmqContext,
   ): Promise<User> {
     const isSameUser =
       body.id.toString().toLowerCase() ===
@@ -54,7 +53,20 @@ export class UserService {
     if (!isSameUser)
       throw new BadRequestException('Could not update a different user.');
 
-    return this.update(body, currentUser, context);
+    let findedUser = await this.userRepository
+      .createQueryBuilder('user')
+      .where('user.id != :userId')
+      .andWhere('user.email = :userEmail')
+      .setParameters({ userId: body.id, userEmail: body.email })
+      .getOne();
+
+    if (findedUser) throw new ConflictException('The user already exist.');
+
+    currentUser.updatedAt = new Date();
+    currentUser = this.userRepository.create(Object.assign(currentUser, body));
+    currentUser = await this.userRepository.save(currentUser);
+    await this.clientProxy.emit('updated_user', currentUser).toPromise();
+    return currentUser;
   }
 
   async findAndUpdate(
