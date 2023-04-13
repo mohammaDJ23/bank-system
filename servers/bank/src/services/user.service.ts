@@ -51,8 +51,7 @@ export class UserService {
             phone = $5,
             role = $6,
             user_service_id = $7,
-            updated_at = $8,
-            created_at = $9
+            updated_at = $8
           WHERE public.user.user_service_id = $7;
         `,
         [
@@ -63,7 +62,6 @@ export class UserService {
           payload.phone,
           payload.role,
           payload.id,
-          payload.createdAt,
           payload.updatedAt,
         ],
       );
