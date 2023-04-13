@@ -167,13 +167,14 @@ export class UserService {
       .createQueryBuilder('user')
       .select('COALESCE(COUNT(user.id), 0)::INTEGER', 'quantities')
       .addSelect(
-        `COALESCE(SUM((user.role = '${Roles.ADMIN}')::INTEGER), 0)::INTEGER`,
+        `COALESCE(SUM((user.role = :admin)::INTEGER), 0)::INTEGER`,
         'adminQuantities',
       )
       .addSelect(
-        `COALESCE(SUM((user.role = '${Roles.USER}')::INTEGER), 0)::INTEGER`,
+        `COALESCE(SUM((user.role = :user)::INTEGER), 0)::INTEGER`,
         'userQuantities',
       )
+      .setParameters({ admin: Roles.ADMIN, user: Roles.USER })
       .getRawOne();
   }
 
