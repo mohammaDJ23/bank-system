@@ -178,8 +178,8 @@ export class UserService {
       .getRawOne();
   }
 
-  async lastWeekUsers(): Promise<any> {
-    let data: LastWeekDto[] = await this.userRepository.query(
+  async lastWeekUsers(): Promise<LastWeekDto[]> {
+    return this.userRepository.query(
       `
         WITH lastWeek (date) AS (
           VALUES
@@ -200,12 +200,6 @@ export class UserService {
         GROUP BY lastWeek.date
         ORDER BY lastWeek.date ASC;
       `,
-    );
-
-    return data.map((item) =>
-      Object.assign<LastWeekDto, Partial<LastWeekDto>>(item, {
-        date: +item.date,
-      }),
     );
   }
 }

@@ -53,6 +53,8 @@ export class SerialConstructor implements DtoConstructor {
   constructor(readonly construct: ClassConstructor) {}
 }
 
+export class ListSerial extends SerialConstructor {}
+
 export class ArraySerial extends SerialConstructor {}
 
 export class ObjectSerial extends SerialConstructor {}

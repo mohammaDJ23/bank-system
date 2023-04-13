@@ -24,7 +24,12 @@ import {
   UserQuantitiesDto,
   LastWeekDto,
 } from '../dtos';
-import { ListSerializer, ObjectSerializer, CurrentUser } from '../decorators';
+import {
+  ListSerializer,
+  ObjectSerializer,
+  CurrentUser,
+  ArraySerializer,
+} from '../decorators';
 import {
   ApiBody,
   ApiResponse,
@@ -136,13 +141,13 @@ export class GatewayController {
   @Get('last-week')
   @UseGuards(AdminAuthGuard)
   @HttpCode(HttpStatus.OK)
-  @ObjectSerializer(LastWeekDto)
+  @ArraySerializer(LastWeekDto)
   @ApiBearerAuth()
   @ApiResponse({ status: HttpStatus.OK, type: LastWeekDto })
   @ApiResponse({ status: HttpStatus.UNAUTHORIZED, type: ErrorDto })
   @ApiResponse({ status: HttpStatus.NOT_FOUND, type: ErrorDto })
   @ApiResponse({ status: HttpStatus.INTERNAL_SERVER_ERROR, type: ErrorDto })
-  getLastWeekUsers(): Promise<LastWeekDto> {
+  getLastWeekUsers(): Promise<LastWeekDto[]> {
     return this.userService.lastWeekUsers();
   }
 
