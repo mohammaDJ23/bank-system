@@ -126,10 +126,7 @@ export class UserService {
     context: RmqContext,
   ): Promise<User> {
     try {
-      const user = await this.userRepository
-        .createQueryBuilder('user')
-        .where('user.id = :id', { id })
-        .getOne();
+      const user = await this.findById(id);
       this.rabbitmqService.applyAcknowledgment(context);
       return user;
     } catch (error) {
@@ -149,10 +146,7 @@ export class UserService {
     context: RmqContext,
   ): Promise<User> {
     try {
-      const user = await this.userRepository
-        .createQueryBuilder('user')
-        .where('user.email = :email', { email })
-        .getOne();
+      const user = await this.findByEmail(email);
       this.rabbitmqService.applyAcknowledgment(context);
       return user;
     } catch (error) {
