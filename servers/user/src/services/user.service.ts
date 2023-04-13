@@ -155,37 +155,49 @@ export class UserService {
     return findedUser;
   }
 
-  async findById(id: number, context?: RmqContext): Promise<User> {
+  findById(id: number): Promise<User> {
+    return this.userRepository
+      .createQueryBuilder('user')
+      .where('user.id = :id', { id })
+      .getOne();
+  }
+
+  async findByIdForMicroservices(
+    id: number,
+    context: RmqContext,
+  ): Promise<User> {
     try {
       const user = await this.userRepository
         .createQueryBuilder('user')
         .where('user.id = :id', { id })
         .getOne();
-
-      if (context) {
-        this.rabbitmqService.applyAcknowledgment(context);
-      }
-
+      this.rabbitmqService.applyAcknowledgment(context);
       return user;
     } catch (error) {
-      throw new RpcException(error)
+      throw new RpcException(error);
     }
   }
 
-  async findByEmail(email: string, context?: RmqContext): Promise<User> {
+  async findByEmail(email: string): Promise<User> {
+    return this.userRepository
+      .createQueryBuilder('user')
+      .where('user.email = :email', { email })
+      .getOne();
+  }
+
+  async findByEmailForMicroservices(
+    email: string,
+    context: RmqContext,
+  ): Promise<User> {
     try {
       const user = await this.userRepository
         .createQueryBuilder('user')
         .where('user.email = :email', { email })
         .getOne();
-
-      if (context) {
-        this.rabbitmqService.applyAcknowledgment(context);
-      }
-
+      this.rabbitmqService.applyAcknowledgment(context);
       return user;
     } catch (error) {
-      throw new RpcException(error)
+      throw new RpcException(error);
     }
   }
 

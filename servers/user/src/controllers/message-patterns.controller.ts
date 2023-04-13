@@ -23,7 +23,7 @@ export class MessagePatternController {
 
   @MessagePattern('find_user_by_id')
   findById(@Payload() id: number, @Ctx() context: RmqContext): Promise<User> {
-    return this.userService.findById(id, context);
+    return this.userService.findByIdForMicroservices(id, context);
   }
 
   @MessagePattern('find_user_by_email')
@@ -31,6 +31,6 @@ export class MessagePatternController {
     @Payload() email: string,
     @Ctx() context: RmqContext,
   ): Promise<User> {
-    return this.userService.findByEmail(email, context);
+    return this.userService.findByEmailForMicroservices(email, context);
   }
 }
