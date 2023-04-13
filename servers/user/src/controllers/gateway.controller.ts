@@ -83,8 +83,11 @@ export class GatewayController {
   @ApiResponse({ status: HttpStatus.CONFLICT, type: ErrorDto })
   @ApiResponse({ status: HttpStatus.NOT_FOUND, type: ErrorDto })
   @ApiResponse({ status: HttpStatus.INTERNAL_SERVER_ERROR, type: ErrorDto })
-  updateByAdmin(@Body() body: UpdateUserByAdminDto): Promise<User> {
-    return this.userService.findAndUpdate(body);
+  updateByAdmin(
+    @Body() body: UpdateUserByAdminDto,
+    @CurrentUser() user: User,
+  ): Promise<User> {
+    return this.userService.updateByAdmin(body, user);
   }
 
   @Delete('delete')

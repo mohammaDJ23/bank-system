@@ -14,6 +14,7 @@ import {
   UpdateUserByUserDto,
   UserQuantitiesDto,
   LastWeekDto,
+  UpdateUserByAdminDto,
 } from '../dtos';
 import { User } from '../entities';
 import { hash } from 'bcrypt';
@@ -46,13 +47,28 @@ export class UserService {
     body: UpdateUserByUserDto,
     currentUser: User,
   ): Promise<User> {
-    const isSameUser =
-      body.id.toString().toLowerCase() ===
-      currentUser.id.toString().toLowerCase();
-
-    if (!isSameUser)
+    if (body.id !== currentUser.id)
       throw new BadRequestException('Could not update a different user.');
 
+    return this.update(body, currentUser);
+  }
+
+  async updateByAdmin(
+    body: UpdateUserByAdminDto,
+    currentUser: User,
+  ): Promise<User> {
+    if (body.id === currentUser.id) {
+      return this.update(body, currentUser);
+    }
+
+    const findedUser = await this.findById(body.id);
+
+    if (!findedUser) throw new NotFoundException('Could not found the user.');
+
+    return this.update(body, findedUser);
+  }
+
+  async update(body: UpdateUserByAdminDto | UpdateUserByUserDto, user: User) {
     let findedUser = await this.userRepository
       .createQueryBuilder('user')
       .where('user.id != :userId')
@@ -62,47 +78,11 @@ export class UserService {
 
     if (findedUser) throw new ConflictException('The user already exist.');
 
-    currentUser.updatedAt = new Date();
-    currentUser = this.userRepository.create(Object.assign(currentUser, body));
-    currentUser = await this.userRepository.save(currentUser);
-    await this.clientProxy.emit('updated_user', currentUser).toPromise();
-    return currentUser;
-  }
-
-  async findAndUpdate(
-    body: Partial<UpdateUserDto>,
-    context?: RmqContext,
-  ): Promise<User> {
-    let user = await this.findById(body.id);
-
-    if (!user)
-      throw new RpcException(
-        new NotFoundException('Could not found the user.'),
-      );
-
-    return this.update(body, user, context);
-  }
-
-  async update(
-    body: User | Partial<UpdateUserDto>,
-    user: User,
-    context?: RmqContext,
-  ): Promise<User> {
-    try {
-      const existedUser = await this.existedUser(body);
-      user.updatedAt = new Date();
-      user = this.userRepository.create(Object.assign(user, body));
-      user = await this.userRepository.save(user);
-      await this.clientProxy.emit('updated_user', user).toPromise();
-
-      if (context) {
-        this.rabbitmqService.applyAcknowledgment(context);
-      }
-
-      return user;
-    } catch (error) {
-      throw error;
-    }
+    user.updatedAt = new Date();
+    user = this.userRepository.create(Object.assign(user, body));
+    user = await this.userRepository.save(user);
+    await this.clientProxy.emit('updated_user', user).toPromise();
+    return user;
   }
 
   async updatePartial(
