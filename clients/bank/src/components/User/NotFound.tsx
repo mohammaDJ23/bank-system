@@ -25,7 +25,7 @@ const NotFound: FC = () => {
       ) : (
         isUserInfoExist && (
           <Button
-            onClick={() => navigate(Pathes.USER.replace(':id', userInfo.id.toString()))}
+            onClick={() => navigate(Pathes.USERS, { state: { previousUserId: userInfo.id } })}
             sx={{ textTransform: 'capitalize' }}
             variant="contained"
             size="small"
