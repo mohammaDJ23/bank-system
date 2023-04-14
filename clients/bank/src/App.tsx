@@ -50,6 +50,7 @@ const App: FC = () => {
                 }
               />
             ))}
+            <Route path="/auth/*" element={<Navigate to={Pathes.LOGIN} />} />
             <Route path="*" element={<Navigate to={Pathes.NOT_FOUND} />} />
           </Routes>
         </HistoryProvider>
