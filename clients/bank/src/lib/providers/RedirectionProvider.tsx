@@ -1,7 +1,7 @@
 import { Fragment, PropsWithChildren, FC, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 
-interface RedirectionDetailObj {
+interface ChildRedirectionObj {
   path: string;
 }
 
@@ -9,20 +9,27 @@ const RedirectionProvider: FC<PropsWithChildren> = ({ children }) => {
   const location = useLocation();
   const navigate = useNavigate();
 
+  console.log('bank app', location.pathname);
+
   useEffect(() => {
-    /**@ts-ignore */
-    window.addEventListener('parent-redirection', (event: CustomEvent<RedirectionDetailObj>) => {
+    function parentRedirectionProcess(event: CustomEvent<ChildRedirectionObj>) {
       navigate(event.detail.path);
-    });
+    }
+    /**@ts-ignore */
+    window.addEventListener('parent-redirection', parentRedirectionProcess);
+    return () => {
+      /**@ts-ignore */
+      window.removeEventListener('parent-redirection', parentRedirectionProcess);
+    };
   }, []);
 
   useEffect(() => {
-    const childRedirectionEvent = new CustomEvent('child-redirection', {
+    const childRedirection = new CustomEvent('child-redirection', {
       bubbles: true,
       cancelable: true,
       detail: { path: location.pathname },
     });
-    window.dispatchEvent(childRedirectionEvent);
+    window.dispatchEvent(childRedirection);
   }, [location]);
 
   return <Fragment>{children}</Fragment>;

@@ -11,23 +11,22 @@ const User = lazy(() => import('../../pages/User'));
 const Users = lazy(() => import('../../pages/Users'));
 const Dashboard = lazy(() => import('../../pages/Dashboard'));
 const UnAuthorized = lazy(() => import('../../pages/UnAuthorized'));
-const NotFound = lazy(() => import('../../pages/NotFound'));
 
 export enum Pathes {
-  INITIAL = '/',
+  BANK = '/bank/*',
+  INITIAL = '/initial',
   LOGIN = '/auth/login',
   DASHBOARD = '/bank/dashboard',
   BILLS = '/bank/bills',
   USERS = '/bank/users',
   CREATE_BILL = '/bank/create-bill',
   CREATE_USER = '/bank/create-user',
-  UPDATE_USER_BY_ADMIN = '/bank/admin/update-user/:id',
+  UNAUTHORIZED = '/bank/unauthorized',
   UPDATE_BILL = '/bank/update-bill/:id',
   UPDATE_USER = '/bank/update-user/:id',
   USER = '/bank/users/:id',
   BILL = '/bank/bills/:id',
-  UNAUTHORIZED = '/bank/unauthorized',
-  NOT_FOUND = '/bank/not-found',
+  UPDATE_USER_BY_ADMIN = '/bank/admin/update-user/:id',
 }
 
 export const routes = [
@@ -36,11 +35,10 @@ export const routes = [
   { title: 'Users', path: Pathes.USERS, element: <Users />, needAuth: true },
   { title: 'Create bill', path: Pathes.CREATE_BILL, element: <CreateBill />, needAuth: true },
   { title: 'Create user', path: Pathes.CREATE_USER, element: <CreateUser />, needAuth: true },
-  { title: 'Update user by admin', path: Pathes.UPDATE_USER_BY_ADMIN, element: <UpdateUserByAdmin />, needAuth: true },
+  { title: 'permission denied', path: Pathes.UNAUTHORIZED, element: <UnAuthorized /> },
   { title: 'Update bill', path: Pathes.UPDATE_BILL, element: <UpdateBill />, needAuth: true },
   { title: 'Update user', path: Pathes.UPDATE_USER, element: <UpdateUserByUser />, needAuth: true },
   { title: 'User', path: Pathes.USER, element: <User />, needAuth: true },
   { title: 'Bill', path: Pathes.BILL, element: <Bill />, needAuth: true },
-  { title: 'permission denied', path: Pathes.UNAUTHORIZED, element: <UnAuthorized /> },
-  { title: 'NotFound', path: Pathes.NOT_FOUND, element: <NotFound /> },
+  { title: 'Update user by admin', path: Pathes.UPDATE_USER_BY_ADMIN, element: <UpdateUserByAdmin />, needAuth: true },
 ];

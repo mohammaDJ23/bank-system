@@ -7,7 +7,7 @@ import 'bootstrap/dist/js/bootstrap.js';
 import 'element-theme-default';
 import 'antd/dist/reset.css';
 import './assets/styles/index.scss';
-import { isDevelopment, Pathes, routes } from './lib';
+import { isDevelopment, isUserAuthenticated, Pathes, routes } from './lib';
 import { createBrowserHistory, createMemoryHistory } from 'history';
 import LoadingFallback from './layout/LoadingFallback';
 import { Provider } from 'react-redux';
@@ -28,14 +28,14 @@ const App: FC = () => {
     <HistoryRouter history={history}>
       <Provider store={store}>
         <HistoryProvider history={history}>
-          <Routes>
-            {routes.map(route => (
-              <Route
-                key={route.path}
-                path={route.path}
-                element={
-                  <RedirectionProvider>
-                    {route.needAuth ? (
+          <RedirectionProvider>
+            <Routes>
+              {routes.map(route => (
+                <Route
+                  key={route.path}
+                  path={route.path}
+                  element={
+                    route.needAuth ? (
                       <AuthProtectionProvider>
                         <Navigation>
                           <Suspense fallback={<LoadingFallback />}>{route.element}</Suspense>
@@ -45,14 +45,16 @@ const App: FC = () => {
                       <Navigation>
                         <Suspense fallback={<LoadingFallback />}>{route.element}</Suspense>
                       </Navigation>
-                    )}
-                  </RedirectionProvider>
-                }
+                    )
+                  }
+                />
+              ))}
+              <Route
+                path={Pathes.BANK}
+                element={<Navigate to={isUserAuthenticated() ? Pathes.DASHBOARD : Pathes.LOGIN} />}
               />
-            ))}
-            <Route path="/auth/*" element={<Navigate to={Pathes.LOGIN} />} />
-            <Route path="*" element={<Navigate to={Pathes.NOT_FOUND} />} />
-          </Routes>
+            </Routes>
+          </RedirectionProvider>
         </HistoryProvider>
       </Provider>
     </HistoryRouter>

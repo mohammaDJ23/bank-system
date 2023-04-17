@@ -1,8 +1,7 @@
 export const pathes = {
-  initial: '/',
+  notFound: '/not-found',
   bank: '/bank/*',
   dashboard: '/bank/dashboard',
   auth: '/auth/*',
   login: '/auth/login',
-  unauthorized: '/unauthorized',
 };
