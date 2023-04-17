@@ -10,8 +10,6 @@ const RedirectionProvider: FC<PropsWithChildren> = ({ children }) => {
   const navigate = useNavigate();
   const childPathRef = useRef<string>('');
 
-  console.log('parent', location.pathname);
-
   useEffect(() => {
     function childRedirectionProcess(event: CustomEvent<ChildRedirectionObj>) {
       if (childPathRef.current !== event.detail.path) {
@@ -28,14 +26,12 @@ const RedirectionProvider: FC<PropsWithChildren> = ({ children }) => {
   }, []);
 
   useEffect(() => {
-    if (childPathRef.current !== location.pathname) {
-      const parentRedirection = new CustomEvent('parent-redirection', {
-        bubbles: true,
-        cancelable: true,
-        detail: { path: location.pathname },
-      });
-      window.dispatchEvent(parentRedirection);
-    }
+    const parentRedirection = new CustomEvent('parent-redirection', {
+      bubbles: true,
+      cancelable: true,
+      detail: { path: location.pathname },
+    });
+    window.dispatchEvent(parentRedirection);
   }, [location]);
 
   return <Fragment>{children}</Fragment>;

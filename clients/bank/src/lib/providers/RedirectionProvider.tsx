@@ -9,8 +9,6 @@ const RedirectionProvider: FC<PropsWithChildren> = ({ children }) => {
   const location = useLocation();
   const navigate = useNavigate();
 
-  console.log('bank app', location.pathname);
-
   useEffect(() => {
     function parentRedirectionProcess(event: CustomEvent<ChildRedirectionObj>) {
       navigate(event.detail.path);

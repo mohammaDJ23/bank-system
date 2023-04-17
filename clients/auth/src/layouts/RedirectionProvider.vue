@@ -21,7 +21,6 @@ onUnmounted(() => {
 });
 
 watch(route, to => {
-  console.log('auth app', route.path);
   const childRedirection = new CustomEvent('child-redirection', {
     bubbles: true,
     cancelable: true,

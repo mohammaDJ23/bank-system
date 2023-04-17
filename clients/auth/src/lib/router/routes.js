@@ -1,9 +1,9 @@
 import { isUserAuthenticated } from '../authentication';
-import { history } from '../../main';
 
 const Login = () => import('../../pages/Login.vue');
 const ResetPassword = () => import('../../pages/ResetPassword.vue');
 const ForgotPassword = () => import('../../pages/ForgotPassword.vue');
+const NotFound = () => import('../../pages/NotFound.vue');
 
 export const pathes = {
   login: '/auth/login',
@@ -28,7 +28,7 @@ export const routes = [
     component: ResetPassword,
     beforeEnter: (to, from, next) => {
       if (!('token' in to.query)) next(pathes.forgotPassword);
-      else if (isUserAuthenticated()) history.push(pathes.dashboard);
+      else if (isUserAuthenticated()) next(pathes.dashboard);
       else next();
     },
   },
@@ -37,15 +37,15 @@ export const routes = [
     name: 'ForgotPassword',
     component: ForgotPassword,
     beforeEnter: (to, from, next) => {
-      if (isUserAuthenticated()) history.push(pathes.dashboard);
+      if (isUserAuthenticated()) next(pathes.dashboard);
       else next();
     },
   },
   {
-    path: '/user/:catchAll(.*)*',
+    path: '/auth/:catchAll(.*)*',
     name: 'NotFound',
     beforeEnter: (to, from, next) => {
-      if (isUserAuthenticated()) history.push(pathes.dashboard);
+      if (isUserAuthenticated()) next(pathes.dashboard);
       else next(pathes.login);
     },
   },
