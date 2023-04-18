@@ -3,7 +3,6 @@ import { isUserAuthenticated } from '../authentication';
 const Login = () => import('../../pages/Login.vue');
 const ResetPassword = () => import('../../pages/ResetPassword.vue');
 const ForgotPassword = () => import('../../pages/ForgotPassword.vue');
-const NotFound = () => import('../../pages/NotFound.vue');
 
 export const pathes = {
   login: '/auth/login',
@@ -43,7 +42,6 @@ export const routes = [
   },
   {
     path: '/auth/:catchAll(.*)*',
-    name: 'NotFound',
     beforeEnter: (to, from, next) => {
       if (isUserAuthenticated()) next(pathes.dashboard);
       else next(pathes.login);
