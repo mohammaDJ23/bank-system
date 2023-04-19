@@ -4,7 +4,6 @@ import { FC, Suspense } from 'react';
 import Navigation from './layout/Navigation';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.js';
-import 'element-theme-default';
 import 'antd/dist/reset.css';
 import './assets/styles/index.scss';
 import { isDevelopment, isUserAuthenticated, Pathes, routes } from './lib';

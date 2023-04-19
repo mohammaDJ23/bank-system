@@ -13,7 +13,11 @@ function App() {
         <RedirectionProvider>
           <Routes>
             {routes.map(route => (
-              <Route path={route.path} element={<Suspense fallback={<LoadingFallback />}>{route.element}</Suspense>} />
+              <Route
+                key={route.path}
+                path={route.path}
+                element={<Suspense fallback={<LoadingFallback />}>{route.element}</Suspense>}
+              />
             ))}
             <Route path="*" element={<Navigate to={isUserAuthenticated() ? Pathes.DASHBOARD : Pathes.LOGIN} />} />
           </Routes>
