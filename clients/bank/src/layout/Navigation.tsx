@@ -138,7 +138,7 @@ const Navigation: FC<PropsWithChildren> = ({ children }) => {
         role: UserRoles.USER,
         onClick: () => {
           LocalStorage.clear();
-          if (history) history.push(Pathes.UNAUTHORIZED);
+          if (history) history.push(Pathes.LOGIN);
         },
       },
     ];

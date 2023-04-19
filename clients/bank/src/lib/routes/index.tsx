@@ -10,7 +10,6 @@ const UpdateUserByUser = lazy(() => import('../../pages/UpdateUserByUser'));
 const User = lazy(() => import('../../pages/User'));
 const Users = lazy(() => import('../../pages/Users'));
 const Dashboard = lazy(() => import('../../pages/Dashboard'));
-const UnAuthorized = lazy(() => import('../../pages/UnAuthorized'));
 
 export enum Pathes {
   BANK = '/bank/*',
@@ -20,7 +19,6 @@ export enum Pathes {
   USERS = '/bank/users',
   CREATE_BILL = '/bank/create-bill',
   CREATE_USER = '/bank/create-user',
-  UNAUTHORIZED = '/bank/unauthorized',
   UPDATE_USER_BY_ADMIN = '/bank/admin/update-user/:id',
   UPDATE_USER = '/bank/update-user/:id',
   UPDATE_BILL = '/bank/update-bill/:id',
@@ -34,7 +32,6 @@ export const routes = [
   { title: 'Users', path: Pathes.USERS, element: <Users />, needAuth: true },
   { title: 'Create bill', path: Pathes.CREATE_BILL, element: <CreateBill />, needAuth: true },
   { title: 'Create user', path: Pathes.CREATE_USER, element: <CreateUser />, needAuth: true },
-  { title: 'permission denied', path: Pathes.UNAUTHORIZED, element: <UnAuthorized /> },
   { title: 'Update user by admin', path: Pathes.UPDATE_USER_BY_ADMIN, element: <UpdateUserByAdmin />, needAuth: true },
   { title: 'Update user', path: Pathes.UPDATE_USER, element: <UpdateUserByUser />, needAuth: true },
   { title: 'Update bill', path: Pathes.UPDATE_BILL, element: <UpdateBill />, needAuth: true },
