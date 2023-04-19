@@ -4,7 +4,7 @@ import { ClipLoader } from 'react-spinners';
 const LoadingFallback: FC = () => {
   return (
     <ClipLoader
-      size="40"
+      size="30"
       color="#20a0ff"
       cssOverride={{
         position: 'fixed',

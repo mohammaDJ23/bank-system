@@ -1,9 +1,9 @@
+import { Suspense } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-import Auth from './components/Auth';
-import Bank from './components/Bank';
+import LoadingFallback from './components/LoadingFallback';
 import RedirectionProvider from './components/RedirectionProvider';
 import UserServiceSocketProvider from './components/UserServiceSocketProvider';
-import { isUserAuthenticated, pathes } from './lib';
+import { isUserAuthenticated, Pathes, routes } from './lib';
 import './lib/socket';
 
 function App() {
@@ -12,9 +12,10 @@ function App() {
       <BrowserRouter>
         <RedirectionProvider>
           <Routes>
-            <Route path={pathes.auth} element={<Auth />} />
-            <Route path={pathes.bank} element={<Bank />} />
-            <Route path="*" element={<Navigate to={isUserAuthenticated() ? pathes.dashboard : pathes.login} />} />
+            {routes.map(route => (
+              <Route path={route.path} element={<Suspense fallback={<LoadingFallback />}>{route.element}</Suspense>} />
+            ))}
+            <Route path="*" element={<Navigate to={isUserAuthenticated() ? Pathes.DASHBOARD : Pathes.LOGIN} />} />
           </Routes>
         </RedirectionProvider>
       </BrowserRouter>
