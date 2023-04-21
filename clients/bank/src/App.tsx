@@ -6,54 +6,49 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.js';
 import 'antd/dist/reset.css';
 import './assets/styles/index.scss';
-import { isDevelopment, isUserAuthenticated, Pathes, routes } from './lib';
-import { createBrowserHistory, createMemoryHistory } from 'history';
+import { isUserAuthenticated, Pathes, routes } from './lib';
+import { BrowserHistory, MemoryHistory } from 'history';
 import LoadingFallback from './layout/LoadingFallback';
 import { Provider } from 'react-redux';
 import { store } from './store';
 import HistoryProvider from './components/hoc/HistoryProvider';
 import AuthProtectionProvider from './lib/providers/AuthProtectionProvider';
-import RedirectionProvider from './lib/providers/RedirectionProvider';
 
-export const history = isDevelopment()
-  ? createBrowserHistory()
-  : createMemoryHistory({
-      initialEntries: [window.location.pathname],
-    });
+interface AppImportation {
+  history: BrowserHistory | MemoryHistory;
+}
 
-const App: FC = () => {
+const App: FC<AppImportation> = ({ history }) => {
   return (
     /**@ts-ignore */
     <HistoryRouter history={history}>
       <Provider store={store}>
         <HistoryProvider history={history}>
-          <RedirectionProvider>
-            <Routes>
-              {routes.map(route => (
-                <Route
-                  key={route.path}
-                  path={route.path}
-                  element={
-                    route.needAuth ? (
-                      <AuthProtectionProvider>
-                        <Navigation>
-                          <Suspense fallback={<LoadingFallback />}>{route.element}</Suspense>
-                        </Navigation>
-                      </AuthProtectionProvider>
-                    ) : (
+          <Routes>
+            {routes.map(route => (
+              <Route
+                key={route.path}
+                path={route.path}
+                element={
+                  route.needAuth ? (
+                    <AuthProtectionProvider>
                       <Navigation>
                         <Suspense fallback={<LoadingFallback />}>{route.element}</Suspense>
                       </Navigation>
-                    )
-                  }
-                />
-              ))}
-              <Route
-                path={Pathes.BANK}
-                element={<Navigate to={isUserAuthenticated() ? Pathes.DASHBOARD : Pathes.LOGIN} />}
+                    </AuthProtectionProvider>
+                  ) : (
+                    <Navigation>
+                      <Suspense fallback={<LoadingFallback />}>{route.element}</Suspense>
+                    </Navigation>
+                  )
+                }
               />
-            </Routes>
-          </RedirectionProvider>
+            ))}
+            <Route
+              path={Pathes.BANK}
+              element={<Navigate to={isUserAuthenticated() ? Pathes.DASHBOARD : Pathes.LOGIN} />}
+            />
+          </Routes>
         </HistoryProvider>
       </Provider>
     </HistoryRouter>

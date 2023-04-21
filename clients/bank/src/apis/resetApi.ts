@@ -1,5 +1,5 @@
 import axios, { AxiosRequestConfig, CreateAxiosDefaults, AxiosInstance, AxiosError, AxiosResponse } from 'axios';
-import { history } from '../App';
+import { history } from '../bootstrap';
 import { getToken, LocalStorage, Pathes } from '../lib';
 
 export interface ErrorObj {

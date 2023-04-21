@@ -17,34 +17,54 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 
 const isDevelopment = process.env.NODE_ENV === 'development';
 
-export const history = isDevelopment ? createWebHistory() : createMemoryHistory(window.location.pathname);
+export const history = isDevelopment ? createWebHistory() : createMemoryHistory();
 export const router = createRouter({ history, routes });
 
-function mount(element) {
+function app(el) {
   const app = createApp(App);
-  const vuetify = createVuetify({
-    components,
-    directives,
-    icons: {
-      defaultSet: 'mdi',
-      aliases,
-      sets: {
-        mdi,
-      },
+
+  return {
+    mount({ onChildNavigate = function () {}, initialPath = '/', history = createWebHistory() } = {}) {
+      router.afterEach((to, from) => {
+        onChildNavigate(to.fullPath);
+      });
+
+      const vuetify = createVuetify({
+        components,
+        directives,
+        icons: {
+          defaultSet: 'mdi',
+          aliases,
+          sets: {
+            mdi,
+          },
+        },
+      });
+
+      app.use(router);
+      app.use(store);
+      app.use(antd);
+      app.use(vuetify);
+
+      app.mount(el);
+
+      return {
+        onParentNavigate(path) {
+          if (path !== history.location) {
+            history.push(path);
+          }
+        },
+      };
     },
-  });
-
-  app.use(router);
-  app.use(store);
-  app.use(antd);
-  app.use(vuetify);
-
-  app.mount(element);
+    unMount() {
+      app.unmount();
+    },
+  };
 }
 
 if (isDevelopment) {
   const element = document.querySelector('#_auth-service');
-  if (element) mount(element);
+  if (element) app(element).mount({ history });
 }
 
-export { mount };
+export { app };

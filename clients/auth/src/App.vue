@@ -1,12 +1,9 @@
 <template>
-  <RedirectionProvider>
-    <Container>
-      <router-view></router-view>
-    </Container>
-  </RedirectionProvider>
+  <Container>
+    <router-view></router-view>
+  </Container>
 </template>
 
 <script setup>
 import Container from './layouts/container.vue';
-import RedirectionProvider from './layouts/RedirectionProvider.vue';
 </script>

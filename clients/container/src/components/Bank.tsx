@@ -1,8 +1,9 @@
-import { mount } from 'bank/BankApp';
+//@ts-ignore
+import { app } from 'bank/BankApp';
 import { useInitialMicro } from '../hooks';
 
 function Bank() {
-  const { ref } = useInitialMicro(mount);
+  const { ref } = useInitialMicro(app);
 
   return <div ref={ref} />;
 }
