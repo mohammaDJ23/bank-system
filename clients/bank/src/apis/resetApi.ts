@@ -1,5 +1,5 @@
 import axios, { AxiosRequestConfig, CreateAxiosDefaults, AxiosInstance, AxiosError, AxiosResponse } from 'axios';
-import { history } from '../App';
+import { history } from '../bootstrap';
 import { getToken, LocalStorage, Pathes } from '../lib';
 
 export interface ErrorObj {
@@ -46,7 +46,7 @@ export class Request<R = any, D = any> implements RootApiObj<D> {
       (error: AxiosError<ErrorObj>) => {
         if (error.response?.data?.statusCode === 401) {
           LocalStorage.clear();
-          history.push(Pathes.UNAUTHORIZED);
+          history.push(Pathes.LOGIN);
         }
 
         return Promise.reject(error);

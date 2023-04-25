@@ -42,7 +42,7 @@ export class Bill {
   @UpdateDateColumn({ type: 'timestamptz' })
   updatedAt: Date;
 
-  @ManyToOne(() => User, (user) => user.bills)
+  @ManyToOne(() => User, (user) => user.bills, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'user_id', referencedColumnName: 'userServiceId' })
   user: User;
 }

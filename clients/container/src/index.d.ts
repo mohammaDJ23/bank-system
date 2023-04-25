@@ -5,14 +5,20 @@ interface Navigate {
 interface MountOptions {
   onChildNavigate: Navigate;
   initialPath: string;
+  history: BrowserHistory | MemoryHistory;
 }
 
 interface MountExportation {
   onParentNavigate: Navigate;
 }
 
-interface Mount {
-  (element: Element): void;
+interface MicroAppExportation {
+  mount(options: Partial<MountOptions>): MountExportation;
+  unMount(): void;
+}
+
+interface MicroApp {
+  (el: Element): MicroAppExportation;
 }
 
 interface RedirectionDetailObj {
@@ -20,9 +26,9 @@ interface RedirectionDetailObj {
 }
 
 declare module 'auth/AuthApp' {
-  export const mount: Mount;
+  export const app: MicroApp;
 }
 
 declare module 'bank/BankApp' {
-  export const mount: Mount;
+  export const app: MicroApp;
 }

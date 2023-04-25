@@ -1,13 +1,11 @@
-import { mount } from 'bank/BankApp';
+//@ts-ignore
+import { app } from 'bank/BankApp';
 import { useInitialMicro } from '../hooks';
-import { isUserAuthenticated, pathes } from '../lib';
-import { Navigate } from 'react-router-dom';
 
-function Auth() {
-  const { ref } = useInitialMicro(mount);
-  const isUserLoggedIn = isUserAuthenticated();
+function Bank() {
+  const { ref } = useInitialMicro(app);
 
-  return isUserLoggedIn ? <div ref={ref} /> : <Navigate to={pathes.unauthorized} />;
+  return <div ref={ref} />;
 }
 
-export default Auth;
+export default Bank;

@@ -1,6 +1,5 @@
 import { FC } from 'react';
-import { Dialog } from 'element-react';
-import { Button } from '@mui/material';
+import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@mui/material';
 
 interface ModalImportation {
   title: string | JSX.Element;
@@ -20,30 +19,20 @@ const Modal: FC<Partial<ModalImportation>> = ({
   onConfirm = () => {},
 }) => {
   return (
-    /**@ts-ignore */
-    <Dialog
-      /**@ts-ignore */
-      title={title}
-      size="tiny"
-      visible={isActive}
-      onCancel={isLoading ? () => {} : onCancel}
-      lockScroll={false}
-      style={{ maxWidth: '484px', width: '100%' }}
-    >
-      {/**@ts-ignore */}
-      <Dialog.Body>
-        <span>{body}</span>
-      </Dialog.Body>
-      {/**@ts-ignore */}
-      <Dialog.Footer className="dialog-footer">
+    <Dialog open={isActive} onClose={onCancel}>
+      <DialogTitle id="alert-dialog-title">{title}</DialogTitle>
+      <DialogContent>
+        <DialogContentText id="alert-dialog-description">{body}</DialogContentText>
+      </DialogContent>
+      <DialogActions>
         <Button
-          sx={{ textTransform: 'capitalize', marginRight: '15px' }}
+          sx={{ textTransform: 'capitalize', marginRight: '10px' }}
           variant="outlined"
           size="small"
           disabled={isLoading}
           onClick={isLoading ? () => {} : onCancel}
         >
-          Cancel
+          Disagree
         </Button>
         <Button
           sx={{ textTransform: 'capitalize' }}
@@ -52,9 +41,9 @@ const Modal: FC<Partial<ModalImportation>> = ({
           disabled={isLoading}
           onClick={isLoading ? () => {} : onConfirm}
         >
-          Confirm
+          Agree
         </Button>
-      </Dialog.Footer>
+      </DialogActions>
     </Dialog>
   );
 };

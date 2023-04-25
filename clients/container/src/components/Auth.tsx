@@ -1,8 +1,9 @@
-import { mount } from 'auth/AuthApp';
+//@ts-ignore
+import { app } from 'auth/AuthApp';
 import { useInitialMicro } from '../hooks';
 
 function Auth() {
-  const { ref } = useInitialMicro(mount);
+  const { ref } = useInitialMicro(app);
 
   return <div ref={ref} />;
 }

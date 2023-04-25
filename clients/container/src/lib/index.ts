@@ -1,4 +1,4 @@
 export * from './authentication';
 export * from './localStorage';
-export * from './pathes';
+export * from './routes';
 export * from './socket';

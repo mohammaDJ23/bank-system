@@ -1,22 +1,29 @@
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-import Auth from './components/Auth';
-import Bank from './components/Bank';
-import UnAuthorized from './components/UnAuthorized';
+import { Suspense } from 'react';
+import { createBrowserHistory } from 'history';
+import { unstable_HistoryRouter as HistoryRouter, Routes, Route, Navigate } from 'react-router-dom';
+import LoadingFallback from './components/LoadingFallback';
 import UserServiceSocketProvider from './components/UserServiceSocketProvider';
-import { pathes } from './lib';
+import { isUserAuthenticated, Pathes, routes } from './lib';
 import './lib/socket';
+
+export const history = createBrowserHistory();
 
 function App() {
   return (
     <UserServiceSocketProvider>
-      <BrowserRouter>
+      {/**@ts-ignore */}
+      <HistoryRouter history={history}>
         <Routes>
-          <Route path={pathes.bank} element={<Bank />} />
-          <Route path={pathes.auth} element={<Auth />} />
-          <Route path={pathes.unauthorized} element={<UnAuthorized />} />
-          <Route path="*" element={<Navigate to={pathes.unauthorized} />} />
+          {routes.map(route => (
+            <Route
+              key={route.path}
+              path={route.path}
+              element={<Suspense fallback={<LoadingFallback />}>{route.element}</Suspense>}
+            />
+          ))}
+          <Route path="*" element={<Navigate to={isUserAuthenticated() ? Pathes.DASHBOARD : Pathes.LOGIN} />} />
         </Routes>
-      </BrowserRouter>
+      </HistoryRouter>
     </UserServiceSocketProvider>
   );
 }

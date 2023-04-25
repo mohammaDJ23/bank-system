@@ -84,7 +84,7 @@ async function validate(event) {
 
       for (let [key, value] of storableData) LocalStorage.setItem(key, value);
 
-      redirect(pathes.initial);
+      redirect(pathes.dashboard);
     });
   }
 }

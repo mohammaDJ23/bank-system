@@ -44,6 +44,6 @@ export class User {
   @UpdateDateColumn({ type: 'timestamptz' })
   updatedAt: Date;
 
-  @OneToMany(() => Bill, (bill) => bill.user)
+  @OneToMany(() => Bill, (bill) => bill.user, { cascade: true })
   bills: Bill[];
 }
