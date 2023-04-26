@@ -18,7 +18,7 @@ export function useInitialMicro(app: MicroApp) {
     //@ts-ignore
     window.addEventListener('child-redirection', (event: CustomEvent<RedirectionObj>) => {
       if (event.detail.path !== currentPathRef.current) {
-        navigate(event.detail.path);
+        navigate(event.detail.path, { replace: true });
       }
     });
   }, []);

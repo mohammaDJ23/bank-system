@@ -14,7 +14,7 @@ const RedirectionProvider: FC<PropsWithChildren> = ({ children }) => {
     //@ts-ignore
     window.addEventListener('parent-redirection', (event: CustomEvent<RedirectionObj>) => {
       if (event.detail.path !== currentPathRef.current) {
-        navigate(event.detail.path);
+        navigate(event.detail.path, { replace: true });
       }
     });
   }, []);
