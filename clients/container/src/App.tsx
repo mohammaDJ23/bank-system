@@ -1,6 +1,6 @@
 import { Suspense } from 'react';
 import { createBrowserHistory } from 'history';
-import { unstable_HistoryRouter as HistoryRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import LoadingFallback from './components/LoadingFallback';
 import UserServiceSocketProvider from './components/UserServiceSocketProvider';
 import { isUserAuthenticated, Pathes, routes } from './lib';
@@ -11,8 +11,7 @@ export const history = createBrowserHistory();
 function App() {
   return (
     <UserServiceSocketProvider>
-      {/**@ts-ignore */}
-      <HistoryRouter history={history}>
+      <BrowserRouter>
         <Routes>
           {routes.map(route => (
             <Route
@@ -23,7 +22,7 @@ function App() {
           ))}
           <Route path="*" element={<Navigate to={isUserAuthenticated() ? Pathes.DASHBOARD : Pathes.LOGIN} />} />
         </Routes>
-      </HistoryRouter>
+      </BrowserRouter>
     </UserServiceSocketProvider>
   );
 }

@@ -42,6 +42,7 @@ export const routes = [
   },
   {
     path: '/auth/:catchAll(.*)*',
+    name: 'NotFound',
     beforeEnter: (to, from, next) => {
       if (isUserAuthenticated()) next(pathes.dashboard);
       else next(pathes.login);

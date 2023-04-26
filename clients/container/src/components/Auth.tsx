@@ -1,4 +1,3 @@
-//@ts-ignore
 import { app } from 'auth/AuthApp';
 import { useInitialMicro } from '../hooks';
 

@@ -33,6 +33,7 @@ import { curveCatmullRom, area } from 'd3-shape';
 import moment from 'moment';
 import { notification } from 'antd';
 import { scalePoint } from 'd3-scale';
+import { Link } from 'react-router-dom';
 
 const AreaChart = styled(Box)(({ theme }) => ({
   [theme.breakpoints.down('sm')]: {
