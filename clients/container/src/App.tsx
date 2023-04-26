@@ -1,12 +1,9 @@
 import { Suspense } from 'react';
-import { createBrowserHistory } from 'history';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import LoadingFallback from './components/LoadingFallback';
 import UserServiceSocketProvider from './components/UserServiceSocketProvider';
 import { isUserAuthenticated, Pathes, routes } from './lib';
 import './lib/socket';
-
-export const history = createBrowserHistory();
 
 function App() {
   return (
