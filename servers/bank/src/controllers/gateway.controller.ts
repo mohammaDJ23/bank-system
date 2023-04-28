@@ -143,8 +143,10 @@ export class GatewayController {
   @ApiResponse({ status: HttpStatus.OK, type: StreamableFile })
   @ApiResponse({ status: HttpStatus.UNAUTHORIZED, type: ErrorDto })
   @ApiResponse({ status: HttpStatus.INTERNAL_SERVER_ERROR, type: ErrorDto })
-  getBillReports(@CurrentUser() user: User): Promise<StreamableFile> {
-    return this.billService.getBillReports(user);
+  getBillReports(
+    @Query('id', ParseIntPipe) id: number,
+  ): Promise<StreamableFile> {
+    return this.billService.getBillReports(id);
   }
 
   @Get('bills')

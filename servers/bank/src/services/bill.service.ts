@@ -20,11 +20,13 @@ import { createReadStream, existsSync, unlink, rmdir, readdir, rm } from 'fs';
 import { mkdir } from 'fs/promises';
 import { join } from 'path';
 import { Workbook } from 'exceljs';
+import { UserService } from './user.service';
 
 @Injectable()
 export class BillService {
   constructor(
     @InjectRepository(Bill) private readonly billRepository: Repository<Bill>,
+    private readonly userService: UserService,
   ) {}
 
   async createBill(body: CreateBillDto, user: User): Promise<Bill> {
@@ -160,10 +162,14 @@ export class BillService {
   }
 
   private getBillReportPath(): string {
-    return join(process.cwd(), '/src', '/reports');
+    return join(process.cwd(), '/reports');
   }
 
-  async getBillReports(user: User): Promise<StreamableFile> {
+  async getBillReports(id: number): Promise<StreamableFile> {
+    const user = await this.userService.findById(id);
+
+    if (!user) throw new NotFoundException('Could not found the user.');
+
     const fileName = `${user.firstName}-${user.lastName}-${user.userServiceId}.xlsx`;
     const path = this.getBillReportPath();
     const filePath = join(path, fileName);
@@ -196,7 +202,12 @@ export class BillService {
 
     const readedFile = createReadStream(filePath);
     return new Promise<StreamableFile>((resolve, reject) => {
-      readedFile.on('ready', () => resolve(new StreamableFile(readedFile)));
+      readedFile.on('ready', () => {
+        resolve(new StreamableFile(readedFile));
+        unlink(filePath, (err) => {
+          if (err) console.log(err);
+        });
+      });
       readedFile.on('error', (err: Error) =>
         reject(new InternalServerErrorException(err.message)),
       );

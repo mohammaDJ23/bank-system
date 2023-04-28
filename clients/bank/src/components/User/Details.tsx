@@ -66,17 +66,17 @@ const Details: FC<DetailsImporation> = ({ user }) => {
   const downloadBillReport = useCallback(() => {
     if (isDownloadBillReportApiProcessing) return;
 
-    request<Blob>(new DownloadBillReportApi()).then(response => {
+    request<Blob>(new DownloadBillReportApi(user.id)).then(response => {
       const href = URL.createObjectURL(response.data);
       const link = document.createElement('a');
       link.href = href;
-      link.setAttribute('download', 'bill-report.xlsx');
+      link.setAttribute('download', `${user.firstName}-${user.lastName}.xlsx`);
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
       URL.revokeObjectURL(href);
     });
-  }, [isDownloadBillReportApiProcessing, request]);
+  }, [isDownloadBillReportApiProcessing, user, request]);
 
   return (
     <>

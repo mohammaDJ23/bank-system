@@ -6,7 +6,7 @@ import { BillService } from 'src/services';
 export class CronJobsController {
   constructor(private readonly billService: BillService) {}
 
-  @Cron(CronExpression.EVERY_5_HOURS)
+  @Cron(CronExpression.EVERY_DAY_AT_MIDNIGHT)
   removeBillReports(): void {
     this.billService.removeBillReports();
   }

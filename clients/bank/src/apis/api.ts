@@ -272,10 +272,10 @@ export class UserWithBillInfoApi extends RootApi {
 }
 
 export class DownloadBillReportApi extends RootApi {
-  constructor() {
+  constructor(id: number) {
     super(
       {
-        url: '/bank/bills/excel',
+        url: `/bank/bills/excel?id=${id}`,
         method: 'get',
         responseType: 'blob',
       },
