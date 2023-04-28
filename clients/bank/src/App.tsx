@@ -13,7 +13,9 @@ import { store } from './store';
 import HistoryProvider from './components/hoc/HistoryProvider';
 import AuthProtectionProvider from './lib/providers/AuthProtectionProvider';
 import RedirectionProvider from './lib/providers/RedirectionProvider';
-import { history } from './bootstrap';
+import { createBrowserHistory } from 'history';
+
+export const history = createBrowserHistory();
 
 const App: FC = () => {
   return (
