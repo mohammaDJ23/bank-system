@@ -24,7 +24,7 @@ const RedirectionProvider: FC<PropsWithChildren> = ({ children }) => {
     const event = new CustomEvent('child-redirection', {
       bubbles: true,
       cancelable: true,
-      detail: { path: location.pathname },
+      detail: { path: `${location.pathname}${location.search}` },
     });
     window.dispatchEvent(event);
   }, [location]);
