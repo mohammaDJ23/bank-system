@@ -16,7 +16,7 @@ import {
 } from 'src/dtos';
 import { Repository } from 'typeorm';
 import { Bill, User } from '../entities';
-import { createReadStream, existsSync } from 'fs';
+import { createReadStream, existsSync, unlink } from 'fs';
 import { mkdir } from 'fs/promises';
 import { join } from 'path';
 import { Workbook } from 'exceljs';
@@ -192,7 +192,13 @@ export class BillService {
 
     const readedFile = createReadStream(filePath);
     return new Promise<StreamableFile>((resolve, reject) => {
-      readedFile.on('ready', () => resolve(new StreamableFile(readedFile)));
+      readedFile.on('ready', () => {
+        const streamFile = new StreamableFile(readedFile);
+        unlink(filePath, (err) => {
+          if (err) reject(err);
+        });
+        resolve(streamFile);
+      });
       readedFile.on('error', (err: Error) =>
         reject(new InternalServerErrorException(err.message)),
       );
