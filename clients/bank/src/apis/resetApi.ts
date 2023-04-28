@@ -1,6 +1,6 @@
 import axios, { AxiosRequestConfig, CreateAxiosDefaults, AxiosInstance, AxiosError, AxiosResponse } from 'axios';
 import { history } from '../App';
-import { getToken, LocalStorage, Pathes } from '../lib';
+import { getToken, isUserAuthenticated, LocalStorage, Pathes } from '../lib';
 
 export interface ErrorObj {
   statusCode: number;
@@ -28,6 +28,18 @@ export class Request<R = any, D = any> implements RootApiObj<D> {
   }
 
   requestInterceptors() {
+    this.axiosInstance.interceptors.request.use(
+      config => {
+        if (!isUserAuthenticated()) {
+          LocalStorage.clear();
+          history.push(Pathes.LOGIN);
+        }
+
+        return config;
+      },
+      error => Promise.reject(error)
+    );
+
     this.axiosInstance.interceptors.request.use(
       config => {
         if (config.headers) {
