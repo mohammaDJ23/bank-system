@@ -1,10 +1,10 @@
 import FormContainer from '../../layout/FormContainer';
 import { Box, TextField, Button, Select, FormControl, MenuItem, InputLabel, FormHelperText } from '@mui/material';
-import { notification } from 'antd';
 import { CreateUser } from '../../lib';
 import { useAuth, useForm, useRequest, useFocus } from '../../hooks';
 import { CreateUserApi } from '../../apis';
 import { FC, useCallback, useEffect } from 'react';
+import { useSnackbar } from 'notistack';
 
 const CreateUserContent: FC = () => {
   const { getUserRoles } = useAuth();
@@ -13,12 +13,13 @@ const CreateUserContent: FC = () => {
   const { focus } = useFocus();
   const isCreateUserApiProcessing = isApiProcessing(CreateUserApi);
   const form = createUserFormInstance.getForm();
+  const { enqueueSnackbar } = useSnackbar();
 
   const formSubmition = useCallback(() => {
     createUserFormInstance.onSubmit(() => {
       request<CreateUser, CreateUser>(new CreateUserApi(form)).then(response => {
         createUserFormInstance.resetForm();
-        notification.success({ message: 'Success', description: 'Your have created a new user successfully.' });
+        enqueueSnackbar({ message: 'Your have created a new user successfully.', variant: 'success' });
       });
     });
   }, [createUserFormInstance, form, request]);

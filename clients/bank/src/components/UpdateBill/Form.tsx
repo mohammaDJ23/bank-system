@@ -5,8 +5,8 @@ import Modal from '../Modal';
 import { useAction, useForm, useRequest } from '../../hooks';
 import { ModalNames } from '../../store';
 import { UpdateBillApi } from '../../apis';
-import { notification } from 'antd';
 import { useNavigate, useParams } from 'react-router-dom';
+import { useSnackbar } from 'notistack';
 
 interface FormImportation {
   formInstance: ReturnType<typeof useForm<UpdateBill>>;
@@ -19,6 +19,7 @@ const Form: FC<FormImportation> = ({ formInstance }) => {
   const { isApiProcessing, request } = useRequest();
   const isUpdateBillApiProcessing = isApiProcessing(UpdateBillApi);
   const form = formInstance.getForm();
+  const { enqueueSnackbar } = useSnackbar();
 
   const formSubmition = useCallback(() => {
     formInstance.onSubmit(() => {
@@ -27,7 +28,7 @@ const Form: FC<FormImportation> = ({ formInstance }) => {
           const billId = params.id as string;
           hideModal(ModalNames.CONFIRMATION);
           formInstance.resetForm();
-          notification.success({ message: 'Success', description: 'You have updated the bill successfully.' });
+          enqueueSnackbar({ message: 'You have updated the bill successfully.', variant: 'success' });
           navigate(Pathes.BILL.replace(':id', billId));
         })
         .catch(err => hideModal(ModalNames.CONFIRMATION));

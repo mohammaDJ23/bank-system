@@ -31,9 +31,8 @@ import {
 import { ArgumentScale, Animation, EventTracker, Stack } from '@devexpress/dx-react-chart';
 import { curveCatmullRom, area } from 'd3-shape';
 import moment from 'moment';
-import { notification } from 'antd';
 import { scalePoint } from 'd3-scale';
-import { Link } from 'react-router-dom';
+import { useSnackbar } from 'notistack';
 
 const AreaChart = styled(Box)(({ theme }) => ({
   [theme.breakpoints.down('sm')]: {
@@ -110,6 +109,7 @@ const Dashboard: FC = () => {
   const { setSpecificDetails } = useAction();
   const { specificDetails } = useSelector();
   const isUserAdmin = isAdmin();
+  const { enqueueSnackbar } = useSnackbar();
   const isInitialTotalAmountApiProcessing = isInitialApiProcessing(TotalAmountApi);
   const isInitialLastWeekBillsApiProcessing = isInitialApiProcessing(LastWeekBillsApi);
   const isPeriodAmountApiProcessing = isApiProcessing(PeriodAmountApi);
@@ -164,17 +164,17 @@ const Dashboard: FC = () => {
     const startDate = billDates.start;
     const endDate = billDates.end;
     if (newDate < startDate) {
-      notification.warning({
-        message: 'Warning',
-        description: `The minimum date is equal to ${moment(startDate).format('ll')}`,
-        duration: 7,
+      enqueueSnackbar({
+        message: `The minimum date is equal to ${moment(startDate).format('ll')}`,
+        variant: 'warning',
+        autoHideDuration: 7000,
       });
       newDate = startDate;
     } else if (newDate > endDate) {
-      notification.warning({
-        message: 'Warning',
-        description: `The maximum date is equal to ${moment(endDate).format('ll')}`,
-        duration: 7,
+      enqueueSnackbar({
+        message: `The maximum date is equal to ${moment(endDate).format('ll')}`,
+        variant: 'warning',
+        autoHideDuration: 7000,
       });
       newDate = endDate;
     }

@@ -1,10 +1,10 @@
 import FormContainer from '../../layout/FormContainer';
 import { Box, TextField, Button } from '@mui/material';
-import { notification } from 'antd';
 import { CreateBill, getTime, isoDate } from '../../lib';
 import { useForm, useRequest, useFocus } from '../../hooks';
 import { FC, useCallback, useEffect } from 'react';
 import { CreateBillApi } from '../../apis';
+import { useSnackbar } from 'notistack';
 
 const CreateBillContent: FC = () => {
   const createBillFromInstance = useForm(CreateBill);
@@ -12,12 +12,13 @@ const CreateBillContent: FC = () => {
   const { focus } = useFocus();
   const isCreateBillApiProcessing = isApiProcessing(CreateBillApi);
   const form = createBillFromInstance.getForm();
+  const { enqueueSnackbar } = useSnackbar();
 
   const formSubmition = useCallback(() => {
     createBillFromInstance.onSubmit(() => {
       request<CreateBill, CreateBill>(new CreateBillApi(form)).then(response => {
         createBillFromInstance.resetForm();
-        notification.success({ message: 'Success', description: 'Your bill was created successfully.' });
+        enqueueSnackbar({ message: 'Your bill was created successfully.', variant: 'success' });
       });
     });
   }, [createBillFromInstance, form, request]);
