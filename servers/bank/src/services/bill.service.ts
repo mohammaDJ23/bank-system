@@ -16,7 +16,7 @@ import {
 } from 'src/dtos';
 import { Repository } from 'typeorm';
 import { Bill, User } from '../entities';
-import { createReadStream, existsSync, unlink } from 'fs';
+import { createReadStream, existsSync, unlink, rmdir, readdir, rm } from 'fs';
 import { mkdir } from 'fs/promises';
 import { join } from 'path';
 import { Workbook } from 'exceljs';
@@ -159,9 +159,13 @@ export class BillService {
     );
   }
 
+  private getBillReportPath(): string {
+    return join(process.cwd(), '/src', '/reports');
+  }
+
   async getBillReports(user: User): Promise<StreamableFile> {
     const fileName = `${user.firstName}-${user.lastName}-${user.userServiceId}.xlsx`;
-    const path = join(process.cwd(), '/src', '/reports');
+    const path = this.getBillReportPath();
     const filePath = join(path, fileName);
 
     if (!existsSync(path)) {
@@ -192,16 +196,29 @@ export class BillService {
 
     const readedFile = createReadStream(filePath);
     return new Promise<StreamableFile>((resolve, reject) => {
-      readedFile.on('ready', () => {
-        const streamFile = new StreamableFile(readedFile);
-        unlink(filePath, (err) => {
-          if (err) reject(err);
-        });
-        resolve(streamFile);
-      });
+      readedFile.on('ready', () => resolve(new StreamableFile(readedFile)));
       readedFile.on('error', (err: Error) =>
         reject(new InternalServerErrorException(err.message)),
       );
     });
+  }
+
+  removeBillReports(): void {
+    const path = this.getBillReportPath();
+    if (existsSync(path))
+      readdir(path, (err, data) => {
+        if (err) console.log(err.message);
+        else {
+          if (data.length <= 0) {
+            rmdir(path, (err) => {
+              if (err) console.log(err);
+            });
+          } else {
+            rm(path, { recursive: true, force: true }, (err) => {
+              if (err) console.log(err);
+            });
+          }
+        }
+      });
   }
 }

@@ -5,7 +5,7 @@ import Modal from '../Modal';
 import { useNavigate } from 'react-router-dom';
 import { FC, useCallback, useState } from 'react';
 import { useAction, useAuth, useRequest, useSelector } from '../../hooks';
-import { DeleteUserApi, IdReq } from '../../apis';
+import { DeleteUserApi, DownloadBillReportApi, IdReq } from '../../apis';
 import { UserWithBillInfoObj, UserObj, Pathes } from '../../lib';
 import { ModalNames } from '../../store';
 
@@ -22,6 +22,7 @@ const Details: FC<DetailsImporation> = ({ user }) => {
   const { isApiProcessing, request } = useRequest();
   const { isAdmin } = useAuth();
   const isDeleteUserApiProcessing = isApiProcessing(DeleteUserApi);
+  const isDownloadBillReportApiProcessing = isApiProcessing(DownloadBillReportApi);
   const options = [
     {
       label: 'Update',
@@ -61,6 +62,21 @@ const Details: FC<DetailsImporation> = ({ user }) => {
       })
       .catch(err => hideModal(ModalNames.CONFIRMATION));
   }, [user, request, hideModal, navigate]);
+
+  const downloadBillReport = useCallback(() => {
+    if (isDownloadBillReportApiProcessing) return;
+
+    request<Blob>(new DownloadBillReportApi()).then(response => {
+      const href = URL.createObjectURL(response.data);
+      const link = document.createElement('a');
+      link.href = href;
+      link.setAttribute('download', 'bill-report.xlsx');
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(href);
+    });
+  }, [isDownloadBillReportApiProcessing, request]);
 
   return (
     <>
@@ -107,6 +123,18 @@ const Details: FC<DetailsImporation> = ({ user }) => {
             last update: {moment(user.updatedAt).format('LLLL')}
           </Typography>
         )}
+        <Typography fontSize="12px" color="">
+          the bill report:{' '}
+          <Typography
+            fontSize="12px"
+            color="#20a0ff"
+            component="span"
+            sx={{ cursor: 'pointer' }}
+            onClick={downloadBillReport}
+          >
+            download
+          </Typography>
+        </Typography>
         <Box mt="30px">
           <Button
             disabled={isDeleteUserApiProcessing}
