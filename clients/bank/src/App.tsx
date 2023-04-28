@@ -5,7 +5,7 @@ import Navigation from './layout/Navigation';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.js';
 import 'antd/dist/reset.css';
-import './assets/styles/index.scss';
+import './assets/styles/index.css';
 import { isUserAuthenticated, Pathes, routes } from './lib';
 import LoadingFallback from './layout/LoadingFallback';
 import { Provider } from 'react-redux';
