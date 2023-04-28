@@ -1,4 +1,4 @@
-import { Box, Typography, Menu, MenuItem, IconButton, Button } from '@mui/material';
+import { Box, Typography, Menu, MenuItem, IconButton, Button, CircularProgress } from '@mui/material';
 import { MoreVert } from '@mui/icons-material';
 import moment from 'moment';
 import Modal from '../Modal';
@@ -123,18 +123,23 @@ const Details: FC<DetailsImporation> = ({ user }) => {
             last update: {moment(user.updatedAt).format('LLLL')}
           </Typography>
         )}
-        <Typography fontSize="12px" color="">
-          the bill report:{' '}
-          <Typography
-            fontSize="12px"
-            color="#20a0ff"
-            component="span"
-            sx={{ cursor: 'pointer' }}
-            onClick={downloadBillReport}
-          >
-            download
+        <Box display="flex" alignItems="center" gap="8px">
+          <Typography fontSize="12px" color="">
+            the bill report:
           </Typography>
-        </Typography>
+          <Box display="flex" alignItems="center" gap="10px">
+            <Typography
+              fontSize="12px"
+              color="#20a0ff"
+              component="span"
+              sx={{ cursor: 'pointer' }}
+              onClick={downloadBillReport}
+            >
+              download
+            </Typography>
+            {isDownloadBillReportApiProcessing && <CircularProgress size={10} />}
+          </Box>
+        </Box>
         <Box mt="30px">
           <Button
             disabled={isDeleteUserApiProcessing}
