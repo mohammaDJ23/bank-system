@@ -51,7 +51,7 @@ import Card from './Card.vue';
 import { ResetPassword, pathes } from '../lib';
 import { useFocus, useRequest, useRedirect } from '../hooks';
 import { ResetPasswordApi } from '../apis';
-import { notification } from 'ant-design-vue';
+import { useNotification } from '@kyvg/vue3-notification';
 
 const formRef = ref();
 const form = reactive(new ResetPassword());
@@ -59,6 +59,7 @@ const valid = ref(true);
 const { isApiProcessing, request } = useRequest();
 const { redirect } = useRedirect();
 const { focus } = useFocus();
+const { notify } = useNotification();
 const isFormProcessing = isApiProcessing(ResetPasswordApi);
 
 onMounted(() => {
@@ -72,10 +73,7 @@ async function validate(event) {
     request(new ResetPasswordApi(form)).then(response => {
       form.clearCachedForm();
       formRef.value.reset();
-      notification.success({
-        message: 'Success',
-        description: 'Your password was changed.',
-      });
+      notify({ text: 'Your password was changed.', title: 'Success', type: 'success' });
       redirect(pathes.login);
     });
   }

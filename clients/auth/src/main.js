@@ -1,7 +1,7 @@
 import 'reflect-metadata';
 import { createApp } from 'vue';
 import { createRouter, createWebHistory } from 'vue-router';
-import antd from 'ant-design-vue';
+import Notifications from '@kyvg/vue3-notification';
 import { routes } from './lib';
 import App from './App.vue';
 import { store } from './store';
@@ -39,8 +39,8 @@ function app(el) {
 
       app.use(router);
       app.use(store);
-      app.use(antd);
       app.use(vuetify);
+      app.use(Notifications);
 
       app.mount(el);
     },
