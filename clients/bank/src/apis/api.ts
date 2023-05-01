@@ -283,3 +283,15 @@ export class DownloadBillReportApi extends RootApi {
     );
   }
 }
+
+export class BillQuantitiesApi extends RootApi {
+  constructor() {
+    super(
+      {
+        url: `/bank/bills/quantities`,
+        method: 'get',
+      },
+      { baseURL: process.env.BANK_SERVICE }
+    );
+  }
+}

@@ -110,7 +110,7 @@ export class GatewayController {
     return this.billService.getTotalAmount(user);
   }
 
-  @Get('bill/quantities')
+  @Get('bills/quantities')
   @UseGuards(AdminAuthGuard)
   @HttpCode(HttpStatus.OK)
   @ObjectSerializer(BillQuantitiesDto)

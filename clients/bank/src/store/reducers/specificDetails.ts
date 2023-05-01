@@ -30,6 +30,10 @@ export interface LastWeekBillsObj {
   date: number;
 }
 
+export class BillQuantities {
+  constructor(public quantities: string, public amount: string) {}
+}
+
 export interface LastWeekUsersObj {
   count: number;
   date: number;
@@ -57,6 +61,7 @@ export interface SpecificDetailsState {
   lastWeekUsers: LastWeekUsersObj[];
   billDates: BillDates | null;
   userQuantities: UserQuantities | null;
+  billQuantities: BillQuantities | null;
 }
 
 const initialState: SpecificDetailsState = {
@@ -69,6 +74,7 @@ const initialState: SpecificDetailsState = {
   lastWeekUsers: [],
   billDates: null,
   userQuantities: null,
+  billQuantities: null,
 };
 
 function setSpecificDetails(state: SpecificDetailsState, action: SetSpecificDetailsAction): SpecificDetailsState {
@@ -90,6 +96,7 @@ function cleanState(state: SpecificDetailsState): SpecificDetailsState {
     lastWeekUsers: [],
     billDates: null,
     userQuantities: null,
+    billQuantities: null,
   };
 }
 

@@ -4,7 +4,7 @@ import { ApiProperty } from '@nestjs/swagger';
 export class BillQuantitiesDto {
   @Expose()
   @ApiProperty()
-  quantities: number;
+  quantities: string;
 
   @Expose()
   @ApiProperty()

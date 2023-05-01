@@ -165,9 +165,8 @@ export class BillService {
   getBillQuantities(): Promise<BillQuantitiesDto> {
     return this.billRepository
       .createQueryBuilder('bill')
-      .select('COUNT(bill.id)', 'quantities')
+      .select('COUNT(bill.id)::TEXT', 'quantities')
       .addSelect('SUM(bill.amount::BIGINT)::TEXT', 'amount')
-      .groupBy('bill.id')
       .getRawOne();
   }
 
