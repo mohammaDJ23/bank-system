@@ -12,3 +12,4 @@ export * from './user.dto';
 export * from './created-bill.dto';
 export * from './updated-bill.dto';
 export * from './deleted-bill.dto';
+export * from './bill-quantities.dto';

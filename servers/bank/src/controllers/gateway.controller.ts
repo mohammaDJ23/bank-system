@@ -37,9 +37,10 @@ import {
   CreatedBillDto,
   UpdatedBillDto,
   DeletedBillDto,
+  BillQuantitiesDto,
 } from '../dtos';
 import { Bill, User } from '../entities';
-import { JwtAuthGuard } from '../guards';
+import { JwtAuthGuard, AdminAuthGuard } from '../guards';
 import { BillService, UserService } from 'src/services';
 
 @UseGuards(JwtAuthGuard)
@@ -107,6 +108,18 @@ export class GatewayController {
   @ApiResponse({ status: HttpStatus.INTERNAL_SERVER_ERROR, type: ErrorDto })
   getTotalAmount(@CurrentUser() user: User): Promise<TotalAmountDto> {
     return this.billService.getTotalAmount(user);
+  }
+
+  @Get('bill/quantities')
+  @UseGuards(AdminAuthGuard)
+  @HttpCode(HttpStatus.OK)
+  @ObjectSerializer(BillQuantitiesDto)
+  @ApiBearerAuth()
+  @ApiResponse({ status: HttpStatus.OK, type: BillQuantitiesDto })
+  @ApiResponse({ status: HttpStatus.UNAUTHORIZED, type: ErrorDto })
+  @ApiResponse({ status: HttpStatus.INTERNAL_SERVER_ERROR, type: ErrorDto })
+  getBillQuantities(): Promise<BillQuantitiesDto> {
+    return this.billService.getBillQuantities();
   }
 
   @Post('bill/period-amount')

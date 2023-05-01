@@ -13,6 +13,7 @@ import {
   TotalAmountWithoutDates,
   UpdateBillDto,
   CreateBillDto,
+  BillQuantitiesDto,
 } from 'src/dtos';
 import { Repository } from 'typeorm';
 import { Bill, User } from '../entities';
@@ -159,6 +160,15 @@ export class BillService {
       `,
       [user.userServiceId],
     );
+  }
+
+  getBillQuantities(): Promise<BillQuantitiesDto> {
+    return this.billRepository
+      .createQueryBuilder('bill')
+      .select('COUNT(bill.id)', 'quantities')
+      .addSelect('SUM(bill.amount::BIGINT)::TEXT', 'amount')
+      .groupBy('bill.id')
+      .getRawOne();
   }
 
   private getBillReportPath(): string {
