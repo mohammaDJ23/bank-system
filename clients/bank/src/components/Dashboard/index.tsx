@@ -360,7 +360,7 @@ const Dashboard: FC = () => {
 
         {isUserAdmin &&
           (isInitialBillQuantitiesApiProcessing ? (
-            <Skeleton width="100%" height="108px" />
+            <Skeleton width="100%" height="64px" />
           ) : (
             specificDetails.billQuantities && (
               <Card>
@@ -369,10 +369,6 @@ const Dashboard: FC = () => {
                     <Box display="flex" alignItems="center" justifyContent="space-between" gap="30px">
                       <Typography whiteSpace="nowrap">Total Bills: </Typography>
                       <Typography>{specificDetails.billQuantities.quantities}</Typography>
-                    </Box>
-                    <Box display="flex" alignItems="center" justifyContent="space-between" gap="30px">
-                      <Typography whiteSpace="nowrap">Total Amount: </Typography>
-                      <Typography>{specificDetails.billQuantities.amount}</Typography>
                     </Box>
                   </Box>
                 </CardContent>
