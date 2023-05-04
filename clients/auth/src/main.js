@@ -12,7 +12,6 @@ import * as directives from 'vuetify/directives';
 import 'vuetify/styles';
 import '@mdi/font/css/materialdesignicons.css';
 import './assets/styles/index.scss';
-import 'ant-design-vue/dist/antd.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 const isDevelopment = process.env.NODE_ENV === 'development';
