@@ -5,8 +5,8 @@ import { ModalNames } from '../../store';
 import { useAction, useForm, useRequest } from '../../hooks';
 import { Box, TextField, Button } from '@mui/material';
 import { UpdateUserByUserApi } from '../../apis';
-import { notification } from 'antd';
 import { useNavigate, useParams } from 'react-router-dom';
+import { useSnackbar } from 'notistack';
 
 interface FormImportation {
   formInstance: ReturnType<typeof useForm<UpdateUserByUser>>;
@@ -19,6 +19,7 @@ const Form: FC<FormImportation> = ({ formInstance }) => {
   const { request, isApiProcessing } = useRequest();
   const isUpdateUserByUserApiProcessing = isApiProcessing(UpdateUserByUserApi);
   const form = formInstance.getForm();
+  const { enqueueSnackbar } = useSnackbar();
 
   const formSubmition = useCallback(() => {
     formInstance.onSubmit(() => {
@@ -27,7 +28,7 @@ const Form: FC<FormImportation> = ({ formInstance }) => {
           const userId = params.id as string;
           hideModal(ModalNames.CONFIRMATION);
           formInstance.resetForm();
-          notification.success({ message: 'Success', description: 'You have updated the user successfully.' });
+          enqueueSnackbar({ message: 'You have updated the user successfully.', variant: 'success' });
           navigate(Pathes.USER.replace(':id', userId));
         })
         .catch(err => hideModal(ModalNames.CONFIRMATION));

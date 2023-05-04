@@ -21,7 +21,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import LogoutIcon from '@mui/icons-material/Logout';
 import { styled } from '@mui/material/styles';
 import { LocalStorage, Pathes, routes, UserRoles } from '../lib';
-import { useAuth, useSelector } from '../hooks';
+import { useAuth } from '../hooks';
 
 interface StyledListItemTextAttr {
   active: string | undefined;
@@ -86,7 +86,6 @@ const Navigation: FC<PropsWithChildren> = ({ children }) => {
   const [open, setOpen] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
-  const { history } = useSelector();
   const params = useParams();
   const { isAdmin, isUser, isUserAuthenticated, getTokenInfo } = useAuth();
   const userInfo = getTokenInfo();
@@ -138,7 +137,7 @@ const Navigation: FC<PropsWithChildren> = ({ children }) => {
         role: UserRoles.USER,
         onClick: () => {
           LocalStorage.clear();
-          if (history) history.push(Pathes.LOGIN);
+          navigate(Pathes.LOGIN);
         },
       },
     ];

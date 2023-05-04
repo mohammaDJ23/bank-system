@@ -3,12 +3,20 @@ import { FC, useEffect, useRef, useState } from 'react';
 import { Box, CardContent, Typography, Slider, Input, styled } from '@mui/material';
 import { DateRange } from '@mui/icons-material';
 import { grey } from '@mui/material/colors';
-import { LastWeekBillsApi, LastWeekUsersApi, PeriodAmountApi, TotalAmountApi, UserQuantitiesApi } from '../../apis';
+import {
+  BillQuantitiesApi,
+  LastWeekBillsApi,
+  LastWeekUsersApi,
+  PeriodAmountApi,
+  TotalAmountApi,
+  UserQuantitiesApi,
+} from '../../apis';
 import { useAction, useAuth, useRequest, useSelector } from '../../hooks';
 import MainContainer from '../../layout/MainContainer';
 import { debounce, getTime } from '../../lib';
 import {
   BillDates,
+  BillQuantities,
   LastWeekBillsObj,
   LastWeekReport,
   LastWeekUsersObj,
@@ -31,8 +39,8 @@ import {
 import { ArgumentScale, Animation, EventTracker, Stack } from '@devexpress/dx-react-chart';
 import { curveCatmullRom, area } from 'd3-shape';
 import moment from 'moment';
-import { notification } from 'antd';
 import { scalePoint } from 'd3-scale';
+import { useSnackbar } from 'notistack';
 
 const AreaChart = styled(Box)(({ theme }) => ({
   [theme.breakpoints.down('sm')]: {
@@ -109,10 +117,12 @@ const Dashboard: FC = () => {
   const { setSpecificDetails } = useAction();
   const { specificDetails } = useSelector();
   const isUserAdmin = isAdmin();
+  const { enqueueSnackbar } = useSnackbar();
   const isInitialTotalAmountApiProcessing = isInitialApiProcessing(TotalAmountApi);
   const isInitialLastWeekBillsApiProcessing = isInitialApiProcessing(LastWeekBillsApi);
   const isPeriodAmountApiProcessing = isApiProcessing(PeriodAmountApi);
   const isInitialUserQuantitiesApiProcessing = isInitialApiProcessing(UserQuantitiesApi);
+  const isInitialBillQuantitiesApiProcessing = isInitialApiProcessing(BillQuantitiesApi);
 
   const periodAmountChangeRequest = useRef(
     debounce(500, (previousPeriodAmountFilter: PeriodAmountFilter, newPeriodAmountFilter: PeriodAmountFilter) => {
@@ -127,10 +137,17 @@ const Dashboard: FC = () => {
 
   useEffect(() => {
     if (isUserAdmin) {
-      Promise.allSettled<[Promise<AxiosResponse<UserQuantities>>, Promise<AxiosResponse<LastWeekUsersObj[]>>]>([
+      Promise.allSettled<
+        [
+          Promise<AxiosResponse<UserQuantities>>,
+          Promise<AxiosResponse<LastWeekUsersObj[]>>,
+          Promise<AxiosResponse<BillQuantities>>
+        ]
+      >([
         request(new UserQuantitiesApi().setInitialApi()),
         request(new LastWeekUsersApi().setInitialApi()),
-      ]).then(([userQuantitiesResponse, lastWeekUsersResponse]) => {
+        request(new BillQuantitiesApi().setInitialApi()),
+      ]).then(([userQuantitiesResponse, lastWeekUsersResponse, billQuantitiesResponse]) => {
         if (userQuantitiesResponse.status === 'fulfilled') {
           const { quantities, adminQuantities, userQuantities } = userQuantitiesResponse.value.data;
           setSpecificDetails('userQuantities', new UserQuantities(quantities, adminQuantities, userQuantities));
@@ -138,6 +155,11 @@ const Dashboard: FC = () => {
 
         if (lastWeekUsersResponse.status === 'fulfilled')
           setSpecificDetails('lastWeekUsers', lastWeekUsersResponse.value.data);
+
+        if (billQuantitiesResponse.status === 'fulfilled') {
+          const { quantities, amount } = billQuantitiesResponse.value.data;
+          setSpecificDetails('billQuantities', new BillQuantities(quantities, amount));
+        }
       });
     }
 
@@ -163,17 +185,17 @@ const Dashboard: FC = () => {
     const startDate = billDates.start;
     const endDate = billDates.end;
     if (newDate < startDate) {
-      notification.warning({
-        message: 'Warning',
-        description: `The minimum date is equal to ${moment(startDate).format('ll')}`,
-        duration: 7,
+      enqueueSnackbar({
+        message: `The minimum date is equal to ${moment(startDate).format('ll')}`,
+        variant: 'warning',
+        autoHideDuration: 7000,
       });
       newDate = startDate;
     } else if (newDate > endDate) {
-      notification.warning({
-        message: 'Warning',
-        description: `The maximum date is equal to ${moment(endDate).format('ll')}`,
-        duration: 7,
+      enqueueSnackbar({
+        message: `The maximum date is equal to ${moment(endDate).format('ll')}`,
+        variant: 'warning',
+        autoHideDuration: 7000,
       });
       newDate = endDate;
     }
@@ -329,6 +351,24 @@ const Dashboard: FC = () => {
                     <Box display="flex" alignItems="center" justifyContent="space-between" gap="30px">
                       <Typography whiteSpace="nowrap">Users: </Typography>
                       <Typography>{specificDetails.userQuantities.userQuantities}</Typography>
+                    </Box>
+                  </Box>
+                </CardContent>
+              </Card>
+            )
+          ))}
+
+        {isUserAdmin &&
+          (isInitialBillQuantitiesApiProcessing ? (
+            <Skeleton width="100%" height="64px" />
+          ) : (
+            specificDetails.billQuantities && (
+              <Card>
+                <CardContent>
+                  <Box display="flex" gap="20px" flexDirection="column">
+                    <Box display="flex" alignItems="center" justifyContent="space-between" gap="30px">
+                      <Typography whiteSpace="nowrap">Total Bills: </Typography>
+                      <Typography>{specificDetails.billQuantities.quantities}</Typography>
                     </Box>
                   </Box>
                 </CardContent>

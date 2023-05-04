@@ -1,5 +1,5 @@
 import { AxiosRequestConfig, CreateAxiosDefaults } from 'axios';
-import { CreateBill, CreateUser, UpdateBill, UpdateUserByAdmin, UpdateUserByUser, ListParams, BillObj } from '../lib';
+import { CreateBill, CreateUser, UpdateBill, UpdateUserByAdmin, UpdateUserByUser, ListParams } from '../lib';
 import { PeriodAmountFilter } from '../store';
 import { RootApiObj } from './resetApi';
 
@@ -264,6 +264,31 @@ export class UserWithBillInfoApi extends RootApi {
     super(
       {
         url: `/bank/user/${id}`,
+        method: 'get',
+      },
+      { baseURL: process.env.BANK_SERVICE }
+    );
+  }
+}
+
+export class DownloadBillReportApi extends RootApi {
+  constructor(id: number) {
+    super(
+      {
+        url: `/bank/bills/excel?id=${id}`,
+        method: 'get',
+        responseType: 'blob',
+      },
+      { baseURL: process.env.BANK_SERVICE }
+    );
+  }
+}
+
+export class BillQuantitiesApi extends RootApi {
+  constructor() {
+    super(
+      {
+        url: `/bank/bills/quantities`,
         method: 'get',
       },
       { baseURL: process.env.BANK_SERVICE }

@@ -5,13 +5,7 @@ const ClearStateProvider: FC<PropsWithChildren> = ({ children }) => {
   const { clearState } = useAction();
 
   useEffect(() => {
-    function clearStateProcess() {
-      clearState();
-    }
-    window.addEventListener('popstate', clearStateProcess);
-
     return () => {
-      window.removeEventListener('popstate', clearStateProcess);
       clearState();
     };
   }, []);

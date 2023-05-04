@@ -1,10 +1,10 @@
 import { AxiosError, AxiosResponse } from 'axios';
-import { notification } from 'antd';
 import { useCallback } from 'react';
 import { ErrorObj, Request, RootApi, RootApiObj } from '../apis';
 import { Constructor } from '../lib';
 import { useAction } from './useActions';
 import { useSelector } from './useSelector';
+import { useSnackbar } from 'notistack';
 
 export function useRequest() {
   const { requestProcess } = useSelector();
@@ -16,6 +16,7 @@ export function useRequest() {
     initialProcessingApiSuccess,
     initialProcessingApiError,
   } = useAction();
+  const { enqueueSnackbar } = useSnackbar();
 
   const getRequestConstructorName = useCallback(<T extends RootApiObj>(requestInstance: RootApi | Constructor<T>) => {
     if (typeof requestInstance === 'function') return requestInstance.name;
@@ -47,7 +48,7 @@ export function useRequest() {
             ? err.message
             : 'Something went wrong';
         message = Array.isArray(message) ? message.join(' - ') : message;
-        notification.error({ message: 'Error', description: message });
+        enqueueSnackbar({ message, variant: 'error' });
 
         if (isInitialApi) initialProcessingApiError(requestConstructorName);
         else processingApiError(requestConstructorName);

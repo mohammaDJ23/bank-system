@@ -5,14 +5,20 @@ import { JwtModule } from '@nestjs/jwt';
 import { ClientsModule } from '@nestjs/microservices';
 import { PassportModule } from '@nestjs/passport';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { ScheduleModule } from '@nestjs/schedule';
 import { Bill, User } from '../entities';
 import { AllExceptionFilter } from '../filters';
-import { GatewayController, MessagePatternController } from '../controllers';
+import {
+  CronJobsController,
+  GatewayController,
+  MessagePatternController,
+} from '../controllers';
 import { JwtStrategy, CustomNamingStrategy } from '../strategies';
 import { BillService, UserService, RabbitmqService } from 'src/services';
 
 @Module({
   imports: [
+    ScheduleModule.forRoot(),
     ClientsModule.register([]),
     TypeOrmModule.forRootAsync({
       useFactory: () => ({
@@ -38,7 +44,11 @@ import { BillService, UserService, RabbitmqService } from 'src/services';
       signOptions: { expiresIn: process.env.JWT_EXPIRATION },
     }),
   ],
-  controllers: [GatewayController, MessagePatternController],
+  controllers: [
+    GatewayController,
+    MessagePatternController,
+    CronJobsController,
+  ],
   providers: [
     UserService,
     BillService,

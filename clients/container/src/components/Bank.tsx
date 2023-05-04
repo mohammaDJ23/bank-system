@@ -1,4 +1,3 @@
-//@ts-ignore
 import { app } from 'bank/BankApp';
 import { useInitialMicro } from '../hooks';
 

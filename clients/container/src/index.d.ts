@@ -1,19 +1,5 @@
-interface Navigate {
-  (path: string): void;
-}
-
-interface MountOptions {
-  onChildNavigate: Navigate;
-  initialPath: string;
-  history: BrowserHistory | MemoryHistory;
-}
-
-interface MountExportation {
-  onParentNavigate: Navigate;
-}
-
 interface MicroAppExportation {
-  mount(options: Partial<MountOptions>): MountExportation;
+  mount(): void;
   unMount(): void;
 }
 
@@ -21,7 +7,7 @@ interface MicroApp {
   (el: Element): MicroAppExportation;
 }
 
-interface RedirectionDetailObj {
+interface RedirectionObj {
   path: string;
 }
 

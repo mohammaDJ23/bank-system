@@ -3,7 +3,7 @@
 /node_modules
 .env.development
 .env.production
-bill-reports.xlsx
+/reports
 
 # Logs
 logs
