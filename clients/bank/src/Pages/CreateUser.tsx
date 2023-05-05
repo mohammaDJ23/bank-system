@@ -1,15 +1,15 @@
 import { FC } from 'react';
 import CreateUserContent from '../components/CreateUser';
-import ProtectAdminRouteProvider from '../lib/providers/ProtectAdminRouteProvider';
+import AdminProtectionProvider from '../lib/providers/AdminProtectionProvider';
 import ClearStateProvider from '../lib/providers/ClearStateProvider';
 
 const CreateUser: FC = () => {
   return (
-    <ProtectAdminRouteProvider path="/bank/users">
+    <AdminProtectionProvider path="/bank/users">
       <ClearStateProvider>
         <CreateUserContent />
       </ClearStateProvider>
-    </ProtectAdminRouteProvider>
+    </AdminProtectionProvider>
   );
 };
 

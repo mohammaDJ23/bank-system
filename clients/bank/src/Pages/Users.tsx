@@ -1,5 +1,5 @@
 import { FC } from 'react';
-import ProtectAdminRouteProvider from '../lib/providers/ProtectAdminRouteProvider';
+import AdminProtectionProvider from '../lib/providers/AdminProtectionProvider';
 import UsersContent from '../components/Users';
 import { useAuth } from '../hooks';
 import ClearStateProvider from '../lib/providers/ClearStateProvider';
@@ -11,11 +11,11 @@ const Users: FC = () => {
   const path = isUserInfoExist ? `/bank/users/${userInfo.id}` : '/';
 
   return (
-    <ProtectAdminRouteProvider path={path}>
+    <AdminProtectionProvider path={path}>
       <ClearStateProvider>
         <UsersContent />
       </ClearStateProvider>
-    </ProtectAdminRouteProvider>
+    </AdminProtectionProvider>
   );
 };
 
