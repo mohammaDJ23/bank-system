@@ -1,5 +1,5 @@
 import { FC } from 'react';
-import ProtectAdminRouteProvider from '../components/hoc/ProtectAdminRouteProvider';
+import ProtectAdminRouteProvider from '../lib/providers/ProtectAdminRouteProvider';
 import UsersContent from '../components/Users';
 import { useAuth } from '../hooks';
 import ClearStateProvider from '../lib/providers/ClearStateProvider';
