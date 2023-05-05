@@ -47,3 +47,7 @@ export function isUser(role?: UserRoles) {
 export function isAdmin(role?: UserRoles) {
   return (role || getTokenInfo()?.role) === UserRoles.ADMIN;
 }
+
+export function isOwner(role?: UserRoles) {
+  return (role || getTokenInfo()?.role) === UserRoles.OWNER;
+}
