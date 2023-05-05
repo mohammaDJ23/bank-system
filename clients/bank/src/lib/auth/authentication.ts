@@ -2,6 +2,7 @@ import { decodeToken } from 'react-jwt';
 import { getTime, LocalStorage } from '../';
 
 export enum UserRoles {
+  OWNER = 'owner',
   ADMIN = 'admin',
   USER = 'user',
 }
