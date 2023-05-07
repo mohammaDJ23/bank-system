@@ -1,10 +1,9 @@
 import { FC } from 'react';
-import AdminProtectionProvider from '../lib/providers/AdminProtectionProvider';
-import OwnerProtectionProvider from '../lib/providers/OwnerProtectionProvider';
 import UsersContent from '../components/Users';
 import { useAuth } from '../hooks';
 import ClearStateProvider from '../lib/providers/ClearStateProvider';
 import { getDynamicPath, Pathes } from '../lib';
+import OwnerOrAdminProtectionProvider from '../lib/providers/OwnerOrAdminProtectionProvider';
 
 const Users: FC = () => {
   const { getTokenInfo } = useAuth();
@@ -13,13 +12,11 @@ const Users: FC = () => {
   const path = isUserInfoExist ? getDynamicPath(Pathes.USER, { id: userInfo.id }) : Pathes.LOGIN;
 
   return (
-    <OwnerProtectionProvider path={path}>
-      <AdminProtectionProvider path={path}>
-        <ClearStateProvider>
-          <UsersContent />
-        </ClearStateProvider>
-      </AdminProtectionProvider>
-    </OwnerProtectionProvider>
+    <OwnerOrAdminProtectionProvider path={path}>
+      <ClearStateProvider>
+        <UsersContent />
+      </ClearStateProvider>
+    </OwnerOrAdminProtectionProvider>
   );
 };
 
