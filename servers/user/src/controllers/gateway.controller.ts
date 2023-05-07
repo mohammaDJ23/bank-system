@@ -37,7 +37,7 @@ import {
   ApiBearerAuth,
   ApiParam,
 } from '@nestjs/swagger';
-import { JwtAuthGuard, AdminAuthGuard, OwnerAuthGuard } from '../guards';
+import { JwtAuthGuard, OwnerAuthGuard, OwnerOrAdminAuthGuard } from '../guards';
 import { User } from 'src/entities';
 
 @UseGuards(JwtAuthGuard)
@@ -105,13 +105,16 @@ export class GatewayController {
   @ApiResponse({ status: HttpStatus.UNAUTHORIZED, type: ErrorDto })
   @ApiResponse({ status: HttpStatus.NOT_FOUND, type: ErrorDto })
   @ApiResponse({ status: HttpStatus.INTERNAL_SERVER_ERROR, type: ErrorDto })
-  delete(@Body() body: DeleteAccountDto): Promise<User> {
-    return this.userService.delete(body);
+  delete(
+    @Body() body: DeleteAccountDto,
+    @CurrentUser() user: User,
+  ): Promise<User> {
+    return this.userService.delete(body, user);
   }
 
   @Get('all')
   @HttpCode(HttpStatus.OK)
-  @UseGuards(OwnerAuthGuard, AdminAuthGuard)
+  @UseGuards(OwnerOrAdminAuthGuard)
   @ListSerializer(UserDto)
   @ApiBody({ type: FindAllDto })
   @ApiBearerAuth()
@@ -126,7 +129,7 @@ export class GatewayController {
   }
 
   @Get('quantities')
-  @UseGuards(OwnerAuthGuard, AdminAuthGuard)
+  @UseGuards(OwnerOrAdminAuthGuard)
   @HttpCode(HttpStatus.OK)
   @ObjectSerializer(UserQuantitiesDto)
   @ApiBearerAuth()
@@ -139,7 +142,7 @@ export class GatewayController {
   }
 
   @Get('last-week')
-  @UseGuards(OwnerAuthGuard, AdminAuthGuard)
+  @UseGuards(OwnerOrAdminAuthGuard)
   @HttpCode(HttpStatus.OK)
   @ArraySerializer(LastWeekDto)
   @ApiBearerAuth()

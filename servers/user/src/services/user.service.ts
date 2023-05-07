@@ -4,6 +4,7 @@ import {
   NotFoundException,
   Inject,
   BadRequestException,
+  ForbiddenException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -94,14 +95,30 @@ export class UserService {
     return user;
   }
 
-  async delete(body: DeleteAccountDto): Promise<User> {
-    let user = await this.findById(body.id);
+  private async deleteUser(body: DeleteAccountDto): Promise<User> {
+    let findedUser = await this.findById(body.id);
 
-    if (!user) throw new NotFoundException('Could not found the user.');
+    if (!findedUser) throw new NotFoundException('Could not found the user.');
 
-    await this.userRepository.delete(user.id);
-    await this.clientProxy.emit('deleted_user', user).toPromise();
-    return user;
+    await this.userRepository.delete(findedUser.id);
+    await this.clientProxy.emit('deleted_user', findedUser).toPromise();
+    return findedUser;
+  }
+
+  async delete(body: DeleteAccountDto, user: User): Promise<User> {
+    switch (user.role) {
+      case Roles.OWNER:
+        return this.deleteUser(body);
+
+      case Roles.USER:
+      case Roles.ADMIN:
+        if (body.id !== user.id)
+          throw new ForbiddenException('Could not delete the user.');
+        return this.deleteUser(body);
+
+      default:
+        throw new ForbiddenException('Could not delete the user.');
+    }
   }
 
   async findOne(id: number, user: User): Promise<User> {
