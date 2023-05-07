@@ -19,7 +19,7 @@ import {
   UserDto,
   DeleteAccountDto,
   UpdateUserByUserDto,
-  UpdateUserByAdminDto,
+  UpdateUserByOwnerDto,
   ErrorDto,
   UserQuantitiesDto,
   LastWeekDto,
@@ -37,7 +37,7 @@ import {
   ApiBearerAuth,
   ApiParam,
 } from '@nestjs/swagger';
-import { JwtAuthGuard, AdminAuthGuard } from '../guards';
+import { JwtAuthGuard, AdminAuthGuard, OwnerAuthGuard } from '../guards';
 import { User } from 'src/entities';
 
 @UseGuards(JwtAuthGuard)
@@ -48,7 +48,7 @@ export class GatewayController {
 
   @Post('create')
   @HttpCode(HttpStatus.CREATED)
-  @UseGuards(AdminAuthGuard)
+  @UseGuards(OwnerAuthGuard)
   @ObjectSerializer(UserDto)
   @ApiBody({ type: CreateUserDto })
   @ApiBearerAuth()
@@ -70,34 +70,34 @@ export class GatewayController {
   @ApiResponse({ status: HttpStatus.CONFLICT, type: ErrorDto })
   @ApiResponse({ status: HttpStatus.BAD_REQUEST, type: ErrorDto })
   @ApiResponse({ status: HttpStatus.INTERNAL_SERVER_ERROR, type: ErrorDto })
-  updateByUser(
+  update(
     @Body() body: UpdateUserByUserDto,
     @CurrentUser() user: User,
   ): Promise<User> {
     return this.userService.updateByUser(body, user);
   }
 
-  @Put('update/admin')
+  @Put('update/owner')
   @HttpCode(HttpStatus.OK)
-  @UseGuards(AdminAuthGuard)
+  @UseGuards(OwnerAuthGuard)
   @ObjectSerializer(UserDto)
-  @ApiBody({ type: UpdateUserByAdminDto })
+  @ApiBody({ type: UpdateUserByOwnerDto })
   @ApiBearerAuth()
   @ApiResponse({ status: HttpStatus.OK, type: UserDto })
   @ApiResponse({ status: HttpStatus.UNAUTHORIZED, type: ErrorDto })
   @ApiResponse({ status: HttpStatus.CONFLICT, type: ErrorDto })
   @ApiResponse({ status: HttpStatus.NOT_FOUND, type: ErrorDto })
   @ApiResponse({ status: HttpStatus.INTERNAL_SERVER_ERROR, type: ErrorDto })
-  updateByAdmin(
-    @Body() body: UpdateUserByAdminDto,
+  updateByOwner(
+    @Body() body: UpdateUserByOwnerDto,
     @CurrentUser() user: User,
   ): Promise<User> {
-    return this.userService.updateByAdmin(body, user);
+    return this.userService.updateByOwner(body, user);
   }
 
   @Delete('delete')
   @HttpCode(HttpStatus.OK)
-  @UseGuards(AdminAuthGuard)
+  @UseGuards(OwnerAuthGuard)
   @ObjectSerializer(UserDto)
   @ApiBody({ type: DeleteAccountDto })
   @ApiBearerAuth()
@@ -111,7 +111,7 @@ export class GatewayController {
 
   @Get('all')
   @HttpCode(HttpStatus.OK)
-  @UseGuards(AdminAuthGuard)
+  @UseGuards(OwnerAuthGuard, AdminAuthGuard)
   @ListSerializer(UserDto)
   @ApiBody({ type: FindAllDto })
   @ApiBearerAuth()
@@ -126,7 +126,7 @@ export class GatewayController {
   }
 
   @Get('quantities')
-  @UseGuards(AdminAuthGuard)
+  @UseGuards(OwnerAuthGuard, AdminAuthGuard)
   @HttpCode(HttpStatus.OK)
   @ObjectSerializer(UserQuantitiesDto)
   @ApiBearerAuth()
@@ -139,7 +139,7 @@ export class GatewayController {
   }
 
   @Get('last-week')
-  @UseGuards(AdminAuthGuard)
+  @UseGuards(OwnerAuthGuard, AdminAuthGuard)
   @HttpCode(HttpStatus.OK)
   @ArraySerializer(LastWeekDto)
   @ApiBearerAuth()

@@ -8,6 +8,10 @@ export class UserQuantitiesDto {
 
   @Expose()
   @ApiProperty()
+  ownerQuantities: number;
+
+  @Expose()
+  @ApiProperty()
   adminQuantities: number;
 
   @Expose()

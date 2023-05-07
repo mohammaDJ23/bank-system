@@ -13,7 +13,7 @@ import {
   UpdateUserByUserDto,
   UserQuantitiesDto,
   LastWeekDto,
-  UpdateUserByAdminDto,
+  UpdateUserByOwnerDto,
 } from '../dtos';
 import { User } from '../entities';
 import { hash } from 'bcrypt';
@@ -50,8 +50,8 @@ export class UserService {
     return this.update(body, currentUser);
   }
 
-  async updateByAdmin(
-    body: UpdateUserByAdminDto,
+  async updateByOwner(
+    body: UpdateUserByOwnerDto,
     currentUser: User,
   ): Promise<User> {
     if (body.id === currentUser.id) return this.update(body, currentUser);
@@ -108,7 +108,7 @@ export class UserService {
     const notFoundException = new NotFoundException(
       'Could not found the user.',
     );
-    if (user.role !== Roles.ADMIN && user.id !== id) throw notFoundException;
+    if (user.role === Roles.USER && user.id !== id) throw notFoundException;
     const findedUser = await this.findById(id);
     if (!findedUser) throw notFoundException;
     return findedUser;
@@ -167,6 +167,10 @@ export class UserService {
       .createQueryBuilder('user')
       .select('COALESCE(COUNT(user.id), 0)::INTEGER', 'quantities')
       .addSelect(
+        `COALESCE(SUM((user.role = :owner)::INTEGER), 0)::INTEGER`,
+        'ownerQuantities',
+      )
+      .addSelect(
         `COALESCE(SUM((user.role = :admin)::INTEGER), 0)::INTEGER`,
         'adminQuantities',
       )
@@ -174,7 +178,11 @@ export class UserService {
         `COALESCE(SUM((user.role = :user)::INTEGER), 0)::INTEGER`,
         'userQuantities',
       )
-      .setParameters({ admin: Roles.ADMIN, user: Roles.USER })
+      .setParameters({
+        owner: Roles.OWNER,
+        admin: Roles.ADMIN,
+        user: Roles.USER,
+      })
       .getRawOne();
   }
 
