@@ -1,5 +1,5 @@
 import { AxiosRequestConfig, CreateAxiosDefaults } from 'axios';
-import { CreateBill, CreateUser, UpdateBill, UpdateUserByAdmin, UpdateUserByUser, ListParams } from '../lib';
+import { CreateBill, CreateUser, UpdateBill, UpdateUserByOwner, UpdateUser, ListParams } from '../lib';
 import { PeriodAmountFilter } from '../store';
 import { RootApiObj } from './resetApi';
 
@@ -57,11 +57,11 @@ export class CreateBillApi extends RootApi<CreateBill> {
   }
 }
 
-export class UpdateUserByAdminApi extends RootApi<UpdateUserByAdmin> {
-  constructor(data: UpdateUserByAdmin) {
+export class UpdateUserByOwnerApi extends RootApi<UpdateUserByOwner> {
+  constructor(data: UpdateUserByOwner) {
     super(
       {
-        url: '/user/update/admin',
+        url: '/user/update/owner',
         method: 'put',
         data,
         headers: {
@@ -73,8 +73,8 @@ export class UpdateUserByAdminApi extends RootApi<UpdateUserByAdmin> {
   }
 }
 
-export class UpdateUserByUserApi extends RootApi<UpdateUserByUser> {
-  constructor(data: UpdateUserByUser) {
+export class UpdateUserApi extends RootApi<UpdateUser> {
+  constructor(data: UpdateUser) {
     super(
       {
         url: '/user/update',

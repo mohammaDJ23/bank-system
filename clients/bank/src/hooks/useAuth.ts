@@ -1,5 +1,5 @@
-import { getToken, getTokenInfo, isUserAuthenticated, isUser, isAdmin, getUserRoles } from '../lib';
+import { getToken, getTokenInfo, isUserAuthenticated, isUser, isAdmin, isOwner, getUserRoles } from '../lib';
 
 export function useAuth() {
-  return { getToken, getTokenInfo, isUserAuthenticated, isUser, isAdmin, getUserRoles };
+  return { getToken, getTokenInfo, isUserAuthenticated, isUser, isAdmin, isOwner, getUserRoles };
 }

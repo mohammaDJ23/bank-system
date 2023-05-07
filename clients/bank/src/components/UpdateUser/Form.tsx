@@ -1,15 +1,15 @@
 import { FC, useCallback } from 'react';
-import { Pathes, UpdateUserByUser } from '../../lib';
+import { getDynamicPath, Pathes, UpdateUser } from '../../lib';
 import Modal from '../Modal';
 import { ModalNames } from '../../store';
 import { useAction, useForm, useRequest } from '../../hooks';
 import { Box, TextField, Button } from '@mui/material';
-import { UpdateUserByUserApi } from '../../apis';
+import { UpdateUserApi } from '../../apis';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useSnackbar } from 'notistack';
 
 interface FormImportation {
-  formInstance: ReturnType<typeof useForm<UpdateUserByUser>>;
+  formInstance: ReturnType<typeof useForm<UpdateUser>>;
 }
 
 const Form: FC<FormImportation> = ({ formInstance }) => {
@@ -17,19 +17,19 @@ const Form: FC<FormImportation> = ({ formInstance }) => {
   const navigate = useNavigate();
   const { hideModal } = useAction();
   const { request, isApiProcessing } = useRequest();
-  const isUpdateUserByUserApiProcessing = isApiProcessing(UpdateUserByUserApi);
+  const isUpdateUserApiProcessing = isApiProcessing(UpdateUserApi);
   const form = formInstance.getForm();
   const { enqueueSnackbar } = useSnackbar();
 
   const formSubmition = useCallback(() => {
     formInstance.onSubmit(() => {
-      request<UpdateUserByUser, UpdateUserByUser>(new UpdateUserByUserApi(form))
+      request<UpdateUser, UpdateUser>(new UpdateUserApi(form))
         .then(response => {
           const userId = params.id as string;
           hideModal(ModalNames.CONFIRMATION);
           formInstance.resetForm();
           enqueueSnackbar({ message: 'You have updated the user successfully.', variant: 'success' });
-          navigate(Pathes.USER.replace(':id', userId));
+          navigate(getDynamicPath(Pathes.USER, { id: userId }));
         })
         .catch(err => hideModal(ModalNames.CONFIRMATION));
     });
@@ -57,7 +57,7 @@ const Form: FC<FormImportation> = ({ formInstance }) => {
           onChange={event => formInstance.onChange('firstName', event.target.value)}
           helperText={formInstance.getInputErrorMessage('firstName')}
           error={formInstance.isInputInValid('firstName')}
-          disabled={isUpdateUserByUserApiProcessing}
+          disabled={isUpdateUserApiProcessing}
         />
         <TextField
           label="Last Name"
@@ -67,7 +67,7 @@ const Form: FC<FormImportation> = ({ formInstance }) => {
           onChange={event => formInstance.onChange('lastName', event.target.value)}
           helperText={formInstance.getInputErrorMessage('lastName')}
           error={formInstance.isInputInValid('lastName')}
-          disabled={isUpdateUserByUserApiProcessing}
+          disabled={isUpdateUserApiProcessing}
         />
         <TextField
           label="Email"
@@ -77,7 +77,7 @@ const Form: FC<FormImportation> = ({ formInstance }) => {
           onChange={event => formInstance.onChange('email', event.target.value)}
           helperText={formInstance.getInputErrorMessage('email')}
           error={formInstance.isInputInValid('email')}
-          disabled={isUpdateUserByUserApiProcessing}
+          disabled={isUpdateUserApiProcessing}
         />
         <TextField
           label="Phone"
@@ -87,11 +87,11 @@ const Form: FC<FormImportation> = ({ formInstance }) => {
           onChange={event => formInstance.onChange('phone', event.target.value)}
           helperText={formInstance.getInputErrorMessage('phone')}
           error={formInstance.isInputInValid('phone')}
-          disabled={isUpdateUserByUserApiProcessing}
+          disabled={isUpdateUserApiProcessing}
         />
         <Box component="div" display="flex" alignItems="center" gap="10px" marginTop="20px">
           <Button
-            disabled={isUpdateUserByUserApiProcessing || !formInstance.isFormValid()}
+            disabled={isUpdateUserApiProcessing || !formInstance.isFormValid()}
             variant="contained"
             size="small"
             type="submit"
@@ -100,7 +100,7 @@ const Form: FC<FormImportation> = ({ formInstance }) => {
             Update
           </Button>
           <Button
-            disabled={isUpdateUserByUserApiProcessing}
+            disabled={isUpdateUserApiProcessing}
             variant="outlined"
             size="small"
             type="button"
@@ -112,7 +112,7 @@ const Form: FC<FormImportation> = ({ formInstance }) => {
         </Box>
       </Box>
       <Modal
-        isLoading={isUpdateUserByUserApiProcessing}
+        isLoading={isUpdateUserApiProcessing}
         isActive={formInstance.isConfirmationActive()}
         onCancel={() => hideModal(ModalNames.CONFIRMATION)}
         onConfirm={formSubmition}

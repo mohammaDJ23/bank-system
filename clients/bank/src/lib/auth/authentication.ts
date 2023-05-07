@@ -18,6 +18,7 @@ export interface TokenInfo {
 
 export function getUserRoles() {
   return [
+    { value: UserRoles.OWNER, label: UserRoles.OWNER },
     { value: UserRoles.ADMIN, label: UserRoles.ADMIN },
     { value: UserRoles.USER, label: UserRoles.USER },
   ];

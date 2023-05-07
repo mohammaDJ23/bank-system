@@ -1,15 +1,15 @@
 import { FC, useCallback } from 'react';
-import { getUserRoles, Pathes, UpdateUserByAdmin } from '../../lib';
+import { getUserRoles, Pathes, UpdateUserByOwner } from '../../lib';
 import Modal from '../Modal';
 import { ModalNames } from '../../store';
 import { useAction, useForm, useRequest } from '../../hooks';
 import { Box, TextField, Button, Select, FormControl, MenuItem, InputLabel, FormHelperText } from '@mui/material';
-import { UpdateUserByAdminApi } from '../../apis';
+import { UpdateUserByOwnerApi } from '../../apis';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useSnackbar } from 'notistack';
 
 interface FormImportation {
-  formInstance: ReturnType<typeof useForm<UpdateUserByAdmin>>;
+  formInstance: ReturnType<typeof useForm<UpdateUserByOwner>>;
 }
 
 const Form: FC<FormImportation> = ({ formInstance }) => {
@@ -17,13 +17,13 @@ const Form: FC<FormImportation> = ({ formInstance }) => {
   const navigate = useNavigate();
   const { hideModal } = useAction();
   const { request, isApiProcessing } = useRequest();
-  const isUpdateUserByAdminApiProcessing = isApiProcessing(UpdateUserByAdminApi);
+  const isUpdateUserByOwnerApiProcessing = isApiProcessing(UpdateUserByOwnerApi);
   const form = formInstance.getForm();
   const { enqueueSnackbar } = useSnackbar();
 
   const formSubmition = useCallback(() => {
     formInstance.onSubmit(() => {
-      request<UpdateUserByAdmin, UpdateUserByAdmin>(new UpdateUserByAdminApi(form))
+      request<UpdateUserByOwner, UpdateUserByOwner>(new UpdateUserByOwnerApi(form))
         .then(response => {
           const userId = params.id as string;
           hideModal(ModalNames.CONFIRMATION);
@@ -57,7 +57,7 @@ const Form: FC<FormImportation> = ({ formInstance }) => {
           onChange={event => formInstance.onChange('firstName', event.target.value)}
           helperText={formInstance.getInputErrorMessage('firstName')}
           error={formInstance.isInputInValid('firstName')}
-          disabled={isUpdateUserByAdminApiProcessing}
+          disabled={isUpdateUserByOwnerApiProcessing}
         />
         <TextField
           label="Last Name"
@@ -67,7 +67,7 @@ const Form: FC<FormImportation> = ({ formInstance }) => {
           onChange={event => formInstance.onChange('lastName', event.target.value)}
           helperText={formInstance.getInputErrorMessage('lastName')}
           error={formInstance.isInputInValid('lastName')}
-          disabled={isUpdateUserByAdminApiProcessing}
+          disabled={isUpdateUserByOwnerApiProcessing}
         />
         <TextField
           label="Email"
@@ -77,7 +77,7 @@ const Form: FC<FormImportation> = ({ formInstance }) => {
           onChange={event => formInstance.onChange('email', event.target.value)}
           helperText={formInstance.getInputErrorMessage('email')}
           error={formInstance.isInputInValid('email')}
-          disabled={isUpdateUserByAdminApiProcessing}
+          disabled={isUpdateUserByOwnerApiProcessing}
         />
         <TextField
           label="Phone"
@@ -87,7 +87,7 @@ const Form: FC<FormImportation> = ({ formInstance }) => {
           onChange={event => formInstance.onChange('phone', event.target.value)}
           helperText={formInstance.getInputErrorMessage('phone')}
           error={formInstance.isInputInValid('phone')}
-          disabled={isUpdateUserByAdminApiProcessing}
+          disabled={isUpdateUserByOwnerApiProcessing}
         />
         <FormControl variant="standard">
           <InputLabel id="role">Role</InputLabel>
@@ -111,7 +111,7 @@ const Form: FC<FormImportation> = ({ formInstance }) => {
         </FormControl>
         <Box component="div" display="flex" alignItems="center" gap="10px" marginTop="20px">
           <Button
-            disabled={isUpdateUserByAdminApiProcessing || !formInstance.isFormValid()}
+            disabled={isUpdateUserByOwnerApiProcessing || !formInstance.isFormValid()}
             variant="contained"
             size="small"
             type="submit"
@@ -120,7 +120,7 @@ const Form: FC<FormImportation> = ({ formInstance }) => {
             Update
           </Button>
           <Button
-            disabled={isUpdateUserByAdminApiProcessing}
+            disabled={isUpdateUserByOwnerApiProcessing}
             variant="outlined"
             size="small"
             type="button"
@@ -132,7 +132,7 @@ const Form: FC<FormImportation> = ({ formInstance }) => {
         </Box>
       </Box>
       <Modal
-        isLoading={isUpdateUserByAdminApiProcessing}
+        isLoading={isUpdateUserByOwnerApiProcessing}
         isActive={formInstance.isConfirmationActive()}
         onCancel={() => hideModal(ModalNames.CONFIRMATION)}
         onConfirm={formSubmition}

@@ -1,4 +1,4 @@
-import { PropsWithChildren, FC, useState } from 'react';
+import { PropsWithChildren, FC, useState, Fragment } from 'react';
 import { useLocation, useNavigate, matchPath, useParams, NavigateOptions } from 'react-router-dom';
 import Drawer from '@mui/material/Drawer';
 import Box from '@mui/material/Box';
@@ -34,7 +34,7 @@ interface StyledListItemIconAttr {
 interface NavigationItemObj {
   title: string;
   icon: JSX.Element;
-  role: UserRoles;
+  roles?: UserRoles[];
   path?: Pathes;
   redirectPath?: Pathes;
   activationOptions?: boolean[];
@@ -87,7 +87,7 @@ const Navigation: FC<PropsWithChildren> = ({ children }) => {
   const navigate = useNavigate();
   const location = useLocation();
   const params = useParams();
-  const { isAdmin, isUser, isUserAuthenticated, getTokenInfo } = useAuth();
+  const { isUserAuthenticated, getTokenInfo } = useAuth();
   const userInfo = getTokenInfo();
   const isUserInfoExist = !!userInfo;
   const isUserLoggedIn = isUserAuthenticated();
@@ -101,40 +101,36 @@ const Navigation: FC<PropsWithChildren> = ({ children }) => {
         icon: <DashboardIcon />,
         path: Pathes.DASHBOARD,
         redirectPath: Pathes.DASHBOARD,
-        role: UserRoles.USER,
       },
       {
         title: 'Create user',
         icon: <GroupAddIcon />,
         path: Pathes.CREATE_USER,
         redirectPath: Pathes.CREATE_USER,
-        role: UserRoles.ADMIN,
+        roles: [UserRoles.OWNER],
       },
       {
         title: 'Create bill',
         icon: <AddCardIcon />,
         path: Pathes.CREATE_BILL,
         redirectPath: Pathes.CREATE_BILL,
-        role: UserRoles.USER,
       },
       {
         title: 'Users',
         icon: <SupervisorAccountIcon />,
         path: Pathes.USERS,
         redirectPath: Pathes.USERS,
-        role: UserRoles.ADMIN,
+        roles: [UserRoles.OWNER, UserRoles.ADMIN],
       },
       {
         title: 'Bills',
         icon: <CreditCardIcon />,
         path: Pathes.BILLS,
         redirectPath: Pathes.BILLS,
-        role: UserRoles.USER,
       },
       {
         title: 'Logout',
         icon: <LogoutIcon />,
-        role: UserRoles.USER,
         onClick: () => {
           LocalStorage.clear();
           navigate(Pathes.LOGIN);
@@ -149,7 +145,6 @@ const Navigation: FC<PropsWithChildren> = ({ children }) => {
         path: Pathes.USER,
         redirectPath: Pathes.USERS,
         navigateOptions: { state: { previousUserId: userInfo.id } },
-        role: UserRoles.USER,
         activationOptions: [userInfo.id === +(params.id as string)],
       });
     }
@@ -240,7 +235,17 @@ const Navigation: FC<PropsWithChildren> = ({ children }) => {
                   </ListItem>
                 );
 
-                return isAdmin() ? navigationEl : isUser(item.role) && navigationEl;
+                return !item.roles ? (
+                  navigationEl
+                ) : isUserInfoExist ? (
+                  item.roles.includes(userInfo.role) ? (
+                    navigationEl
+                  ) : (
+                    <Fragment key={index}></Fragment>
+                  )
+                ) : (
+                  <Fragment key={index}></Fragment>
+                );
               })}
             </List>
           </Box>

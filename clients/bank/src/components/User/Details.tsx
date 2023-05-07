@@ -6,7 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import { FC, useCallback, useState } from 'react';
 import { useAction, useAuth, useRequest, useSelector } from '../../hooks';
 import { DeleteUserApi, DownloadBillReportApi, IdReq } from '../../apis';
-import { UserWithBillInfoObj, UserObj, Pathes } from '../../lib';
+import { UserWithBillInfoObj, UserObj, Pathes, getDynamicPath } from '../../lib';
 import { ModalNames } from '../../store';
 
 interface DetailsImporation {
@@ -20,15 +20,15 @@ const Details: FC<DetailsImporation> = ({ user }) => {
   const { showModal, hideModal } = useAction();
   const { modals } = useSelector();
   const { isApiProcessing, request } = useRequest();
-  const { isAdmin } = useAuth();
+  const { isOwner } = useAuth();
   const isDeleteUserApiProcessing = isApiProcessing(DeleteUserApi);
   const isDownloadBillReportApiProcessing = isApiProcessing(DownloadBillReportApi);
   const options = [
     {
       label: 'Update',
-      path: isAdmin()
-        ? Pathes.UPDATE_USER_BY_ADMIN.replace(':id', user.id.toString())
-        : Pathes.UPDATE_USER.replace(':id', user.id.toString()),
+      path: isOwner()
+        ? getDynamicPath(Pathes.UPDATE_USER_BY_OWNER, { id: user.id })
+        : getDynamicPath(Pathes.UPDATE_USER, { id: user.id }),
     },
   ];
 
@@ -41,7 +41,7 @@ const Details: FC<DetailsImporation> = ({ user }) => {
   }, []);
 
   const onMenuClick = useCallback(
-    (option: typeof options[number]) => {
+    (option: (typeof options)[number]) => {
       return function () {
         onMenuClose();
         navigate(option.path);

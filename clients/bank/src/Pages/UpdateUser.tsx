@@ -1,11 +1,11 @@
 import { FC } from 'react';
-import UpdateUserByUserContent from '../components/UpdateUserByUser';
+import UpdateUserContent from '../components/UpdateUser';
 import ClearStateProvider from '../lib/providers/ClearStateProvider';
 
 const UpdateUserByUser: FC = () => {
   return (
     <ClearStateProvider>
-      <UpdateUserByUserContent />
+      <UpdateUserContent />
     </ClearStateProvider>
   );
 };

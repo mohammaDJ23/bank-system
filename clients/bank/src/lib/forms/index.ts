@@ -1,8 +1,8 @@
 import { CreateUser } from './createUser';
 import { CreateBill } from './createBill';
 import { UpdateBill } from './updateBill';
-import { UpdateUserByAdmin } from './updateUser';
-import { UpdateUserByUser } from './updateUser';
+import { UpdateUserByOwner } from './updateUser';
+import { UpdateUser } from './updateUser';
 
 export * from './createUser';
 export * from './formConstructor';
@@ -14,6 +14,6 @@ export const forms = {
   CreateUser,
   CreateBill,
   UpdateBill,
-  UpdateUserByAdmin,
-  UpdateUserByUser,
+  UpdateUserByOwner,
+  UpdateUser,
 };

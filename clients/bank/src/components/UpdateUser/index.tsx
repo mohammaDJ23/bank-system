@@ -1,6 +1,6 @@
 import FormContainer from '../../layout/FormContainer';
 import Form from './Form';
-import { UpdateUserByAdmin, UserObj } from '../../lib';
+import { UpdateUser, UserObj } from '../../lib';
 import { useAction, useForm, useRequest, useSelector } from '../../hooks';
 import { useEffect, FC } from 'react';
 import { useParams } from 'react-router-dom';
@@ -8,12 +8,12 @@ import Skeleton from './Skeleton';
 import { UserApi } from '../../apis';
 import NotFound from './NotFound';
 
-const UpdateUserByAdminContent: FC = () => {
+const UpdateUserContent: FC = () => {
   const params = useParams();
   const { setSpecificDetails } = useAction();
   const { specificDetails } = useSelector();
   const { request, isInitialApiProcessing } = useRequest();
-  const updateUserByAdminFormInstance = useForm(UpdateUserByAdmin);
+  const updateUserFormInstance = useForm(UpdateUser);
   const isInitialUserApiProcessing = isInitialApiProcessing(UserApi);
 
   useEffect(() => {
@@ -21,14 +21,13 @@ const UpdateUserByAdminContent: FC = () => {
     if (userId) {
       request<UserObj, number>(new UserApi(+userId).setInitialApi()).then(response => {
         setSpecificDetails('user', response.data);
-        updateUserByAdminFormInstance.initializeForm(
-          new UpdateUserByAdmin({
+        updateUserFormInstance.initializeForm(
+          new UpdateUser({
             id: response.data.id,
             firstName: response.data.firstName,
             lastName: response.data.lastName,
             email: response.data.email,
             phone: response.data.phone,
-            role: response.data.role,
           })
         );
       });
@@ -40,7 +39,7 @@ const UpdateUserByAdminContent: FC = () => {
       {isInitialUserApiProcessing ? (
         <Skeleton />
       ) : specificDetails.user ? (
-        <Form formInstance={updateUserByAdminFormInstance} />
+        <Form formInstance={updateUserFormInstance} />
       ) : (
         <NotFound />
       )}
@@ -48,4 +47,4 @@ const UpdateUserByAdminContent: FC = () => {
   );
 };
 
-export default UpdateUserByAdminContent;
+export default UpdateUserContent;

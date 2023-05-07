@@ -1,15 +1,16 @@
 import { FC } from 'react';
 import CreateUserContent from '../components/CreateUser';
-import AdminProtectionProvider from '../lib/providers/AdminProtectionProvider';
+import OwnerProtectionProvider from '../lib/providers/OwnerProtectionProvider';
 import ClearStateProvider from '../lib/providers/ClearStateProvider';
+import { Pathes } from '../lib';
 
 const CreateUser: FC = () => {
   return (
-    <AdminProtectionProvider path="/bank/users">
+    <OwnerProtectionProvider path={Pathes.DASHBOARD}>
       <ClearStateProvider>
         <CreateUserContent />
       </ClearStateProvider>
-    </AdminProtectionProvider>
+    </OwnerProtectionProvider>
   );
 };
 
