@@ -48,7 +48,17 @@ export class BillDates {
 }
 
 export class UserQuantities {
-  constructor(public quantities: number, public adminQuantities: number, public userQuantities: number) {}
+  public quantities: number;
+  public ownerQuantities: number;
+  public adminQuantities: number;
+  public userQuantities: number;
+
+  constructor(arg: UserQuantities) {
+    this.quantities = arg.quantities;
+    this.ownerQuantities = arg.ownerQuantities;
+    this.adminQuantities = arg.adminQuantities;
+    this.userQuantities = arg.userQuantities;
+  }
 }
 
 export interface SpecificDetailsState {

@@ -40,7 +40,7 @@ import {
   BillQuantitiesDto,
 } from '../dtos';
 import { Bill, User } from '../entities';
-import { JwtAuthGuard, AdminAuthGuard, OwnerAuthGuard } from '../guards';
+import { JwtAuthGuard, OwnerOrAdminAuthGuard } from '../guards';
 import { BillService, UserService } from 'src/services';
 
 @UseGuards(JwtAuthGuard)
@@ -111,7 +111,7 @@ export class GatewayController {
   }
 
   @Get('bills/quantities')
-  @UseGuards(OwnerAuthGuard, AdminAuthGuard)
+  @UseGuards(OwnerOrAdminAuthGuard)
   @HttpCode(HttpStatus.OK)
   @ObjectSerializer(BillQuantitiesDto)
   @ApiBearerAuth()

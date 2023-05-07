@@ -150,10 +150,8 @@ const Dashboard: FC = () => {
         request(new LastWeekUsersApi().setInitialApi()),
         request(new BillQuantitiesApi().setInitialApi()),
       ]).then(([userQuantitiesResponse, lastWeekUsersResponse, billQuantitiesResponse]) => {
-        if (userQuantitiesResponse.status === 'fulfilled') {
-          const { quantities, adminQuantities, userQuantities } = userQuantitiesResponse.value.data;
-          setSpecificDetails('userQuantities', new UserQuantities(quantities, adminQuantities, userQuantities));
-        }
+        if (userQuantitiesResponse.status === 'fulfilled')
+          setSpecificDetails('userQuantities', new UserQuantities(userQuantitiesResponse.value.data));
 
         if (lastWeekUsersResponse.status === 'fulfilled')
           setSpecificDetails('lastWeekUsers', lastWeekUsersResponse.value.data);
@@ -336,7 +334,7 @@ const Dashboard: FC = () => {
 
         {isUserOwnerOrAdmin &&
           (isInitialUserQuantitiesApiProcessing ? (
-            <Skeleton width="100%" height="152px" />
+            <Skeleton width="100%" height="196px" />
           ) : (
             specificDetails.userQuantities && (
               <Card>
@@ -345,6 +343,10 @@ const Dashboard: FC = () => {
                     <Box display="flex" alignItems="center" justifyContent="space-between" gap="30px">
                       <Typography whiteSpace="nowrap">Total Users: </Typography>
                       <Typography>{specificDetails.userQuantities.quantities}</Typography>
+                    </Box>
+                    <Box display="flex" alignItems="center" justifyContent="space-between" gap="30px">
+                      <Typography whiteSpace="nowrap">Owners: </Typography>
+                      <Typography>{specificDetails.userQuantities.ownerQuantities}</Typography>
                     </Box>
                     <Box display="flex" alignItems="center" justifyContent="space-between" gap="30px">
                       <Typography whiteSpace="nowrap">Admins: </Typography>
