@@ -20,13 +20,15 @@ const Details: FC<DetailsImporation> = ({ user }) => {
   const { showModal, hideModal } = useAction();
   const { modals } = useSelector();
   const { isApiProcessing, request } = useRequest();
-  const { isOwner } = useAuth();
+  const { isOwner, isSameUser } = useAuth();
+  const isUserOwner = isOwner();
+  const isUserSame = isSameUser(user.id);
   const isDeleteUserApiProcessing = isApiProcessing(DeleteUserApi);
   const isDownloadBillReportApiProcessing = isApiProcessing(DownloadBillReportApi);
   const options = [
     {
       label: 'Update',
-      path: isOwner()
+      path: isUserOwner
         ? getDynamicPath(Pathes.UPDATE_USER_BY_OWNER, { id: user.id })
         : getDynamicPath(Pathes.UPDATE_USER, { id: user.id }),
     },
@@ -140,18 +142,20 @@ const Details: FC<DetailsImporation> = ({ user }) => {
             {isDownloadBillReportApiProcessing && <CircularProgress size={10} />}
           </Box>
         </Box>
-        <Box mt="30px">
-          <Button
-            disabled={isDeleteUserApiProcessing}
-            onClick={onDeleteAccount}
-            variant="contained"
-            color="error"
-            size="small"
-            sx={{ textTransform: 'capitalize' }}
-          >
-            Delete the account
-          </Button>
-        </Box>
+        {((!isUserOwner && isUserSame) || isUserOwner) && (
+          <Box mt="30px">
+            <Button
+              disabled={isDeleteUserApiProcessing}
+              onClick={onDeleteAccount}
+              variant="contained"
+              color="error"
+              size="small"
+              sx={{ textTransform: 'capitalize' }}
+            >
+              Delete the account
+            </Button>
+          </Box>
+        )}
       </Box>
 
       <Modal

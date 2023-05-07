@@ -52,3 +52,8 @@ export function isAdmin(role?: UserRoles) {
 export function isOwner(role?: UserRoles) {
   return (role || getTokenInfo()?.role) === UserRoles.OWNER;
 }
+
+export function isSameUser(id: number) {
+  const userInfo = getTokenInfo();
+  return id === userInfo?.id;
+}
