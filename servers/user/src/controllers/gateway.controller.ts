@@ -37,7 +37,12 @@ import {
   ApiBearerAuth,
   ApiParam,
 } from '@nestjs/swagger';
-import { JwtAuthGuard, OwnerAuthGuard, OwnerOrAdminAuthGuard } from '../guards';
+import {
+  IsSameUserAuthGuard,
+  JwtAuthGuard,
+  OwnerAuthGuard,
+  OwnerOrAdminAuthGuard,
+} from '../guards';
 import { User } from 'src/entities';
 
 @UseGuards(JwtAuthGuard)
@@ -62,6 +67,7 @@ export class GatewayController {
 
   @Put('update')
   @HttpCode(HttpStatus.OK)
+  @UseGuards(IsSameUserAuthGuard)
   @ObjectSerializer(UserDto)
   @ApiBody({ type: UpdateUserByUserDto })
   @ApiBearerAuth()
@@ -97,7 +103,7 @@ export class GatewayController {
 
   @Delete('delete')
   @HttpCode(HttpStatus.OK)
-  @UseGuards(OwnerAuthGuard)
+  @UseGuards(IsSameUserAuthGuard)
   @ObjectSerializer(UserDto)
   @ApiBody({ type: DeleteAccountDto })
   @ApiBearerAuth()
@@ -105,11 +111,8 @@ export class GatewayController {
   @ApiResponse({ status: HttpStatus.UNAUTHORIZED, type: ErrorDto })
   @ApiResponse({ status: HttpStatus.NOT_FOUND, type: ErrorDto })
   @ApiResponse({ status: HttpStatus.INTERNAL_SERVER_ERROR, type: ErrorDto })
-  delete(
-    @Body() body: DeleteAccountDto,
-    @CurrentUser() user: User,
-  ): Promise<User> {
-    return this.userService.delete(body, user);
+  delete(@Body() body: DeleteAccountDto): Promise<User> {
+    return this.userService.delete(body);
   }
 
   @Get('all')
@@ -156,6 +159,7 @@ export class GatewayController {
 
   @Get(':id')
   @HttpCode(HttpStatus.OK)
+  @UseGuards(IsSameUserAuthGuard)
   @ObjectSerializer(UserDto)
   @ApiParam({ name: 'id', type: Number })
   @ApiBearerAuth()
@@ -163,10 +167,7 @@ export class GatewayController {
   @ApiResponse({ status: HttpStatus.UNAUTHORIZED, type: ErrorDto })
   @ApiResponse({ status: HttpStatus.NOT_FOUND, type: ErrorDto })
   @ApiResponse({ status: HttpStatus.INTERNAL_SERVER_ERROR, type: ErrorDto })
-  findOne(
-    @Param('id', ParseIntPipe) id: number,
-    @CurrentUser() user: User,
-  ): Promise<User> {
-    return this.userService.findOne(id, user);
+  findOne(@Param('id', ParseIntPipe) id: number): Promise<User> {
+    return this.userService.findOne(id);
   }
 }

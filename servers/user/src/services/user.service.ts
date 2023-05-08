@@ -46,8 +46,6 @@ export class UserService {
     body: UpdateUserByUserDto,
     currentUser: User,
   ): Promise<User> {
-    if (body.id !== currentUser.id)
-      throw new BadRequestException('Could not update a different user.');
     return this.update(body, currentUser);
   }
 
@@ -95,7 +93,7 @@ export class UserService {
     return user;
   }
 
-  private async deleteUser(body: DeleteAccountDto): Promise<User> {
+  async delete(body: DeleteAccountDto): Promise<User> {
     let findedUser = await this.findById(body.id);
 
     if (!findedUser) throw new NotFoundException('Could not found the user.');
@@ -105,29 +103,9 @@ export class UserService {
     return findedUser;
   }
 
-  async delete(body: DeleteAccountDto, user: User): Promise<User> {
-    switch (user.role) {
-      case Roles.OWNER:
-        return this.deleteUser(body);
-
-      case Roles.USER:
-      case Roles.ADMIN:
-        if (body.id !== user.id)
-          throw new ForbiddenException('Could not delete the user.');
-        return this.deleteUser(body);
-
-      default:
-        throw new ForbiddenException('Could not delete the user.');
-    }
-  }
-
-  async findOne(id: number, user: User): Promise<User> {
-    const notFoundException = new NotFoundException(
-      'Could not found the user.',
-    );
-    if (user.role === Roles.USER && user.id !== id) throw notFoundException;
+  async findOne(id: number): Promise<User> {
     const findedUser = await this.findById(id);
-    if (!findedUser) throw notFoundException;
+    if (!findedUser) throw new NotFoundException('Could not found the user.');
     return findedUser;
   }
 
