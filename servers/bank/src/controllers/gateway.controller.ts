@@ -206,6 +206,8 @@ export class GatewayController {
 
   @Get('user/:id')
   @HttpCode(HttpStatus.OK)
+  @SameUser(UserRoles.USER)
+  @UseGuards(SameUserGuard)
   @ObjectSerializer(UserWithBillInfoDto)
   @ApiParam({ name: 'id', type: 'number' })
   @ApiBearerAuth()
@@ -215,8 +217,7 @@ export class GatewayController {
   @ApiResponse({ status: HttpStatus.INTERNAL_SERVER_ERROR, type: ErrorDto })
   getUserWithBillInfo(
     @Param('id', ParseIntPipe) id: number,
-    @CurrentUser() user: User,
   ): Promise<UserWithBillInfoDto> {
-    return this.userService.getUserWithBillInfo(id, user);
+    return this.userService.getUserWithBillInfo(id);
   }
 }
