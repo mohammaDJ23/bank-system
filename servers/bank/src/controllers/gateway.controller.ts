@@ -47,11 +47,9 @@ import {
   BillQuantitiesDto,
 } from '../dtos';
 import { Bill, User } from '../entities';
-import { JwtAuthGuard } from '../guards';
+import { JwtAuthGuard, RolesGuard, SameUserGuard } from '../guards';
 import { BillService, UserService } from 'src/services';
 import { UserRoles } from 'src/types';
-import { RolesGuard } from 'src/guards/roles-auth.guard';
-import { SameUserGuard } from 'src/guards/same-user-auth.guard';
 
 @UseGuards(JwtAuthGuard)
 @Controller('/api/v1/bank')
