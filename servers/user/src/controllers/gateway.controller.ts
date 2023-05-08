@@ -46,8 +46,8 @@ import {
 import { User } from 'src/entities';
 
 @UseGuards(JwtAuthGuard)
-@Controller('user')
-@ApiTags('user')
+@Controller('api/v1/user')
+@ApiTags('api/v1/user')
 export class GatewayController {
   constructor(private readonly userService: UserService) {}
 
@@ -83,7 +83,7 @@ export class GatewayController {
     return this.userService.updateByUser(body, user);
   }
 
-  @Put('update/owner')
+  @Put('owner/update')
   @HttpCode(HttpStatus.OK)
   @UseGuards(OwnerAuthGuard)
   @ObjectSerializer(UserDto)
@@ -111,8 +111,8 @@ export class GatewayController {
   @ApiResponse({ status: HttpStatus.UNAUTHORIZED, type: ErrorDto })
   @ApiResponse({ status: HttpStatus.NOT_FOUND, type: ErrorDto })
   @ApiResponse({ status: HttpStatus.INTERNAL_SERVER_ERROR, type: ErrorDto })
-  delete(@Body() body: DeleteAccountDto): Promise<User> {
-    return this.userService.delete(body);
+  delete(@Query('id', ParseIntPipe) id: number): Promise<User> {
+    return this.userService.delete(id);
   }
 
   @Get('all')
@@ -125,8 +125,8 @@ export class GatewayController {
   @ApiResponse({ status: HttpStatus.UNAUTHORIZED, type: ErrorDto })
   @ApiResponse({ status: HttpStatus.INTERNAL_SERVER_ERROR, type: ErrorDto })
   findAll(
-    @Query('page') page: number,
-    @Query('take') take: number,
+    @Query('page', ParseIntPipe) page: number,
+    @Query('take', ParseIntPipe) take: number,
   ): Promise<[User[], number]> {
     return this.userService.findAll(page, take);
   }
