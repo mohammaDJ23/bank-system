@@ -9,7 +9,7 @@ import { isUserAuthenticated, Pathes, routes } from './lib';
 import LoadingFallback from './layout/LoadingFallback';
 import { Provider } from 'react-redux';
 import { store } from './store';
-import HistoryProvider from './components/hoc/HistoryProvider';
+import HistoryProvider from './lib/providers/HistoryProvider';
 import AuthProtectionProvider from './lib/providers/AuthProtectionProvider';
 import RedirectionProvider from './lib/providers/RedirectionProvider';
 import { createBrowserHistory } from 'history';

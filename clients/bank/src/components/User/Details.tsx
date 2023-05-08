@@ -6,7 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import { FC, useCallback, useState } from 'react';
 import { useAction, useAuth, useRequest, useSelector } from '../../hooks';
 import { DeleteUserApi, DownloadBillReportApi, IdReq } from '../../apis';
-import { UserWithBillInfoObj, UserObj, Pathes } from '../../lib';
+import { UserWithBillInfoObj, UserObj, Pathes, getDynamicPath } from '../../lib';
 import { ModalNames } from '../../store';
 
 interface DetailsImporation {
@@ -20,15 +20,18 @@ const Details: FC<DetailsImporation> = ({ user }) => {
   const { showModal, hideModal } = useAction();
   const { modals } = useSelector();
   const { isApiProcessing, request } = useRequest();
-  const { isAdmin } = useAuth();
+  const { isOwner, isSameUser } = useAuth();
+  const isUserOwner = isOwner();
+  const isUserSame = isSameUser(user.id);
+  const isAuthorized = (!isUserOwner && isUserSame) || isUserOwner;
   const isDeleteUserApiProcessing = isApiProcessing(DeleteUserApi);
   const isDownloadBillReportApiProcessing = isApiProcessing(DownloadBillReportApi);
   const options = [
     {
       label: 'Update',
-      path: isAdmin()
-        ? Pathes.UPDATE_USER_BY_ADMIN.replace(':id', user.id.toString())
-        : Pathes.UPDATE_USER.replace(':id', user.id.toString()),
+      path: isUserOwner
+        ? getDynamicPath(Pathes.UPDATE_USER_BY_OWNER, { id: user.id })
+        : getDynamicPath(Pathes.UPDATE_USER, { id: user.id }),
     },
   ];
 
@@ -41,7 +44,7 @@ const Details: FC<DetailsImporation> = ({ user }) => {
   }, []);
 
   const onMenuClick = useCallback(
-    (option: typeof options[number]) => {
+    (option: (typeof options)[number]) => {
       return function () {
         onMenuClose();
         navigate(option.path);
@@ -85,7 +88,7 @@ const Details: FC<DetailsImporation> = ({ user }) => {
           <Typography fontWeight="700" fontSize="16px">
             {user.firstName} {user.lastName}
           </Typography>
-          {options.length > 0 && (
+          {options.length > 0 && isAuthorized && (
             <>
               <IconButton onClick={onMenuOpen}>
                 <MoreVert />
@@ -123,35 +126,39 @@ const Details: FC<DetailsImporation> = ({ user }) => {
             last update: {moment(user.updatedAt).format('LLLL')}
           </Typography>
         )}
-        <Box display="flex" alignItems="center" gap="8px">
-          <Typography fontSize="12px" color="">
-            the bill report:
-          </Typography>
-          <Box display="flex" alignItems="center" gap="10px">
-            <Typography
-              fontSize="12px"
-              color="#20a0ff"
-              component="span"
-              sx={{ cursor: 'pointer' }}
-              onClick={downloadBillReport}
-            >
-              download
+        {isAuthorized && (
+          <Box display="flex" alignItems="center" gap="8px">
+            <Typography fontSize="12px" color="">
+              the bill report:
             </Typography>
-            {isDownloadBillReportApiProcessing && <CircularProgress size={10} />}
+            <Box display="flex" alignItems="center" gap="10px">
+              <Typography
+                fontSize="12px"
+                color="#20a0ff"
+                component="span"
+                sx={{ cursor: 'pointer' }}
+                onClick={downloadBillReport}
+              >
+                download
+              </Typography>
+              {isDownloadBillReportApiProcessing && <CircularProgress size={10} />}
+            </Box>
           </Box>
-        </Box>
-        <Box mt="30px">
-          <Button
-            disabled={isDeleteUserApiProcessing}
-            onClick={onDeleteAccount}
-            variant="contained"
-            color="error"
-            size="small"
-            sx={{ textTransform: 'capitalize' }}
-          >
-            Delete the account
-          </Button>
-        </Box>
+        )}
+        {isAuthorized && (
+          <Box mt="30px">
+            <Button
+              disabled={isDeleteUserApiProcessing}
+              onClick={onDeleteAccount}
+              variant="contained"
+              color="error"
+              size="small"
+              sx={{ textTransform: 'capitalize' }}
+            >
+              Delete the account
+            </Button>
+          </Box>
+        )}
       </Box>
 
       <Modal

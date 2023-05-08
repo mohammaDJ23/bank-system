@@ -113,10 +113,12 @@ const Dashboard: FC = () => {
   const defaultSliderStep = getDefaultSliderStep();
   const [sliderStep, setSliderStep] = useState(defaultSliderStep);
   const { request, isInitialApiProcessing, isApiProcessing } = useRequest();
-  const { isAdmin } = useAuth();
+  const { isOwner, isAdmin } = useAuth();
   const { setSpecificDetails } = useAction();
   const { specificDetails } = useSelector();
   const isUserAdmin = isAdmin();
+  const isUserOwner = isOwner();
+  const isUserOwnerOrAdmin = isUserOwner || isUserAdmin;
   const { enqueueSnackbar } = useSnackbar();
   const isInitialTotalAmountApiProcessing = isInitialApiProcessing(TotalAmountApi);
   const isInitialLastWeekBillsApiProcessing = isInitialApiProcessing(LastWeekBillsApi);
@@ -136,7 +138,7 @@ const Dashboard: FC = () => {
   );
 
   useEffect(() => {
-    if (isUserAdmin) {
+    if (isUserOwnerOrAdmin) {
       Promise.allSettled<
         [
           Promise<AxiosResponse<UserQuantities>>,
@@ -148,10 +150,8 @@ const Dashboard: FC = () => {
         request(new LastWeekUsersApi().setInitialApi()),
         request(new BillQuantitiesApi().setInitialApi()),
       ]).then(([userQuantitiesResponse, lastWeekUsersResponse, billQuantitiesResponse]) => {
-        if (userQuantitiesResponse.status === 'fulfilled') {
-          const { quantities, adminQuantities, userQuantities } = userQuantitiesResponse.value.data;
-          setSpecificDetails('userQuantities', new UserQuantities(quantities, adminQuantities, userQuantities));
-        }
+        if (userQuantitiesResponse.status === 'fulfilled')
+          setSpecificDetails('userQuantities', new UserQuantities(userQuantitiesResponse.value.data));
 
         if (lastWeekUsersResponse.status === 'fulfilled')
           setSpecificDetails('lastWeekUsers', lastWeekUsersResponse.value.data);
@@ -212,7 +212,7 @@ const Dashboard: FC = () => {
         billAmount: specificDetails.lastWeekBills[i].amount,
       });
 
-    for (let i = 0; i < chartData.length && isUserAdmin; i++)
+    for (let i = 0; i < chartData.length && isUserOwnerOrAdmin; i++)
       lastWeekUsersLoop: for (let j = 0; j < specificDetails.lastWeekUsers.length; j++)
         if (
           moment(new Date(chartData[i].date)).format('l') === moment(specificDetails.lastWeekUsers[j].date).format('l')
@@ -292,7 +292,7 @@ const Dashboard: FC = () => {
                       argumentField="date"
                       seriesComponent={Area}
                     />
-                    {isUserAdmin && (
+                    {isUserOwnerOrAdmin && (
                       <AreaSeries
                         color="#ff3d00"
                         name="Users"
@@ -319,7 +319,7 @@ const Dashboard: FC = () => {
                       }}
                     />
                     <BarSeries color="#20a0ff" name="Bills" valueField="billCounts" argumentField="date" />
-                    {isUserAdmin && (
+                    {isUserOwnerOrAdmin && (
                       <BarSeries color="#ff3d00" name="Users" valueField="userCounts" argumentField="date" />
                     )}
                     <Animation />
@@ -332,9 +332,9 @@ const Dashboard: FC = () => {
           )
         )}
 
-        {isUserAdmin &&
+        {isUserOwnerOrAdmin &&
           (isInitialUserQuantitiesApiProcessing ? (
-            <Skeleton width="100%" height="152px" />
+            <Skeleton width="100%" height="196px" />
           ) : (
             specificDetails.userQuantities && (
               <Card>
@@ -343,6 +343,10 @@ const Dashboard: FC = () => {
                     <Box display="flex" alignItems="center" justifyContent="space-between" gap="30px">
                       <Typography whiteSpace="nowrap">Total Users: </Typography>
                       <Typography>{specificDetails.userQuantities.quantities}</Typography>
+                    </Box>
+                    <Box display="flex" alignItems="center" justifyContent="space-between" gap="30px">
+                      <Typography whiteSpace="nowrap">Owners: </Typography>
+                      <Typography>{specificDetails.userQuantities.ownerQuantities}</Typography>
                     </Box>
                     <Box display="flex" alignItems="center" justifyContent="space-between" gap="30px">
                       <Typography whiteSpace="nowrap">Admins: </Typography>
@@ -358,7 +362,7 @@ const Dashboard: FC = () => {
             )
           ))}
 
-        {isUserAdmin &&
+        {isUserOwnerOrAdmin &&
           (isInitialBillQuantitiesApiProcessing ? (
             <Skeleton width="100%" height="64px" />
           ) : (

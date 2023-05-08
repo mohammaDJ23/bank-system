@@ -11,7 +11,7 @@ import {
 } from '../';
 import { Form } from './formConstructor';
 
-export class UpdateUserByAdmin extends Form {
+export class UpdateUserByOwner extends Form {
   @DefineVal()
   id: number = 0;
 
@@ -47,7 +47,7 @@ export class UpdateUserByAdmin extends Form {
     email = '',
     phone = '',
     role = UserRoles.USER,
-  }: Partial<Omit<UpdateUserByAdmin, keyof Form>> = {}) {
+  }: Partial<Omit<UpdateUserByOwner, keyof Form>> = {}) {
     super();
     this.id = id;
     this.firstName = firstName;
@@ -58,7 +58,7 @@ export class UpdateUserByAdmin extends Form {
   }
 }
 
-export class UpdateUserByUser extends Form {
+export class UpdateUser extends Form {
   @DefineVal()
   id: number = 0;
 
@@ -88,7 +88,7 @@ export class UpdateUserByUser extends Form {
     lastName = '',
     email = '',
     phone = '',
-  }: Partial<Omit<UpdateUserByUser, keyof Form>> = {}) {
+  }: Partial<Omit<UpdateUser, keyof Form>> = {}) {
     super();
     this.id = id;
     this.firstName = firstName;

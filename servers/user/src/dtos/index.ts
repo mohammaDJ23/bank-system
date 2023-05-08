@@ -4,7 +4,7 @@ export * from './error.dto';
 export * from './find-all.dto';
 export * from './last-week.dto';
 export * from './list.dto';
-export * from './update-user-by-admin.dto';
+export * from './update-user-by-ownerdto';
 export * from './update-user-by-user.dto';
 export * from './update-user.dto';
 export * from './user-quantities.dto';

@@ -4,6 +4,7 @@ import {
   NotFoundException,
   Inject,
   BadRequestException,
+  ForbiddenException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -13,7 +14,7 @@ import {
   UpdateUserByUserDto,
   UserQuantitiesDto,
   LastWeekDto,
-  UpdateUserByAdminDto,
+  UpdateUserByOwnerDto,
 } from '../dtos';
 import { User } from '../entities';
 import { hash } from 'bcrypt';
@@ -45,13 +46,11 @@ export class UserService {
     body: UpdateUserByUserDto,
     currentUser: User,
   ): Promise<User> {
-    if (body.id !== currentUser.id)
-      throw new BadRequestException('Could not update a different user.');
     return this.update(body, currentUser);
   }
 
-  async updateByAdmin(
-    body: UpdateUserByAdminDto,
+  async updateByOwner(
+    body: UpdateUserByOwnerDto,
     currentUser: User,
   ): Promise<User> {
     if (body.id === currentUser.id) return this.update(body, currentUser);
@@ -95,22 +94,18 @@ export class UserService {
   }
 
   async delete(body: DeleteAccountDto): Promise<User> {
-    let user = await this.findById(body.id);
+    let findedUser = await this.findById(body.id);
 
-    if (!user) throw new NotFoundException('Could not found the user.');
+    if (!findedUser) throw new NotFoundException('Could not found the user.');
 
-    await this.userRepository.delete(user.id);
-    await this.clientProxy.emit('deleted_user', user).toPromise();
-    return user;
+    await this.userRepository.delete(findedUser.id);
+    await this.clientProxy.emit('deleted_user', findedUser).toPromise();
+    return findedUser;
   }
 
-  async findOne(id: number, user: User): Promise<User> {
-    const notFoundException = new NotFoundException(
-      'Could not found the user.',
-    );
-    if (user.role !== Roles.ADMIN && user.id !== id) throw notFoundException;
+  async findOne(id: number): Promise<User> {
     const findedUser = await this.findById(id);
-    if (!findedUser) throw notFoundException;
+    if (!findedUser) throw new NotFoundException('Could not found the user.');
     return findedUser;
   }
 
@@ -156,9 +151,10 @@ export class UserService {
 
   findAll(page: number, take: number): Promise<[User[], number]> {
     return this.userRepository
-      .createQueryBuilder()
+      .createQueryBuilder('user')
       .take(take)
       .skip((page - 1) * take)
+      .orderBy('user.createdAt', 'DESC')
       .getManyAndCount();
   }
 
@@ -167,6 +163,10 @@ export class UserService {
       .createQueryBuilder('user')
       .select('COALESCE(COUNT(user.id), 0)::INTEGER', 'quantities')
       .addSelect(
+        `COALESCE(SUM((user.role = :owner)::INTEGER), 0)::INTEGER`,
+        'ownerQuantities',
+      )
+      .addSelect(
         `COALESCE(SUM((user.role = :admin)::INTEGER), 0)::INTEGER`,
         'adminQuantities',
       )
@@ -174,7 +174,11 @@ export class UserService {
         `COALESCE(SUM((user.role = :user)::INTEGER), 0)::INTEGER`,
         'userQuantities',
       )
-      .setParameters({ admin: Roles.ADMIN, user: Roles.USER })
+      .setParameters({
+        owner: Roles.OWNER,
+        admin: Roles.ADMIN,
+        user: Roles.USER,
+      })
       .getRawOne();
   }
 

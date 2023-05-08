@@ -2,18 +2,15 @@ import { FC, PropsWithChildren, Fragment } from 'react';
 import { Navigate } from 'react-router-dom';
 import { useAuth } from '../../hooks';
 
-interface ProtectAdminRouteProviderImportation {
+interface AdminProtectionProviderImportation {
   path: string;
 }
 
-const ProtectAdminRouteProvider: FC<PropsWithChildren<ProtectAdminRouteProviderImportation>> = ({
-  children,
-  path,
-}) => {
+const AdminProtectionProvider: FC<PropsWithChildren<AdminProtectionProviderImportation>> = ({ children, path }) => {
   const { isAdmin } = useAuth();
 
   if (isAdmin()) return <Fragment>{children}</Fragment>;
   else return <Navigate to={path} replace />;
 };
 
-export default ProtectAdminRouteProvider;
+export default AdminProtectionProvider;

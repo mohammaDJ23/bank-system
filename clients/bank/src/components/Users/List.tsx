@@ -2,10 +2,10 @@ import { FC } from 'react';
 import { List, ListItem, ListItemText, ListItemButton, Box, Card } from '@mui/material';
 import moment from 'moment';
 import { useNavigate } from 'react-router-dom';
-import { Pathes, UserObj } from '../../lib';
+import { Pathes, UserObj, getUserRoleColor } from '../../lib';
 import CountBadge from '../CountBadge';
 import Pagination from '../Pagination';
-import { usePaginationList } from '../../hooks';
+import { useAuth, usePaginationList } from '../../hooks';
 
 interface UserListImportation {
   listInstance: ReturnType<typeof usePaginationList<UserObj>>;
@@ -15,6 +15,9 @@ interface UserListImportation {
 const UserList: FC<UserListImportation> = ({ listInstance, onPageChange }) => {
   const navigate = useNavigate();
   const listInfo = listInstance.getFullInfo();
+  const { getTokenInfo } = useAuth();
+  const userInfo = getTokenInfo();
+  const isUserExist = !!userInfo;
 
   return (
     <>
@@ -23,7 +26,13 @@ const UserList: FC<UserListImportation> = ({ listInstance, onPageChange }) => {
           <Card
             key={index}
             variant="outlined"
-            sx={{ my: '20px', position: 'relative', overflow: 'visible' }}
+            sx={{
+              my: '20px',
+              position: 'relative',
+              overflow: 'visible',
+              borderColor:
+                isUserExist && user.id === userInfo.id && listInfo.list.length > 2 ? getUserRoleColor(user.role) : '',
+            }}
             onClick={() => navigate(Pathes.USER.replace(':id', user.id.toString()))}
           >
             <ListItemButton>
@@ -47,11 +56,30 @@ const UserList: FC<UserListImportation> = ({ listInstance, onPageChange }) => {
                     width="100%"
                     flexWrap="wrap"
                   >
-                    <ListItemText
-                      sx={{ flex: 'unset' }}
-                      secondaryTypographyProps={{ fontSize: '10px' }}
-                      secondary={user.role}
-                    />
+                    <Box
+                      component="div"
+                      display="flex"
+                      alignItems="center"
+                      justifyContent="space-between"
+                      gap="10px"
+                      flexWrap="wrap"
+                    >
+                      <ListItemText
+                        sx={{
+                          flex: 'unset',
+                          width: '8px',
+                          height: '8px',
+                          backgroundColor: getUserRoleColor(user.role),
+                          borderRadius: '50%',
+                        }}
+                        secondary={<Box component="span"></Box>}
+                      />
+                      <ListItemText
+                        sx={{ flex: 'unset' }}
+                        secondaryTypographyProps={{ fontSize: '10px' }}
+                        secondary={user.role}
+                      />
+                    </Box>
                     <ListItemText
                       sx={{ flex: 'unset' }}
                       secondaryTypographyProps={{ fontSize: '10px' }}

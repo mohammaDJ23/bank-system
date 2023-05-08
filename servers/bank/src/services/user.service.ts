@@ -89,7 +89,7 @@ export class UserService {
     id: number,
     user: User,
   ): Promise<UserWithBillInfoDto> {
-    if (user.role !== Roles.ADMIN && user.userServiceId !== id)
+    if (user.role === Roles.USER && user.userServiceId !== id)
       throw new NotFoundException('Could not found the user.');
 
     const [response]: UserWithBillInfoDto[] = await this.userService.query(
