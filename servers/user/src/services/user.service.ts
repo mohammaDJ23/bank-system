@@ -151,9 +151,10 @@ export class UserService {
 
   findAll(page: number, take: number): Promise<[User[], number]> {
     return this.userRepository
-      .createQueryBuilder()
+      .createQueryBuilder('user')
       .take(take)
       .skip((page - 1) * take)
+      .orderBy('user.createdAt', 'DESC')
       .getManyAndCount();
   }
 
