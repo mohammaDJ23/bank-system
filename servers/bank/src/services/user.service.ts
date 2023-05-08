@@ -2,7 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { RmqContext, RpcException } from '@nestjs/microservices';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UserWithBillInfoDto } from 'src/dtos';
-import { Roles } from 'src/types';
+import { UserRoles } from 'src/types';
 import { Repository } from 'typeorm';
 import { User } from '../entities';
 import { RabbitmqService } from './rabbitmq.service';
@@ -89,7 +89,7 @@ export class UserService {
     id: number,
     user: User,
   ): Promise<UserWithBillInfoDto> {
-    if (user.role === Roles.USER && user.userServiceId !== id)
+    if (user.role === UserRoles.USER && user.userServiceId !== id)
       throw new NotFoundException('Could not found the user.');
 
     const [response]: UserWithBillInfoDto[] = await this.userService.query(

@@ -26,6 +26,8 @@ import {
   ObjectSerializer,
   ListSerializer,
   ArraySerializer,
+  Roles,
+  SameUser,
 } from '../decorators';
 import {
   BillDto,
@@ -45,12 +47,11 @@ import {
   BillQuantitiesDto,
 } from '../dtos';
 import { Bill, User } from '../entities';
-import {
-  IsSameUserAuthGuard,
-  JwtAuthGuard,
-  OwnerOrAdminAuthGuard,
-} from '../guards';
+import { JwtAuthGuard } from '../guards';
 import { BillService, UserService } from 'src/services';
+import { UserRoles } from 'src/types';
+import { RolesGuard } from 'src/guards/roles-auth.guard';
+import { SameUserGuard } from 'src/guards/same-user-auth.guard';
 
 @UseGuards(JwtAuthGuard)
 @Controller('/api/v1/bank')
@@ -120,7 +121,8 @@ export class GatewayController {
   }
 
   @Get('bill/quantities')
-  @UseGuards(OwnerOrAdminAuthGuard)
+  @Roles(UserRoles.OWNER, UserRoles.ADMIN)
+  @UseGuards(RolesGuard)
   @HttpCode(HttpStatus.OK)
   @ObjectSerializer(BillQuantitiesDto)
   @ApiBearerAuth()
@@ -159,7 +161,8 @@ export class GatewayController {
 
   @Get('bill/excel')
   @HttpCode(HttpStatus.OK)
-  @UseGuards(IsSameUserAuthGuard)
+  @SameUser(UserRoles.ADMIN, UserRoles.USER)
+  @UseGuards(SameUserGuard)
   @Header('Content-Type', 'application/json')
   @Header('Content-Disposition', 'attachment; filename="bill-reports.xlsx"')
   @ApiBearerAuth()

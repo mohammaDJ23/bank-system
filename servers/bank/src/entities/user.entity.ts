@@ -1,4 +1,4 @@
-import { Roles } from 'src/types';
+import { UserRoles } from 'src/types';
 import {
   Entity,
   Column,
@@ -34,7 +34,7 @@ export class User {
 
   @Column({
     type: 'enum',
-    enum: Roles,
+    enum: UserRoles,
   })
   role: string;
 

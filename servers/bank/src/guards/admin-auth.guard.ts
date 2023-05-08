@@ -1,7 +1,7 @@
 import { Injectable, CanActivate, ExecutionContext } from '@nestjs/common';
 import { Observable } from 'rxjs';
 import { getCurrentUser } from 'src/libs';
-import { Roles } from 'src/types';
+import { UserRoles } from 'src/types';
 
 @Injectable()
 export class AdminAuthGuard implements CanActivate {
@@ -9,6 +9,6 @@ export class AdminAuthGuard implements CanActivate {
     context: ExecutionContext,
   ): boolean | Promise<boolean> | Observable<boolean> {
     const currentUser = getCurrentUser(context);
-    return currentUser.role === Roles.ADMIN;
+    return currentUser.role === UserRoles.ADMIN;
   }
 }
