@@ -140,7 +140,7 @@ const Navigation: FC<PropsWithChildren> = ({ children }) => {
 
     if (isUserInfoExist) {
       navigationItems.unshift({
-        title: `${userInfo.firstName} ${userInfo.lastName}`,
+        title: `${userInfo.firstName} ${userInfo.lastName} (${userInfo.role})`,
         icon: <PersonIcon />,
         path: Pathes.USER,
         redirectPath: Pathes.USERS,
