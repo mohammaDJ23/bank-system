@@ -3,7 +3,7 @@ import { Ctx, EventPattern, Payload, RmqContext } from '@nestjs/microservices';
 import { User } from '../entities';
 import { UserService } from 'src/services';
 
-@Controller()
+@Controller('/message-patterns/v1/bank')
 export class MessagePatternController {
   constructor(private readonly userService: UserService) {}
 

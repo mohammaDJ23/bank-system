@@ -5,6 +5,7 @@ import {
   ObjectSerial,
   SerialConstructor,
   ClassConstructor,
+  ListSerial,
 } from 'src/types';
 
 export function serializer(serialConstructor: SerialConstructor) {
@@ -12,6 +13,10 @@ export function serializer(serialConstructor: SerialConstructor) {
 }
 
 export function ListSerializer(dto: ClassConstructor) {
+  return serializer(new ListSerial(dto));
+}
+
+export function ArraySerializer(dto: ClassConstructor) {
   return serializer(new ArraySerial(dto));
 }
 

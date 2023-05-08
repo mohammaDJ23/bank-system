@@ -21,7 +21,12 @@ import {
   ApiBearerAuth,
   ApiParam,
 } from '@nestjs/swagger';
-import { CurrentUser, ObjectSerializer, ListSerializer } from '../decorators';
+import {
+  CurrentUser,
+  ObjectSerializer,
+  ListSerializer,
+  ArraySerializer,
+} from '../decorators';
 import {
   BillDto,
   CreateBillDto,
@@ -48,8 +53,8 @@ import {
 import { BillService, UserService } from 'src/services';
 
 @UseGuards(JwtAuthGuard)
-@Controller('bank')
-@ApiTags('bank')
+@Controller('/api/v1/bank')
+@ApiTags('/api/v1/bank')
 export class GatewayController {
   constructor(
     private readonly billService: BillService,
@@ -97,10 +102,10 @@ export class GatewayController {
   @ApiResponse({ status: HttpStatus.NOT_FOUND, type: ErrorDto })
   @ApiResponse({ status: HttpStatus.INTERNAL_SERVER_ERROR, type: ErrorDto })
   deleteBill(
-    @Body() body: DeleteBillDto,
+    @Query('id') id: string,
     @CurrentUser() user: User,
   ): Promise<Bill> {
-    return this.billService.deleteBill(body, user);
+    return this.billService.deleteBill(id, user);
   }
 
   @Get('bill/total-amount')
@@ -114,7 +119,7 @@ export class GatewayController {
     return this.billService.getTotalAmount(user);
   }
 
-  @Get('bills/quantities')
+  @Get('bill/quantities')
   @UseGuards(OwnerOrAdminAuthGuard)
   @HttpCode(HttpStatus.OK)
   @ObjectSerializer(BillQuantitiesDto)
@@ -141,9 +146,9 @@ export class GatewayController {
     return this.billService.periodAmount(body, user);
   }
 
-  @Get('bills/last-week')
+  @Get('bill/last-week')
   @HttpCode(HttpStatus.OK)
-  @ObjectSerializer(LastWeekDto)
+  @ArraySerializer(LastWeekDto)
   @ApiBearerAuth()
   @ApiResponse({ status: HttpStatus.OK, type: LastWeekDto, isArray: true })
   @ApiResponse({ status: HttpStatus.UNAUTHORIZED, type: ErrorDto })
@@ -152,7 +157,7 @@ export class GatewayController {
     return this.billService.lastWeekBills(user);
   }
 
-  @Get('bills/excel')
+  @Get('bill/excel')
   @HttpCode(HttpStatus.OK)
   @UseGuards(IsSameUserAuthGuard)
   @Header('Content-Type', 'application/json')
@@ -167,7 +172,7 @@ export class GatewayController {
     return this.billService.getBillReports(id);
   }
 
-  @Get('bills')
+  @Get('bill/all')
   @HttpCode(HttpStatus.OK)
   @ListSerializer(BillDto)
   @ApiBody({ type: ListDto })
@@ -176,8 +181,8 @@ export class GatewayController {
   @ApiResponse({ status: HttpStatus.UNAUTHORIZED, type: ErrorDto })
   @ApiResponse({ status: HttpStatus.INTERNAL_SERVER_ERROR, type: ErrorDto })
   findAll(
-    @Query('page') page: number,
-    @Query('take') take: number,
+    @Query('page', ParseIntPipe) page: number,
+    @Query('take', ParseIntPipe) take: number,
     @CurrentUser() user: User,
   ): Promise<[Bill[], number]> {
     return this.billService.findAll(page, take, user);
