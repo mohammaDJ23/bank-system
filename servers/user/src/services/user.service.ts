@@ -3,14 +3,11 @@ import {
   ConflictException,
   NotFoundException,
   Inject,
-  BadRequestException,
-  ForbiddenException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import {
   CreateUserDto,
-  DeleteAccountDto,
   UpdateUserByUserDto,
   UserQuantitiesDto,
   LastWeekDto,
@@ -19,7 +16,7 @@ import {
 import { User } from '../entities';
 import { hash } from 'bcrypt';
 import { ClientProxy, RmqContext, RpcException } from '@nestjs/microservices';
-import { RabbitMqServices, Roles, UpdatedUserPartialObj } from '../types';
+import { RabbitMqServices, UserRoles, UpdatedUserPartialObj } from '../types';
 import { RabbitmqService } from './rabbitmq.service';
 
 @Injectable()
@@ -175,9 +172,9 @@ export class UserService {
         'userQuantities',
       )
       .setParameters({
-        owner: Roles.OWNER,
-        admin: Roles.ADMIN,
-        user: Roles.USER,
+        owner: UserRoles.OWNER,
+        admin: UserRoles.ADMIN,
+        user: UserRoles.USER,
       })
       .getRawOne();
   }

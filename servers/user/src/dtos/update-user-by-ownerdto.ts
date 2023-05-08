@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsString, Matches, Length, IsNumber, IsEnum } from 'class-validator';
-import { Roles } from 'src/types';
+import { UserRoles } from 'src/types';
 
 export class UpdateUserByOwnerDto {
   @IsNumber()
@@ -32,7 +32,7 @@ export class UpdateUserByOwnerDto {
   @ApiProperty()
   phone: string;
 
-  @IsEnum(Roles)
-  @ApiProperty({ enum: [Roles] })
+  @IsEnum(UserRoles)
+  @ApiProperty({ enum: [UserRoles] })
   role: string;
 }

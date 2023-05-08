@@ -29,6 +29,8 @@ import {
   ObjectSerializer,
   CurrentUser,
   ArraySerializer,
+  Roles,
+  SameUser,
 } from '../decorators';
 import {
   ApiBody,
@@ -37,13 +39,9 @@ import {
   ApiBearerAuth,
   ApiParam,
 } from '@nestjs/swagger';
-import {
-  IsSameUserAuthGuard,
-  JwtAuthGuard,
-  OwnerAuthGuard,
-  OwnerOrAdminAuthGuard,
-} from '../guards';
+import { JwtAuthGuard, RolesGuard, SameUserGuard } from '../guards';
 import { User } from 'src/entities';
+import { UserRoles } from 'src/types';
 
 @UseGuards(JwtAuthGuard)
 @Controller('/api/v1/user')
@@ -53,7 +51,8 @@ export class GatewayController {
 
   @Post('create')
   @HttpCode(HttpStatus.CREATED)
-  @UseGuards(OwnerAuthGuard)
+  @Roles(UserRoles.OWNER)
+  @UseGuards(RolesGuard)
   @ObjectSerializer(UserDto)
   @ApiBody({ type: CreateUserDto })
   @ApiBearerAuth()
@@ -67,7 +66,8 @@ export class GatewayController {
 
   @Put('update')
   @HttpCode(HttpStatus.OK)
-  @UseGuards(IsSameUserAuthGuard)
+  @SameUser(UserRoles.ADMIN, UserRoles.USER)
+  @UseGuards(SameUserGuard)
   @ObjectSerializer(UserDto)
   @ApiBody({ type: UpdateUserByUserDto })
   @ApiBearerAuth()
@@ -85,7 +85,8 @@ export class GatewayController {
 
   @Put('owner/update')
   @HttpCode(HttpStatus.OK)
-  @UseGuards(OwnerAuthGuard)
+  @Roles(UserRoles.OWNER)
+  @UseGuards(RolesGuard)
   @ObjectSerializer(UserDto)
   @ApiBody({ type: UpdateUserByOwnerDto })
   @ApiBearerAuth()
@@ -103,7 +104,8 @@ export class GatewayController {
 
   @Delete('delete')
   @HttpCode(HttpStatus.OK)
-  @UseGuards(IsSameUserAuthGuard)
+  @SameUser(UserRoles.ADMIN, UserRoles.USER)
+  @UseGuards(SameUserGuard)
   @ObjectSerializer(UserDto)
   @ApiBody({ type: DeleteAccountDto })
   @ApiBearerAuth()
@@ -117,7 +119,8 @@ export class GatewayController {
 
   @Get('all')
   @HttpCode(HttpStatus.OK)
-  @UseGuards(OwnerOrAdminAuthGuard)
+  @Roles(UserRoles.OWNER, UserRoles.ADMIN)
+  @UseGuards(RolesGuard)
   @ListSerializer(UserDto)
   @ApiBody({ type: FindAllDto })
   @ApiBearerAuth()
@@ -132,7 +135,8 @@ export class GatewayController {
   }
 
   @Get('quantities')
-  @UseGuards(OwnerOrAdminAuthGuard)
+  @Roles(UserRoles.OWNER, UserRoles.ADMIN)
+  @UseGuards(RolesGuard)
   @HttpCode(HttpStatus.OK)
   @ObjectSerializer(UserQuantitiesDto)
   @ApiBearerAuth()
@@ -145,7 +149,8 @@ export class GatewayController {
   }
 
   @Get('last-week')
-  @UseGuards(OwnerOrAdminAuthGuard)
+  @Roles(UserRoles.OWNER, UserRoles.ADMIN)
+  @UseGuards(RolesGuard)
   @HttpCode(HttpStatus.OK)
   @ArraySerializer(LastWeekDto)
   @ApiBearerAuth()
@@ -159,7 +164,8 @@ export class GatewayController {
 
   @Get(':id')
   @HttpCode(HttpStatus.OK)
-  @UseGuards(IsSameUserAuthGuard)
+  @SameUser(UserRoles.ADMIN, UserRoles.USER)
+  @UseGuards(SameUserGuard)
   @ObjectSerializer(UserDto)
   @ApiParam({ name: 'id', type: Number })
   @ApiBearerAuth()

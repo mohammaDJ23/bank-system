@@ -1,5 +1,5 @@
 import { IsString, Matches, Length, IsNumber, IsEnum } from 'class-validator';
-import { Roles } from 'src/types';
+import { UserRoles } from 'src/types';
 
 export class UpdateUserDto {
   @IsNumber()
@@ -32,6 +32,6 @@ export class UpdateUserDto {
   })
   phone: string;
 
-  @IsEnum(Roles)
+  @IsEnum(UserRoles)
   role: string;
 }
