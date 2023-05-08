@@ -40,7 +40,11 @@ import {
   BillQuantitiesDto,
 } from '../dtos';
 import { Bill, User } from '../entities';
-import { JwtAuthGuard, OwnerOrAdminAuthGuard } from '../guards';
+import {
+  IsSameUserAuthGuard,
+  JwtAuthGuard,
+  OwnerOrAdminAuthGuard,
+} from '../guards';
 import { BillService, UserService } from 'src/services';
 
 @UseGuards(JwtAuthGuard)
@@ -150,6 +154,7 @@ export class GatewayController {
 
   @Get('bills/excel')
   @HttpCode(HttpStatus.OK)
+  @UseGuards(IsSameUserAuthGuard)
   @Header('Content-Type', 'application/json')
   @Header('Content-Disposition', 'attachment; filename="bill-reports.xlsx"')
   @ApiBearerAuth()

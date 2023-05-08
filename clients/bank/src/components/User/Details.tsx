@@ -23,6 +23,7 @@ const Details: FC<DetailsImporation> = ({ user }) => {
   const { isOwner, isSameUser } = useAuth();
   const isUserOwner = isOwner();
   const isUserSame = isSameUser(user.id);
+  const isAuthorized = (!isUserOwner && isUserSame) || isUserOwner;
   const isDeleteUserApiProcessing = isApiProcessing(DeleteUserApi);
   const isDownloadBillReportApiProcessing = isApiProcessing(DownloadBillReportApi);
   const options = [
@@ -87,7 +88,7 @@ const Details: FC<DetailsImporation> = ({ user }) => {
           <Typography fontWeight="700" fontSize="16px">
             {user.firstName} {user.lastName}
           </Typography>
-          {options.length > 0 && (
+          {options.length > 0 && isAuthorized && (
             <>
               <IconButton onClick={onMenuOpen}>
                 <MoreVert />
@@ -125,24 +126,26 @@ const Details: FC<DetailsImporation> = ({ user }) => {
             last update: {moment(user.updatedAt).format('LLLL')}
           </Typography>
         )}
-        <Box display="flex" alignItems="center" gap="8px">
-          <Typography fontSize="12px" color="">
-            the bill report:
-          </Typography>
-          <Box display="flex" alignItems="center" gap="10px">
-            <Typography
-              fontSize="12px"
-              color="#20a0ff"
-              component="span"
-              sx={{ cursor: 'pointer' }}
-              onClick={downloadBillReport}
-            >
-              download
+        {isAuthorized && (
+          <Box display="flex" alignItems="center" gap="8px">
+            <Typography fontSize="12px" color="">
+              the bill report:
             </Typography>
-            {isDownloadBillReportApiProcessing && <CircularProgress size={10} />}
+            <Box display="flex" alignItems="center" gap="10px">
+              <Typography
+                fontSize="12px"
+                color="#20a0ff"
+                component="span"
+                sx={{ cursor: 'pointer' }}
+                onClick={downloadBillReport}
+              >
+                download
+              </Typography>
+              {isDownloadBillReportApiProcessing && <CircularProgress size={10} />}
+            </Box>
           </Box>
-        </Box>
-        {((!isUserOwner && isUserSame) || isUserOwner) && (
+        )}
+        {isAuthorized && (
           <Box mt="30px">
             <Button
               disabled={isDeleteUserApiProcessing}
