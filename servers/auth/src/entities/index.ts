@@ -1,2 +1,2 @@
-export * from './reset-password.entity';
+export * from './resetPassword.entity';
 export * from './user.entity';
