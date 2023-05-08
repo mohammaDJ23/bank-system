@@ -1,3 +1,3 @@
-export * from './jwt-auth.guard';
-export * from './roles-auth.guard';
-export * from './same-user-auth.guard';
+export * from './jwt.guard';
+export * from './roles.guard';
+export * from './sameUserAuth.guard';

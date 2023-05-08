@@ -17,7 +17,6 @@ import {
   CreateUserDto,
   FindAllDto,
   UserDto,
-  DeleteAccountDto,
   UpdateUserByUserDto,
   UpdateUserByOwnerDto,
   ErrorDto,
@@ -38,12 +37,13 @@ import {
   ApiTags,
   ApiBearerAuth,
   ApiParam,
+  ApiQuery,
 } from '@nestjs/swagger';
-import { JwtAuthGuard, RolesGuard, SameUserGuard } from '../guards';
+import { JwtGuard, RolesGuard, SameUserGuard } from '../guards';
 import { User } from 'src/entities';
 import { UserRoles } from 'src/types';
 
-@UseGuards(JwtAuthGuard)
+@UseGuards(JwtGuard)
 @Controller('/api/v1/user')
 @ApiTags('/api/v1/user')
 export class GatewayController {
@@ -107,7 +107,7 @@ export class GatewayController {
   @SameUser(UserRoles.ADMIN, UserRoles.USER)
   @UseGuards(SameUserGuard)
   @ObjectSerializer(UserDto)
-  @ApiBody({ type: DeleteAccountDto })
+  @ApiQuery({ name: 'id', type: 'number' })
   @ApiBearerAuth()
   @ApiResponse({ status: HttpStatus.OK, type: UserDto })
   @ApiResponse({ status: HttpStatus.UNAUTHORIZED, type: ErrorDto })

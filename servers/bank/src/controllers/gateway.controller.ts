@@ -20,6 +20,7 @@ import {
   ApiResponse,
   ApiBearerAuth,
   ApiParam,
+  ApiQuery,
 } from '@nestjs/swagger';
 import {
   CurrentUser,
@@ -33,7 +34,6 @@ import {
   BillDto,
   CreateBillDto,
   UpdateBillDto,
-  DeleteBillDto,
   TotalAmountDto,
   TotalAmountWithoutDates,
   PeriodAmountDto,
@@ -47,11 +47,11 @@ import {
   BillQuantitiesDto,
 } from '../dtos';
 import { Bill, User } from '../entities';
-import { JwtAuthGuard, RolesGuard, SameUserGuard } from '../guards';
+import { JwtGuard, RolesGuard, SameUserGuard } from '../guards';
 import { BillService, UserService } from 'src/services';
 import { UserRoles } from 'src/types';
 
-@UseGuards(JwtAuthGuard)
+@UseGuards(JwtGuard)
 @Controller('/api/v1/bank')
 @ApiTags('/api/v1/bank')
 export class GatewayController {
@@ -94,7 +94,7 @@ export class GatewayController {
   @Delete('bill/delete')
   @HttpCode(HttpStatus.OK)
   @ObjectSerializer(DeletedBillDto)
-  @ApiBody({ type: DeleteBillDto })
+  @ApiQuery({ name: 'id', type: 'string' })
   @ApiBearerAuth()
   @ApiResponse({ status: HttpStatus.OK, type: DeletedBillDto })
   @ApiResponse({ status: HttpStatus.UNAUTHORIZED, type: ErrorDto })

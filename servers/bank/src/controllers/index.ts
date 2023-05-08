@@ -1,3 +1,3 @@
 export * from './gateway.controller';
-export * from './message-pattern.controller';
-export * from './cron-jobs.controller';
+export * from './messagePattern.controller';
+export * from './cronJobs.controller';

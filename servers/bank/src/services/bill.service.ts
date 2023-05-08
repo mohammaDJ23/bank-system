@@ -6,7 +6,6 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import {
-  DeleteBillDto,
   LastWeekDto,
   PeriodAmountDto,
   TotalAmountDto,
