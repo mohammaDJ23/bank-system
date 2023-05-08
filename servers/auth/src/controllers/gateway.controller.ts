@@ -12,8 +12,8 @@ import { ObjectSerializer, CurrentUser } from '../decorators';
 import { ResetPasswordService, AuthService } from '../services';
 import { User } from '../entities';
 
-@Controller('auth')
-@ApiTags('auth')
+@Controller('/api/v1/auth')
+@ApiTags('/api/v1/auth')
 export class GatewayController {
   constructor(
     private readonly authService: AuthService,

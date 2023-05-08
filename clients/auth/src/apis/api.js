@@ -1,5 +1,3 @@
-import { ResetPassword } from '../lib';
-
 class RootApi {
   constructor(api = {}, config = {}) {
     this.api = api;
@@ -14,7 +12,7 @@ class RootApi {
 export class LoginApi extends RootApi {
   constructor(data) {
     super({
-      url: '/auth/login',
+      url: '/api/v1/auth/login',
       method: 'post',
       data,
       header: {
@@ -27,7 +25,7 @@ export class LoginApi extends RootApi {
 export class ForgotPasswordApi extends RootApi {
   constructor(data) {
     super({
-      url: '/auth/forgot-password',
+      url: '/api/v1/auth/forgot-password',
       method: 'post',
       data,
       header: {
@@ -40,7 +38,7 @@ export class ForgotPasswordApi extends RootApi {
 export class ResetPasswordApi extends RootApi {
   constructor(data) {
     super({
-      url: '/auth/reset-password',
+      url: '/api/v1/auth/reset-password',
       method: 'post',
       data,
       header: {

@@ -100,8 +100,8 @@ export class AppModule {
     consumer
       .apply(CurrentUserMiddleWare)
       .forRoutes(
-        { path: 'auth/login', method: RequestMethod.POST },
-        { path: 'auth/forgot-password', method: RequestMethod.POST },
+        { path: '/api/v1/auth/login', method: RequestMethod.POST },
+        { path: '/api/v1/auth/forgot-password', method: RequestMethod.POST },
       );
   }
 }
