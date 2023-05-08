@@ -46,8 +46,8 @@ import {
 import { User } from 'src/entities';
 
 @UseGuards(JwtAuthGuard)
-@Controller('api/v1/user')
-@ApiTags('api/v1/user')
+@Controller('/api/v1/user')
+@ApiTags('/api/v1/user')
 export class GatewayController {
   constructor(private readonly userService: UserService) {}
 
