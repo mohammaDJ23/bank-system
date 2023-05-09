@@ -39,7 +39,12 @@ import {
   ApiParam,
   ApiQuery,
 } from '@nestjs/swagger';
-import { JwtGuard, RolesGuard, SameUserGuard } from '../guards';
+import {
+  DifferentOwnerGuard,
+  JwtGuard,
+  RolesGuard,
+  SameUserGuard,
+} from '../guards';
 import { User } from 'src/entities';
 import { UserRoles } from 'src/types';
 
@@ -106,7 +111,7 @@ export class GatewayController {
   @Delete('delete')
   @HttpCode(HttpStatus.OK)
   @SameUser(UserRoles.ADMIN, UserRoles.USER)
-  @UseGuards(SameUserGuard)
+  @UseGuards(SameUserGuard, DifferentOwnerGuard)
   @ObjectSerializer(UserDto)
   @ApiQuery({ name: 'id', type: 'number' })
   @ApiBearerAuth()
