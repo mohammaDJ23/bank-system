@@ -1,5 +1,5 @@
 import { decodeToken } from 'react-jwt';
-import { getTime, LocalStorage } from '../';
+import { getTime, LocalStorage, UserObj } from '../';
 
 export enum UserRoles {
   OWNER = 'owner',
