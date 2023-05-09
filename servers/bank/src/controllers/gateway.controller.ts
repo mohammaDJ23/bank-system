@@ -161,6 +161,7 @@ export class GatewayController {
   @HttpCode(HttpStatus.OK)
   @SameUser(UserRoles.ADMIN, UserRoles.USER)
   @UseGuards(SameUserGuard)
+  @ApiQuery({ name: 'id', type: 'number' })
   @Header('Content-Type', 'application/json')
   @Header('Content-Disposition', 'attachment; filename="bill-reports.xlsx"')
   @ApiBearerAuth()
