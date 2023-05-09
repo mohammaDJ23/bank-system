@@ -4,7 +4,7 @@ import { Observable } from 'rxjs';
 import { CustomSocket } from 'src/adapters';
 
 @Injectable()
-export class JwtSocketAuthGuard implements CanActivate {
+export class JwtSocketGuard implements CanActivate {
   constructor(private readonly jwtService: JwtService) {}
 
   canActivate(

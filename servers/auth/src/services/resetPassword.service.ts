@@ -49,7 +49,7 @@ export class ResetPasswordService {
       from: process.env.MAILER_USER,
       to: currentUser.email,
       subject: 'Reset password link',
-      template: './reset-password',
+      template: './resetPassword',
       context: {
         firstName: currentUser.firstName,
         lastName: currentUser.lastName,
@@ -88,7 +88,7 @@ export class ResetPasswordService {
       from: process.env.MAILER_USER,
       to: user.email,
       subject: 'Changed password',
-      template: './changed-password',
+      template: './changedPassword',
       context: {
         firstName: user.firstName,
         link: `${process.env.CLIENT_CONTAINER_URL}/auth/login`,

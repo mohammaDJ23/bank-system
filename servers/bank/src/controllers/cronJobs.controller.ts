@@ -2,7 +2,7 @@ import { Controller } from '@nestjs/common';
 import { Cron, CronExpression } from '@nestjs/schedule';
 import { BillService } from 'src/services';
 
-@Controller()
+@Controller('/cron-jobs/v1/bank')
 export class CronJobsController {
   constructor(private readonly billService: BillService) {}
 

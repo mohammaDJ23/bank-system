@@ -105,8 +105,12 @@ const Area = (props: any) => (
   />
 );
 
-function getDefaultSliderStep() {
+function getOneDayDate() {
   return 1 * 24 * 60 * 60 * 1000;
+}
+
+function getDefaultSliderStep() {
+  return getOneDayDate();
 }
 
 const Dashboard: FC = () => {
@@ -391,6 +395,7 @@ const Dashboard: FC = () => {
                 <Box display="flex" justifyContent="center" flexDirection="column" gap="20px">
                   {specificDetails.billDates.start > 0 &&
                     specificDetails.billDates.end > 0 &&
+                    specificDetails.billDates.end - specificDetails.billDates.start > getOneDayDate() &&
                     (() => {
                       const slider = (
                         <Slider

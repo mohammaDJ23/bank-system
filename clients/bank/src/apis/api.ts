@@ -3,10 +3,6 @@ import { CreateBill, CreateUser, UpdateBill, UpdateUserByOwner, UpdateUser, List
 import { PeriodAmountFilter } from '../store';
 import { RootApiObj } from './resetApi';
 
-export interface IdReq<T = number | string> {
-  id: T;
-}
-
 export abstract class RootApi<D = any> implements RootApiObj<D> {
   protected _isInitialApi: boolean = false;
 
@@ -29,7 +25,7 @@ export class CreateUserApi extends RootApi<CreateUser> {
   constructor(data: CreateUser) {
     super(
       {
-        url: '/user/create',
+        url: '/api/v1/user/create',
         method: 'post',
         data,
         headers: {
@@ -45,7 +41,7 @@ export class CreateBillApi extends RootApi<CreateBill> {
   constructor(data: CreateBill) {
     super(
       {
-        url: '/bank/bill/create',
+        url: '/api/v1/bank/bill/create',
         method: 'post',
         data,
         headers: {
@@ -61,7 +57,7 @@ export class UpdateUserByOwnerApi extends RootApi<UpdateUserByOwner> {
   constructor(data: UpdateUserByOwner) {
     super(
       {
-        url: '/user/update/owner',
+        url: '/api/v1/user/owner/update',
         method: 'put',
         data,
         headers: {
@@ -77,7 +73,7 @@ export class UpdateUserApi extends RootApi<UpdateUser> {
   constructor(data: UpdateUser) {
     super(
       {
-        url: '/user/update',
+        url: '/api/v1/user/update',
         method: 'put',
         data,
         headers: {
@@ -93,7 +89,7 @@ export class UpdateBillApi extends RootApi<UpdateBill> {
   constructor(data: UpdateBill) {
     super(
       {
-        url: '/bank/bill/update',
+        url: '/api/v1/bank/bill/update',
         method: 'put',
         data,
         headers: {
@@ -109,7 +105,7 @@ export class UsersApi<T = any> extends RootApi {
   constructor(data: ListParams<T>) {
     super(
       {
-        url: `/user/all?page=${data.page}&take=${data.take}`,
+        url: `/api/v1/user/all?page=${data.page}&take=${data.take}`,
         method: 'get',
       },
       { baseURL: process.env.USER_SERVICE }
@@ -123,7 +119,7 @@ export class BillsApi<T = any> extends RootApi {
   constructor(data: ListParams<T>) {
     super(
       {
-        url: `/bank/bills?page=${data.page}&take=${data.take}`,
+        url: `/api/v1/bank/bill/all?page=${data.page}&take=${data.take}`,
         method: 'get',
       },
       { baseURL: process.env.BANK_SERVICE }
@@ -137,7 +133,7 @@ export class UserApi extends RootApi {
   constructor(id: number) {
     super(
       {
-        url: `/user/${id}`,
+        url: `/api/v1/user/${id}`,
         method: 'get',
       },
       { baseURL: process.env.USER_SERVICE }
@@ -149,7 +145,7 @@ export class BillApi extends RootApi {
   constructor(id: string) {
     super(
       {
-        url: `/bank/bill/${id}`,
+        url: `/api/v1/bank/bill/${id}`,
         method: 'get',
       },
       { baseURL: process.env.BANK_SERVICE }
@@ -157,26 +153,24 @@ export class BillApi extends RootApi {
   }
 }
 
-export class DeleteBillApi extends RootApi<IdReq> {
+export class DeleteBillApi extends RootApi {
   constructor(id: string) {
     super(
       {
-        url: `/bank/bill/delete`,
+        url: `/api/v1/bank/bill/delete?id=${id}`,
         method: 'delete',
-        data: { id },
       },
       { baseURL: process.env.BANK_SERVICE }
     );
   }
 }
 
-export class DeleteUserApi extends RootApi<IdReq> {
+export class DeleteUserApi extends RootApi {
   constructor(id: number) {
     super(
       {
-        url: `/user/delete`,
+        url: `/api/v1/user/delete?id=${id}`,
         method: 'delete',
-        data: { id },
       },
       { baseURL: process.env.USER_SERVICE }
     );
@@ -187,7 +181,7 @@ export class TotalAmountApi extends RootApi {
   constructor() {
     super(
       {
-        url: '/bank/bill/total-amount',
+        url: '/api/v1/bank/bill/total-amount',
         method: 'get',
       },
       { baseURL: process.env.BANK_SERVICE }
@@ -199,7 +193,7 @@ export class PeriodAmountApi extends RootApi<PeriodAmountFilter> {
   constructor(data: PeriodAmountFilter) {
     super(
       {
-        url: '/bank/bill/period-amount',
+        url: '/api/v1/bank/bill/period-amount',
         method: 'post',
         data,
         headers: {
@@ -215,7 +209,7 @@ export class LastWeekBillsApi extends RootApi {
   constructor() {
     super(
       {
-        url: '/bank/bills/last-week',
+        url: '/api/v1/bank/bill/last-week',
         method: 'get',
       },
       { baseURL: process.env.BANK_SERVICE }
@@ -227,7 +221,7 @@ export class BillsExcelApi extends RootApi {
   constructor() {
     super(
       {
-        url: '/bank/bills/excel',
+        url: '/api/v1/bank/bill/excel',
         method: 'get',
       },
       { baseURL: process.env.BANK_SERVICE }
@@ -239,7 +233,7 @@ export class UserQuantitiesApi extends RootApi {
   constructor() {
     super(
       {
-        url: '/user/quantities',
+        url: '/api/v1/user/quantities',
         method: 'get',
       },
       { baseURL: process.env.USER_SERVICE }
@@ -251,7 +245,7 @@ export class LastWeekUsersApi extends RootApi {
   constructor() {
     super(
       {
-        url: '/user/last-week',
+        url: '/api/v1/user/last-week',
         method: 'get',
       },
       { baseURL: process.env.USER_SERVICE }
@@ -263,7 +257,7 @@ export class UserWithBillInfoApi extends RootApi {
   constructor(id: number) {
     super(
       {
-        url: `/bank/user/${id}`,
+        url: `/api/v1/bank/user/${id}`,
         method: 'get',
       },
       { baseURL: process.env.BANK_SERVICE }
@@ -275,7 +269,7 @@ export class DownloadBillReportApi extends RootApi {
   constructor(id: number) {
     super(
       {
-        url: `/bank/bills/excel?id=${id}`,
+        url: `/api/v1/bank/bill/excel?id=${id}`,
         method: 'get',
         responseType: 'blob',
       },
@@ -288,7 +282,7 @@ export class BillQuantitiesApi extends RootApi {
   constructor() {
     super(
       {
-        url: `/bank/bills/quantities`,
+        url: `/api/v1/bank/bill/quantities`,
         method: 'get',
       },
       { baseURL: process.env.BANK_SERVICE }

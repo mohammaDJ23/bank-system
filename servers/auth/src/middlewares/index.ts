@@ -1,1 +1,1 @@
-export * from './current-user.middleware';
+export * from './currentUser.middleware';

@@ -17,7 +17,6 @@ import {
   CreateUserDto,
   FindAllDto,
   UserDto,
-  DeleteAccountDto,
   UpdateUserByUserDto,
   UpdateUserByOwnerDto,
   ErrorDto,
@@ -29,6 +28,8 @@ import {
   ObjectSerializer,
   CurrentUser,
   ArraySerializer,
+  Roles,
+  SameUser,
 } from '../decorators';
 import {
   ApiBody,
@@ -36,24 +37,22 @@ import {
   ApiTags,
   ApiBearerAuth,
   ApiParam,
+  ApiQuery,
 } from '@nestjs/swagger';
-import {
-  IsSameUserAuthGuard,
-  JwtAuthGuard,
-  OwnerAuthGuard,
-  OwnerOrAdminAuthGuard,
-} from '../guards';
+import { JwtGuard, RolesGuard, SameUserGuard } from '../guards';
 import { User } from 'src/entities';
+import { UserRoles } from 'src/types';
 
-@UseGuards(JwtAuthGuard)
-@Controller('user')
-@ApiTags('user')
+@UseGuards(JwtGuard)
+@Controller('/api/v1/user')
+@ApiTags('/api/v1/user')
 export class GatewayController {
   constructor(private readonly userService: UserService) {}
 
   @Post('create')
   @HttpCode(HttpStatus.CREATED)
-  @UseGuards(OwnerAuthGuard)
+  @Roles(UserRoles.OWNER)
+  @UseGuards(RolesGuard)
   @ObjectSerializer(UserDto)
   @ApiBody({ type: CreateUserDto })
   @ApiBearerAuth()
@@ -67,7 +66,8 @@ export class GatewayController {
 
   @Put('update')
   @HttpCode(HttpStatus.OK)
-  @UseGuards(IsSameUserAuthGuard)
+  @SameUser(UserRoles.ADMIN, UserRoles.USER)
+  @UseGuards(SameUserGuard)
   @ObjectSerializer(UserDto)
   @ApiBody({ type: UpdateUserByUserDto })
   @ApiBearerAuth()
@@ -83,9 +83,10 @@ export class GatewayController {
     return this.userService.updateByUser(body, user);
   }
 
-  @Put('update/owner')
+  @Put('owner/update')
   @HttpCode(HttpStatus.OK)
-  @UseGuards(OwnerAuthGuard)
+  @Roles(UserRoles.OWNER)
+  @UseGuards(RolesGuard)
   @ObjectSerializer(UserDto)
   @ApiBody({ type: UpdateUserByOwnerDto })
   @ApiBearerAuth()
@@ -103,21 +104,23 @@ export class GatewayController {
 
   @Delete('delete')
   @HttpCode(HttpStatus.OK)
-  @UseGuards(IsSameUserAuthGuard)
+  @SameUser(UserRoles.ADMIN, UserRoles.USER)
+  @UseGuards(SameUserGuard)
   @ObjectSerializer(UserDto)
-  @ApiBody({ type: DeleteAccountDto })
+  @ApiQuery({ name: 'id', type: 'number' })
   @ApiBearerAuth()
   @ApiResponse({ status: HttpStatus.OK, type: UserDto })
   @ApiResponse({ status: HttpStatus.UNAUTHORIZED, type: ErrorDto })
   @ApiResponse({ status: HttpStatus.NOT_FOUND, type: ErrorDto })
   @ApiResponse({ status: HttpStatus.INTERNAL_SERVER_ERROR, type: ErrorDto })
-  delete(@Body() body: DeleteAccountDto): Promise<User> {
-    return this.userService.delete(body);
+  delete(@Query('id', ParseIntPipe) id: number): Promise<User> {
+    return this.userService.delete(id);
   }
 
   @Get('all')
   @HttpCode(HttpStatus.OK)
-  @UseGuards(OwnerOrAdminAuthGuard)
+  @Roles(UserRoles.OWNER, UserRoles.ADMIN)
+  @UseGuards(RolesGuard)
   @ListSerializer(UserDto)
   @ApiBody({ type: FindAllDto })
   @ApiBearerAuth()
@@ -125,14 +128,15 @@ export class GatewayController {
   @ApiResponse({ status: HttpStatus.UNAUTHORIZED, type: ErrorDto })
   @ApiResponse({ status: HttpStatus.INTERNAL_SERVER_ERROR, type: ErrorDto })
   findAll(
-    @Query('page') page: number,
-    @Query('take') take: number,
+    @Query('page', ParseIntPipe) page: number,
+    @Query('take', ParseIntPipe) take: number,
   ): Promise<[User[], number]> {
     return this.userService.findAll(page, take);
   }
 
   @Get('quantities')
-  @UseGuards(OwnerOrAdminAuthGuard)
+  @Roles(UserRoles.OWNER, UserRoles.ADMIN)
+  @UseGuards(RolesGuard)
   @HttpCode(HttpStatus.OK)
   @ObjectSerializer(UserQuantitiesDto)
   @ApiBearerAuth()
@@ -145,7 +149,8 @@ export class GatewayController {
   }
 
   @Get('last-week')
-  @UseGuards(OwnerOrAdminAuthGuard)
+  @Roles(UserRoles.OWNER, UserRoles.ADMIN)
+  @UseGuards(RolesGuard)
   @HttpCode(HttpStatus.OK)
   @ArraySerializer(LastWeekDto)
   @ApiBearerAuth()
@@ -159,7 +164,8 @@ export class GatewayController {
 
   @Get(':id')
   @HttpCode(HttpStatus.OK)
-  @UseGuards(IsSameUserAuthGuard)
+  @SameUser(UserRoles.ADMIN, UserRoles.USER)
+  @UseGuards(SameUserGuard)
   @ObjectSerializer(UserDto)
   @ApiParam({ name: 'id', type: Number })
   @ApiBearerAuth()

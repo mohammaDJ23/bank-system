@@ -7,7 +7,7 @@ import { FC, useCallback, useState } from 'react';
 import { useAction, useRequest, useSelector } from '../../hooks';
 import { BillObj, Pathes } from '../../lib';
 import { ModalNames } from '../../store';
-import { DeleteBillApi, IdReq } from '../../apis';
+import { DeleteBillApi } from '../../apis';
 
 interface DetailsImporation {
   bill: BillObj;
@@ -32,7 +32,7 @@ const Details: FC<DetailsImporation> = ({ bill }) => {
   }, []);
 
   const onMenuClick = useCallback(
-    (option: typeof options[number]) => {
+    (option: (typeof options)[number]) => {
       return function () {
         onMenuClose();
         navigate(option.path);
@@ -46,7 +46,7 @@ const Details: FC<DetailsImporation> = ({ bill }) => {
   }, [showModal]);
 
   const deleteBill = useCallback(() => {
-    request<BillObj, IdReq>(new DeleteBillApi(bill.id))
+    request<BillObj, string>(new DeleteBillApi(bill.id))
       .then(() => {
         hideModal(ModalNames.CONFIRMATION);
         navigate(Pathes.BILLS);

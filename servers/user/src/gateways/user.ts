@@ -8,7 +8,7 @@ import {
 import { UseGuards } from '@nestjs/common';
 import { Server } from 'socket.io';
 import { UserService } from 'src/services';
-import { JwtSocketAuthGuard } from 'src/guards';
+import { JwtSocketGuard } from 'src/guards';
 import { CustomSocket } from 'src/adapters';
 
 @WebSocketGateway({

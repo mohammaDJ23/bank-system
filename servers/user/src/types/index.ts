@@ -10,7 +10,7 @@ export interface EncryptedUserObj {
   expiration: number;
 }
 
-export enum Roles {
+export enum UserRoles {
   OWNER = 'owner',
   ADMIN = 'admin',
   USER = 'user',

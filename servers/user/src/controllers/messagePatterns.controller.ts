@@ -9,7 +9,7 @@ import { UserService } from '../services';
 import { User } from 'src/entities';
 import { UpdatedUserPartialObj } from 'src/types';
 
-@Controller()
+@Controller('/message-pattenrs/v1/user')
 export class MessagePatternController {
   constructor(private readonly userService: UserService) {}
 

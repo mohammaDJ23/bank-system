@@ -1,2 +1,2 @@
-export * from './cron-jobs.controller';
+export * from './cronJobs.controller';
 export * from './gateway.controller';

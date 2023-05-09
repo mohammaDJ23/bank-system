@@ -1,4 +1,4 @@
 export * from './body';
-export * from './current-user';
+export * from './currentUser';
 export * from './request';
 export * from './swagger';

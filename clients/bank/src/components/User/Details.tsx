@@ -5,7 +5,7 @@ import Modal from '../Modal';
 import { useNavigate } from 'react-router-dom';
 import { FC, useCallback, useState } from 'react';
 import { useAction, useAuth, useRequest, useSelector } from '../../hooks';
-import { DeleteUserApi, DownloadBillReportApi, IdReq } from '../../apis';
+import { DeleteUserApi, DownloadBillReportApi } from '../../apis';
 import { UserWithBillInfoObj, UserObj, Pathes, getDynamicPath } from '../../lib';
 import { ModalNames } from '../../store';
 
@@ -58,7 +58,7 @@ const Details: FC<DetailsImporation> = ({ user }) => {
   }, [showModal]);
 
   const deleteUser = useCallback(() => {
-    request<UserObj, IdReq>(new DeleteUserApi(user.id))
+    request<UserObj, number>(new DeleteUserApi(user.id))
       .then(response => {
         hideModal(ModalNames.CONFIRMATION);
         navigate(Pathes.USERS);
