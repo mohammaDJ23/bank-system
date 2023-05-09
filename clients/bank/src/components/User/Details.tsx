@@ -6,7 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import { FC, useCallback, useState } from 'react';
 import { useAction, useAuth, useRequest, useSelector } from '../../hooks';
 import { DeleteUserApi, DownloadBillReportApi } from '../../apis';
-import { UserWithBillInfoObj, UserObj, Pathes, getDynamicPath } from '../../lib';
+import { UserWithBillInfoObj, UserObj, Pathes, getDynamicPath, UserRoles, LocalStorage, getToken } from '../../lib';
 import { ModalNames } from '../../store';
 
 interface DetailsImporation {
@@ -20,9 +20,11 @@ const Details: FC<DetailsImporation> = ({ user }) => {
   const { showModal, hideModal } = useAction();
   const { modals } = useSelector();
   const { isApiProcessing, request } = useRequest();
-  const { isOwner, isSameUser } = useAuth();
+  const { isOwner, isSameUser, getTokenInfo } = useAuth();
   const isUserOwner = isOwner();
   const isUserSame = isSameUser(user.id);
+  const userInfo = getTokenInfo();
+  const isUserExist = !!userInfo;
   const isAuthorized = (!isUserOwner && isUserSame) || isUserOwner;
   const isDeleteUserApiProcessing = isApiProcessing(DeleteUserApi);
   const isDownloadBillReportApiProcessing = isApiProcessing(DownloadBillReportApi);
@@ -61,10 +63,20 @@ const Details: FC<DetailsImporation> = ({ user }) => {
     request<UserObj, number>(new DeleteUserApi(user.id))
       .then(response => {
         hideModal(ModalNames.CONFIRMATION);
-        navigate(Pathes.USERS);
+        if (isUserExist) {
+          if ((userInfo.role === UserRoles.OWNER && userInfo.id === user.id) || userInfo.role !== UserRoles.OWNER) {
+            LocalStorage.clear();
+            navigate(Pathes.LOGIN);
+          } else {
+            navigate(Pathes.USERS);
+          }
+        } else {
+          LocalStorage.clear();
+          navigate(Pathes.LOGIN);
+        }
       })
       .catch(err => hideModal(ModalNames.CONFIRMATION));
-  }, [user, request, hideModal, navigate]);
+  }, [user, isUserExist, userInfo, request, hideModal, navigate]);
 
   const downloadBillReport = useCallback(() => {
     if (isDownloadBillReportApiProcessing) return;
