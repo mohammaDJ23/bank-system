@@ -21,7 +21,7 @@ export interface UserWithBillInfoObj extends UserObj {
 
 export interface UserFiltersObj {
   q: string;
-  role: UserRoles;
+  role: string;
   fromDate: string;
   toDate: string;
 }

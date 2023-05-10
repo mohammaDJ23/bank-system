@@ -1,7 +1,7 @@
 import { UserRoles } from '../auth';
 
 export function isRole(value: string): string | undefined {
-  const isRoleValid = value === UserRoles.ADMIN || value === UserRoles.USER || value === UserRoles.OWNER;
+  const isRoleValid = Object.values(UserRoles).some(role => role === value);
 
   if (!isRoleValid) return 'Invalid Role';
 }

@@ -8,3 +8,4 @@ export * from './isAmount';
 export * from './isReceiver';
 export * from './isDescriptions';
 export * from './isDate';
+export * from './isQuery';
