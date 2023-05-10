@@ -8,6 +8,7 @@ import {
   getUserRoles,
   isSameUser,
   hasRole,
+  hasUserAuthorized,
 } from '../lib';
 
 export function useAuth() {
@@ -21,5 +22,6 @@ export function useAuth() {
     getUserRoles,
     isSameUser,
     hasRole,
+    hasUserAuthorized,
   };
 }

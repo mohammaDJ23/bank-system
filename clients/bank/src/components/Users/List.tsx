@@ -30,8 +30,7 @@ const UserList: FC<UserListImportation> = ({ listInstance, onPageChange }) => {
               my: '20px',
               position: 'relative',
               overflow: 'visible',
-              borderColor:
-                isUserExist && user.id === userInfo.id && listInfo.list.length >= 2 ? getUserRoleColor(user.role) : '',
+              backgroundColor: isUserExist && user.id === userInfo.id && listInfo.list.length >= 2 ? '#F8F8F8' : '',
             }}
             onClick={() => navigate(Pathes.USER.replace(':id', user.id.toString()))}
           >
