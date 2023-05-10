@@ -11,6 +11,13 @@ export interface BillObj {
   userId: number;
 }
 
+export interface BillFiltersObj {
+  q: string;
+  date: string;
+  fromDate: string;
+  toDate: string;
+}
+
 export class BillList implements ListInstance {
   constructor(
     public list: ListObj<BillObj> = {},

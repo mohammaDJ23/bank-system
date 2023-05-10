@@ -19,6 +19,13 @@ export interface UserWithBillInfoObj extends UserObj {
   };
 }
 
+export interface UserFiltersObj {
+  q: string;
+  role: UserRoles;
+  fromDate: string;
+  toDate: string;
+}
+
 export class UserList implements ListInstance {
   constructor(
     public list: ListObj<UserObj> = {},
