@@ -41,19 +41,35 @@ export function isUserAuthenticated() {
   return !!getToken();
 }
 
+export function hasRole(...roles: UserRoles[]): boolean {
+  roles = roles || Object.values(UserRoles);
+
+  const userInfo = getTokenInfo();
+
+  if (!userInfo) return false;
+  else return roles.some(role => userInfo.role === role);
+}
+
 export function isUser(role?: UserRoles) {
-  return (role || getTokenInfo()?.role) === UserRoles.USER;
+  return role ? role === UserRoles.USER : hasRole(UserRoles.USER);
 }
 
 export function isAdmin(role?: UserRoles) {
-  return (role || getTokenInfo()?.role) === UserRoles.ADMIN;
+  return role ? role === UserRoles.ADMIN : hasRole(UserRoles.ADMIN);
 }
 
 export function isOwner(role?: UserRoles) {
-  return (role || getTokenInfo()?.role) === UserRoles.OWNER;
+  return role ? role === UserRoles.OWNER : hasRole(UserRoles.OWNER);
 }
 
 export function isSameUser(id: number) {
   const userInfo = getTokenInfo();
   return id === userInfo?.id;
+}
+
+export function hasUserAuthorized(user: UserObj): boolean {
+  const isEnteredUserOwner = isOwner();
+  const isUserOwner = isOwner(user.role);
+  const isUserSame = isSameUser(user.id);
+  return isEnteredUserOwner ? (!isUserOwner ? true : isUserSame) : isUserSame;
 }

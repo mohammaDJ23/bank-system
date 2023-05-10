@@ -6,7 +6,15 @@ import { useNavigate } from 'react-router-dom';
 import { FC, useCallback, useState } from 'react';
 import { useAction, useAuth, useRequest, useSelector } from '../../hooks';
 import { DeleteUserApi, DownloadBillReportApi } from '../../apis';
-import { UserWithBillInfoObj, UserObj, Pathes, getDynamicPath, UserRoles, LocalStorage, getToken } from '../../lib';
+import {
+  UserWithBillInfoObj,
+  UserObj,
+  Pathes,
+  getDynamicPath,
+  UserRoles,
+  LocalStorage,
+  hasUserAuthorized,
+} from '../../lib';
 import { ModalNames } from '../../store';
 
 interface DetailsImporation {
@@ -20,12 +28,11 @@ const Details: FC<DetailsImporation> = ({ user }) => {
   const { showModal, hideModal } = useAction();
   const { modals } = useSelector();
   const { isApiProcessing, request } = useRequest();
-  const { isOwner, isSameUser, getTokenInfo } = useAuth();
+  const { isOwner, getTokenInfo } = useAuth();
   const isUserOwner = isOwner();
-  const isUserSame = isSameUser(user.id);
+  const isAuthorized = hasUserAuthorized(user);
   const userInfo = getTokenInfo();
   const isUserExist = !!userInfo;
-  const isAuthorized = (!isUserOwner && isUserSame) || isUserOwner;
   const isDeleteUserApiProcessing = isApiProcessing(DeleteUserApi);
   const isDownloadBillReportApiProcessing = isApiProcessing(DownloadBillReportApi);
   const options = [
