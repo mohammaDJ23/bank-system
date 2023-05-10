@@ -47,7 +47,12 @@ import {
   BillQuantitiesDto,
 } from '../dtos';
 import { Bill, User } from '../entities';
-import { JwtGuard, RolesGuard, SameUserGuard } from '../guards';
+import {
+  DifferentOwnerGuard,
+  JwtGuard,
+  RolesGuard,
+  SameUserGuard,
+} from '../guards';
 import { BillService, UserService } from 'src/services';
 import { UserRoles } from 'src/types';
 
@@ -160,7 +165,7 @@ export class GatewayController {
   @Get('bill/excel')
   @HttpCode(HttpStatus.OK)
   @SameUser(UserRoles.ADMIN, UserRoles.USER)
-  @UseGuards(SameUserGuard)
+  @UseGuards(SameUserGuard, DifferentOwnerGuard)
   @ApiQuery({ name: 'id', type: 'number' })
   @Header('Content-Type', 'application/json')
   @Header('Content-Disposition', 'attachment; filename="bill-reports.xlsx"')
