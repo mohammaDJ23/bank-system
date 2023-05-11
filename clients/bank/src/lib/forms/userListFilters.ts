@@ -1,10 +1,10 @@
+import { UserRoles } from '../auth';
 import { DefineRules, DefineVal, CacheInput, DefineValidation } from '../decorators';
-import { UserFiltersObj } from '../lists';
 import { getTime } from '../utilFunctions';
 import { isDate, isQuery, isRole } from '../validations';
 import { Form } from './formConstructor';
 
-export class UserFilters extends Form implements UserFiltersObj {
+export class UserListFilters extends Form {
   @DefineRules([isQuery])
   @DefineVal()
   @DefineValidation()
@@ -13,23 +13,23 @@ export class UserFilters extends Form implements UserFiltersObj {
   @DefineRules([isRole])
   @DefineVal()
   @DefineValidation()
-  role: string = '';
+  roles: UserRoles[] = Object.values(UserRoles);
 
   @DefineRules([isDate])
   @DefineVal()
   @DefineValidation()
-  fromDate: string = '';
+  fromDate: number = 0;
 
   @DefineRules([isDate])
   @DefineVal(getTime())
   @CacheInput()
   @DefineValidation()
-  toDate: string = '';
+  toDate: number = 0;
 
   constructor() {
     super();
     this.q = this.q;
-    this.role = this.role;
+    this.roles = this.roles;
     this.fromDate = this.fromDate;
     this.toDate = this.toDate;
   }

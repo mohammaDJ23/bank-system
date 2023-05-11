@@ -47,6 +47,8 @@ import {
 } from '../guards';
 import { User } from 'src/entities';
 import { UserRoles } from 'src/types';
+import { ParseUserListFiltersPipe } from 'src/pipes';
+import { UserListFiltersDto } from 'src/dtos/userListFilters.dto';
 
 @UseGuards(JwtGuard)
 @Controller('/api/v1/user')
@@ -128,7 +130,9 @@ export class GatewayController {
   @Roles(UserRoles.OWNER, UserRoles.ADMIN)
   @UseGuards(RolesGuard)
   @ListSerializer(UserDto)
-  @ApiBody({ type: FindAllDto })
+  @ApiQuery({ name: 'page', type: 'number' })
+  @ApiQuery({ name: 'take', type: 'number' })
+  @ApiParam({ name: 'filters', type: UserListFiltersDto })
   @ApiBearerAuth()
   @ApiResponse({ status: HttpStatus.OK, type: UserDto, isArray: true })
   @ApiResponse({ status: HttpStatus.UNAUTHORIZED, type: ErrorDto })
@@ -136,8 +140,9 @@ export class GatewayController {
   findAll(
     @Query('page', ParseIntPipe) page: number,
     @Query('take', ParseIntPipe) take: number,
+    @Query('filters', ParseUserListFiltersPipe) filters: UserListFiltersDto,
   ): Promise<[User[], number]> {
-    return this.userService.findAll(page, take);
+    return this.userService.findAll(page, take, filters);
   }
 
   @Get('quantities')

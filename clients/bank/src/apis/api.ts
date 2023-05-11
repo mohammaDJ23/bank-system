@@ -1,5 +1,5 @@
 import { AxiosRequestConfig, CreateAxiosDefaults } from 'axios';
-import { CreateBill, CreateUser, UpdateBill, UpdateUserByOwner, UpdateUser, ListParams } from '../lib';
+import { CreateBill, CreateUser, UpdateBill, UpdateUserByOwner, UpdateUser, ListParams, UserListFilters } from '../lib';
 import { PeriodAmountFilter } from '../store';
 import { RootApiObj } from './resetApi';
 
@@ -102,7 +102,7 @@ export class UpdateBillApi extends RootApi<UpdateBill> {
 }
 
 export class UsersApi<T = any> extends RootApi {
-  constructor(data: ListParams<T>) {
+  constructor(data: ListParams<T> & UserListFilters) {
     super(
       {
         url: '/api/v1/user/all',
@@ -110,6 +110,12 @@ export class UsersApi<T = any> extends RootApi {
         params: {
           page: data.page,
           take: data.take,
+          filters: {
+            q: data.q,
+            roles: data.roles,
+            fromDate: data.fromDate,
+            toDate: data.toDate,
+          },
         },
       },
       { baseURL: process.env.USER_SERVICE }

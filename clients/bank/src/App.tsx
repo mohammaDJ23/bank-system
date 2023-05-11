@@ -23,7 +23,12 @@ const App: FC = () => {
     <HistoryRouter history={history}>
       <Provider store={store}>
         <RedirectionProvider>
-          <SnackbarProvider dense maxSnack={Infinity} anchorOrigin={{ horizontal: 'right', vertical: 'top' }}>
+          <SnackbarProvider
+            dense
+            maxSnack={Infinity}
+            anchorOrigin={{ horizontal: 'right', vertical: 'top' }}
+            style={{ maxWidth: '300px' }}
+          >
             <HistoryProvider history={history}>
               <Routes>
                 {routes.map(route => (

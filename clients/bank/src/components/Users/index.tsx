@@ -1,15 +1,16 @@
 import ListContainer from '../../layout/ListContainer';
-import { Pathes, UserList, UserObj } from '../../lib';
+import { Pathes, UserList, UserListFilters, UserObj } from '../../lib';
 import EmptyList from './EmptyList';
 import List from './List';
 import Skeleton from './Skeleton';
 import { FC, useCallback, useEffect } from 'react';
-import { usePaginationList, useRequest } from '../../hooks';
+import { useForm, usePaginationList, useRequest } from '../../hooks';
 import { UsersApi, UsersApiConstructorType } from '../../apis';
 import { Navigate, useLocation } from 'react-router-dom';
 
 const UsersContent: FC = () => {
   const location = useLocation();
+  const userListFiltersInstance = useForm(UserListFilters);
   const { request, isInitialApiProcessing, isApiProcessing } = useRequest();
   const userListInstance = usePaginationList(UserList);
   const userListInfo = userListInstance.getFullInfo();
@@ -20,7 +21,8 @@ const UsersContent: FC = () => {
 
   const getUsersList = useCallback(
     (options: Partial<UsersApiConstructorType> = {}) => {
-      const apiData = { take: userListInfo.take, page: userListInfo.page, ...options };
+      const userFilters = userListFiltersInstance.getForm();
+      const apiData = Object.assign({ take: userListInfo.take, page: userListInfo.page, ...options }, userFilters);
       const userApi = new UsersApi<UserObj>(apiData);
 
       if (apiData.isInitialApi) {
@@ -32,7 +34,7 @@ const UsersContent: FC = () => {
         userListInstance.insertNewList({ total, list, page: apiData.page });
       });
     },
-    [userListInfo, userListInstance, request]
+    [userListInfo, userListInstance, userListFiltersInstance, request]
   );
 
   useEffect(() => {
