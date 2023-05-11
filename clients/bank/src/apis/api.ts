@@ -1,5 +1,5 @@
 import { AxiosRequestConfig, CreateAxiosDefaults } from 'axios';
-import { CreateBill, CreateUser, UpdateBill, UpdateUserByOwner, UpdateUser, ListParams } from '../lib';
+import { CreateBill, CreateUser, UpdateBill, UpdateUserByOwner, UpdateUser, ListParams, UserListFilters } from '../lib';
 import { PeriodAmountFilter } from '../store';
 import { RootApiObj } from './resetApi';
 
@@ -102,11 +102,21 @@ export class UpdateBillApi extends RootApi<UpdateBill> {
 }
 
 export class UsersApi<T = any> extends RootApi {
-  constructor(data: ListParams<T>) {
+  constructor(data: ListParams<T> & UserListFilters) {
     super(
       {
-        url: `/api/v1/user/all?page=${data.page}&take=${data.take}`,
+        url: '/api/v1/user/all',
         method: 'get',
+        params: {
+          page: data.page,
+          take: data.take,
+          filters: {
+            q: data.q,
+            roles: data.roles,
+            fromDate: data.fromDate,
+            toDate: data.toDate,
+          },
+        },
       },
       { baseURL: process.env.USER_SERVICE }
     );
@@ -119,8 +129,12 @@ export class BillsApi<T = any> extends RootApi {
   constructor(data: ListParams<T>) {
     super(
       {
-        url: `/api/v1/bank/bill/all?page=${data.page}&take=${data.take}`,
+        url: '/api/v1/bank/bill/all',
         method: 'get',
+        params: {
+          page: data.page,
+          take: data.take,
+        },
       },
       { baseURL: process.env.BANK_SERVICE }
     );
@@ -157,8 +171,11 @@ export class DeleteBillApi extends RootApi {
   constructor(id: string) {
     super(
       {
-        url: `/api/v1/bank/bill/delete?id=${id}`,
+        url: '/api/v1/bank/bill/delete',
         method: 'delete',
+        params: {
+          id,
+        },
       },
       { baseURL: process.env.BANK_SERVICE }
     );
@@ -169,8 +186,11 @@ export class DeleteUserApi extends RootApi {
   constructor(id: number) {
     super(
       {
-        url: `/api/v1/user/delete?id=${id}`,
+        url: '/api/v1/user/delete',
         method: 'delete',
+        params: {
+          id,
+        },
       },
       { baseURL: process.env.USER_SERVICE }
     );
@@ -269,9 +289,12 @@ export class DownloadBillReportApi extends RootApi {
   constructor(id: number) {
     super(
       {
-        url: `/api/v1/bank/bill/excel?id=${id}`,
+        url: '/api/v1/bank/bill/excel',
         method: 'get',
         responseType: 'blob',
+        params: {
+          id,
+        },
       },
       { baseURL: process.env.BANK_SERVICE }
     );

@@ -5,7 +5,7 @@ import {
   Inject,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Brackets, Repository } from 'typeorm';
 import {
   CreateUserDto,
   UpdateUserByUserDto,
@@ -18,6 +18,7 @@ import { hash } from 'bcrypt';
 import { ClientProxy, RmqContext, RpcException } from '@nestjs/microservices';
 import { RabbitMqServices, UserRoles, UpdatedUserPartialObj } from '../types';
 import { RabbitmqService } from './rabbitmq.service';
+import { UserListFiltersDto } from 'src/dtos/userListFilters.dto';
 
 @Injectable()
 export class UserService {
@@ -146,12 +147,40 @@ export class UserService {
     }
   }
 
-  findAll(page: number, take: number): Promise<[User[], number]> {
+  findAll(
+    page: number,
+    take: number,
+    filters: UserListFiltersDto,
+  ): Promise<[User[], number]> {
     return this.userRepository
       .createQueryBuilder('user')
       .take(take)
       .skip((page - 1) * take)
       .orderBy('user.createdAt', 'DESC')
+      .where(
+        new Brackets((query) =>
+          query
+            .where('to_tsvector(user.firstName) @@ to_tsquery(:q)')
+            .orWhere('to_tsvector(user.lastName) @@ to_tsquery(:q)')
+            .orWhere('to_tsvector(user.phone) @@ to_tsquery(:q)')
+            .orWhere("user.firstName ILIKE '%' || :q || '%'")
+            .orWhere("user.lastName ILIKE '%' || :q || '%'")
+            .orWhere("user.phone ILIKE '%' || :q || '%'"),
+        ),
+      )
+      .andWhere('user.role = ANY(:roles)')
+      .andWhere(
+        'CASE WHEN :fromDate > 0 THEN COALESCE(EXTRACT(EPOCH FROM user.createdAt) * 1000, 0)::BIGINT >= :fromDate ELSE TRUE END',
+      )
+      .andWhere(
+        'CASE WHEN :toDate > 0 THEN COALESCE(EXTRACT(EPOCH FROM user.createdAt) * 1000, 0)::BIGINT <= :toDate ELSE TRUE END',
+      )
+      .setParameters({
+        q: filters.q,
+        roles: filters.roles,
+        fromDate: filters.fromDate,
+        toDate: filters.toDate,
+      })
       .getManyAndCount();
   }
 
