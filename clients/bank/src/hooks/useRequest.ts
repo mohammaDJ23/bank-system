@@ -71,42 +71,42 @@ export function useRequest() {
     <T extends RootApi>(requestInstance: Constructor<T>) => {
       return requestProcess.processingApis.loadings[getRequestConstructorName(requestInstance)];
     },
-    [requestProcess, getRequestConstructorName]
+    [requestProcess.processingApis.loadings, getRequestConstructorName]
   );
 
   const isProcessingApiSuccessed = useCallback(
     <T extends RootApi>(requestInstance: Constructor<T>) => {
       return requestProcess.processingApis.successes[getRequestConstructorName(requestInstance)];
     },
-    [requestProcess, getRequestConstructorName]
+    [requestProcess.processingApis.successes, getRequestConstructorName]
   );
 
   const isProcessingApiFailed = useCallback(
     <T extends RootApi>(requestInstance: Constructor<T>) => {
       return requestProcess.processingApis.errors[getRequestConstructorName(requestInstance)];
     },
-    [requestProcess, getRequestConstructorName]
+    [requestProcess.processingApis.errors, getRequestConstructorName]
   );
 
   const isInitialProcessingApiLoaded = useCallback(
     <T extends RootApi>(requestInstance: Constructor<T>) => {
       return requestProcess.initialProcessingApis.loadings[getRequestConstructorName(requestInstance)];
     },
-    [requestProcess, getRequestConstructorName]
+    [requestProcess.initialProcessingApis.loadings, getRequestConstructorName]
   );
 
   const isInitialProcessingApiSuccessed = useCallback(
     <T extends RootApi>(requestInstance: Constructor<T>) => {
       return requestProcess.initialProcessingApis.successes[getRequestConstructorName(requestInstance)];
     },
-    [requestProcess, getRequestConstructorName]
+    [requestProcess.initialProcessingApis.successes, getRequestConstructorName]
   );
 
   const isInitialProcessingApiFailed = useCallback(
     <T extends RootApi>(requestInstance: Constructor<T>) => {
       return requestProcess.initialProcessingApis.errors[getRequestConstructorName(requestInstance)];
     },
-    [requestProcess, getRequestConstructorName]
+    [requestProcess.initialProcessingApis.errors, getRequestConstructorName]
   );
 
   const isApiProcessing = useCallback(
