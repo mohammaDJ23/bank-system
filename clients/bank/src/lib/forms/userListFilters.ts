@@ -1,17 +1,15 @@
 import { UserRoles } from '../auth';
 import { DefineRules, DefineVal, CacheInput, DefineValidation } from '../decorators';
-import { getTime } from '../utilFunctions';
-import { isDate, isQuery, isRole } from '../validations';
+import { isDate, isUserRoles } from '../validations';
 import { Form } from './formConstructor';
 
 export class UserListFilters extends Form {
-  @DefineRules([isQuery])
   @DefineVal()
   @DefineValidation()
   q: string = '';
 
-  @DefineRules([isRole])
-  @DefineVal()
+  @DefineRules([isUserRoles])
+  @DefineVal(Object.values(UserRoles))
   @DefineValidation()
   roles: UserRoles[] = Object.values(UserRoles);
 
@@ -21,7 +19,7 @@ export class UserListFilters extends Form {
   fromDate: number = 0;
 
   @DefineRules([isDate])
-  @DefineVal(getTime())
+  @DefineVal()
   @CacheInput()
   @DefineValidation()
   toDate: number = 0;

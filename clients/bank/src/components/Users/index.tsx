@@ -53,6 +53,12 @@ const UsersContent: FC = () => {
     [userListInstance, isUsersApiProcessing, getUsersList]
   );
 
+  const onFilterSubmit = useCallback(() => {
+    const newPage = 1;
+    userListInstance.onPageChange(newPage);
+    getUsersList({ page: newPage });
+  }, [getUsersList, userListInstance]);
+
   if (isPreviousUserExist) {
     return <Navigate to={Pathes.USER.replace(':id', previousUserId)} />;
   }
@@ -64,7 +70,7 @@ const UsersContent: FC = () => {
       ) : userListInstance.isListEmpty() ? (
         <EmptyList />
       ) : (
-        <List listInstance={userListInstance} onPageChange={changePage} />
+        <List listInstance={userListInstance} onPageChange={changePage} onFilterSubmit={onFilterSubmit} />
       )}
     </ListContainer>
   );
