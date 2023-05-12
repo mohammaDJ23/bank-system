@@ -2,8 +2,8 @@ import { FC } from 'react';
 import UsersContent from '../components/Users';
 import { useAuth } from '../hooks';
 import ClearStateProvider from '../lib/providers/ClearStateProvider';
-import { getDynamicPath, Pathes } from '../lib';
-import OwnerOrAdminProtectionProvider from '../lib/providers/OwnerOrAdminProtectionProvider';
+import { getDynamicPath, Pathes, UserRoles } from '../lib';
+import UserRoleProtectionProvider from '../lib/providers/UserRoleProtectionProvider';
 
 const Users: FC = () => {
   const { getTokenInfo } = useAuth();
@@ -12,11 +12,11 @@ const Users: FC = () => {
   const path = isUserInfoExist ? getDynamicPath(Pathes.USER, { id: userInfo.id }) : Pathes.LOGIN;
 
   return (
-    <OwnerOrAdminProtectionProvider path={path}>
+    <UserRoleProtectionProvider path={path} roles={[UserRoles.OWNER, UserRoles.ADMIN]}>
       <ClearStateProvider>
         <UsersContent />
       </ClearStateProvider>
-    </OwnerOrAdminProtectionProvider>
+    </UserRoleProtectionProvider>
   );
 };
 
