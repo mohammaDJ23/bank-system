@@ -20,6 +20,7 @@ import { UsersApi, UsersApiConstructorType } from '../../apis';
 import Filter from '../Filter';
 import EmptyList from './EmptyList';
 import Skeleton from './Skeleton';
+import { ModalNames } from '../../store';
 
 const List: FC = () => {
   const navigate = useNavigate();
@@ -162,103 +163,101 @@ const List: FC = () => {
         </>
       )}
 
-      {!isInitialUsersApiProcessing && (
-        <Filter>
-          <Box
-            component="form"
-            noValidate
-            autoComplete="off"
-            display="flex"
-            flexDirection="column"
-            gap="20px"
-            onSubmit={event => {
-              event.preventDefault();
-              userListFilterFormSubmition();
-            }}
-          >
-            <TextField
-              label="Seach"
-              variant="standard"
-              type="text"
-              fullWidth
-              value={userListFiltersForm.q}
-              onChange={event => userListFiltersFormInstance.onChange('q', event.target.value)}
-              helperText={userListFiltersFormInstance.getInputErrorMessage('q')}
-              error={userListFiltersFormInstance.isInputInValid('q')}
-              name="q"
-              placeholder="first name, last name, phone"
-              disabled={isUsersApiProcessing}
-            />
-            <Autocomplete
-              multiple
-              id="size-small-standard-multi"
-              size="small"
-              options={Object.values(UserRoles)}
-              getOptionLabel={(option: (typeof userListFiltersForm.roles)[number]) => option}
-              onChange={(event, value) => userListFiltersFormInstance.onChange('roles', value)}
-              value={userListFiltersForm.roles}
-              renderInput={(params: any) => (
-                <TextField
-                  {...params}
-                  label="Roles"
-                  variant="standard"
-                  type="text"
-                  error={userListFiltersFormInstance.isInputInValid('roles')}
-                  helperText={userListFiltersFormInstance.getInputErrorMessage('roles')}
-                  name="roles"
-                />
-              )}
-              disabled={isUsersApiProcessing}
-            />
+      <Filter name={ModalNames.USER_FILTERS}>
+        <Box
+          component="form"
+          noValidate
+          autoComplete="off"
+          display="flex"
+          flexDirection="column"
+          gap="20px"
+          onSubmit={event => {
+            event.preventDefault();
+            userListFilterFormSubmition();
+          }}
+        >
+          <TextField
+            label="Seach"
+            variant="standard"
+            type="text"
+            fullWidth
+            value={userListFiltersForm.q}
+            onChange={event => userListFiltersFormInstance.onChange('q', event.target.value)}
+            helperText={userListFiltersFormInstance.getInputErrorMessage('q')}
+            error={userListFiltersFormInstance.isInputInValid('q')}
+            name="q"
+            placeholder="first name, last name, phone"
+            disabled={isUsersApiProcessing}
+          />
+          <Autocomplete
+            multiple
+            id="size-small-standard-multi"
+            size="small"
+            options={Object.values(UserRoles)}
+            getOptionLabel={(option: (typeof userListFiltersForm.roles)[number]) => option}
+            onChange={(event, value) => userListFiltersFormInstance.onChange('roles', value)}
+            value={userListFiltersForm.roles}
+            renderInput={(params: any) => (
+              <TextField
+                {...params}
+                label="Roles"
+                variant="standard"
+                type="text"
+                error={userListFiltersFormInstance.isInputInValid('roles')}
+                helperText={userListFiltersFormInstance.getInputErrorMessage('roles')}
+                name="roles"
+              />
+            )}
+            disabled={isUsersApiProcessing}
+          />
 
-            <TextField
-              label="From date"
-              type="date"
-              variant="standard"
-              value={userListFiltersForm.fromDate ? isoDate(userListFiltersForm.fromDate) : ''}
-              onChange={event => userListFiltersFormInstance.onChange('fromDate', getTime(event.target.value))}
-              helperText={userListFiltersFormInstance.getInputErrorMessage('fromDate')}
-              error={userListFiltersFormInstance.isInputInValid('fromDate')}
-              InputLabelProps={{ shrink: true }}
-              name="fromDate"
-              disabled={isUsersApiProcessing}
-            />
-            <TextField
-              label="To date"
-              type="date"
-              variant="standard"
-              value={userListFiltersForm.toDate ? isoDate(userListFiltersForm.toDate) : ''}
-              onChange={event => userListFiltersFormInstance.onChange('toDate', getTime(event.target.value))}
-              helperText={userListFiltersFormInstance.getInputErrorMessage('toDate')}
-              error={userListFiltersFormInstance.isInputInValid('toDate')}
-              InputLabelProps={{ shrink: true }}
-              name="toDate"
-              disabled={isUsersApiProcessing}
-            />
-            <Box component="div" display="flex" alignItems="center" gap="10px" marginTop="20px">
-              <Button
-                disabled={isUsersApiProcessing || !userListFiltersFormInstance.isFormValid()}
-                variant="contained"
-                size="small"
-                type="submit"
-                sx={{ textTransform: 'capitalize' }}
-              >
-                Filter
-              </Button>
-              <Button
-                disabled={false}
-                variant="outlined"
-                size="small"
-                type="button"
-                sx={{ textTransform: 'capitalize' }}
-                onClick={() => userListFiltersFormInstance.resetForm()}
-              >
-                Reset
-              </Button>
-            </Box>
+          <TextField
+            label="From date"
+            type="date"
+            variant="standard"
+            value={userListFiltersForm.fromDate ? isoDate(userListFiltersForm.fromDate) : ''}
+            onChange={event => userListFiltersFormInstance.onChange('fromDate', getTime(event.target.value))}
+            helperText={userListFiltersFormInstance.getInputErrorMessage('fromDate')}
+            error={userListFiltersFormInstance.isInputInValid('fromDate')}
+            InputLabelProps={{ shrink: true }}
+            name="fromDate"
+            disabled={isUsersApiProcessing}
+          />
+          <TextField
+            label="To date"
+            type="date"
+            variant="standard"
+            value={userListFiltersForm.toDate ? isoDate(userListFiltersForm.toDate) : ''}
+            onChange={event => userListFiltersFormInstance.onChange('toDate', getTime(event.target.value))}
+            helperText={userListFiltersFormInstance.getInputErrorMessage('toDate')}
+            error={userListFiltersFormInstance.isInputInValid('toDate')}
+            InputLabelProps={{ shrink: true }}
+            name="toDate"
+            disabled={isUsersApiProcessing}
+          />
+          <Box component="div" display="flex" alignItems="center" gap="10px" marginTop="20px">
+            <Button
+              disabled={isUsersApiProcessing || !userListFiltersFormInstance.isFormValid()}
+              variant="contained"
+              size="small"
+              type="submit"
+              sx={{ textTransform: 'capitalize' }}
+            >
+              Filter
+            </Button>
+            <Button
+              disabled={false}
+              variant="outlined"
+              size="small"
+              type="button"
+              sx={{ textTransform: 'capitalize' }}
+              onClick={() => userListFiltersFormInstance.resetForm()}
+            >
+              Reset
+            </Button>
           </Box>
-        </Filter>
-      )}
+        </Box>
+      </Filter>
     </>
   );
 };

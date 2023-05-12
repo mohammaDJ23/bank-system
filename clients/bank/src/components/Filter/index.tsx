@@ -1,28 +1,9 @@
-import { FC, useEffect, useState, useRef, PropsWithChildren } from 'react';
+import { FC, useEffect, useRef, PropsWithChildren } from 'react';
 import { Box } from '@mui/material';
-import { AddCircle, Close } from '@mui/icons-material';
+import { Close } from '@mui/icons-material';
 import { styled } from '@mui/material/styles';
-
-interface AddCircleWrapperAttr {
-  isActive: boolean;
-}
-
-const AddCircleWrapper = styled(Box)<AddCircleWrapperAttr>(({ theme, isActive }) => ({
-  position: 'fixed',
-  left: '20px',
-  zIndex: '1',
-  cursor: 'pointer',
-  transition: 'bottom 0.3s, left 0.3s',
-  [theme.breakpoints.up('lg')]: {
-    bottom: isActive ? '-50px' : '20px',
-  },
-  [theme.breakpoints.down('lg')]: {
-    bottom: isActive ? '-50px' : '20px',
-  },
-  [theme.breakpoints.down('md')]: {
-    bottom: '-50px',
-  },
-}));
+import { ModalNames } from '../../store';
+import { useAction, useSelector } from '../../hooks';
 
 interface FiltersWrapperAttr {
   isActive: boolean;
@@ -30,11 +11,10 @@ interface FiltersWrapperAttr {
 
 const FiltersWrapper = styled(Box)<FiltersWrapperAttr>(({ theme, isActive }) => ({
   position: 'fixed',
-  bottom: isActive ? '20px' : '-500px',
-  right: '-20px',
-  left: '20px',
+  bottom: '20px',
+  right: isActive ? '20px' : '-500px',
   zIndex: '2',
-  transition: 'bottom 0.3s, left 0.3s',
+  transition: 'bottom 0.3s, right 0.3s',
   width: 'calc(100% - 40px)',
   maxWidth: '330px',
   height: 'calc(100% - 40px - 64px)',
@@ -50,32 +30,38 @@ const FiltersContent = styled(Box)(({ theme }) => ({
   overflow: 'hidden',
 }));
 
-const Filter: FC<PropsWithChildren> = ({ children }) => {
-  const touchStartYPositionRef = useRef<number>(0);
-  const [isFilterOpened, setIsFilterOpened] = useState(false);
+interface FilterImporation extends PropsWithChildren {
+  name: ModalNames;
+}
+
+const Filter: FC<FilterImporation> = ({ children, name }) => {
+  const touchStartXPositionRef = useRef<number>(0);
+  const { showModal, hideModal } = useAction();
+  const { modals } = useSelector();
+  const isFilterOpened = !!modals[name];
 
   useEffect(() => {
     function touchStartProcess(event: TouchEvent) {
-      touchStartYPositionRef.current = event.changedTouches[0].clientY;
+      touchStartXPositionRef.current = event.changedTouches[0].clientX;
     }
 
     function touchMoveProcess(event: TouchEvent) {
-      if (event.changedTouches[0].clientY < touchStartYPositionRef.current) {
-        touchStartYPositionRef.current = event.changedTouches[0].clientY;
-        setIsFilterOpened(true);
+      if (event.changedTouches[0].clientX < touchStartXPositionRef.current) {
+        touchStartXPositionRef.current = event.changedTouches[0].clientX;
+        showModal(name);
       }
     }
 
     function touchEndProcess(event: TouchEvent) {
-      if (event.changedTouches[0].clientY > touchStartYPositionRef.current) {
-        touchStartYPositionRef.current = 0;
-        setIsFilterOpened(false);
+      if (event.changedTouches[0].clientX > touchStartXPositionRef.current) {
+        touchStartXPositionRef.current = 0;
+        hideModal(name);
       }
     }
 
     function keyupProcess(event: KeyboardEvent) {
       if (event.key === 'Escape') {
-        setIsFilterOpened(false);
+        hideModal(name);
       }
     }
 
@@ -92,20 +78,14 @@ const Filter: FC<PropsWithChildren> = ({ children }) => {
   }, []);
 
   return (
-    <>
-      <FiltersWrapper isActive={isFilterOpened}>
-        <FiltersContent>
-          <Box display="flex" alignItems="center" justifyContent="end" onClick={() => setIsFilterOpened(false)}>
-            <Close />
-          </Box>
-          {children}
-        </FiltersContent>
-      </FiltersWrapper>
-
-      <AddCircleWrapper isActive={isFilterOpened} onClick={() => setIsFilterOpened(!isFilterOpened)}>
-        <AddCircle fontSize="medium" color="primary" />
-      </AddCircleWrapper>
-    </>
+    <FiltersWrapper isActive={isFilterOpened}>
+      <FiltersContent>
+        <Box display="flex" alignItems="center" justifyContent="end" onClick={() => hideModal(name)}>
+          <Close />
+        </Box>
+        {children}
+      </FiltersContent>
+    </FiltersWrapper>
   );
 };
 

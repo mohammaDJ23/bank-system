@@ -38,14 +38,10 @@ const App: FC = () => {
                     element={
                       route.needAuth ? (
                         <AuthProtectionProvider>
-                          <Navigation>
-                            <Suspense fallback={<LoadingFallback />}>{route.element}</Suspense>
-                          </Navigation>
+                          <Suspense fallback={<LoadingFallback />}>{route.element}</Suspense>
                         </AuthProtectionProvider>
                       ) : (
-                        <Navigation>
-                          <Suspense fallback={<LoadingFallback />}>{route.element}</Suspense>
-                        </Navigation>
+                        <Suspense fallback={<LoadingFallback />}>{route.element}</Suspense>
                       )
                     }
                   />
