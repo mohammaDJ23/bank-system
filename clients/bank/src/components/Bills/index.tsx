@@ -6,6 +6,7 @@ import Skeleton from './Skeleton';
 import { BillsApi, BillsApiConstructorType } from '../../apis';
 import List from './List';
 import { FC, useCallback, useEffect } from 'react';
+import Navigation from '../../layout/Navigation';
 
 const BillsContent: FC = () => {
   const { request, isInitialApiProcessing, isApiProcessing } = useRequest();
@@ -47,15 +48,17 @@ const BillsContent: FC = () => {
   );
 
   return (
-    <ListContainer>
-      {isInitialBillsApiProcessing || isBillsApiProcessing ? (
-        <Skeleton take={billListInfo.take} />
-      ) : billListInstance.isListEmpty() ? (
-        <EmptyList />
-      ) : (
-        <List listInstance={billListInstance} onPageChange={changePage} />
-      )}
-    </ListContainer>
+    <Navigation>
+      <ListContainer>
+        {isInitialBillsApiProcessing || isBillsApiProcessing ? (
+          <Skeleton take={billListInfo.take} />
+        ) : billListInstance.isListEmpty() ? (
+          <EmptyList />
+        ) : (
+          <List listInstance={billListInstance} onPageChange={changePage} />
+        )}
+      </ListContainer>
+    </Navigation>
   );
 };
 

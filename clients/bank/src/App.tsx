@@ -1,7 +1,6 @@
 import 'reflect-metadata';
 import { Route, unstable_HistoryRouter as HistoryRouter, Navigate, Routes } from 'react-router-dom';
 import { FC, Suspense } from 'react';
-import Navigation from './layout/Navigation';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.js';
 import './assets/styles/index.css';
