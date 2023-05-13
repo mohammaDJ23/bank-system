@@ -45,6 +45,7 @@ import {
   UpdatedBillDto,
   DeletedBillDto,
   BillQuantitiesDto,
+  BillListFiltersDto,
 } from '../dtos';
 import { Bill, User } from '../entities';
 import {
@@ -55,6 +56,7 @@ import {
 } from '../guards';
 import { BillService, UserService } from 'src/services';
 import { UserRoles } from 'src/types';
+import { ParseBillListFiltersPipe } from 'src/pipes';
 
 @UseGuards(JwtGuard)
 @Controller('/api/v1/bank')
@@ -182,7 +184,9 @@ export class GatewayController {
   @Get('bill/all')
   @HttpCode(HttpStatus.OK)
   @ListSerializer(BillDto)
-  @ApiBody({ type: ListDto })
+  @ApiQuery({ name: 'page', type: 'number' })
+  @ApiQuery({ name: 'take', type: 'number' })
+  @ApiQuery({ name: 'filters', type: BillListFiltersDto })
   @ApiBearerAuth()
   @ApiResponse({ status: HttpStatus.OK, type: BillDto, isArray: true })
   @ApiResponse({ status: HttpStatus.UNAUTHORIZED, type: ErrorDto })
@@ -190,15 +194,16 @@ export class GatewayController {
   findAll(
     @Query('page', ParseIntPipe) page: number,
     @Query('take', ParseIntPipe) take: number,
+    @Query('filters', ParseBillListFiltersPipe) filters: BillListFiltersDto,
     @CurrentUser() user: User,
   ): Promise<[Bill[], number]> {
-    return this.billService.findAll(page, take, user);
+    return this.billService.findAll(page, take, filters, user);
   }
 
   @Get('bill/:id')
   @HttpCode(HttpStatus.OK)
   @ObjectSerializer(BillDto)
-  @ApiParam({ name: 'id', type: 'number' })
+  @ApiParam({ name: 'id', type: 'string' })
   @ApiBearerAuth()
   @ApiResponse({ status: HttpStatus.OK, type: BillDto })
   @ApiResponse({ status: HttpStatus.UNAUTHORIZED, type: ErrorDto })

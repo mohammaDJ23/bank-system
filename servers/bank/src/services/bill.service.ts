@@ -13,8 +13,9 @@ import {
   UpdateBillDto,
   CreateBillDto,
   BillQuantitiesDto,
+  BillListFiltersDto,
 } from 'src/dtos';
-import { Repository } from 'typeorm';
+import { Brackets, Repository } from 'typeorm';
 import { Bill, User } from '../entities';
 import { createReadStream, existsSync, unlink, rmdir, readdir, rm } from 'fs';
 import { mkdir } from 'fs/promises';
@@ -82,16 +83,39 @@ export class BillService {
   async findAll(
     page: number,
     take: number,
+    filters: BillListFiltersDto,
     user: User,
   ): Promise<[Bill[], number]> {
     return this.billRepository
       .createQueryBuilder('bill')
-      .leftJoinAndSelect('bill.user', 'user')
+      .leftJoin('bill.user', 'user')
       .where('user.user_service_id = :userId')
+      .andWhere(
+        new Brackets((query) =>
+          query
+            .where('to_tsvector(bill.receiver) @@ to_tsquery(:q)')
+            .orWhere('to_tsvector(bill.description) @@ to_tsquery(:q)')
+            .orWhere('to_tsvector(bill.amount) @@ to_tsquery(:q)')
+            .orWhere("bill.receiver ILIKE '%' || :q || '%'")
+            .orWhere("bill.description ILIKE '%' || :q || '%'")
+            .orWhere("bill.amount ILIKE '%' || :q || '%'"),
+        ),
+      )
+      .andWhere(
+        'CASE WHEN :fromDate > 0 THEN COALESCE(EXTRACT(EPOCH FROM bill.date) * 1000, 0)::BIGINT >= :fromDate ELSE TRUE END',
+      )
+      .andWhere(
+        'CASE WHEN :toDate > 0 THEN COALESCE(EXTRACT(EPOCH FROM bill.date) * 1000, 0)::BIGINT <= :toDate ELSE TRUE END',
+      )
       .orderBy('bill.date', 'DESC')
       .take(take)
       .skip((page - 1) * take)
-      .setParameters({ userId: user.userServiceId })
+      .setParameters({
+        userId: user.userServiceId,
+        q: filters.q,
+        fromDate: filters.fromDate,
+        toDate: filters.toDate,
+      })
       .getManyAndCount();
   }
 
