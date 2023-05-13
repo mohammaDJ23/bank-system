@@ -7,6 +7,7 @@ import { UserWithBillInfoObj } from '../../lib';
 import { UserWithBillInfoApi } from '../../apis';
 import NotFound from './NotFound';
 import Details from './Details';
+import Navigation from '../../layout/Navigation';
 
 const UserContent: FC = () => {
   const { request, isInitialApiProcessing } = useRequest();
@@ -26,9 +27,11 @@ const UserContent: FC = () => {
   }, []);
 
   return (
-    <DefaultContainer>
-      {isUserWithBillInfoApiProcessing ? <Skeleton /> : user ? <Details user={user} /> : <NotFound />}
-    </DefaultContainer>
+    <Navigation>
+      <DefaultContainer>
+        {isUserWithBillInfoApiProcessing ? <Skeleton /> : user ? <Details user={user} /> : <NotFound />}
+      </DefaultContainer>
+    </Navigation>
   );
 };
 

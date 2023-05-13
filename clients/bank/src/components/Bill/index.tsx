@@ -7,6 +7,7 @@ import { BillApi } from '../../apis';
 import { BillObj } from '../../lib';
 import NotFound from './NotFound';
 import Details from './Details';
+import Navigation from '../../layout/Navigation';
 
 const BillContent: FC = () => {
   const params = useParams();
@@ -26,9 +27,11 @@ const BillContent: FC = () => {
   }, []);
 
   return (
-    <DefaultContainer>
-      {isInitialBillApiProcessing ? <Skeleton /> : bill ? <Details bill={bill} /> : <NotFound />}
-    </DefaultContainer>
+    <Navigation>
+      <DefaultContainer>
+        {isInitialBillApiProcessing ? <Skeleton /> : bill ? <Details bill={bill} /> : <NotFound />}
+      </DefaultContainer>
+    </Navigation>
   );
 };
 

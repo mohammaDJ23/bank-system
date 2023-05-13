@@ -1,72 +1,36 @@
 import ListContainer from '../../layout/ListContainer';
-import { Pathes, UserList, UserListFilters, UserObj } from '../../lib';
-import EmptyList from './EmptyList';
+import { getDynamicPath, Pathes, UserList } from '../../lib';
 import List from './List';
-import Skeleton from './Skeleton';
-import { FC, useCallback, useEffect } from 'react';
-import { useForm, usePaginationList, useRequest } from '../../hooks';
-import { UsersApi, UsersApiConstructorType } from '../../apis';
+import { FC } from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
+import Navigation from '../../layout/Navigation';
+import { Typography } from '@mui/material';
+import { useAction, usePaginationList, useRequest } from '../../hooks';
+import { ModalNames } from '../../store';
+import { UsersApi } from '../../apis';
 
 const UsersContent: FC = () => {
+  const { showModal } = useAction();
   const location = useLocation();
-  const userListFiltersInstance = useForm(UserListFilters);
-  const { request, isInitialApiProcessing, isApiProcessing } = useRequest();
+  const { isInitialApiProcessing } = useRequest();
   const userListInstance = usePaginationList(UserList);
-  const userListInfo = userListInstance.getFullInfo();
   const isInitialUsersApiProcessing = isInitialApiProcessing(UsersApi);
-  const isUsersApiProcessing = isApiProcessing(UsersApi);
+  const usersTotal = userListInstance.getTotal();
   const previousUserId: string | undefined = location.state?.previousUserId;
-  const isPreviousUserExist = !!previousUserId;
+  const isPreviousUserIdExist = !!previousUserId;
 
-  const getUsersList = useCallback(
-    (options: Partial<UsersApiConstructorType> = {}) => {
-      const userFilters = userListFiltersInstance.getForm();
-      const apiData = Object.assign({ take: userListInfo.take, page: userListInfo.page, ...options }, userFilters);
-      const userApi = new UsersApi<UserObj>(apiData);
-
-      if (apiData.isInitialApi) {
-        userApi.setInitialApi();
-      }
-
-      request<[UserObj[], number], UsersApiConstructorType>(userApi).then(response => {
-        const [list, total] = response.data;
-        userListInstance.insertNewList({ total, list, page: apiData.page });
-      });
-    },
-    [userListInfo, userListInstance, userListFiltersInstance, request]
-  );
-
-  useEffect(() => {
-    if (isPreviousUserExist) return;
-    getUsersList({ isInitialApi: true });
-  }, []);
-
-  const changePage = useCallback(
-    (newPage: number) => {
-      userListInstance.onPageChange(newPage);
-
-      if (userListInstance.isNewPageEqualToCurrentPage(newPage) || isUsersApiProcessing) return;
-
-      if (!userListInstance.isNewPageExist(newPage)) getUsersList({ page: newPage });
-    },
-    [userListInstance, isUsersApiProcessing, getUsersList]
-  );
-
-  if (isPreviousUserExist) {
-    return <Navigate to={Pathes.USER.replace(':id', previousUserId)} />;
+  if (isPreviousUserIdExist) {
+    return <Navigate to={getDynamicPath(Pathes.USER, { id: previousUserId })} />;
   }
 
+  const menuOptions = [<Typography onClick={() => showModal(ModalNames.USER_FILTERS)}>Filters</Typography>];
+
   return (
-    <ListContainer>
-      {isInitialUsersApiProcessing || isUsersApiProcessing ? (
-        <Skeleton take={userListInfo.take} />
-      ) : userListInstance.isListEmpty() ? (
-        <EmptyList />
-      ) : (
-        <List listInstance={userListInstance} onPageChange={changePage} />
-      )}
-    </ListContainer>
+    <Navigation title={`Users ${!isInitialUsersApiProcessing ? `(${usersTotal})` : ''}`} menuOptions={menuOptions}>
+      <ListContainer>
+        <List />
+      </ListContainer>
+    </Navigation>
   );
 };
 

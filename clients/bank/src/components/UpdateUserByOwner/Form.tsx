@@ -1,8 +1,8 @@
 import { FC, useCallback } from 'react';
-import { getUserRoles, Pathes, UpdateUserByOwner } from '../../lib';
+import { getUserRoles, LocalStorage, Pathes, UpdateUserByOwner } from '../../lib';
 import Modal from '../Modal';
 import { ModalNames } from '../../store';
-import { useAction, useForm, useRequest } from '../../hooks';
+import { useAction, useAuth, useForm, useRequest } from '../../hooks';
 import { Box, TextField, Button, Select, FormControl, MenuItem, InputLabel, FormHelperText } from '@mui/material';
 import { UpdateUserByOwnerApi } from '../../apis';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -20,6 +20,9 @@ const Form: FC<FormImportation> = ({ formInstance }) => {
   const isUpdateUserByOwnerApiProcessing = isApiProcessing(UpdateUserByOwnerApi);
   const form = formInstance.getForm();
   const { enqueueSnackbar } = useSnackbar();
+  const { getTokenInfo } = useAuth();
+  const userInfo = getTokenInfo();
+  const isUserInfoExist = !!userInfo;
 
   const formSubmition = useCallback(() => {
     formInstance.onSubmit(() => {
@@ -28,12 +31,18 @@ const Form: FC<FormImportation> = ({ formInstance }) => {
           const userId = params.id as string;
           hideModal(ModalNames.CONFIRMATION);
           formInstance.resetForm();
-          enqueueSnackbar({ message: 'You have updated the user successfully.', variant: 'success' });
-          navigate(Pathes.USER.replace(':id', userId));
+
+          if (isUserInfoExist && userInfo.id === +userId && response.data.role !== userInfo.role) {
+            LocalStorage.clear();
+            navigate(Pathes.LOGIN);
+          } else {
+            enqueueSnackbar({ message: 'You have updated the user successfully.', variant: 'success' });
+            navigate(Pathes.USER.replace(':id', userId));
+          }
         })
         .catch(err => hideModal(ModalNames.CONFIRMATION));
     });
-  }, [formInstance, form, params, navigate, request, hideModal]);
+  }, [formInstance, userInfo, isUserInfoExist, form, params, navigate, request, hideModal]);
 
   return (
     <>

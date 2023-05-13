@@ -72,15 +72,19 @@ export function usePaginationList<T>(listInstance: ListInstanceConstructor<ListI
       }
 
       function insertNewList({ page, total, list }: InsertNewListOptions<T>) {
-        if (list.length <= 0 || total <= 0) return;
-
         const listInstance = getListInstance();
         const listInfo = getFullInfo();
 
         page = page || listInfo.page;
 
         const constructedList = new (listInstance.constructor as Constructor<ListInstance<T>>)();
-        constructedList.list = Object.assign(listInfo.lists, { [page]: list });
+
+        if (list.length <= 0 && total <= 0) {
+          constructedList.list = {};
+        } else {
+          constructedList.list = Object.assign(listInfo.lists, { [page]: list });
+        }
+
         constructedList.total = total;
         constructedList.page = page;
         setList(constructedList);

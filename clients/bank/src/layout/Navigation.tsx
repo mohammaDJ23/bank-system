@@ -1,4 +1,4 @@
-import { PropsWithChildren, FC, useState, Fragment } from 'react';
+import { PropsWithChildren, FC, useState, Fragment, useCallback } from 'react';
 import { useLocation, useNavigate, matchPath, useParams, NavigateOptions } from 'react-router-dom';
 import Drawer from '@mui/material/Drawer';
 import Box from '@mui/material/Box';
@@ -22,6 +22,8 @@ import LogoutIcon from '@mui/icons-material/Logout';
 import { styled } from '@mui/material/styles';
 import { LocalStorage, Pathes, routes, UserRoles } from '../lib';
 import { useAuth } from '../hooks';
+import { MoreVert } from '@mui/icons-material';
+import { Menu, MenuItem } from '@mui/material';
 
 interface StyledListItemTextAttr {
   active: string | undefined;
@@ -51,6 +53,10 @@ const AppBar = styled('div')(({ theme }) => ({
   width: '100%',
   backgroundColor: '#20a0ff',
   transition: 'all 0.3s',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'space-between',
+  gap: '20px',
   [theme.breakpoints.between('xs', 'sm')]: {
     minHeight: '48px',
     '.css-hyum1k-MuiToolbar-root': {
@@ -82,8 +88,19 @@ const StyledListItemIcon = styled(ListItemIcon)<StyledListItemIconAttr>(({ theme
   color: active ? '#20a0ff' : 'inherit',
 }));
 
-const Navigation: FC<PropsWithChildren> = ({ children }) => {
-  const [open, setOpen] = useState(false);
+const MoreVertIcon = styled(MoreVert)(({}) => ({
+  color: 'white',
+}));
+
+interface NavigationImportation extends PropsWithChildren {
+  menuOptions?: (string | React.ReactElement)[];
+  title?: string | React.ReactElement;
+}
+
+const Navigation: FC<NavigationImportation> = ({ children, menuOptions, title }) => {
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const isMenuOpened = Boolean(anchorEl);
+  const [isDrawerOpened, setIsDrawerOpened] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
   const params = useParams();
@@ -93,6 +110,20 @@ const Navigation: FC<PropsWithChildren> = ({ children }) => {
   const isUserLoggedIn = isUserAuthenticated();
   const activeRoute = routes.find(route => matchPath(route.path, location.pathname));
   const activeRouteTitle = activeRoute?.title || 'Bank system';
+
+  const onMenuOpen = useCallback((event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget);
+  }, []);
+
+  const onMenuClose = useCallback(() => {
+    setAnchorEl(null);
+  }, []);
+
+  const onMenuClick = useCallback(() => {
+    return function () {
+      onMenuClose();
+    };
+  }, [onMenuClose]);
 
   function getNavigationItems() {
     const navigationItems: NavigationItemObj[] = [
@@ -176,7 +207,7 @@ const Navigation: FC<PropsWithChildren> = ({ children }) => {
             <IconButton
               color="inherit"
               aria-label="open drawer"
-              onClick={() => setOpen(true)}
+              onClick={() => setIsDrawerOpened(true)}
               edge="start"
               sx={{ mr: 2 }}
             >
@@ -185,18 +216,33 @@ const Navigation: FC<PropsWithChildren> = ({ children }) => {
           )}
 
           <Typography variant="h6" noWrap component="div" sx={{ color: 'white' }}>
-            {activeRouteTitle}
+            {title || activeRouteTitle}
           </Typography>
         </Toolbar>
+
+        {menuOptions && menuOptions.length > 0 && (
+          <Box>
+            <IconButton onClick={onMenuOpen}>
+              <MoreVertIcon />
+            </IconButton>
+            <Menu anchorEl={anchorEl} open={isMenuOpened} onClick={onMenuClose}>
+              {menuOptions.map((menu, index) => (
+                <MenuItem key={index} onClick={onMenuClick}>
+                  {menu}
+                </MenuItem>
+              ))}
+            </Menu>
+          </Box>
+        )}
       </AppBar>
 
       <ChildrenWrapper>{children}</ChildrenWrapper>
 
       {isUserLoggedIn && (
-        <Drawer sx={{ zIndex: 11 }} anchor="left" open={open} onClose={() => setOpen(false)}>
+        <Drawer sx={{ zIndex: 11 }} anchor="left" open={isDrawerOpened} onClose={() => setIsDrawerOpened(false)}>
           <Box sx={{ width: 250 }} role="presentation">
             <DrawerHeader>
-              <CloseIcon onClick={() => setOpen(false)} />
+              <CloseIcon onClick={() => setIsDrawerOpened(false)} />
             </DrawerHeader>
 
             <Divider />
@@ -206,7 +252,7 @@ const Navigation: FC<PropsWithChildren> = ({ children }) => {
                 const navigationEl = (
                   <ListItem
                     onClick={() => {
-                      setOpen(false);
+                      setIsDrawerOpened(false);
 
                       if (item.path && item.redirectPath && !isPathActive(item))
                         navigate(item.redirectPath, item.navigateOptions);

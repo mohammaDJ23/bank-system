@@ -7,6 +7,7 @@ import { useParams } from 'react-router-dom';
 import Skeleton from './Skeleton';
 import { BillApi } from '../../apis';
 import NotFound from './NotFound';
+import Navigation from '../../layout/Navigation';
 
 const UpdateBillContent: FC = () => {
   const params = useParams();
@@ -35,15 +36,17 @@ const UpdateBillContent: FC = () => {
   }, []);
 
   return (
-    <FormContainer>
-      {isInitialBillApiProcessing ? (
-        <Skeleton />
-      ) : specificDetails.bill ? (
-        <Form formInstance={updateBillFormInstance} />
-      ) : (
-        <NotFound />
-      )}
-    </FormContainer>
+    <Navigation>
+      <FormContainer>
+        {isInitialBillApiProcessing ? (
+          <Skeleton />
+        ) : specificDetails.bill ? (
+          <Form formInstance={updateBillFormInstance} />
+        ) : (
+          <NotFound />
+        )}
+      </FormContainer>
+    </Navigation>
   );
 };
 

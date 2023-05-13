@@ -41,6 +41,7 @@ import { curveCatmullRom, area } from 'd3-shape';
 import moment from 'moment';
 import { scalePoint } from 'd3-scale';
 import { useSnackbar } from 'notistack';
+import Navigation from '../../layout/Navigation';
 
 const AreaChart = styled(Box)(({ theme }) => ({
   [theme.breakpoints.down('sm')]: {
@@ -269,213 +270,222 @@ const Dashboard: FC = () => {
   const chartData = getChartData();
 
   return (
-    <MainContainer>
-      <Box component="div" display="flex" alignItems="center" justifyContent="center" flexDirection="column" gap="16px">
-        {isInitialLastWeekBillsApiProcessing ? (
-          <Skeleton height="440px" width="100%" />
-        ) : (
-          chartData.length > 0 && (
-            <Card>
-              <CardContent>
-                <AreaChart>
-                  <Chart data={chartData} height={400}>
-                    {/**@ts-ignore*/}
-                    <ArgumentScale factory={scalePoint} />
-                    <ArgumentAxis showGrid />
-                    <ValueAxis
-                      showGrid
-                      tickFormat={scale => tick => {
-                        if (Number.isInteger(tick)) return Math.floor(Number(tick)).toString();
-                        else return '';
-                      }}
-                    />
-                    <AreaSeries
-                      color="#20a0ff"
-                      name="Bills"
-                      valueField="billCounts"
-                      argumentField="date"
-                      seriesComponent={Area}
-                    />
-                    {isUserOwnerOrAdmin && (
+    <Navigation>
+      <MainContainer>
+        <Box
+          component="div"
+          display="flex"
+          alignItems="center"
+          justifyContent="center"
+          flexDirection="column"
+          gap="16px"
+        >
+          {isInitialLastWeekBillsApiProcessing ? (
+            <Skeleton height="440px" width="100%" />
+          ) : (
+            chartData.length > 0 && (
+              <Card>
+                <CardContent>
+                  <AreaChart>
+                    <Chart data={chartData} height={400}>
+                      {/**@ts-ignore*/}
+                      <ArgumentScale factory={scalePoint} />
+                      <ArgumentAxis showGrid />
+                      <ValueAxis
+                        showGrid
+                        tickFormat={scale => tick => {
+                          if (Number.isInteger(tick)) return Math.floor(Number(tick)).toString();
+                          else return '';
+                        }}
+                      />
                       <AreaSeries
-                        color="#ff3d00"
-                        name="Users"
-                        valueField="userCounts"
+                        color="#20a0ff"
+                        name="Bills"
+                        valueField="billCounts"
                         argumentField="date"
                         seriesComponent={Area}
                       />
-                    )}
-                    <Animation />
-                    <EventTracker />
-                    <Tooltip />
-                    <Legend position="bottom" rootComponent={Root} labelComponent={Label} />
-                    <Title text="The Previous Week Reports" />
-                  </Chart>
-                </AreaChart>
-                <BarChart>
-                  <Chart data={chartData} height={400} rotated>
-                    <ArgumentAxis showGrid />
-                    <ValueAxis
-                      showGrid
-                      tickFormat={scale => tick => {
-                        if (Number.isInteger(tick)) return Math.floor(Number(tick)).toString();
-                        else return '';
-                      }}
-                    />
-                    <BarSeries color="#20a0ff" name="Bills" valueField="billCounts" argumentField="date" />
-                    {isUserOwnerOrAdmin && (
-                      <BarSeries color="#ff3d00" name="Users" valueField="userCounts" argumentField="date" />
-                    )}
-                    <Animation />
-                    <Legend position="bottom" rootComponent={Root} labelComponent={Label} />
-                    <Stack />
-                  </Chart>
-                </BarChart>
-              </CardContent>
-            </Card>
-          )
-        )}
-
-        {isUserOwnerOrAdmin &&
-          (isInitialUserQuantitiesApiProcessing ? (
-            <Skeleton width="100%" height="196px" />
-          ) : (
-            specificDetails.userQuantities && (
-              <Card>
-                <CardContent>
-                  <Box display="flex" gap="20px" flexDirection="column">
-                    <Box display="flex" alignItems="center" justifyContent="space-between" gap="30px">
-                      <Typography whiteSpace="nowrap">Total Users: </Typography>
-                      <Typography>{specificDetails.userQuantities.quantities}</Typography>
-                    </Box>
-                    <Box display="flex" alignItems="center" justifyContent="space-between" gap="30px">
-                      <Typography whiteSpace="nowrap">Owners: </Typography>
-                      <Typography>{specificDetails.userQuantities.ownerQuantities}</Typography>
-                    </Box>
-                    <Box display="flex" alignItems="center" justifyContent="space-between" gap="30px">
-                      <Typography whiteSpace="nowrap">Admins: </Typography>
-                      <Typography>{specificDetails.userQuantities.adminQuantities}</Typography>
-                    </Box>
-                    <Box display="flex" alignItems="center" justifyContent="space-between" gap="30px">
-                      <Typography whiteSpace="nowrap">Users: </Typography>
-                      <Typography>{specificDetails.userQuantities.userQuantities}</Typography>
-                    </Box>
-                  </Box>
-                </CardContent>
-              </Card>
-            )
-          ))}
-
-        {isUserOwnerOrAdmin &&
-          (isInitialBillQuantitiesApiProcessing ? (
-            <Skeleton width="100%" height="64px" />
-          ) : (
-            specificDetails.billQuantities && (
-              <Card>
-                <CardContent>
-                  <Box display="flex" gap="20px" flexDirection="column">
-                    <Box display="flex" alignItems="center" justifyContent="space-between" gap="30px">
-                      <Typography whiteSpace="nowrap">Total Bills: </Typography>
-                      <Typography>{specificDetails.billQuantities.quantities}</Typography>
-                    </Box>
-                  </Box>
-                </CardContent>
-              </Card>
-            )
-          ))}
-
-        {isInitialTotalAmountApiProcessing ? (
-          <Skeleton width="100%" height="128px" />
-        ) : (
-          specificDetails.totalAmount &&
-          specificDetails.periodAmountFilter &&
-          specificDetails.billDates && (
-            <Card>
-              <CardContent>
-                <Box display="flex" justifyContent="center" flexDirection="column" gap="20px">
-                  {specificDetails.billDates.start > 0 &&
-                    specificDetails.billDates.end > 0 &&
-                    specificDetails.billDates.end - specificDetails.billDates.start > getOneDayDate() &&
-                    (() => {
-                      const slider = (
-                        <Slider
-                          disabled={isPeriodAmountApiProcessing}
-                          value={[specificDetails.periodAmountFilter.start, specificDetails.periodAmountFilter.end]}
-                          step={sliderStep}
-                          min={specificDetails.billDates.start}
-                          max={specificDetails.billDates.end}
-                          onChange={changeSlider}
-                          valueLabelDisplay="off"
+                      {isUserOwnerOrAdmin && (
+                        <AreaSeries
+                          color="#ff3d00"
+                          name="Users"
+                          valueField="userCounts"
+                          argumentField="date"
+                          seriesComponent={Area}
                         />
-                      );
+                      )}
+                      <Animation />
+                      <EventTracker />
+                      <Tooltip />
+                      <Legend position="bottom" rootComponent={Root} labelComponent={Label} />
+                      <Title text="The Previous Week Reports" />
+                    </Chart>
+                  </AreaChart>
+                  <BarChart>
+                    <Chart data={chartData} height={400} rotated>
+                      <ArgumentAxis showGrid />
+                      <ValueAxis
+                        showGrid
+                        tickFormat={scale => tick => {
+                          if (Number.isInteger(tick)) return Math.floor(Number(tick)).toString();
+                          else return '';
+                        }}
+                      />
+                      <BarSeries color="#20a0ff" name="Bills" valueField="billCounts" argumentField="date" />
+                      {isUserOwnerOrAdmin && (
+                        <BarSeries color="#ff3d00" name="Users" valueField="userCounts" argumentField="date" />
+                      )}
+                      <Animation />
+                      <Legend position="bottom" rootComponent={Root} labelComponent={Label} />
+                      <Stack />
+                    </Chart>
+                  </BarChart>
+                </CardContent>
+              </Card>
+            )
+          )}
 
-                      return (
-                        <Box>
-                          <SmallSliderWrapper>{slider}</SmallSliderWrapper>
-                          <Box
-                            display="flex"
-                            alignItems="center"
-                            justifyContent="space-between"
-                            gap="30px"
-                            position="relative"
-                          >
-                            <Box display="flex" alignItems="center" gap="5px">
-                              <Typography fontSize="10px" whiteSpace="nowrap">
-                                {moment(specificDetails.periodAmountFilter.start).format('ll')}
-                              </Typography>
-                              <DateRange fontSize="small" sx={{ color: grey[600] }} />
+          {isUserOwnerOrAdmin &&
+            (isInitialUserQuantitiesApiProcessing ? (
+              <Skeleton width="100%" height="196px" />
+            ) : (
+              specificDetails.userQuantities && (
+                <Card>
+                  <CardContent>
+                    <Box display="flex" gap="20px" flexDirection="column">
+                      <Box display="flex" alignItems="center" justifyContent="space-between" gap="30px">
+                        <Typography whiteSpace="nowrap">Total Users: </Typography>
+                        <Typography>{specificDetails.userQuantities.quantities}</Typography>
+                      </Box>
+                      <Box display="flex" alignItems="center" justifyContent="space-between" gap="30px">
+                        <Typography whiteSpace="nowrap">Owners: </Typography>
+                        <Typography>{specificDetails.userQuantities.ownerQuantities}</Typography>
+                      </Box>
+                      <Box display="flex" alignItems="center" justifyContent="space-between" gap="30px">
+                        <Typography whiteSpace="nowrap">Admins: </Typography>
+                        <Typography>{specificDetails.userQuantities.adminQuantities}</Typography>
+                      </Box>
+                      <Box display="flex" alignItems="center" justifyContent="space-between" gap="30px">
+                        <Typography whiteSpace="nowrap">Users: </Typography>
+                        <Typography>{specificDetails.userQuantities.userQuantities}</Typography>
+                      </Box>
+                    </Box>
+                  </CardContent>
+                </Card>
+              )
+            ))}
+
+          {isUserOwnerOrAdmin &&
+            (isInitialBillQuantitiesApiProcessing ? (
+              <Skeleton width="100%" height="64px" />
+            ) : (
+              specificDetails.billQuantities && (
+                <Card>
+                  <CardContent>
+                    <Box display="flex" gap="20px" flexDirection="column">
+                      <Box display="flex" alignItems="center" justifyContent="space-between" gap="30px">
+                        <Typography whiteSpace="nowrap">Total Bills: </Typography>
+                        <Typography>{specificDetails.billQuantities.quantities}</Typography>
+                      </Box>
+                    </Box>
+                  </CardContent>
+                </Card>
+              )
+            ))}
+
+          {isInitialTotalAmountApiProcessing ? (
+            <Skeleton width="100%" height="128px" />
+          ) : (
+            specificDetails.totalAmount &&
+            specificDetails.periodAmountFilter &&
+            specificDetails.billDates && (
+              <Card>
+                <CardContent>
+                  <Box display="flex" justifyContent="center" flexDirection="column" gap="20px">
+                    {specificDetails.billDates.start > 0 &&
+                      specificDetails.billDates.end > 0 &&
+                      specificDetails.billDates.end - specificDetails.billDates.start > getOneDayDate() &&
+                      (() => {
+                        const slider = (
+                          <Slider
+                            disabled={isPeriodAmountApiProcessing}
+                            value={[specificDetails.periodAmountFilter.start, specificDetails.periodAmountFilter.end]}
+                            step={sliderStep}
+                            min={specificDetails.billDates.start}
+                            max={specificDetails.billDates.end}
+                            onChange={changeSlider}
+                            valueLabelDisplay="off"
+                          />
+                        );
+
+                        return (
+                          <Box>
+                            <SmallSliderWrapper>{slider}</SmallSliderWrapper>
+                            <Box
+                              display="flex"
+                              alignItems="center"
+                              justifyContent="space-between"
+                              gap="30px"
+                              position="relative"
+                            >
+                              <Box display="flex" alignItems="center" gap="5px">
+                                <Typography fontSize="10px" whiteSpace="nowrap">
+                                  {moment(specificDetails.periodAmountFilter.start).format('ll')}
+                                </Typography>
+                                <DateRange fontSize="small" sx={{ color: grey[600] }} />
+                              </Box>
+                              <Input
+                                disabled={isPeriodAmountApiProcessing}
+                                type="date"
+                                value={moment(specificDetails.periodAmountFilter.start).format('YYYY-MM-DD')}
+                                onChange={changeStartDate}
+                                sx={{
+                                  position: 'absolute',
+                                  top: '7px',
+                                  left: '-57px',
+                                  opacity: '0',
+                                }}
+                              />
+                              <LargSliderWrapper>{slider}</LargSliderWrapper>
+                              <Box display="flex" alignItems="center" gap="5px">
+                                <Typography fontSize="10px" whiteSpace="nowrap">
+                                  {moment(specificDetails.periodAmountFilter.end).format('ll')}
+                                </Typography>
+                                <DateRange fontSize="small" sx={{ color: grey[600] }} />
+                              </Box>
+                              <Input
+                                disabled={isPeriodAmountApiProcessing}
+                                type="date"
+                                value={moment(specificDetails.periodAmountFilter.end).format('YYYY-MM-DD')}
+                                onChange={changeEndDate}
+                                sx={{
+                                  position: 'absolute',
+                                  top: '7px',
+                                  right: '0px',
+                                  opacity: '0',
+                                  width: '20px',
+                                }}
+                              />
                             </Box>
-                            <Input
-                              disabled={isPeriodAmountApiProcessing}
-                              type="date"
-                              value={moment(specificDetails.periodAmountFilter.start).format('YYYY-MM-DD')}
-                              onChange={changeStartDate}
-                              sx={{
-                                position: 'absolute',
-                                top: '7px',
-                                left: '-57px',
-                                opacity: '0',
-                              }}
-                            />
-                            <LargSliderWrapper>{slider}</LargSliderWrapper>
-                            <Box display="flex" alignItems="center" gap="5px">
-                              <Typography fontSize="10px" whiteSpace="nowrap">
-                                {moment(specificDetails.periodAmountFilter.end).format('ll')}
-                              </Typography>
-                              <DateRange fontSize="small" sx={{ color: grey[600] }} />
-                            </Box>
-                            <Input
-                              disabled={isPeriodAmountApiProcessing}
-                              type="date"
-                              value={moment(specificDetails.periodAmountFilter.end).format('YYYY-MM-DD')}
-                              onChange={changeEndDate}
-                              sx={{
-                                position: 'absolute',
-                                top: '7px',
-                                right: '0px',
-                                opacity: '0',
-                                width: '20px',
-                              }}
-                            />
                           </Box>
-                        </Box>
-                      );
-                    })()}
-                  <Box display="flex" alignItems="center" justifyContent="space-between" gap="20px">
-                    <Typography whiteSpace="nowrap">Total Amount: </Typography>
-                    <Typography>{specificDetails.totalAmount.totalAmount}</Typography>
+                        );
+                      })()}
+                    <Box display="flex" alignItems="center" justifyContent="space-between" gap="20px">
+                      <Typography whiteSpace="nowrap">Total Amount: </Typography>
+                      <Typography>{specificDetails.totalAmount.totalAmount}</Typography>
+                    </Box>
+                    <Box display="flex" alignItems="center" justifyContent="space-between" gap="20px">
+                      <Typography whiteSpace="nowrap">Bill quantities: </Typography>
+                      <Typography>{specificDetails.totalAmount.quantities}</Typography>
+                    </Box>
                   </Box>
-                  <Box display="flex" alignItems="center" justifyContent="space-between" gap="20px">
-                    <Typography whiteSpace="nowrap">Bill quantities: </Typography>
-                    <Typography>{specificDetails.totalAmount.quantities}</Typography>
-                  </Box>
-                </Box>
-              </CardContent>
-            </Card>
-          )
-        )}
-      </Box>
-    </MainContainer>
+                </CardContent>
+              </Card>
+            )
+          )}
+        </Box>
+      </MainContainer>
+    </Navigation>
   );
 };
 

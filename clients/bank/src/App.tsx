@@ -1,7 +1,6 @@
 import 'reflect-metadata';
 import { Route, unstable_HistoryRouter as HistoryRouter, Navigate, Routes } from 'react-router-dom';
 import { FC, Suspense } from 'react';
-import Navigation from './layout/Navigation';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.js';
 import './assets/styles/index.css';
@@ -38,14 +37,10 @@ const App: FC = () => {
                     element={
                       route.needAuth ? (
                         <AuthProtectionProvider>
-                          <Navigation>
-                            <Suspense fallback={<LoadingFallback />}>{route.element}</Suspense>
-                          </Navigation>
+                          <Suspense fallback={<LoadingFallback />}>{route.element}</Suspense>
                         </AuthProtectionProvider>
                       ) : (
-                        <Navigation>
-                          <Suspense fallback={<LoadingFallback />}>{route.element}</Suspense>
-                        </Navigation>
+                        <Suspense fallback={<LoadingFallback />}>{route.element}</Suspense>
                       )
                     }
                   />

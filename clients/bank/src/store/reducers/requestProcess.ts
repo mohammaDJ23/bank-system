@@ -45,10 +45,16 @@ function processingApiLoading(state: RequestProcessState, action: ProcessingApiL
   const newState = Object.assign<object, RequestProcessState>({}, state);
   delete newState.processingApis.errors[requestName];
   delete newState.processingApis.successes[requestName];
-  newState.processingApis.loadings = Object.assign<Process, Process>(newState.processingApis.loadings, {
-    [requestName]: true,
-  });
-  return newState;
+  return {
+    ...newState,
+    processingApis: {
+      ...newState.processingApis,
+      loadings: {
+        ...newState.processingApis.loadings,
+        [requestName]: true,
+      },
+    },
+  };
 }
 
 function processingApiSuccess(state: RequestProcessState, action: ProcessingApiSuccessAction): RequestProcessState {
@@ -56,10 +62,16 @@ function processingApiSuccess(state: RequestProcessState, action: ProcessingApiS
   const newState = Object.assign<object, RequestProcessState>({}, state);
   delete newState.processingApis.loadings[requestName];
   delete newState.processingApis.errors[requestName];
-  newState.processingApis.successes = Object.assign<Process, Process>(newState.processingApis.successes, {
-    [requestName]: true,
-  });
-  return newState;
+  return {
+    ...newState,
+    processingApis: {
+      ...newState.processingApis,
+      successes: {
+        ...newState.processingApis.successes,
+        [requestName]: true,
+      },
+    },
+  };
 }
 
 function processingApiError(state: RequestProcessState, action: ProcessingApiErrorAction): RequestProcessState {
@@ -67,10 +79,16 @@ function processingApiError(state: RequestProcessState, action: ProcessingApiErr
   const newState = Object.assign<object, RequestProcessState>({}, state);
   delete newState.processingApis.loadings[requestName];
   delete newState.processingApis.successes[requestName];
-  newState.processingApis.errors = Object.assign<Process, Process>(newState.processingApis.errors, {
-    [requestName]: true,
-  });
-  return newState;
+  return {
+    ...newState,
+    initialProcessingApis: {
+      ...newState.initialProcessingApis,
+      errors: {
+        ...newState.initialProcessingApis.errors,
+        [requestName]: true,
+      },
+    },
+  };
 }
 
 function initialProcessingApiLoading(
@@ -81,10 +99,16 @@ function initialProcessingApiLoading(
   const newState = Object.assign<object, RequestProcessState>({}, state);
   delete newState.initialProcessingApis.errors[requestName];
   delete newState.initialProcessingApis.successes[requestName];
-  newState.initialProcessingApis.loadings = Object.assign<Process, Process>(newState.initialProcessingApis.loadings, {
-    [requestName]: true,
-  });
-  return newState;
+  return {
+    ...newState,
+    initialProcessingApis: {
+      ...newState.initialProcessingApis,
+      loadings: {
+        ...newState.initialProcessingApis.loadings,
+        [requestName]: true,
+      },
+    },
+  };
 }
 
 function initialProcessingApiSuccess(
@@ -95,10 +119,16 @@ function initialProcessingApiSuccess(
   const newState = Object.assign<object, RequestProcessState>({}, state);
   delete newState.initialProcessingApis.loadings[requestName];
   delete newState.initialProcessingApis.errors[requestName];
-  newState.initialProcessingApis.successes = Object.assign<Process, Process>(newState.initialProcessingApis.successes, {
-    [requestName]: true,
-  });
-  return newState;
+  return {
+    ...newState,
+    initialProcessingApis: {
+      ...newState.initialProcessingApis,
+      successes: {
+        ...newState.initialProcessingApis.successes,
+        [requestName]: true,
+      },
+    },
+  };
 }
 
 function initialProcessingApiError(
@@ -109,10 +139,16 @@ function initialProcessingApiError(
   const newState = Object.assign<object, RequestProcessState>({}, state);
   delete newState.initialProcessingApis.loadings[requestName];
   delete newState.initialProcessingApis.successes[requestName];
-  newState.initialProcessingApis.errors = Object.assign<Process, Process>(newState.initialProcessingApis.errors, {
-    [requestName]: true,
-  });
-  return newState;
+  return {
+    ...newState,
+    initialProcessingApis: {
+      ...newState.initialProcessingApis,
+      errors: {
+        ...newState.initialProcessingApis.errors,
+        [requestName]: true,
+      },
+    },
+  };
 }
 
 function clean(state: RequestProcessState) {

@@ -7,6 +7,7 @@ import { useParams } from 'react-router-dom';
 import Skeleton from './Skeleton';
 import { UserApi } from '../../apis';
 import NotFound from './NotFound';
+import Navigation from '../../layout/Navigation';
 
 const UpdateUserByOwnerContent: FC = () => {
   const params = useParams();
@@ -36,15 +37,17 @@ const UpdateUserByOwnerContent: FC = () => {
   }, []);
 
   return (
-    <FormContainer>
-      {isInitialUserApiProcessing ? (
-        <Skeleton />
-      ) : specificDetails.user ? (
-        <Form formInstance={updateUserByOwnerFormInstance} />
-      ) : (
-        <NotFound />
-      )}
-    </FormContainer>
+    <Navigation>
+      <FormContainer>
+        {isInitialUserApiProcessing ? (
+          <Skeleton />
+        ) : specificDetails.user ? (
+          <Form formInstance={updateUserByOwnerFormInstance} />
+        ) : (
+          <NotFound />
+        )}
+      </FormContainer>
+    </Navigation>
   );
 };
 

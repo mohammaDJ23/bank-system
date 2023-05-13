@@ -1,17 +1,11 @@
-import { UserRoles } from '../auth';
 import { DefineRules, DefineVal, CacheInput, DefineValidation } from '../decorators';
-import { isDate, isUserRoles } from '../validations';
+import { isDate } from '../validations';
 import { Form } from './formConstructor';
 
-export class UserListFilters extends Form {
+export class BillListFilters extends Form {
   @DefineVal()
   @DefineValidation()
   q: string = '';
-
-  @DefineRules([isUserRoles])
-  @DefineVal(Object.values(UserRoles))
-  @DefineValidation()
-  roles: UserRoles[] = Object.values(UserRoles);
 
   @DefineRules([isDate])
   @DefineVal()
@@ -27,7 +21,6 @@ export class UserListFilters extends Form {
   constructor() {
     super();
     this.q = this.q;
-    this.roles = this.roles;
     this.fromDate = this.fromDate;
     this.toDate = this.toDate;
   }

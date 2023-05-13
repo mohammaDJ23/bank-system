@@ -12,3 +12,4 @@ export * from './createdBill.dto';
 export * from './updatedBill.dto';
 export * from './deletedBill.dto';
 export * from './billQuantities.dto';
+export * from './billListFilters.dto';

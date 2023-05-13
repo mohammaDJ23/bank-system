@@ -8,6 +8,8 @@ export enum Modal {
 
 export enum ModalNames {
   CONFIRMATION = 'CONFIRMATION',
+  USER_FILTERS = 'USER_FILTERS',
+  BILL_FILTERS = 'BILL_FILTERS',
 }
 
 export interface ModalState {
