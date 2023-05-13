@@ -170,10 +170,10 @@ export class UserService {
       )
       .andWhere('user.role = ANY(:roles)')
       .andWhere(
-        'CASE WHEN :fromDate > 0 THEN COALESCE(EXTRACT(EPOCH FROM user.createdAt) * 1000, 0)::BIGINT >= :fromDate ELSE TRUE END',
+        'CASE WHEN (:fromDate)::BIGINT > 0 THEN COALESCE(EXTRACT(EPOCH FROM user.createdAt) * 1000, 0)::BIGINT >= (:fromDate)::BIGINT ELSE TRUE END',
       )
       .andWhere(
-        'CASE WHEN :toDate > 0 THEN COALESCE(EXTRACT(EPOCH FROM user.createdAt) * 1000, 0)::BIGINT <= :toDate ELSE TRUE END',
+        'CASE WHEN (:toDate)::BIGINT > 0 THEN COALESCE(EXTRACT(EPOCH FROM user.createdAt) * 1000, 0)::BIGINT <= (:toDate)::BIGINT ELSE TRUE END',
       )
       .setParameters({
         q: filters.q,
