@@ -13,9 +13,9 @@ const UsersContent: FC = () => {
   const { showModal } = useAction();
   const location = useLocation();
   const { isInitialApiProcessing } = useRequest();
-  const { getTotal } = usePaginationList(UserList);
+  const userListInstance = usePaginationList(UserList);
   const isInitialUsersApiProcessing = isInitialApiProcessing(UsersApi);
-  const usersTotal = getTotal();
+  const usersTotal = userListInstance.getTotal();
   const previousUserId: string | undefined = location.state?.previousUserId;
   const isPreviousUserIdExist = !!previousUserId;
 

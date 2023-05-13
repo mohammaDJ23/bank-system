@@ -177,7 +177,7 @@ const List: FC = () => {
           }}
         >
           <TextField
-            label="Seach"
+            label="Search"
             variant="standard"
             type="text"
             fullWidth

@@ -1,5 +1,14 @@
 import { AxiosRequestConfig, CreateAxiosDefaults } from 'axios';
-import { CreateBill, CreateUser, UpdateBill, UpdateUserByOwner, UpdateUser, ListParams, UserListFilters } from '../lib';
+import {
+  CreateBill,
+  CreateUser,
+  UpdateBill,
+  UpdateUserByOwner,
+  UpdateUser,
+  ListParams,
+  UserListFilters,
+  BillListFilters,
+} from '../lib';
 import { PeriodAmountFilter } from '../store';
 import { RootApiObj } from './resetApi';
 
@@ -126,7 +135,7 @@ export class UsersApi<T = any> extends RootApi {
 export type UsersApiConstructorType = ConstructorParameters<typeof UsersApi>[0] & Pick<RootApi, 'isInitialApi'>;
 
 export class BillsApi<T = any> extends RootApi {
-  constructor(data: ListParams<T>) {
+  constructor(data: ListParams<T> & BillListFilters) {
     super(
       {
         url: '/api/v1/bank/bill/all',
@@ -134,6 +143,11 @@ export class BillsApi<T = any> extends RootApi {
         params: {
           page: data.page,
           take: data.take,
+          filters: {
+            q: data.q,
+            fromDate: data.fromDate,
+            toDate: data.toDate,
+          },
         },
       },
       { baseURL: process.env.BANK_SERVICE }

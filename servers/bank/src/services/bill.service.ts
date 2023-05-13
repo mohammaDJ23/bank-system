@@ -88,7 +88,7 @@ export class BillService {
   ): Promise<[Bill[], number]> {
     return this.billRepository
       .createQueryBuilder('bill')
-      .leftJoin('bill.user', 'user')
+      .leftJoinAndSelect('bill.user', 'user')
       .where('user.user_service_id = :userId')
       .andWhere(
         new Brackets((query) =>
@@ -102,10 +102,10 @@ export class BillService {
         ),
       )
       .andWhere(
-        'CASE WHEN :fromDate > 0 THEN COALESCE(EXTRACT(EPOCH FROM bill.date) * 1000, 0)::BIGINT >= :fromDate ELSE TRUE END',
+        'CASE WHEN (:fromDate)::BIGINT > 0 THEN COALESCE(EXTRACT(EPOCH FROM bill.date) * 1000, 0)::BIGINT >= (:fromDate)::BIGINT ELSE TRUE END',
       )
       .andWhere(
-        'CASE WHEN :toDate > 0 THEN COALESCE(EXTRACT(EPOCH FROM bill.date) * 1000, 0)::BIGINT <= :toDate ELSE TRUE END',
+        'CASE WHEN (:toDate)::BIGINT > 0 THEN COALESCE(EXTRACT(EPOCH FROM bill.date) * 1000, 0)::BIGINT <= (:toDate)::BIGINT ELSE TRUE END',
       )
       .orderBy('bill.date', 'DESC')
       .take(take)
