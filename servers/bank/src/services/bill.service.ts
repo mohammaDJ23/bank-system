@@ -93,19 +93,19 @@ export class BillService {
       .andWhere(
         new Brackets((query) =>
           query
-            .where('to_tsvector(bill.receiver) @@ to_tsquery(:q)')
-            .orWhere('to_tsvector(bill.description) @@ to_tsquery(:q)')
-            .orWhere('to_tsvector(bill.amount) @@ to_tsquery(:q)')
+            .where('to_tsvector(bill.receiver) @@ plainto_tsquery(:q)')
+            .orWhere('to_tsvector(bill.description) @@ plainto_tsquery(:q)')
+            .orWhere('to_tsvector(bill.amount) @@ plainto_tsquery(:q)')
             .orWhere("bill.receiver ILIKE '%' || :q || '%'")
             .orWhere("bill.description ILIKE '%' || :q || '%'")
             .orWhere("bill.amount ILIKE '%' || :q || '%'"),
         ),
       )
       .andWhere(
-        'CASE WHEN (:fromDate)::BIGINT > 0 THEN COALESCE(EXTRACT(EPOCH FROM bill.date) * 1000, 0)::BIGINT >= (:fromDate)::BIGINT ELSE TRUE END',
+        'CASE WHEN (:fromDate)::BIGINT > 0 THEN COALESCE(EXTRACT(EPOCH FROM date(bill.date)) * 1000, 0)::BIGINT >= (:fromDate)::BIGINT ELSE TRUE END',
       )
       .andWhere(
-        'CASE WHEN (:toDate)::BIGINT > 0 THEN COALESCE(EXTRACT(EPOCH FROM bill.date) * 1000, 0)::BIGINT <= (:toDate)::BIGINT ELSE TRUE END',
+        'CASE WHEN (:toDate)::BIGINT > 0 THEN COALESCE(EXTRACT(EPOCH FROM date(bill.date)) * 1000, 0)::BIGINT <= (:toDate)::BIGINT ELSE TRUE END',
       )
       .orderBy('bill.date', 'DESC')
       .take(take)

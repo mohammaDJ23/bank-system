@@ -160,9 +160,9 @@ export class UserService {
       .where(
         new Brackets((query) =>
           query
-            .where('to_tsvector(user.firstName) @@ to_tsquery(:q)')
-            .orWhere('to_tsvector(user.lastName) @@ to_tsquery(:q)')
-            .orWhere('to_tsvector(user.phone) @@ to_tsquery(:q)')
+            .where('to_tsvector(user.firstName) @@ plainto_tsquery(:q)')
+            .orWhere('to_tsvector(user.lastName) @@ plainto_tsquery(:q)')
+            .orWhere('to_tsvector(user.phone) @@ plainto_tsquery(:q)')
             .orWhere("user.firstName ILIKE '%' || :q || '%'")
             .orWhere("user.lastName ILIKE '%' || :q || '%'")
             .orWhere("user.phone ILIKE '%' || :q || '%'"),
@@ -170,10 +170,10 @@ export class UserService {
       )
       .andWhere('user.role = ANY(:roles)')
       .andWhere(
-        'CASE WHEN (:fromDate)::BIGINT > 0 THEN COALESCE(EXTRACT(EPOCH FROM user.createdAt) * 1000, 0)::BIGINT >= (:fromDate)::BIGINT ELSE TRUE END',
+        'CASE WHEN (:fromDate)::BIGINT > 0 THEN COALESCE(EXTRACT(EPOCH FROM date(user.createdAt)) * 1000, 0)::BIGINT >= (:fromDate)::BIGINT ELSE TRUE END',
       )
       .andWhere(
-        'CASE WHEN (:toDate)::BIGINT > 0 THEN COALESCE(EXTRACT(EPOCH FROM user.createdAt) * 1000, 0)::BIGINT <= (:toDate)::BIGINT ELSE TRUE END',
+        'CASE WHEN (:toDate)::BIGINT > 0 THEN COALESCE(EXTRACT(EPOCH FROM date(user.createdAt)) * 1000, 0)::BIGINT <= (:toDate)::BIGINT ELSE TRUE END',
       )
       .setParameters({
         q: filters.q,
