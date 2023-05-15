@@ -9,4 +9,8 @@ export class UserWithBillInfoDto extends UserDto {
     counts: string;
     amounts: string;
   };
+
+  @Expose()
+  @ApiProperty()
+  creator: UserDto;
 }

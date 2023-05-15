@@ -31,6 +31,10 @@ export class UserDto {
 
   @Expose()
   @ApiProperty()
+  createdBy: number;
+
+  @Expose()
+  @ApiProperty()
   createdAt: Date;
 
   @Expose()

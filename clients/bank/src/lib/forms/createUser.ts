@@ -48,9 +48,6 @@ export class CreateUser extends Form {
   @DefineValidation()
   role: string = '';
 
-  @DefineVal()
-  createdBy: number = 0;
-
   constructor() {
     super();
     this.firstName = this.getCachedInput('firstName');
@@ -59,6 +56,5 @@ export class CreateUser extends Form {
     this.password = this.password;
     this.phone = this.getCachedInput('phone');
     this.role = this.getCachedInput('role');
-    this.createdBy = this.createdBy;
   }
 }

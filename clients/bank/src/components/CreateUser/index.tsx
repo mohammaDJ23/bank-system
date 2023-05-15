@@ -8,21 +8,13 @@ import { useSnackbar } from 'notistack';
 import Navigation from '../../layout/Navigation';
 
 const CreateUserContent: FC = () => {
-  const { getUserRoles, getTokenInfo } = useAuth();
+  const { getUserRoles } = useAuth();
   const createUserFormInstance = useForm(CreateUser);
   const { isApiProcessing, request } = useRequest();
   const { focus } = useFocus();
   const isCreateUserApiProcessing = isApiProcessing(CreateUserApi);
   const form = createUserFormInstance.getForm();
   const { enqueueSnackbar } = useSnackbar();
-  const userInfo = getTokenInfo();
-  const isUserInfoExist = !!userInfo;
-
-  useEffect(() => {
-    if (isUserInfoExist) {
-      createUserFormInstance.onChange('createdBy', userInfo.id);
-    }
-  }, []);
 
   const formSubmition = useCallback(() => {
     createUserFormInstance.onSubmit(() => {

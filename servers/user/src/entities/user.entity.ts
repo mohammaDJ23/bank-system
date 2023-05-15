@@ -34,6 +34,9 @@ export class User {
   })
   role: string;
 
+  @Column({ type: 'integer' })
+  createdBy: number;
+
   @CreateDateColumn({ type: 'timestamptz' })
   createdAt: Date;
 

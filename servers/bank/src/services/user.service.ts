@@ -94,6 +94,7 @@ export class UserService {
           public.user.email AS email,
           public.user.phone AS phone,
           public.user.role AS role,
+          public.user.created_by AS "createdBy",
           public.user.created_at AS "createdAt",
           public.user.updated_at AS "updatedAt",
           json_build_object('counts', COALESCE(bill.counts, 0)::TEXT, 'amounts', COALESCE(bill.amounts, 0)::TEXT) AS bill

@@ -28,13 +28,14 @@ export class UserService {
     private readonly rabbitmqService: RabbitmqService,
   ) {}
 
-  async create(body: CreateUserDto): Promise<User> {
-    let user = await this.findByEmail(body.email);
+  async create(body: CreateUserDto, user: User): Promise<User> {
+    let findedUser = await this.findByEmail(body.email);
 
-    if (user) throw new ConflictException('The user already exist.');
+    if (findedUser) throw new ConflictException('The user already exist.');
 
     body.password = await hash(body.password, 10);
-    user = this.userRepository.create(body);
+    const newUser = this.userRepository.create(body);
+    newUser.createdBy = user.id;
     user = await this.userRepository.save(user);
     await this.clientProxy.emit('created_user', user).toPromise();
     return user;
