@@ -5,6 +5,9 @@ import {
   PrimaryGeneratedColumn,
   CreateDateColumn,
   UpdateDateColumn,
+  OneToMany,
+  ManyToOne,
+  JoinColumn,
 } from 'typeorm';
 
 @Entity()
@@ -39,4 +42,11 @@ export class User {
 
   @UpdateDateColumn({ type: 'timestamptz' })
   updatedAt: Date;
+
+  @OneToMany(() => User, (user) => user.parentUser)
+  users: User[];
+
+  @ManyToOne(() => User, (user) => user.users)
+  @JoinColumn({ name: 'created_by', referencedColumnName: 'id' })
+  parentUser: User;
 }

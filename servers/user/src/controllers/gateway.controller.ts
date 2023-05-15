@@ -66,8 +66,11 @@ export class GatewayController {
   @ApiResponse({ status: HttpStatus.UNAUTHORIZED, type: ErrorDto })
   @ApiResponse({ status: HttpStatus.CONFLICT, type: ErrorDto })
   @ApiResponse({ status: HttpStatus.INTERNAL_SERVER_ERROR, type: ErrorDto })
-  create(@Body() body: CreateUserDto): Promise<User> {
-    return this.userService.create(body);
+  create(
+    @Body() body: CreateUserDto,
+    @CurrentUser() user: User,
+  ): Promise<User> {
+    return this.userService.create(body, user);
   }
 
   @Put('update')
