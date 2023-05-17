@@ -93,13 +93,33 @@ export class UserService {
   }
 
   async delete(id: number): Promise<User> {
-    let findedUser = await this.findById(id);
+    // cascade deleting for bills
+    // cascade deleting is not for users
+    // soft deleting for the actual user
 
-    if (!findedUser) throw new NotFoundException('Could not found the user.');
+    // let findedUser = await this.findById(id);
 
-    await this.userRepository.delete(findedUser.id);
-    await this.clientProxy.emit('deleted_user', findedUser).toPromise();
-    return findedUser;
+    // if (!findedUser) throw new NotFoundException('Could not found the user.');
+
+    // await this.userRepository.delete(findedUser.id)
+    // await this.clientProxy.emit('deleted_user', findedUser).toPromise();
+    // return findedUser;
+
+    // const deletedUser = await this.userRepository
+    //   .createQueryBuilder('public.user')
+    //   .softDelete()
+    //   .where('public.user.id = :userId')
+    //   .setParameters({ userId: id })
+    //   .returning('*')
+    //   .execute();
+    // console.log(deletedUser);
+    // await this.clientProxy.emit('deleted_user', deletedUser.raw[0]).toPromise();
+    // return deletedUser.raw[0];
+
+    const user = await this.userRepository.findOneOrFail({ where: { id } });
+    await this.userRepository.softRemove(user);
+    await this.clientProxy.emit('deleted_user', user).toPromise();
+    return user;
   }
 
   async findOne(id: number): Promise<User> {
