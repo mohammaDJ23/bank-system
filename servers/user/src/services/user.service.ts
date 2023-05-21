@@ -28,16 +28,17 @@ export class UserService {
     private readonly rabbitmqService: RabbitmqService,
   ) {}
 
-  async create(body: CreateUserDto): Promise<User> {
-    let user = await this.findByEmail(body.email);
+  async create(body: CreateUserDto, user: User): Promise<User> {
+    let findedUser = await this.findByEmail(body.email);
 
-    if (user) throw new ConflictException('The user already exist.');
+    if (findedUser) throw new ConflictException('The user already exist.');
 
     body.password = await hash(body.password, 10);
-    user = this.userRepository.create(body);
-    user = await this.userRepository.save(user);
-    await this.clientProxy.emit('created_user', user).toPromise();
-    return user;
+    let newUser = this.userRepository.create(body);
+    newUser.parentUser = user;
+    newUser = await this.userRepository.save(newUser);
+    await this.clientProxy.emit('created_user', newUser).toPromise();
+    return newUser;
   }
 
   async updateByUser(
@@ -92,13 +93,33 @@ export class UserService {
   }
 
   async delete(id: number): Promise<User> {
-    let findedUser = await this.findById(id);
+    // cascade deleting for bills
+    // cascade deleting is not for users
+    // soft deleting for the actual user
 
-    if (!findedUser) throw new NotFoundException('Could not found the user.');
+    // let findedUser = await this.findById(id);
 
-    await this.userRepository.delete(findedUser.id);
-    await this.clientProxy.emit('deleted_user', findedUser).toPromise();
-    return findedUser;
+    // if (!findedUser) throw new NotFoundException('Could not found the user.');
+
+    // await this.userRepository.delete(findedUser.id)
+    // await this.clientProxy.emit('deleted_user', findedUser).toPromise();
+    // return findedUser;
+
+    // const deletedUser = await this.userRepository
+    //   .createQueryBuilder('public.user')
+    //   .softDelete()
+    //   .where('public.user.id = :userId')
+    //   .setParameters({ userId: id })
+    //   .returning('*')
+    //   .execute();
+    // console.log(deletedUser);
+    // await this.clientProxy.emit('deleted_user', deletedUser.raw[0]).toPromise();
+    // return deletedUser.raw[0];
+
+    const user = await this.userRepository.findOneOrFail({ where: { id } });
+    await this.userRepository.softRemove(user);
+    await this.clientProxy.emit('deleted_user', user).toPromise();
+    return user;
   }
 
   async findOne(id: number): Promise<User> {
@@ -160,9 +181,9 @@ export class UserService {
       .where(
         new Brackets((query) =>
           query
-            .where('to_tsvector(user.firstName) @@ to_tsquery(:q)')
-            .orWhere('to_tsvector(user.lastName) @@ to_tsquery(:q)')
-            .orWhere('to_tsvector(user.phone) @@ to_tsquery(:q)')
+            .where('to_tsvector(user.firstName) @@ plainto_tsquery(:q)')
+            .orWhere('to_tsvector(user.lastName) @@ plainto_tsquery(:q)')
+            .orWhere('to_tsvector(user.phone) @@ plainto_tsquery(:q)')
             .orWhere("user.firstName ILIKE '%' || :q || '%'")
             .orWhere("user.lastName ILIKE '%' || :q || '%'")
             .orWhere("user.phone ILIKE '%' || :q || '%'"),
@@ -170,10 +191,10 @@ export class UserService {
       )
       .andWhere('user.role = ANY(:roles)')
       .andWhere(
-        'CASE WHEN (:fromDate)::BIGINT > 0 THEN COALESCE(EXTRACT(EPOCH FROM user.createdAt) * 1000, 0)::BIGINT >= (:fromDate)::BIGINT ELSE TRUE END',
+        'CASE WHEN (:fromDate)::BIGINT > 0 THEN COALESCE(EXTRACT(EPOCH FROM date(user.createdAt)) * 1000, 0)::BIGINT >= (:fromDate)::BIGINT ELSE TRUE END',
       )
       .andWhere(
-        'CASE WHEN (:toDate)::BIGINT > 0 THEN COALESCE(EXTRACT(EPOCH FROM user.createdAt) * 1000, 0)::BIGINT <= (:toDate)::BIGINT ELSE TRUE END',
+        'CASE WHEN (:toDate)::BIGINT > 0 THEN COALESCE(EXTRACT(EPOCH FROM date(user.createdAt)) * 1000, 0)::BIGINT <= (:toDate)::BIGINT ELSE TRUE END',
       )
       .setParameters({
         q: filters.q,

@@ -6,6 +6,9 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   OneToMany,
+  JoinColumn,
+  ManyToOne,
+  DeleteDateColumn,
 } from 'typeorm';
 import { Bill } from '../entities';
 
@@ -44,6 +47,16 @@ export class User {
   @UpdateDateColumn({ type: 'timestamptz' })
   updatedAt: Date;
 
+  @DeleteDateColumn({ type: 'timestamptz', nullable: true })
+  deletedAt: Date;
+
   @OneToMany(() => Bill, (bill) => bill.user, { cascade: true })
   bills: Bill[];
+
+  @OneToMany(() => User, (user) => user.parentUser)
+  users: User[];
+
+  @ManyToOne(() => User, (user) => user.users)
+  @JoinColumn({ name: 'created_by', referencedColumnName: 'id' })
+  parentUser: User;
 }

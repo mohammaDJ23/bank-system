@@ -137,7 +137,7 @@ const List: FC = () => {
             helperText={billListFiltersFormInstance.getInputErrorMessage('q')}
             error={billListFiltersFormInstance.isInputInValid('q')}
             name="q"
-            placeholder="first name, last name, phone"
+            placeholder="amount, receiver, description"
             disabled={isBillsApiProcessing}
           />
           <TextField

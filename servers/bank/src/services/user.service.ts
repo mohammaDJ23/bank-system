@@ -3,18 +3,18 @@ import { RmqContext, RpcException } from '@nestjs/microservices';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UserWithBillInfoDto } from 'src/dtos';
 import { Repository } from 'typeorm';
-import { User } from '../entities';
+import { Bill, User } from '../entities';
 import { RabbitmqService } from './rabbitmq.service';
 
 @Injectable()
 export class UserService {
   constructor(
-    @InjectRepository(User) private readonly userService: Repository<User>,
+    @InjectRepository(User) private readonly userRepository: Repository<User>,
     private readonly rabbitmqService: RabbitmqService,
   ) {}
 
   findById(id: number): Promise<User> {
-    return this.userService
+    return this.userRepository
       .createQueryBuilder('user')
       .where('user.user_service_id = :id', { id })
       .getOne();
@@ -25,7 +25,7 @@ export class UserService {
       payload = Object.assign<User, Partial<User>>(payload, {
         userServiceId: payload.id,
       });
-      await this.userService
+      await this.userRepository
         .createQueryBuilder()
         .insert()
         .into(User)
@@ -39,7 +39,7 @@ export class UserService {
 
   async update(payload: User, context: RmqContext): Promise<void> {
     try {
-      await this.userService.query(
+      await this.userRepository.query(
         `
           UPDATE public.user
           SET 
@@ -72,12 +72,18 @@ export class UserService {
 
   async delete(payload: User, context: RmqContext): Promise<void> {
     try {
-      await this.userService
-        .createQueryBuilder('public.user')
-        .delete()
-        .where('public.user.user_service_id = :userId')
-        .setParameters({ userId: payload.id })
-        .execute();
+      // await this.userRepository
+      //   .createQueryBuilder('public.user')
+      //   .softDelete()
+      //   .where('public.user.user_service_id = :userId')
+      //   .setParameters({ userId: payload.id })
+      //   .execute();
+
+      const user = await this.userRepository.findOneOrFail({
+        where: { userServiceId: payload.id },
+        relations: ['bills'],
+      });
+      await this.userRepository.softRemove(user);
       this.rabbitmqService.applyAcknowledgment(context);
     } catch (error) {
       throw new RpcException(error);
@@ -85,7 +91,7 @@ export class UserService {
   }
 
   async getUserWithBillInfo(id: number): Promise<UserWithBillInfoDto> {
-    const [response]: UserWithBillInfoDto[] = await this.userService.query(
+    const [response]: UserWithBillInfoDto[] = await this.userRepository.query(
       `
         SELECT 
           public.user.user_service_id AS id,
