@@ -86,7 +86,7 @@ export class UserService {
   async getUserWithBillInfo(id: number): Promise<UserWithBillInfoDto> {
     const [response]: UserWithBillInfoDto[] = await this.userRepository.query(
       `
-        SELECT 
+        SELECT
           public.user.user_service_id AS id,
           public.user.first_name AS "firstName",
           public.user.last_name AS "lastName",
@@ -100,6 +100,7 @@ export class UserService {
         LEFT JOIN (
           SELECT bill.user_id, COUNT(bill.user_id) AS counts, SUM(bill.amount::BIGINT) AS amounts
           FROM bill
+          WHERE bill.deleted_at IS NULL
           GROUP BY bill.user_id
         ) bill ON bill.user_id = $1
         WHERE public.user.user_service_id = $1;
