@@ -72,13 +72,6 @@ export class UserService {
 
   async delete(payload: User, context: RmqContext): Promise<void> {
     try {
-      // await this.userRepository
-      //   .createQueryBuilder('public.user')
-      //   .softDelete()
-      //   .where('public.user.user_service_id = :userId')
-      //   .setParameters({ userId: payload.id })
-      //   .execute();
-
       const user = await this.userRepository.findOneOrFail({
         where: { userServiceId: payload.id },
         relations: ['bills'],
