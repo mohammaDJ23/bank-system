@@ -8,7 +8,7 @@ export class ResetPassword {
   @Column({ type: 'int' })
   userId: number;
 
-  @Column({ unique: true })
+  @Column({ type: 'varchar',unique: true })
   token: string;
 
   @Column({ type: 'timestamptz' })

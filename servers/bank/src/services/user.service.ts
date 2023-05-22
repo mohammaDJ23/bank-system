@@ -3,7 +3,7 @@ import { RmqContext, RpcException } from '@nestjs/microservices';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UserWithBillInfoDto } from 'src/dtos';
 import { Repository } from 'typeorm';
-import { Bill, User } from '../entities';
+import { User } from '../entities';
 import { RabbitmqService } from './rabbitmq.service';
 
 @Injectable()
