@@ -5,6 +5,7 @@ import { DateRange } from '@mui/icons-material';
 import { grey } from '@mui/material/colors';
 import {
   BillQuantitiesApi,
+  DeletedUserQuantitiesApi,
   LastWeekBillsApi,
   LastWeekUsersApi,
   PeriodAmountApi,
@@ -17,6 +18,7 @@ import { debounce, getTime } from '../../lib';
 import {
   BillDates,
   BillQuantities,
+  DeletedUserQuantities,
   LastWeekBillsObj,
   LastWeekReport,
   LastWeekUsersObj,
@@ -129,6 +131,7 @@ const Dashboard: FC = () => {
   const isInitialLastWeekBillsApiProcessing = isInitialApiProcessing(LastWeekBillsApi);
   const isPeriodAmountApiProcessing = isApiProcessing(PeriodAmountApi);
   const isInitialUserQuantitiesApiProcessing = isInitialApiProcessing(UserQuantitiesApi);
+  const isInitialDeletedUserQuantitiesApiProcessing = isInitialApiProcessing(DeletedUserQuantitiesApi);
   const isInitialBillQuantitiesApiProcessing = isInitialApiProcessing(BillQuantitiesApi);
 
   const periodAmountChangeRequest = useRef(
@@ -147,25 +150,35 @@ const Dashboard: FC = () => {
       Promise.allSettled<
         [
           Promise<AxiosResponse<UserQuantities>>,
+          Promise<AxiosResponse<DeletedUserQuantities>>,
           Promise<AxiosResponse<LastWeekUsersObj[]>>,
           Promise<AxiosResponse<BillQuantities>>
         ]
       >([
         request(new UserQuantitiesApi().setInitialApi()),
+        request(new DeletedUserQuantitiesApi().setInitialApi()),
         request(new LastWeekUsersApi().setInitialApi()),
         request(new BillQuantitiesApi().setInitialApi()),
-      ]).then(([userQuantitiesResponse, lastWeekUsersResponse, billQuantitiesResponse]) => {
-        if (userQuantitiesResponse.status === 'fulfilled')
-          setSpecificDetails('userQuantities', new UserQuantities(userQuantitiesResponse.value.data));
+      ]).then(
+        ([userQuantitiesResponse, deletedUserQuantitiesResponse, lastWeekUsersResponse, billQuantitiesResponse]) => {
+          if (userQuantitiesResponse.status === 'fulfilled')
+            setSpecificDetails('userQuantities', new UserQuantities(userQuantitiesResponse.value.data));
 
-        if (lastWeekUsersResponse.status === 'fulfilled')
-          setSpecificDetails('lastWeekUsers', lastWeekUsersResponse.value.data);
+          if (deletedUserQuantitiesResponse.status === 'fulfilled')
+            setSpecificDetails(
+              'deletedUserQuantities',
+              new DeletedUserQuantities(deletedUserQuantitiesResponse.value.data)
+            );
 
-        if (billQuantitiesResponse.status === 'fulfilled') {
-          const { quantities, amount } = billQuantitiesResponse.value.data;
-          setSpecificDetails('billQuantities', new BillQuantities(quantities, amount));
+          if (lastWeekUsersResponse.status === 'fulfilled')
+            setSpecificDetails('lastWeekUsers', lastWeekUsersResponse.value.data);
+
+          if (billQuantitiesResponse.status === 'fulfilled') {
+            const { quantities, amount } = billQuantitiesResponse.value.data;
+            setSpecificDetails('billQuantities', new BillQuantities(quantities, amount));
+          }
         }
-      });
+      );
     }
 
     Promise.allSettled<[Promise<AxiosResponse<TotalAmount & BillDates>>, Promise<AxiosResponse<LastWeekBillsObj[]>>]>([
@@ -368,6 +381,36 @@ const Dashboard: FC = () => {
                       <Box display="flex" alignItems="center" justifyContent="space-between" gap="30px">
                         <Typography whiteSpace="nowrap">Users: </Typography>
                         <Typography>{specificDetails.userQuantities.userQuantities}</Typography>
+                      </Box>
+                    </Box>
+                  </CardContent>
+                </Card>
+              )
+            ))}
+
+          {isUserOwnerOrAdmin &&
+            (isInitialDeletedUserQuantitiesApiProcessing ? (
+              <Skeleton width="100%" height="196px" />
+            ) : (
+              specificDetails.deletedUserQuantities && (
+                <Card>
+                  <CardContent>
+                    <Box display="flex" gap="20px" flexDirection="column">
+                      <Box display="flex" alignItems="center" justifyContent="space-between" gap="30px">
+                        <Typography whiteSpace="nowrap">Total Deleted Users: </Typography>
+                        <Typography>{specificDetails.deletedUserQuantities.quantities}</Typography>
+                      </Box>
+                      <Box display="flex" alignItems="center" justifyContent="space-between" gap="30px">
+                        <Typography whiteSpace="nowrap">Deleted Owners: </Typography>
+                        <Typography>{specificDetails.deletedUserQuantities.ownerQuantities}</Typography>
+                      </Box>
+                      <Box display="flex" alignItems="center" justifyContent="space-between" gap="30px">
+                        <Typography whiteSpace="nowrap">Deleted Admins: </Typography>
+                        <Typography>{specificDetails.deletedUserQuantities.adminQuantities}</Typography>
+                      </Box>
+                      <Box display="flex" alignItems="center" justifyContent="space-between" gap="30px">
+                        <Typography whiteSpace="nowrap">Deleted Users: </Typography>
+                        <Typography>{specificDetails.deletedUserQuantities.userQuantities}</Typography>
                       </Box>
                     </Box>
                   </CardContent>
