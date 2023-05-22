@@ -29,7 +29,7 @@ export class UserService {
   ) {}
 
   async create(body: CreateUserDto, user: User): Promise<User> {
-    let findedUser = await this.findByEmail(body.email);
+    let findedUser = await this.findByEmailWithDeleted(body.email);
 
     if (findedUser) throw new ConflictException('The user already exist.');
 
@@ -129,6 +129,14 @@ export class UserService {
     return this.userRepository
       .createQueryBuilder('user')
       .where('user.email = :email', { email })
+      .getOne();
+  }
+
+  async findByEmailWithDeleted(email: string): Promise<User> {
+    return this.userRepository
+      .createQueryBuilder('user')
+      .where('user.email = :email', { email })
+      .withDeleted()
       .getOne();
   }
 
