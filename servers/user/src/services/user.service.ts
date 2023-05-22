@@ -41,17 +41,11 @@ export class UserService {
     return newUser;
   }
 
-  async updateByUser(
-    body: UpdateUserByUserDto,
-    currentUser: User,
-  ): Promise<User> {
+  updateByUser(body: UpdateUserByUserDto, currentUser: User): Promise<User> {
     return this.update(body, currentUser);
   }
 
-  async updateByOwner(
-    body: UpdateUserByOwnerDto,
-    currentUser: User,
-  ): Promise<User> {
+  updateByOwner(body: UpdateUserByOwnerDto, currentUser: User): Promise<User> {
     if (body.id === currentUser.id) return this.update(body, currentUser);
     return this.update(body);
   }
@@ -125,14 +119,14 @@ export class UserService {
     }
   }
 
-  async findByEmail(email: string): Promise<User> {
+  findByEmail(email: string): Promise<User> {
     return this.userRepository
       .createQueryBuilder('user')
       .where('user.email = :email', { email })
       .getOne();
   }
 
-  async findByEmailWithDeleted(email: string): Promise<User> {
+  findByEmailWithDeleted(email: string): Promise<User> {
     return this.userRepository
       .createQueryBuilder('user')
       .where('user.email = :email', { email })
@@ -190,7 +184,7 @@ export class UserService {
       .getManyAndCount();
   }
 
-  async getUserQuantities(): Promise<UserQuantitiesDto> {
+  getUserQuantities(): Promise<UserQuantitiesDto> {
     return this.userRepository
       .createQueryBuilder('user')
       .select('COALESCE(COUNT(user.id), 0)::INTEGER', 'quantities')
@@ -214,7 +208,7 @@ export class UserService {
       .getRawOne();
   }
 
-  async lastWeekUsers(): Promise<LastWeekDto[]> {
+  lastWeekUsers(): Promise<LastWeekDto[]> {
     return this.userRepository.query(
       `
         WITH lastWeek (date) AS (
