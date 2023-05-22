@@ -231,7 +231,9 @@ export class UserService {
           COALESCE(EXTRACT(EPOCH FROM lastWeek.date) * 1000, 0)::BIGINT AS date,
           COUNT(public.user.created_at)::INTEGER as count
         FROM lastWeek
-        FULL JOIN public.user ON to_char(lastWeek.date, 'YYYY-MM-DD') = to_char(public.user.created_at, 'YYYY-MM-DD')
+        FULL JOIN 
+          public.user ON to_char(lastWeek.date, 'YYYY-MM-DD') = to_char(public.user.created_at, 'YYYY-MM-DD') AND 
+          public.user.deleted_at IS NULL
         WHERE lastWeek.date IS NOT NULL
         GROUP BY lastWeek.date
         ORDER BY lastWeek.date ASC;
