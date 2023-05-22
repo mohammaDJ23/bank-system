@@ -208,6 +208,32 @@ export class UserService {
       .getRawOne();
   }
 
+  getDeletedUserQuantities(): Promise<UserQuantitiesDto> {
+    return this.userRepository
+      .createQueryBuilder('user')
+      .select('COALESCE(COUNT(user.id), 0)::INTEGER', 'quantities')
+      .addSelect(
+        `COALESCE(SUM((user.role = :owner)::INTEGER), 0)::INTEGER`,
+        'ownerQuantities',
+      )
+      .addSelect(
+        `COALESCE(SUM((user.role = :admin)::INTEGER), 0)::INTEGER`,
+        'adminQuantities',
+      )
+      .addSelect(
+        `COALESCE(SUM((user.role = :user)::INTEGER), 0)::INTEGER`,
+        'userQuantities',
+      )
+      .withDeleted()
+      .where('user.deletedAt IS NOT NULL')
+      .setParameters({
+        owner: UserRoles.OWNER,
+        admin: UserRoles.ADMIN,
+        user: UserRoles.USER,
+      })
+      .getRawOne();
+  }
+
   lastWeekUsers(): Promise<LastWeekDto[]> {
     return this.userRepository.query(
       `

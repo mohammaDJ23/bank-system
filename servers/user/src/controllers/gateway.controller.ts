@@ -161,6 +161,20 @@ export class GatewayController {
     return this.userService.getUserQuantities();
   }
 
+  @Get('deleted-quantities')
+  @Roles(UserRoles.OWNER, UserRoles.ADMIN)
+  @UseGuards(RolesGuard)
+  @HttpCode(HttpStatus.OK)
+  @ObjectSerializer(UserQuantitiesDto)
+  @ApiBearerAuth()
+  @ApiResponse({ status: HttpStatus.OK, type: UserQuantitiesDto })
+  @ApiResponse({ status: HttpStatus.UNAUTHORIZED, type: ErrorDto })
+  @ApiResponse({ status: HttpStatus.NOT_FOUND, type: ErrorDto })
+  @ApiResponse({ status: HttpStatus.INTERNAL_SERVER_ERROR, type: ErrorDto })
+  getDeletedUserQuantities(): Promise<UserQuantitiesDto> {
+    return this.userService.getDeletedUserQuantities();
+  }
+
   @Get('last-week')
   @Roles(UserRoles.OWNER, UserRoles.ADMIN)
   @UseGuards(RolesGuard)
