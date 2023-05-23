@@ -21,6 +21,7 @@ import {
   ErrorDto,
   UserQuantitiesDto,
   LastWeekDto,
+  AccessTokenDto,
 } from '../dtos';
 import {
   ListSerializer,
@@ -47,7 +48,8 @@ import {
 import { User } from 'src/entities';
 import { UserRoles } from 'src/types';
 import { ParseUserListFiltersPipe } from 'src/pipes';
-import { UserListFiltersDto } from 'src/dtos/userListFilters.dto';
+import { UserListFiltersDto } from 'src/dtos';
+import { TokenizeSerializer } from 'src/decorators';
 
 @UseGuards(JwtGuard)
 @Controller('/api/v1/user')
@@ -78,10 +80,10 @@ export class GatewayController {
   @Roles(UserRoles.ADMIN, UserRoles.USER)
   @SameUser(UserRoles.ADMIN, UserRoles.USER)
   @UseGuards(RolesGuard, SameUserGuard)
-  @ObjectSerializer(UserDto)
+  @TokenizeSerializer()
   @ApiBody({ type: UpdateUserByUserDto })
   @ApiBearerAuth()
-  @ApiResponse({ status: HttpStatus.OK, type: UserDto })
+  @ApiResponse({ status: HttpStatus.OK, type: AccessTokenDto })
   @ApiResponse({ status: HttpStatus.UNAUTHORIZED, type: ErrorDto })
   @ApiResponse({ status: HttpStatus.CONFLICT, type: ErrorDto })
   @ApiResponse({ status: HttpStatus.BAD_REQUEST, type: ErrorDto })
@@ -97,10 +99,10 @@ export class GatewayController {
   @HttpCode(HttpStatus.OK)
   @Roles(UserRoles.OWNER)
   @UseGuards(RolesGuard, DifferentOwnerGuard)
-  @ObjectSerializer(UserDto)
+  @TokenizeSerializer()
   @ApiBody({ type: UpdateUserByOwnerDto })
   @ApiBearerAuth()
-  @ApiResponse({ status: HttpStatus.OK, type: UserDto })
+  @ApiResponse({ status: HttpStatus.OK, type: AccessTokenDto })
   @ApiResponse({ status: HttpStatus.UNAUTHORIZED, type: ErrorDto })
   @ApiResponse({ status: HttpStatus.CONFLICT, type: ErrorDto })
   @ApiResponse({ status: HttpStatus.NOT_FOUND, type: ErrorDto })
