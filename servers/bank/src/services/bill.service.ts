@@ -176,7 +176,10 @@ export class BillService {
           COALESCE(SUM(bill.amount::BIGINT), 0)::BIGINT AS amount,
           COUNT(bill.id)::INTEGER as count
         FROM lastWeek
-        FULL JOIN bill ON to_char(lastWeek.date, 'YYYY-MM-DD') = to_char(bill.date, 'YYYY-MM-DD') AND bill.user_id = $1
+        FULL JOIN bill ON
+          to_char(lastWeek.date, 'YYYY-MM-DD') = to_char(bill.date, 'YYYY-MM-DD') AND 
+            bill.user_id = $1 AND 
+            bill.deleted_at IS NULL
         WHERE lastWeek.date IS NOT NULL
         GROUP BY lastWeek.date
         ORDER BY lastWeek.date ASC;
