@@ -124,6 +124,10 @@ const Details: FC<DetailsImporation> = ({ user }) => {
           role: {user.role}
         </Typography>
         <Typography fontSize="12px" color="">
+          created by: {user.parent.firstName} {user.parent.lastName} ({user.parent.role}){' '}
+          {user.parent.deletedAt && `was deleted at ${moment(user.parent.deletedAt).format('LLLL')}`}
+        </Typography>
+        <Typography fontSize="12px" color="">
           total bill quantities: {user.bill.counts}
         </Typography>
         <Typography fontSize="12px" color="">

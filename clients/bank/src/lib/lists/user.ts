@@ -8,8 +8,10 @@ export interface UserObj {
   email: string;
   phone: string;
   role: UserRoles;
+  createdBy: number;
   createdAt: Date;
   updatedAt: Date;
+  deletedAt: Date | null;
 }
 
 export interface UserWithBillInfoObj extends UserObj {
@@ -17,6 +19,8 @@ export interface UserWithBillInfoObj extends UserObj {
     counts: string;
     amounts: string;
   };
+
+  parent: UserObj;
 }
 
 export class UserList implements ListInstance {
