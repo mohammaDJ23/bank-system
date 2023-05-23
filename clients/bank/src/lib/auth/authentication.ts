@@ -13,7 +13,7 @@ export interface TokenInfo {
   firstName: string;
   lastName: string;
   role: UserRoles;
-  expiration: string;
+  expiration: number;
 }
 
 export interface AccessTokenObj {
@@ -48,7 +48,7 @@ export function reInitializeToken(token: string) {
     LocalStorage.removeItem('access_token');
     LocalStorage.removeItem('access_token_expiration');
 
-    const storableData = [
+    const storableData: [string, string | number][] = [
       ['access_token', token],
       ['access_token_expiration', new Date().getTime() + decodedToken.expiration],
     ];
