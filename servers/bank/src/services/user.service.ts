@@ -109,7 +109,10 @@ export class UserService {
             'createdAt', user2.created_at,
             'updatedAt', user2.updated_at,
             'deletedAt', user2.deleted_at
-          ) AS parent
+          ) AS parent,
+          json_build_object(
+            'quantities', COALESCE(user3.created_users, 0)::TEXT
+          ) AS users
         FROM public.user AS user1
         LEFT JOIN (
           SELECT bill.user_id, COUNT(bill.user_id) AS counts, SUM(bill.amount::BIGINT) AS amounts
@@ -118,6 +121,12 @@ export class UserService {
           GROUP BY bill.user_id
         ) bill ON bill.user_id = $1
         LEFT JOIN public.user AS user2 ON user2.user_service_id = user1.created_by
+        LEFT JOIN (
+          SELECT user3.created_by, COUNT(user3.id) AS created_users
+          FROM public.user AS user3
+          WHERE user3.deleted_at IS NULL AND user3.user_service_id != $1
+          GROUP BY user3.created_by
+        ) user3 ON user3.created_by = $1
         WHERE user1.user_service_id = $1 AND user1.deleted_at IS NULL;
       `,
       [id],
