@@ -22,6 +22,7 @@ const Details: FC<DetailsImporation> = ({ user }) => {
   const { isApiProcessing, request } = useRequest();
   const { isOwner, getTokenInfo, hasUserAuthorized } = useAuth();
   const isUserOwner = isOwner();
+  const isCurrentUserOwner = isOwner(user.role);
   const isAuthorized = hasUserAuthorized(user);
   const userInfo = getTokenInfo();
   const isUserExist = !!userInfo;
@@ -127,6 +128,11 @@ const Details: FC<DetailsImporation> = ({ user }) => {
           created by: {user.parent.firstName} {user.parent.lastName} ({user.parent.role}){' '}
           {user.parent.deletedAt && `was deleted at ${moment(user.parent.deletedAt).format('LLLL')}`}
         </Typography>
+        {isCurrentUserOwner && (
+          <Typography fontSize="12px" color="">
+            total created users: {user.users.quantities}
+          </Typography>
+        )}
         <Typography fontSize="12px" color="">
           total bill quantities: {user.bill.counts}
         </Typography>

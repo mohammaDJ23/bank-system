@@ -21,6 +21,10 @@ export interface UserWithBillInfoObj extends UserObj {
   };
 
   parent: UserObj;
+
+  users: {
+    quantities: string;
+  };
 }
 
 export class UserList implements ListInstance {
