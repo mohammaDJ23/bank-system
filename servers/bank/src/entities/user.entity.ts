@@ -53,10 +53,10 @@ export class User {
   @OneToMany(() => Bill, (bill) => bill.user, { cascade: true })
   bills: Bill[];
 
-  @OneToMany(() => User, (user) => user.parentUser)
+  @OneToMany(() => User, (user) => user.parent)
   users: User[];
 
   @ManyToOne(() => User, (user) => user.users)
   @JoinColumn({ name: 'created_by', referencedColumnName: 'id' })
-  parentUser: User;
+  parent: User;
 }

@@ -35,7 +35,7 @@ export class UserService {
 
     body.password = await hash(body.password, 10);
     let newUser = this.userRepository.create(body);
-    newUser.parentUser = user;
+    newUser.parent = user;
     newUser = await this.userRepository.save(newUser);
     await this.clientProxy.emit('created_user', newUser).toPromise();
     return newUser;

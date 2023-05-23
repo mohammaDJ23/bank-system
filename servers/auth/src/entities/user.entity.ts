@@ -6,6 +6,9 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   DeleteDateColumn,
+  OneToMany,
+  ManyToOne,
+  JoinColumn,
 } from 'typeorm';
 
 @Entity()
@@ -42,4 +45,11 @@ export class User {
 
   @DeleteDateColumn({ type: 'timestamptz', nullable: true })
   deletedAt: Date;
+
+  @OneToMany(() => User, (user) => user.parent)
+  users: User[];
+
+  @ManyToOne(() => User, (user) => user.users)
+  @JoinColumn({ name: 'created_by', referencedColumnName: 'id' })
+  parent: User;
 }
