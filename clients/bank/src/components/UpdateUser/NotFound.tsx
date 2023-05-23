@@ -2,7 +2,7 @@ import { Box, Typography, Button } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { FC } from 'react';
 import { useAuth } from '../../hooks';
-import { Pathes } from '../../lib';
+import { getDynamicPath, Pathes } from '../../lib';
 
 const NotFound: FC = () => {
   const navigate = useNavigate();
@@ -15,7 +15,7 @@ const NotFound: FC = () => {
       <Typography>Not found the user</Typography>
       {isUserInfoExist && (
         <Button
-          onClick={() => navigate(Pathes.USER.replace(':id', userInfo.id.toString()))}
+          onClick={() => navigate(getDynamicPath(Pathes.USER, { id: userInfo.id.toString() }))}
           sx={{ textTransform: 'capitalize' }}
           variant="contained"
           size="small"

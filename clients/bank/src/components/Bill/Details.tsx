@@ -5,7 +5,7 @@ import Modal from '../Modal';
 import { useNavigate } from 'react-router-dom';
 import { FC, useCallback, useState } from 'react';
 import { useAction, useRequest, useSelector } from '../../hooks';
-import { BillObj, Pathes } from '../../lib';
+import { BillObj, getDynamicPath, Pathes } from '../../lib';
 import { ModalNames } from '../../store';
 import { DeleteBillApi } from '../../apis';
 
@@ -21,7 +21,7 @@ const Details: FC<DetailsImporation> = ({ bill }) => {
   const { modals } = useSelector();
   const { isApiProcessing, request } = useRequest();
   const isDeleteBillApiProcessing = isApiProcessing(DeleteBillApi);
-  const options = [{ label: 'Update', path: Pathes.UPDATE_BILL.replace(':id', bill.id) }];
+  const options = [{ label: 'Update', path: getDynamicPath(Pathes.UPDATE_BILL, { id: bill.id }) }];
 
   const onMenuOpen = useCallback((event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
