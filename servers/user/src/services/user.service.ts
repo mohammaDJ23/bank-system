@@ -72,6 +72,7 @@ export class UserService {
     if (updatedUser.email) {
       let findedUser = await this.userRepository
         .createQueryBuilder('user')
+        .withDeleted()
         .where('user.id != :userId')
         .andWhere('user.email = :userEmail')
         .setParameters({ userId: updatedUser.id, userEmail: updatedUser.email })
@@ -129,8 +130,8 @@ export class UserService {
   findByEmailWithDeleted(email: string): Promise<User> {
     return this.userRepository
       .createQueryBuilder('user')
-      .where('user.email = :email', { email })
       .withDeleted()
+      .where('user.email = :email', { email })
       .getOne();
   }
 
