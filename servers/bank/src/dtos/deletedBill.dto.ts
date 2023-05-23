@@ -30,6 +30,10 @@ export class DeletedBillDto {
   @ApiProperty()
   updatedAt: Date;
 
+  @Expose({ name: 'deleted_at' })
+  @ApiProperty()
+  deletedAt: Date;
+
   @Expose({ name: 'user_id' })
   @ApiProperty()
   userId: number;
