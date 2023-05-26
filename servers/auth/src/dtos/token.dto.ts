@@ -6,3 +6,9 @@ export class TokenDto {
   @ApiProperty()
   accessToken: string;
 }
+
+export class OauthTokenDto extends TokenDto {
+  @Expose()
+  @ApiProperty()
+  oauthAccessToken: string;
+}

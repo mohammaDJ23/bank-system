@@ -10,8 +10,11 @@ export interface EncryptedUserObj {
   expiration: number;
 }
 
+export interface UserSignInfoObj extends EncryptedUserObj {}
+
 export interface OauthUser {
   email: string;
+  accessToken: string;
 }
 
 export enum Roles {

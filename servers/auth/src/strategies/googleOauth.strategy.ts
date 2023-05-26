@@ -17,7 +17,7 @@ export class GoogleOauthStrategy extends PassportStrategy(Strategy, 'google') {
     const [email] = profile.emails;
 
     if (email) {
-      if (email.verified) return { email: email.value };
+      if (email.verified) return { email: email.value, accessToken };
       else
         throw new BadRequestException(
           'Your email is not verified by the google service.',
