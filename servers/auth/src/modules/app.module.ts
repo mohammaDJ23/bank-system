@@ -22,7 +22,11 @@ import { MailerModule } from '@nestjs-modules/mailer';
 import { EjsAdapter } from '@nestjs-modules/mailer/dist/adapters/ejs.adapter';
 import { ScheduleModule } from '@nestjs/schedule';
 import { RabbitMqQueue, RabbitMqServices } from '../types';
-import { CronJobsController, GatewayController } from '../controllers';
+import {
+  CronJobsController,
+  GatewayController,
+  GoogleController,
+} from '../controllers';
 import { UserService, ResetPasswordService, AuthService } from '../services';
 import { CurrentUserMiddleWare } from '../middlewares';
 
@@ -84,7 +88,7 @@ import { CurrentUserMiddleWare } from '../middlewares';
     }),
     ScheduleModule.forRoot(),
   ],
-  controllers: [CronJobsController, GatewayController],
+  controllers: [CronJobsController, GatewayController, GoogleController],
   providers: [
     UserService,
     ResetPasswordService,
