@@ -10,6 +10,10 @@ export interface EncryptedUserObj {
   expiration: number;
 }
 
+export interface OauthUser {
+  email: string;
+}
+
 export enum Roles {
   OWNER = 'owner',
   ADMIN = 'admin',
@@ -22,6 +26,7 @@ export interface UpdatedUserPartialObj extends Partial<User> {
 
 export interface Request extends Req {
   currentUser: User;
+  user: undefined | OauthUser;
 }
 
 export type Exception =
