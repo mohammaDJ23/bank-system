@@ -10,7 +10,11 @@ import { APP_FILTER, APP_PIPE } from '@nestjs/core';
 import { ClientsModule, Transport } from '@nestjs/microservices';
 import { AllExceptionFilter } from '../filters';
 import { JwtModule } from '@nestjs/jwt';
-import { JwtStrategy, CustomNamingStrategy } from '../strategies';
+import {
+  JwtStrategy,
+  CustomNamingStrategy,
+  GoogleOauthStrategy,
+} from '../strategies';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ResetPassword } from '../entities';
 import { join } from 'path';
@@ -86,6 +90,7 @@ import { CurrentUserMiddleWare } from '../middlewares';
     ResetPasswordService,
     AuthService,
     JwtStrategy,
+    GoogleOauthStrategy,
     { provide: APP_FILTER, useClass: AllExceptionFilter },
     {
       provide: APP_PIPE,
