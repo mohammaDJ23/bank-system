@@ -79,7 +79,7 @@ import { CurrentUserMiddleWare } from '../middlewares';
       },
       defaults: {},
       template: {
-        dir: join(__dirname, '../', 'templates'),
+        dir: join(__dirname, '../', '../', 'views/pages'),
         adapter: new EjsAdapter(),
         options: {
           strict: true,

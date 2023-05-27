@@ -1,13 +1,11 @@
-import {
-  Injectable,
-  NotFoundException,
-  BadRequestException,
-} from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { HttpStatus } from '@nestjs/common/enums';
 import { JwtService } from '@nestjs/jwt';
 import { compare } from 'bcrypt';
+import { Response } from 'express';
 import { User } from 'src/entities';
 import { OauthUser, UserSignInfoObj } from 'src/types';
-import { LoginDto, OauthTokenDto, TokenDto } from '../dtos';
+import { LoginDto, TokenDto } from '../dtos';
 import { UserService } from './user.service';
 
 @Injectable()
@@ -43,19 +41,23 @@ export class AuthService {
     return this.getJwtToken(currentUser);
   }
 
-  async loginWithOauth(user: OauthUser): Promise<OauthTokenDto> {
+  async loginWithOauth(response: Response, user: OauthUser): Promise<void> {
     const findedUser = await this.userService.findByEmail(user.email);
 
-    if (!findedUser)
-      throw new BadRequestException(
-        'The user does not exist in our database for the creattion of an account for you try to contact to the owner then try to login with local authentication or google service.',
+    if (!findedUser) {
+      response.render('pages/failOauth', {
+        loginUrl: `${process.env.CLIENT_CONTAINER_URL}/auth/login`,
+      });
+    } else {
+      const jwtToken = this.getJwtToken(findedUser);
+      response.redirect(
+        HttpStatus.MOVED_PERMANENTLY,
+        `${
+          process.env.CLIENT_CONTAINER_URL
+        }/auth/success-oauth?accessToken=${encodeURIComponent(
+          jwtToken.accessToken,
+        )}&oauthAccessToken=${encodeURIComponent(user.accessToken)}`,
       );
-
-    const jwtToken = this.getJwtToken(findedUser);
-
-    return {
-      accessToken: jwtToken.accessToken,
-      oauthAccessToken: user.accessToken,
-    };
+    }
   }
 }

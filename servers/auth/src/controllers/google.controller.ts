@@ -3,11 +3,13 @@ import {
   Get,
   HttpCode,
   HttpStatus,
+  Res,
   UseGuards,
 } from '@nestjs/common';
 import { ApiResponse, ApiTags } from '@nestjs/swagger';
-import { CurrentOauthUser, ObjectSerializer } from 'src/decorators';
-import { ErrorDto, OauthTokenDto } from 'src/dtos';
+import { Response } from 'express';
+import { CurrentOauthUser } from 'src/decorators';
+import { ErrorDto } from 'src/dtos';
 import { GoogleOAuthGuard } from 'src/guards';
 import { AuthService } from 'src/services';
 import { OauthUser } from 'src/types';
@@ -23,14 +25,17 @@ export class GoogleController {
 
   @Get('redirect')
   @HttpCode(HttpStatus.OK)
-  @HttpCode(HttpStatus.BAD_REQUEST)
+  @HttpCode(HttpStatus.MOVED_PERMANENTLY)
   @HttpCode(HttpStatus.INTERNAL_SERVER_ERROR)
-  @ObjectSerializer(OauthTokenDto)
-  @ApiResponse({ status: HttpStatus.OK, type: OauthTokenDto })
+  @ApiResponse({ status: HttpStatus.OK, type: 'text/html' })
+  @ApiResponse({ status: HttpStatus.MOVED_PERMANENTLY })
   @ApiResponse({ status: HttpStatus.NOT_FOUND, type: ErrorDto })
   @ApiResponse({ status: HttpStatus.BAD_REQUEST, type: ErrorDto })
   @ApiResponse({ status: HttpStatus.INTERNAL_SERVER_ERROR, type: ErrorDto })
-  googleAuthRedirect(@CurrentOauthUser() user: OauthUser) {
-    return this.authService.loginWithOauth(user);
+  googleAuthRedirect(
+    @Res() response: Response,
+    @CurrentOauthUser() user: OauthUser,
+  ): Promise<void> {
+    return this.authService.loginWithOauth(response, user);
   }
 }
