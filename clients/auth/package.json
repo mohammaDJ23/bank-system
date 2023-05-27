@@ -26,6 +26,7 @@
     "secure-web-storage": "^1.0.2",
     "terser-webpack-plugin": "^5.3.6",
     "unplugin-element-plus": "^0.4.1",
+    "validator": "^13.9.0",
     "vue": "^3.2.41",
     "vue-router": "^4.1.6",
     "vuetify": "^3.1.2",
