@@ -21,6 +21,7 @@ import {
   ErrorDto,
   UserQuantitiesDto,
   LastWeekDto,
+  AccessTokenDto,
 } from '../dtos';
 import {
   ListSerializer,
@@ -47,7 +48,8 @@ import {
 import { User } from 'src/entities';
 import { UserRoles } from 'src/types';
 import { ParseUserListFiltersPipe } from 'src/pipes';
-import { UserListFiltersDto } from 'src/dtos/userListFilters.dto';
+import { UserListFiltersDto } from 'src/dtos';
+import { TokenizeSerializer } from 'src/decorators';
 
 @UseGuards(JwtGuard)
 @Controller('/api/v1/user')
@@ -78,10 +80,10 @@ export class GatewayController {
   @Roles(UserRoles.ADMIN, UserRoles.USER)
   @SameUser(UserRoles.ADMIN, UserRoles.USER)
   @UseGuards(RolesGuard, SameUserGuard)
-  @ObjectSerializer(UserDto)
+  @TokenizeSerializer()
   @ApiBody({ type: UpdateUserByUserDto })
   @ApiBearerAuth()
-  @ApiResponse({ status: HttpStatus.OK, type: UserDto })
+  @ApiResponse({ status: HttpStatus.OK, type: AccessTokenDto })
   @ApiResponse({ status: HttpStatus.UNAUTHORIZED, type: ErrorDto })
   @ApiResponse({ status: HttpStatus.CONFLICT, type: ErrorDto })
   @ApiResponse({ status: HttpStatus.BAD_REQUEST, type: ErrorDto })
@@ -97,10 +99,10 @@ export class GatewayController {
   @HttpCode(HttpStatus.OK)
   @Roles(UserRoles.OWNER)
   @UseGuards(RolesGuard, DifferentOwnerGuard)
-  @ObjectSerializer(UserDto)
+  @TokenizeSerializer()
   @ApiBody({ type: UpdateUserByOwnerDto })
   @ApiBearerAuth()
-  @ApiResponse({ status: HttpStatus.OK, type: UserDto })
+  @ApiResponse({ status: HttpStatus.OK, type: AccessTokenDto })
   @ApiResponse({ status: HttpStatus.UNAUTHORIZED, type: ErrorDto })
   @ApiResponse({ status: HttpStatus.CONFLICT, type: ErrorDto })
   @ApiResponse({ status: HttpStatus.NOT_FOUND, type: ErrorDto })
@@ -159,6 +161,20 @@ export class GatewayController {
   @ApiResponse({ status: HttpStatus.INTERNAL_SERVER_ERROR, type: ErrorDto })
   getUserQuantities(): Promise<UserQuantitiesDto> {
     return this.userService.getUserQuantities();
+  }
+
+  @Get('deleted-quantities')
+  @Roles(UserRoles.OWNER, UserRoles.ADMIN)
+  @UseGuards(RolesGuard)
+  @HttpCode(HttpStatus.OK)
+  @ObjectSerializer(UserQuantitiesDto)
+  @ApiBearerAuth()
+  @ApiResponse({ status: HttpStatus.OK, type: UserQuantitiesDto })
+  @ApiResponse({ status: HttpStatus.UNAUTHORIZED, type: ErrorDto })
+  @ApiResponse({ status: HttpStatus.NOT_FOUND, type: ErrorDto })
+  @ApiResponse({ status: HttpStatus.INTERNAL_SERVER_ERROR, type: ErrorDto })
+  getDeletedUserQuantities(): Promise<UserQuantitiesDto> {
+    return this.userService.getDeletedUserQuantities();
   }
 
   @Get('last-week')

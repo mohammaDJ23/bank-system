@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import moment from 'moment';
 import CountBadge from '../CountBadge';
 import Pagination from '../Pagination';
-import { BillList, BillListFilters, BillObj, getTime, isoDate, Pathes } from '../../lib';
+import { BillList, BillListFilters, BillObj, getDynamicPath, getTime, isoDate, Pathes } from '../../lib';
 import { useForm, usePaginationList, useRequest } from '../../hooks';
 import { BillsApi, BillsApiConstructorType } from '../../apis';
 import Skeleton from './Skeleton';
@@ -76,7 +76,7 @@ const List: FC = () => {
                 key={index}
                 variant="outlined"
                 sx={{ my: '20px', position: 'relative', overflow: 'visible' }}
-                onClick={() => navigate(Pathes.BILL.replace(':id', bill.id))}
+                onClick={() => navigate(getDynamicPath(Pathes.BILL, { id: bill.id }))}
               >
                 <ListItemButton>
                   <ListItem disablePadding sx={{ my: '10px' }}>

@@ -133,5 +133,15 @@ export function useRequest() {
     [isInitialProcessingApiLoaded, isInitialProcessingApiSuccessed, isInitialProcessingApiFailed]
   );
 
-  return { request, isApiProcessing, isInitialApiProcessing };
+  return {
+    request,
+    isApiProcessing,
+    isInitialApiProcessing,
+    isProcessingApiLoaded,
+    isProcessingApiSuccessed,
+    isProcessingApiFailed,
+    isInitialProcessingApiLoaded,
+    isInitialProcessingApiSuccessed,
+    isInitialProcessingApiFailed,
+  };
 }

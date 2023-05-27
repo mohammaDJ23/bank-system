@@ -6,6 +6,7 @@ import {
   UpdateDateColumn,
   ManyToOne,
   JoinColumn,
+  DeleteDateColumn,
 } from 'typeorm';
 import { User } from './user.entity';
 
@@ -14,13 +15,13 @@ export class Bill {
   @PrimaryGeneratedColumn({ type: 'bigint' })
   id: string;
 
-  @Column({ length: 18 })
+  @Column({ type: 'varchar', length: 18 })
   amount: string;
 
-  @Column({ length: 100 })
+  @Column({ type: 'varchar', length: 100 })
   receiver: string;
 
-  @Column({ length: 500 })
+  @Column({ type: 'varchar', length: 500 })
   description: string;
 
   @Column({
@@ -41,6 +42,9 @@ export class Bill {
 
   @UpdateDateColumn({ type: 'timestamptz' })
   updatedAt: Date;
+
+  @DeleteDateColumn({ type: 'timestamptz', nullable: true })
+  deletedAt: Date;
 
   @ManyToOne(() => User, (user) => user.bills, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'user_id', referencedColumnName: 'userServiceId' })

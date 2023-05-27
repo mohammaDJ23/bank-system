@@ -13,7 +13,11 @@ export interface TokenInfo {
   firstName: string;
   lastName: string;
   role: UserRoles;
-  expiration: string;
+  expiration: number;
+}
+
+export interface AccessTokenObj {
+  accessToken: string;
 }
 
 export function getUserRoles() {
@@ -33,8 +37,24 @@ export function getToken(): string {
   return '';
 }
 
-export function getTokenInfo() {
-  return decodeToken<TokenInfo>(getToken());
+export function getTokenInfo(token: string = '') {
+  return decodeToken<TokenInfo>(token || getToken());
+}
+
+export function reInitializeToken(token: string) {
+  const decodedToken = getTokenInfo(token);
+
+  if (decodedToken) {
+    LocalStorage.removeItem('access_token');
+    LocalStorage.removeItem('access_token_expiration');
+
+    const storableData: [string, string | number][] = [
+      ['access_token', token],
+      ['access_token_expiration', new Date().getTime() + decodedToken.expiration],
+    ];
+
+    for (let [key, value] of storableData) LocalStorage.setItem(key, value);
+  }
 }
 
 export function isUserAuthenticated() {

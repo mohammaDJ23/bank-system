@@ -61,6 +61,20 @@ export class UserQuantities {
   }
 }
 
+export class DeletedUserQuantities {
+  public quantities: number;
+  public ownerQuantities: number;
+  public adminQuantities: number;
+  public userQuantities: number;
+
+  constructor(arg: DeletedUserQuantities) {
+    this.quantities = arg.quantities;
+    this.ownerQuantities = arg.ownerQuantities;
+    this.adminQuantities = arg.adminQuantities;
+    this.userQuantities = arg.userQuantities;
+  }
+}
+
 export interface SpecificDetailsState {
   user: UserObj | null;
   userWithBillInfo: UserWithBillInfoObj | null;
@@ -71,6 +85,7 @@ export interface SpecificDetailsState {
   lastWeekUsers: LastWeekUsersObj[];
   billDates: BillDates | null;
   userQuantities: UserQuantities | null;
+  deletedUserQuantities: DeletedUserQuantities | null;
   billQuantities: BillQuantities | null;
 }
 
@@ -84,6 +99,7 @@ const initialState: SpecificDetailsState = {
   lastWeekUsers: [],
   billDates: null,
   userQuantities: null,
+  deletedUserQuantities: null,
   billQuantities: null,
 };
 
@@ -106,6 +122,7 @@ function cleanState(state: SpecificDetailsState): SpecificDetailsState {
     lastWeekUsers: [],
     billDates: null,
     userQuantities: null,
+    deletedUserQuantities: null,
     billQuantities: null,
   };
 }

@@ -12,7 +12,17 @@ import {
 } from '@mui/material';
 import moment from 'moment';
 import { useNavigate } from 'react-router-dom';
-import { Pathes, UserObj, getUserRoleColor, UserListFilters, isoDate, getTime, UserRoles, UserList } from '../../lib';
+import {
+  Pathes,
+  UserObj,
+  getUserRoleColor,
+  UserListFilters,
+  isoDate,
+  getTime,
+  UserRoles,
+  UserList,
+  getDynamicPath,
+} from '../../lib';
 import CountBadge from '../CountBadge';
 import Pagination from '../Pagination';
 import { useAuth, useForm, usePaginationList, useRequest } from '../../hooks';
@@ -95,7 +105,7 @@ const List: FC = () => {
                   backgroundColor:
                     isUserExist && user.id === userInfo.id && userListInfo.list.length >= 2 ? '#F8F8F8' : '',
                 }}
-                onClick={() => navigate(Pathes.USER.replace(':id', user.id.toString()))}
+                onClick={() => navigate(getDynamicPath(Pathes.USER, { id: user.id.toString() }))}
               >
                 <ListItemButton>
                   <ListItem disablePadding sx={{ my: '10px' }}>

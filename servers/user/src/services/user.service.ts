@@ -29,29 +29,23 @@ export class UserService {
   ) {}
 
   async create(body: CreateUserDto, user: User): Promise<User> {
-    let findedUser = await this.findByEmail(body.email);
+    let findedUser = await this.findByEmailWithDeleted(body.email);
 
     if (findedUser) throw new ConflictException('The user already exist.');
 
     body.password = await hash(body.password, 10);
     let newUser = this.userRepository.create(body);
-    newUser.parentUser = user;
+    newUser.parent = user;
     newUser = await this.userRepository.save(newUser);
     await this.clientProxy.emit('created_user', newUser).toPromise();
     return newUser;
   }
 
-  async updateByUser(
-    body: UpdateUserByUserDto,
-    currentUser: User,
-  ): Promise<User> {
+  updateByUser(body: UpdateUserByUserDto, currentUser: User): Promise<User> {
     return this.update(body, currentUser);
   }
 
-  async updateByOwner(
-    body: UpdateUserByOwnerDto,
-    currentUser: User,
-  ): Promise<User> {
+  updateByOwner(body: UpdateUserByOwnerDto, currentUser: User): Promise<User> {
     if (body.id === currentUser.id) return this.update(body, currentUser);
     return this.update(body);
   }
@@ -78,6 +72,7 @@ export class UserService {
     if (updatedUser.email) {
       let findedUser = await this.userRepository
         .createQueryBuilder('user')
+        .withDeleted()
         .where('user.id != :userId')
         .andWhere('user.email = :userEmail')
         .setParameters({ userId: updatedUser.id, userEmail: updatedUser.email })
@@ -93,29 +88,6 @@ export class UserService {
   }
 
   async delete(id: number): Promise<User> {
-    // cascade deleting for bills
-    // cascade deleting is not for users
-    // soft deleting for the actual user
-
-    // let findedUser = await this.findById(id);
-
-    // if (!findedUser) throw new NotFoundException('Could not found the user.');
-
-    // await this.userRepository.delete(findedUser.id)
-    // await this.clientProxy.emit('deleted_user', findedUser).toPromise();
-    // return findedUser;
-
-    // const deletedUser = await this.userRepository
-    //   .createQueryBuilder('public.user')
-    //   .softDelete()
-    //   .where('public.user.id = :userId')
-    //   .setParameters({ userId: id })
-    //   .returning('*')
-    //   .execute();
-    // console.log(deletedUser);
-    // await this.clientProxy.emit('deleted_user', deletedUser.raw[0]).toPromise();
-    // return deletedUser.raw[0];
-
     const user = await this.userRepository.findOneOrFail({ where: { id } });
     await this.userRepository.softRemove(user);
     await this.clientProxy.emit('deleted_user', user).toPromise();
@@ -148,9 +120,17 @@ export class UserService {
     }
   }
 
-  async findByEmail(email: string): Promise<User> {
+  findByEmail(email: string): Promise<User> {
     return this.userRepository
       .createQueryBuilder('user')
+      .where('user.email = :email', { email })
+      .getOne();
+  }
+
+  findByEmailWithDeleted(email: string): Promise<User> {
+    return this.userRepository
+      .createQueryBuilder('user')
+      .withDeleted()
       .where('user.email = :email', { email })
       .getOne();
   }
@@ -205,7 +185,7 @@ export class UserService {
       .getManyAndCount();
   }
 
-  async getUserQuantities(): Promise<UserQuantitiesDto> {
+  getUserQuantities(): Promise<UserQuantitiesDto> {
     return this.userRepository
       .createQueryBuilder('user')
       .select('COALESCE(COUNT(user.id), 0)::INTEGER', 'quantities')
@@ -229,7 +209,33 @@ export class UserService {
       .getRawOne();
   }
 
-  async lastWeekUsers(): Promise<LastWeekDto[]> {
+  getDeletedUserQuantities(): Promise<UserQuantitiesDto> {
+    return this.userRepository
+      .createQueryBuilder('user')
+      .select('COALESCE(COUNT(user.id), 0)::INTEGER', 'quantities')
+      .addSelect(
+        `COALESCE(SUM((user.role = :owner)::INTEGER), 0)::INTEGER`,
+        'ownerQuantities',
+      )
+      .addSelect(
+        `COALESCE(SUM((user.role = :admin)::INTEGER), 0)::INTEGER`,
+        'adminQuantities',
+      )
+      .addSelect(
+        `COALESCE(SUM((user.role = :user)::INTEGER), 0)::INTEGER`,
+        'userQuantities',
+      )
+      .withDeleted()
+      .where('user.deletedAt IS NOT NULL')
+      .setParameters({
+        owner: UserRoles.OWNER,
+        admin: UserRoles.ADMIN,
+        user: UserRoles.USER,
+      })
+      .getRawOne();
+  }
+
+  lastWeekUsers(): Promise<LastWeekDto[]> {
     return this.userRepository.query(
       `
         WITH lastWeek (date) AS (
@@ -246,7 +252,9 @@ export class UserService {
           COALESCE(EXTRACT(EPOCH FROM lastWeek.date) * 1000, 0)::BIGINT AS date,
           COUNT(public.user.created_at)::INTEGER as count
         FROM lastWeek
-        FULL JOIN public.user ON to_char(lastWeek.date, 'YYYY-MM-DD') = to_char(public.user.created_at, 'YYYY-MM-DD')
+        FULL JOIN 
+          public.user ON to_char(lastWeek.date, 'YYYY-MM-DD') = to_char(public.user.created_at, 'YYYY-MM-DD') AND 
+          public.user.deleted_at IS NULL
         WHERE lastWeek.date IS NOT NULL
         GROUP BY lastWeek.date
         ORDER BY lastWeek.date ASC;

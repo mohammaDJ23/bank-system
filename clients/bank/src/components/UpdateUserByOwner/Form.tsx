@@ -1,5 +1,5 @@
 import { FC, useCallback } from 'react';
-import { getUserRoles, LocalStorage, Pathes, UpdateUserByOwner } from '../../lib';
+import { AccessTokenObj, getDynamicPath, getUserRoles, Pathes, reInitializeToken, UpdateUserByOwner } from '../../lib';
 import Modal from '../Modal';
 import { ModalNames } from '../../store';
 import { useAction, useAuth, useForm, useRequest } from '../../hooks';
@@ -26,19 +26,18 @@ const Form: FC<FormImportation> = ({ formInstance }) => {
 
   const formSubmition = useCallback(() => {
     formInstance.onSubmit(() => {
-      request<UpdateUserByOwner, UpdateUserByOwner>(new UpdateUserByOwnerApi(form))
+      request<AccessTokenObj, UpdateUserByOwner>(new UpdateUserByOwnerApi(form))
         .then(response => {
           const userId = params.id as string;
           hideModal(ModalNames.CONFIRMATION);
           formInstance.resetForm();
 
-          if (isUserInfoExist && userInfo.id === +userId && response.data.role !== userInfo.role) {
-            LocalStorage.clear();
-            navigate(Pathes.LOGIN);
+          if (isUserInfoExist && userInfo.id === +userId) {
+            reInitializeToken(response.data.accessToken);
           } else {
             enqueueSnackbar({ message: 'You have updated the user successfully.', variant: 'success' });
-            navigate(Pathes.USER.replace(':id', userId));
           }
+          navigate(getDynamicPath(Pathes.USER, { id: userId }));
         })
         .catch(err => hideModal(ModalNames.CONFIRMATION));
     });

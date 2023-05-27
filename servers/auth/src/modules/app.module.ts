@@ -10,7 +10,11 @@ import { APP_FILTER, APP_PIPE } from '@nestjs/core';
 import { ClientsModule, Transport } from '@nestjs/microservices';
 import { AllExceptionFilter } from '../filters';
 import { JwtModule } from '@nestjs/jwt';
-import { JwtStrategy, CustomNamingStrategy } from '../strategies';
+import {
+  JwtStrategy,
+  CustomNamingStrategy,
+  GoogleOauthStrategy,
+} from '../strategies';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ResetPassword } from '../entities';
 import { join } from 'path';
@@ -18,7 +22,11 @@ import { MailerModule } from '@nestjs-modules/mailer';
 import { EjsAdapter } from '@nestjs-modules/mailer/dist/adapters/ejs.adapter';
 import { ScheduleModule } from '@nestjs/schedule';
 import { RabbitMqQueue, RabbitMqServices } from '../types';
-import { CronJobsController, GatewayController } from '../controllers';
+import {
+  CronJobsController,
+  GatewayController,
+  GoogleController,
+} from '../controllers';
 import { UserService, ResetPasswordService, AuthService } from '../services';
 import { CurrentUserMiddleWare } from '../middlewares';
 
@@ -71,7 +79,7 @@ import { CurrentUserMiddleWare } from '../middlewares';
       },
       defaults: {},
       template: {
-        dir: join(__dirname, '../', 'templates'),
+        dir: join(__dirname, '../', '../', 'views/pages'),
         adapter: new EjsAdapter(),
         options: {
           strict: true,
@@ -80,12 +88,13 @@ import { CurrentUserMiddleWare } from '../middlewares';
     }),
     ScheduleModule.forRoot(),
   ],
-  controllers: [CronJobsController, GatewayController],
+  controllers: [CronJobsController, GatewayController, GoogleController],
   providers: [
     UserService,
     ResetPasswordService,
     AuthService,
     JwtStrategy,
+    GoogleOauthStrategy,
     { provide: APP_FILTER, useClass: AllExceptionFilter },
     {
       provide: APP_PIPE,

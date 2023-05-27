@@ -3,7 +3,7 @@ import { RmqContext, RpcException } from '@nestjs/microservices';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UserWithBillInfoDto } from 'src/dtos';
 import { Repository } from 'typeorm';
-import { Bill, User } from '../entities';
+import { User } from '../entities';
 import { RabbitmqService } from './rabbitmq.service';
 
 @Injectable()
@@ -72,13 +72,6 @@ export class UserService {
 
   async delete(payload: User, context: RmqContext): Promise<void> {
     try {
-      // await this.userRepository
-      //   .createQueryBuilder('public.user')
-      //   .softDelete()
-      //   .where('public.user.user_service_id = :userId')
-      //   .setParameters({ userId: payload.id })
-      //   .execute();
-
       const user = await this.userRepository.findOneOrFail({
         where: { userServiceId: payload.id },
         relations: ['bills'],
@@ -93,23 +86,48 @@ export class UserService {
   async getUserWithBillInfo(id: number): Promise<UserWithBillInfoDto> {
     const [response]: UserWithBillInfoDto[] = await this.userRepository.query(
       `
-        SELECT 
-          public.user.user_service_id AS id,
-          public.user.first_name AS "firstName",
-          public.user.last_name AS "lastName",
-          public.user.email AS email,
-          public.user.phone AS phone,
-          public.user.role AS role,
-          public.user.created_at AS "createdAt",
-          public.user.updated_at AS "updatedAt",
-          json_build_object('counts', COALESCE(bill.counts, 0)::TEXT, 'amounts', COALESCE(bill.amounts, 0)::TEXT) AS bill
-        FROM public.user
+        SELECT
+          user1.user_service_id AS id,
+          user1.first_name AS "firstName",
+          user1.last_name AS "lastName",
+          user1.email AS email,
+          user1.phone AS phone,
+          user1.role AS role,
+          user1.created_by AS "createdBy",
+          user1.created_at AS "createdAt",
+          user1.updated_at AS "updatedAt",
+          user1.deleted_at AS "deletedAt",
+          json_build_object('counts', COALESCE(bill.counts, 0)::TEXT, 'amounts', COALESCE(bill.amounts, 0)::TEXT) AS bill,
+          json_build_object(
+            'id', user2.user_service_id,
+            'firstName', user2.first_name,
+            'lastName', user2.last_name,
+            'email', user2.email,
+            'phone', user2.phone,
+            'role', user2.role,
+            'createdBy', user2.created_by,
+            'createdAt', user2.created_at,
+            'updatedAt', user2.updated_at,
+            'deletedAt', user2.deleted_at
+          ) AS parent,
+          json_build_object(
+            'quantities', COALESCE(user3.created_users, 0)::TEXT
+          ) AS users
+        FROM public.user AS user1
         LEFT JOIN (
           SELECT bill.user_id, COUNT(bill.user_id) AS counts, SUM(bill.amount::BIGINT) AS amounts
           FROM bill
+          WHERE bill.deleted_at IS NULL
           GROUP BY bill.user_id
         ) bill ON bill.user_id = $1
-        WHERE public.user.user_service_id = $1;
+        LEFT JOIN public.user AS user2 ON user2.user_service_id = user1.created_by
+        LEFT JOIN (
+          SELECT user3.created_by, COUNT(user3.id) AS created_users
+          FROM public.user AS user3
+          WHERE user3.deleted_at IS NULL AND user3.user_service_id != $1
+          GROUP BY user3.created_by
+        ) user3 ON user3.created_by = $1
+        WHERE user1.user_service_id = $1 AND user1.deleted_at IS NULL;
       `,
       [id],
     );

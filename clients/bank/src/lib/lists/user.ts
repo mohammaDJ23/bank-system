@@ -8,14 +8,22 @@ export interface UserObj {
   email: string;
   phone: string;
   role: UserRoles;
+  createdBy: number;
   createdAt: Date;
   updatedAt: Date;
+  deletedAt: Date | null;
 }
 
 export interface UserWithBillInfoObj extends UserObj {
   bill: {
     counts: string;
     amounts: string;
+  };
+
+  parent: UserObj;
+
+  users: {
+    quantities: string;
   };
 }
 

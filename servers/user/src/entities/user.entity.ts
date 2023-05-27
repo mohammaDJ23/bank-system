@@ -16,19 +16,19 @@ export class User {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ length: 45 })
+  @Column({ type: 'varchar', length: 45 })
   firstName: string;
 
-  @Column({ length: 45 })
+  @Column({ type: 'varchar', length: 45 })
   lastName: string;
 
-  @Column({ unique: true, length: 256 })
+  @Column({ type: 'varchar', unique: true, length: 256 })
   email: string;
 
-  @Column({ length: 60 })
+  @Column({ type: 'varchar', length: 60 })
   password: string;
 
-  @Column({ length: 12 })
+  @Column({ type: 'varchar', length: 12 })
   phone: string;
 
   @Column({
@@ -47,10 +47,10 @@ export class User {
   @DeleteDateColumn({ type: 'timestamptz', nullable: true })
   deletedAt: Date;
 
-  @OneToMany(() => User, (user) => user.parentUser)
+  @OneToMany(() => User, (user) => user.parent)
   users: User[];
 
   @ManyToOne(() => User, (user) => user.users)
   @JoinColumn({ name: 'created_by', referencedColumnName: 'id' })
-  parentUser: User;
+  parent: User;
 }

@@ -1,12 +1,11 @@
 import { FC, useCallback } from 'react';
-import { getDynamicPath, Pathes, UpdateUser } from '../../lib';
+import { AccessTokenObj, getDynamicPath, LocalStorage, Pathes, reInitializeToken, UpdateUser } from '../../lib';
 import Modal from '../Modal';
 import { ModalNames } from '../../store';
 import { useAction, useForm, useRequest } from '../../hooks';
 import { Box, TextField, Button } from '@mui/material';
 import { UpdateUserApi } from '../../apis';
 import { useNavigate, useParams } from 'react-router-dom';
-import { useSnackbar } from 'notistack';
 
 interface FormImportation {
   formInstance: ReturnType<typeof useForm<UpdateUser>>;
@@ -19,16 +18,16 @@ const Form: FC<FormImportation> = ({ formInstance }) => {
   const { request, isApiProcessing } = useRequest();
   const isUpdateUserApiProcessing = isApiProcessing(UpdateUserApi);
   const form = formInstance.getForm();
-  const { enqueueSnackbar } = useSnackbar();
 
   const formSubmition = useCallback(() => {
     formInstance.onSubmit(() => {
-      request<UpdateUser, UpdateUser>(new UpdateUserApi(form))
+      request<AccessTokenObj, UpdateUser>(new UpdateUserApi(form))
         .then(response => {
           const userId = params.id as string;
           hideModal(ModalNames.CONFIRMATION);
           formInstance.resetForm();
-          enqueueSnackbar({ message: 'You have updated the user successfully.', variant: 'success' });
+
+          reInitializeToken(response.data.accessToken);
           navigate(getDynamicPath(Pathes.USER, { id: userId }));
         })
         .catch(err => hideModal(ModalNames.CONFIRMATION));

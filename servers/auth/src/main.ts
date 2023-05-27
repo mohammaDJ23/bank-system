@@ -3,11 +3,12 @@ import { AppModule } from './modules';
 import { Transport, MicroserviceOptions } from '@nestjs/microservices';
 import { RabbitMqQueue } from './types';
 import { swagger } from './libs';
+import { NestExpressApplication } from '@nestjs/platform-express';
 
 require('dotenv').config();
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create<NestExpressApplication>(AppModule);
 
   app.connectMicroservice<MicroserviceOptions>({
     transport: Transport.RMQ,
@@ -20,6 +21,8 @@ async function bootstrap() {
       noAck: false,
     },
   });
+
+  app.set('view engine', 'ejs');
 
   app.enableCors({
     origin: [

@@ -1,4 +1,4 @@
-import { getTime, isoDate, Pathes, UpdateBill } from '../../lib';
+import { getDynamicPath, getTime, isoDate, Pathes, UpdateBill } from '../../lib';
 import { FC, useCallback } from 'react';
 import { Box, TextField, Button } from '@mui/material';
 import Modal from '../Modal';
@@ -29,7 +29,7 @@ const Form: FC<FormImportation> = ({ formInstance }) => {
           hideModal(ModalNames.CONFIRMATION);
           formInstance.resetForm();
           enqueueSnackbar({ message: 'You have updated the bill successfully.', variant: 'success' });
-          navigate(Pathes.BILL.replace(':id', billId));
+          navigate(getDynamicPath(Pathes.BILL, { id: billId }));
         })
         .catch(err => hideModal(ModalNames.CONFIRMATION));
     });

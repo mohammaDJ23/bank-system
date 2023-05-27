@@ -275,6 +275,18 @@ export class UserQuantitiesApi extends RootApi {
   }
 }
 
+export class DeletedUserQuantitiesApi extends RootApi {
+  constructor() {
+    super(
+      {
+        url: '/api/v1/user/deleted-quantities',
+        method: 'get',
+      },
+      { baseURL: process.env.USER_SERVICE }
+    );
+  }
+}
+
 export class LastWeekUsersApi extends RootApi {
   constructor() {
     super(
