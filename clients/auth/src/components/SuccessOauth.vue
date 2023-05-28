@@ -11,7 +11,8 @@ const router = useRouter();
 
 onMounted(() => {
   const jwtAccessToken = route.query.accessToken;
-  const oauthAccessTokenInfo = JSON.parse(route.query.oauthAccessTokenInfo);
+  const oauthAccessTokenInfo = route.query.oauthAccessTokenInfo;
+  const parsedOauthAccessTokenInfo = JSON.parse(oauthAccessTokenInfo);
 
   const decodedJwtToken = decodeToken(jwtAccessToken);
 
@@ -21,6 +22,7 @@ onMounted(() => {
       ['access_token_expiration', new Date().getTime() + decodedJwtToken.expiration],
       ['oauth_access_token', oauthAccessTokenInfo.accessToken],
       ['oauth_access_token_expiration', new Date().getTime() + oauthAccessTokenInfo.expiration],
+      ['oauth_access_token_info', parsedOauthAccessTokenInfo],
     ];
     for (let [key, value] of storableData) LocalStorage.setItem(key, value);
 
