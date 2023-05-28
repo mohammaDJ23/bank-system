@@ -14,13 +14,15 @@ onMounted(() => {
   const oauthToken = route.query.oauthAccessToken;
   const decodedJwtToken = decodeToken(jwtToken);
 
-  const storableData = [
-    ['access_token', jwtToken],
-    ['oauth_access_token', oauthToken],
-    ['access_token_expiration', new Date().getTime() + decodedJwtToken.expiration],
-  ];
-  for (let [key, value] of storableData) LocalStorage.setItem(key, value);
+  if (decodedJwtToken) {
+    const storableData = [
+      ['access_token', jwtToken],
+      ['oauth_access_token', oauthToken],
+      ['access_token_expiration', new Date().getTime() + decodedJwtToken.expiration],
+    ];
+    for (let [key, value] of storableData) LocalStorage.setItem(key, value);
 
-  router.push(pathes.dashboard);
+    router.push(pathes.dashboard);
+  } else router.push(pathes.login);
 });
 </script>
