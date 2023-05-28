@@ -56,7 +56,9 @@ export class AuthService {
           process.env.CLIENT_CONTAINER_URL
         }/auth/success-oauth?accessToken=${encodeURIComponent(
           jwtToken.accessToken,
-        )}&oauthAccessToken=${encodeURIComponent(user.accessToken)}`,
+        )}&oauthAccessToken=${encodeURIComponent(
+          user.accessToken,
+        )}&oauthAccessTokenInfo=${JSON.stringify(user)}`,
       );
     }
   }

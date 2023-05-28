@@ -1,6 +1,7 @@
 import { PassportStrategy } from '@nestjs/passport';
 import { Profile, Strategy } from 'passport-google-oauth20';
 import { BadRequestException, Injectable } from '@nestjs/common';
+import { OAuth2Client } from 'google-auth-library';
 
 @Injectable()
 export class GoogleOauthStrategy extends PassportStrategy(Strategy, 'google') {
@@ -16,15 +17,24 @@ export class GoogleOauthStrategy extends PassportStrategy(Strategy, 'google') {
   async validate(accessToken: string, refreshToken: string, profile: Profile) {
     const [email] = profile.emails;
 
-    if (email) {
-      if (email.verified) return { email: email.value, accessToken };
-      else
-        throw new BadRequestException(
-          'Your email is not verified by the google service.',
-        );
-    } else
+    if (!email)
       throw new BadRequestException(
         'Could not found the user by the google service.',
       );
+
+    if (!email.verified)
+      throw new BadRequestException(
+        'Your email is not verified by the google service.',
+      );
+
+    const oauth2Client = new OAuth2Client();
+    const oauthTokenInfo = await oauth2Client.getTokenInfo(accessToken);
+
+    return {
+      id: profile.id,
+      email: email.value,
+      accessToken,
+      expiration: oauthTokenInfo.expiry_date,
+    };
   }
 }
