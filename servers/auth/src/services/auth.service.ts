@@ -58,7 +58,7 @@ export class AuthService {
           jwtToken.accessToken,
         )}&oauthAccessToken=${encodeURIComponent(
           user.accessToken,
-        )}&oauthAccessTokenInfo=${JSON.stringify(user)}`,
+        )}&oauthAccessTokenInfo=${encodeURIComponent(JSON.stringify(user))}`,
       );
     }
   }
