@@ -11,6 +11,7 @@ import {
   HttpStatus,
   ParseIntPipe,
   Query,
+  UseInterceptors,
 } from '@nestjs/common';
 import { UserService } from '../services';
 import {
@@ -50,6 +51,7 @@ import { UserRoles } from 'src/types';
 import { ParseUserListFiltersPipe } from 'src/pipes';
 import { UserListFiltersDto } from 'src/dtos';
 import { TokenizeSerializer } from 'src/decorators';
+import { ListCacheInterceptor } from 'src/interceptors';
 
 @UseGuards(JwtGuard)
 @Controller('/api/v1/user')
@@ -134,6 +136,7 @@ export class GatewayController {
   @Roles(UserRoles.OWNER, UserRoles.ADMIN)
   @UseGuards(RolesGuard)
   @ListSerializer(UserDto)
+  @UseInterceptors(ListCacheInterceptor)
   @ApiQuery({ name: 'page', type: 'number' })
   @ApiQuery({ name: 'take', type: 'number' })
   @ApiParam({ name: 'filters', type: UserListFiltersDto })

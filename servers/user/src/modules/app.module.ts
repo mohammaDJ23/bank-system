@@ -1,4 +1,4 @@
-import { Module, ValidationPipe } from '@nestjs/common';
+import { CacheModule, Module, ValidationPipe } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { ClientsModule, Transport } from '@nestjs/microservices';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -12,9 +12,19 @@ import { JwtModule } from '@nestjs/jwt';
 import { GatewayController, MessagePatternController } from '../controllers';
 import { RabbitMqQueue, RabbitMqServices } from '../types';
 import { UserConnectionGateWay } from 'src/gateways';
+import { redisStore } from 'cache-manager-redis-yet';
 
 @Module({
   imports: [
+    CacheModule.registerAsync({
+      useFactory: async () => ({
+        isGlobal: true,
+        store: await redisStore({ ttl: 0 }),
+        host: process.env.REDIS_HOST,
+        port: process.env.REDIS_PORT,
+        ttl: 0,
+      }),
+    }),
     ClientsModule.register([
       {
         name: RabbitMqServices.USER,
