@@ -26,12 +26,10 @@ import {
   UserListFiltersDto,
 } from 'src/dtos';
 import {
-  ObjectSerializer,
   CurrentUser,
   Roles,
   SameUser,
   CacheKey,
-  TokenizeSerializer,
   ResetCachedKey,
 } from 'src/decorators';
 import {
@@ -56,6 +54,9 @@ import {
   LastWeekArraySerializeInterceptor,
   ResetCacheInterceptor,
   UserListSerializeInterceptor,
+  UserObjectSerializeInterceptor,
+  UserQuantitiesObjectSerializeInterceptor,
+  TokenizeInterceptor,
 } from 'src/interceptors';
 
 @UseGuards(JwtGuard)
@@ -68,7 +69,7 @@ export class GatewayController {
   @HttpCode(HttpStatus.CREATED)
   @Roles(UserRoles.OWNER)
   @UseGuards(RolesGuard)
-  @ObjectSerializer(UserDto)
+  @UseInterceptors(UserObjectSerializeInterceptor)
   @ApiBody({ type: CreateUserDto })
   @ApiBearerAuth()
   @ApiResponse({ status: HttpStatus.CREATED, type: UserDto })
@@ -87,7 +88,7 @@ export class GatewayController {
   @Roles(UserRoles.ADMIN, UserRoles.USER)
   @SameUser(UserRoles.ADMIN, UserRoles.USER)
   @UseGuards(RolesGuard, SameUserGuard)
-  @TokenizeSerializer()
+  @UseInterceptors(TokenizeInterceptor)
   @ApiBody({ type: UpdateUserByUserDto })
   @ApiBearerAuth()
   @ApiResponse({ status: HttpStatus.OK, type: AccessTokenDto })
@@ -106,7 +107,7 @@ export class GatewayController {
   @HttpCode(HttpStatus.OK)
   @Roles(UserRoles.OWNER)
   @UseGuards(RolesGuard, DifferentOwnerGuard)
-  @TokenizeSerializer()
+  @UseInterceptors(TokenizeInterceptor)
   @ApiBody({ type: UpdateUserByOwnerDto })
   @ApiBearerAuth()
   @ApiResponse({ status: HttpStatus.OK, type: AccessTokenDto })
@@ -125,7 +126,7 @@ export class GatewayController {
   @HttpCode(HttpStatus.OK)
   @SameUser(UserRoles.ADMIN, UserRoles.USER)
   @UseGuards(SameUserGuard, DifferentOwnerGuard)
-  @ObjectSerializer(UserDto)
+  @UseInterceptors(UserObjectSerializeInterceptor)
   @ApiQuery({ name: 'id', type: 'number' })
   @ApiBearerAuth()
   @ApiResponse({ status: HttpStatus.OK, type: UserDto })
@@ -161,7 +162,7 @@ export class GatewayController {
   @Roles(UserRoles.OWNER, UserRoles.ADMIN)
   @UseGuards(RolesGuard)
   @HttpCode(HttpStatus.OK)
-  @ObjectSerializer(UserQuantitiesDto)
+  @UseInterceptors(UserQuantitiesObjectSerializeInterceptor)
   @ApiBearerAuth()
   @ApiResponse({ status: HttpStatus.OK, type: UserQuantitiesDto })
   @ApiResponse({ status: HttpStatus.UNAUTHORIZED, type: ErrorDto })
@@ -175,7 +176,7 @@ export class GatewayController {
   @Roles(UserRoles.OWNER, UserRoles.ADMIN)
   @UseGuards(RolesGuard)
   @HttpCode(HttpStatus.OK)
-  @ObjectSerializer(UserQuantitiesDto)
+  @UseInterceptors(UserQuantitiesObjectSerializeInterceptor)
   @ApiBearerAuth()
   @ApiResponse({ status: HttpStatus.OK, type: UserQuantitiesDto })
   @ApiResponse({ status: HttpStatus.UNAUTHORIZED, type: ErrorDto })
@@ -203,7 +204,7 @@ export class GatewayController {
   @HttpCode(HttpStatus.OK)
   @SameUser(UserRoles.ADMIN, UserRoles.USER)
   @UseGuards(SameUserGuard, DifferentOwnerGuard)
-  @ObjectSerializer(UserDto)
+  @UseInterceptors(UserObjectSerializeInterceptor)
   @ApiParam({ name: 'id', type: 'number' })
   @ApiBearerAuth()
   @ApiResponse({ status: HttpStatus.OK, type: UserDto })

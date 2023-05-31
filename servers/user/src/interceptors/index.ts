@@ -1,4 +1,4 @@
-export * from './serialize.interceptor';
+export * from './objectSerialize.interceptor';
 export * from './tokenize.interceptor';
 export * from './cache.interceptor';
 export * from './listSerialize.interceptor';
