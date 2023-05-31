@@ -33,6 +33,7 @@ import {
   SameUser,
   CacheKey,
   TokenizeSerializer,
+  ResetCachedKey,
 } from 'src/decorators';
 import {
   ApiBody,
@@ -53,6 +54,7 @@ import { CacheKeys, UserRoles } from 'src/types';
 import { ParseUserListFiltersPipe } from 'src/pipes';
 import {
   CacheInterceptor,
+  ResetCacheInterceptor,
   UserListSerializeInterceptor,
 } from 'src/interceptors';
 
