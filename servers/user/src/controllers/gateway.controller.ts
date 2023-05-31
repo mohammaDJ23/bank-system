@@ -28,7 +28,6 @@ import {
 import {
   ObjectSerializer,
   CurrentUser,
-  ArraySerializer,
   Roles,
   SameUser,
   CacheKey,
@@ -54,6 +53,7 @@ import { CacheKeys, UserRoles } from 'src/types';
 import { ParseUserListFiltersPipe } from 'src/pipes';
 import {
   CacheInterceptor,
+  LastWeekArraySerializeInterceptor,
   ResetCacheInterceptor,
   UserListSerializeInterceptor,
 } from 'src/interceptors';
@@ -189,7 +189,7 @@ export class GatewayController {
   @Roles(UserRoles.OWNER, UserRoles.ADMIN)
   @UseGuards(RolesGuard)
   @HttpCode(HttpStatus.OK)
-  @ArraySerializer(LastWeekDto)
+  @UseInterceptors(LastWeekArraySerializeInterceptor)
   @ApiBearerAuth()
   @ApiResponse({ status: HttpStatus.OK, type: LastWeekDto })
   @ApiResponse({ status: HttpStatus.UNAUTHORIZED, type: ErrorDto })
