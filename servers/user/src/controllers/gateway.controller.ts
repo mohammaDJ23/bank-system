@@ -13,7 +13,7 @@ import {
   Query,
   UseInterceptors,
 } from '@nestjs/common';
-import { UserService } from '../services';
+import { UserService } from 'src/services';
 import {
   CreateUserDto,
   UserDto,
@@ -23,15 +23,17 @@ import {
   UserQuantitiesDto,
   LastWeekDto,
   AccessTokenDto,
-} from '../dtos';
+  UserListFiltersDto,
+} from 'src/dtos';
 import {
-  ListSerializer,
   ObjectSerializer,
   CurrentUser,
   ArraySerializer,
   Roles,
   SameUser,
-} from '../decorators';
+  CacheKey,
+  TokenizeSerializer,
+} from 'src/decorators';
 import {
   ApiBody,
   ApiResponse,
@@ -45,13 +47,14 @@ import {
   JwtGuard,
   RolesGuard,
   SameUserGuard,
-} from '../guards';
+} from 'src/guards';
 import { User } from 'src/entities';
-import { UserRoles } from 'src/types';
+import { CacheKeys, UserRoles } from 'src/types';
 import { ParseUserListFiltersPipe } from 'src/pipes';
-import { UserListFiltersDto } from 'src/dtos';
-import { TokenizeSerializer } from 'src/decorators';
-import { ListCacheInterceptor } from 'src/interceptors';
+import {
+  CacheInterceptor,
+  UserListSerializeInterceptor,
+} from 'src/interceptors';
 
 @UseGuards(JwtGuard)
 @Controller('/api/v1/user')
@@ -134,9 +137,9 @@ export class GatewayController {
   @Get('all')
   @HttpCode(HttpStatus.OK)
   @Roles(UserRoles.OWNER, UserRoles.ADMIN)
+  @CacheKey(CacheKeys.USERS)
   @UseGuards(RolesGuard)
-  @ListSerializer(UserDto)
-  @UseInterceptors(ListCacheInterceptor)
+  @UseInterceptors(CacheInterceptor, UserListSerializeInterceptor)
   @ApiQuery({ name: 'page', type: 'number' })
   @ApiQuery({ name: 'take', type: 'number' })
   @ApiParam({ name: 'filters', type: UserListFiltersDto })
