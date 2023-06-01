@@ -9,6 +9,7 @@ import {
 import { Reflector } from '@nestjs/core';
 import { Cache } from 'cache-manager';
 import { map } from 'rxjs';
+import { getCurrentUser, getRequest } from 'src/libs';
 import { CacheKeys } from 'src/types';
 
 @Injectable()
@@ -30,11 +31,17 @@ export class ResetCacheInterceptor implements NestInterceptor {
             context.getClass(),
           ]);
 
-        const cacheKeys = await this.cacheService.store.keys();
+        if (requiredResetCachedKey) {
+          const currentUser = getCurrentUser(context);
 
-        for (const cachedKey of cacheKeys)
-          if (cachedKey.startsWith(requiredResetCachedKey))
-            await this.cacheService.del(cachedKey);
+          const userId = currentUser.id;
+
+          const cacheKeys = await this.cacheService.store.keys();
+          const targetKey = `${userId}.${requiredResetCachedKey}`;
+
+          for (const key of cacheKeys)
+            if (key.startsWith(targetKey)) await this.cacheService.del(key);
+        }
 
         return data;
       }),
