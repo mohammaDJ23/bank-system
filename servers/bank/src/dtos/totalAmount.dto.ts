@@ -21,7 +21,7 @@ export class TotalAmountDto {
   quantities: string;
 }
 
-export class TotalAmountWithoutDates {
+export class TotalAmountWithoutDatesDto {
   @Expose()
   @ApiProperty()
   totalAmount: string;

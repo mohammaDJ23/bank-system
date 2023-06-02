@@ -59,3 +59,13 @@ export class ListSerial extends SerialConstructor {}
 export class ArraySerial extends SerialConstructor {}
 
 export class ObjectSerial extends SerialConstructor {}
+
+export type ListObj = [any[], number];
+
+export enum CacheKeys {
+  USERS = 'USERS',
+  USER = 'USER',
+  DELETED_USERS = 'DELETED_USERS',
+  QUANTITIES = 'QUANTITIES',
+  DELETED_QUANTITIES = 'DELETED_QUANTITIES',
+}

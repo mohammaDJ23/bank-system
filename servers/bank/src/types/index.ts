@@ -53,3 +53,13 @@ export enum UserRoles {
   ADMIN = 'admin',
   USER = 'user',
 }
+
+export type ListObj = [any[], number];
+
+export enum CacheKeys {
+  USER = 'USER',
+  BILLS = 'BILLS',
+  BILL = 'BILL',
+  QUANTITIES = 'QUANTITIES',
+  TOTAL_AMOUNT = 'TOTAL_AMOUNT',
+}

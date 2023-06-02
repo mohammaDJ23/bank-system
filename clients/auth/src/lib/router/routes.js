@@ -1,13 +1,16 @@
+import validator from 'validator';
 import { isUserAuthenticated } from '../authentication';
 
 const Login = () => import('../../pages/Login.vue');
 const ResetPassword = () => import('../../pages/ResetPassword.vue');
 const ForgotPassword = () => import('../../pages/ForgotPassword.vue');
+const SuccessOauth = () => import('../../pages/SuccessOauth.vue');
 
 export const pathes = {
   login: '/auth/login',
   forgotPassword: '/auth/forgot-password',
   resetPassword: '/auth/reset-password',
+  successOauth: '/auth/success-oauth',
   dashboard: '/bank/dashboard',
 };
 
@@ -37,6 +40,17 @@ export const routes = [
     component: ForgotPassword,
     beforeEnter: (to, from, next) => {
       if (isUserAuthenticated()) next(pathes.dashboard);
+      else next();
+    },
+  },
+  {
+    path: pathes.successOauth,
+    name: 'SuccessOauth',
+    component: SuccessOauth,
+    beforeEnter: (to, from, next) => {
+      if (isUserAuthenticated()) next(pathes.dashboard);
+      else if (!(validator.isJWT(to.query.accessToken) && validator.isJWT(to.query.oauthAccessToken)))
+        next(pathes.login);
       else next();
     },
   },

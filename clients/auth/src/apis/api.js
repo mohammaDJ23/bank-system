@@ -22,6 +22,15 @@ export class LoginApi extends RootApi {
   }
 }
 
+export class LoginWithGoogleApi extends RootApi {
+  constructor() {
+    super({
+      url: '/api/v1/auth/google',
+      method: 'get',
+    });
+  }
+}
+
 export class ForgotPasswordApi extends RootApi {
   constructor(data) {
     super({

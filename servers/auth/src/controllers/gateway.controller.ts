@@ -1,4 +1,11 @@
-import { Body, Controller, Post, HttpStatus, HttpCode } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Post,
+  HttpStatus,
+  HttpCode,
+  UseInterceptors,
+} from '@nestjs/common';
 import { ApiBody, ApiResponse, ApiTags } from '@nestjs/swagger';
 import {
   LoginDto,
@@ -7,10 +14,14 @@ import {
   TokenDto,
   ResetPasswordDto,
   ErrorDto,
-} from '../dtos';
-import { ObjectSerializer, CurrentUser } from '../decorators';
-import { ResetPasswordService, AuthService } from '../services';
-import { User } from '../entities';
+} from 'src/dtos';
+import { CurrentUser } from 'src/decorators';
+import { ResetPasswordService, AuthService } from 'src/services';
+import { User } from 'src/entities';
+import {
+  MessageObjectSerializeInterceptor,
+  TokenObjectSerializeInterceptor,
+} from 'src/interceptors';
 
 @Controller('/api/v1/auth')
 @ApiTags('/api/v1/auth')
@@ -22,7 +33,7 @@ export class GatewayController {
 
   @Post('login')
   @HttpCode(HttpStatus.OK)
-  @ObjectSerializer(TokenDto)
+  @UseInterceptors(TokenObjectSerializeInterceptor)
   @ApiBody({ type: LoginDto })
   @ApiResponse({ status: HttpStatus.OK, type: TokenDto })
   @ApiResponse({ status: HttpStatus.NOT_FOUND, type: ErrorDto })
@@ -37,7 +48,7 @@ export class GatewayController {
 
   @Post('forgot-password')
   @HttpCode(HttpStatus.OK)
-  @ObjectSerializer(MessageDto)
+  @UseInterceptors(MessageObjectSerializeInterceptor)
   @ApiBody({ type: ForgotPasswordDto })
   @ApiResponse({ status: HttpStatus.OK, type: MessageDto })
   @ApiResponse({ status: HttpStatus.NOT_FOUND, type: ErrorDto })
@@ -52,7 +63,7 @@ export class GatewayController {
 
   @Post('reset-password')
   @HttpCode(HttpStatus.OK)
-  @ObjectSerializer(MessageDto)
+  @UseInterceptors(MessageObjectSerializeInterceptor)
   @ApiBody({ type: ResetPasswordDto })
   @ApiResponse({ status: HttpStatus.OK, type: MessageDto })
   @ApiResponse({ status: HttpStatus.NOT_FOUND, type: ErrorDto })

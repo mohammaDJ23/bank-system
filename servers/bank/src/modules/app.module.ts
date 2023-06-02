@@ -15,9 +15,20 @@ import {
 } from '../controllers';
 import { JwtStrategy, CustomNamingStrategy } from '../strategies';
 import { BillService, UserService, RabbitmqService } from 'src/services';
+import { CacheModule } from '@nestjs/cache-manager';
+import { redisStore } from 'cache-manager-redis-yet';
 
 @Module({
   imports: [
+    CacheModule.registerAsync({
+      useFactory: async () => ({
+        isGlobal: true,
+        store: await redisStore({ ttl: +process.env.REDIS_TTL }),
+        host: process.env.REDIS_HOST,
+        port: process.env.REDIS_PORT,
+        ttl: +process.env.REDIS_TTL,
+      }),
+    }),
     ScheduleModule.forRoot(),
     ClientsModule.register([]),
     TypeOrmModule.forRootAsync({

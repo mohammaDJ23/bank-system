@@ -31,6 +31,17 @@
         </v-btn>
         <v-btn
           color="primary"
+          class="text-capitalize"
+          variant="outlined"
+          size="small"
+          type="button"
+          @click="loginWithGoogle"
+          :disabled="isFormProcessing"
+        >
+          Login with google
+        </v-btn>
+        <v-btn
+          color="primary"
           variant="outlined"
           size="small"
           class="text-capitalize"
@@ -50,7 +61,7 @@ import { reactive, onMounted, ref } from 'vue';
 import Card from './Card.vue';
 import { LocalStorage, Login, pathes } from '../lib';
 import { useFocus, useRequest, useRedirect } from '../hooks';
-import { LoginApi } from '../apis';
+import { LoginApi, LoginWithGoogleApi } from '../apis';
 import { decodeToken } from 'react-jwt';
 import { isUserAuthenticated } from '../lib';
 
@@ -60,7 +71,8 @@ const valid = reactive(true);
 const { isApiProcessing, request } = useRequest();
 const { redirect } = useRedirect();
 const { focus } = useFocus();
-const isFormProcessing = isApiProcessing(LoginApi);
+const isLoginApiProcessing = isApiProcessing(LoginApi);
+const isFormProcessing = isLoginApiProcessing;
 const isUserLoggedIn = isUserAuthenticated();
 
 onMounted(() => {
@@ -87,5 +99,10 @@ async function validate(event) {
       redirect(pathes.dashboard);
     });
   }
+}
+
+function loginWithGoogle() {
+  const loginWithGoogleApi = new LoginWithGoogleApi();
+  window.open(process.env.AUTH_SERVICE + loginWithGoogleApi.api.url, '_self');
 }
 </script>

@@ -19,6 +19,7 @@ import { ClientProxy, RmqContext, RpcException } from '@nestjs/microservices';
 import { RabbitMqServices, UserRoles, UpdatedUserPartialObj } from '../types';
 import { RabbitmqService } from './rabbitmq.service';
 import { UserListFiltersDto } from 'src/dtos/userListFilters.dto';
+import { DeletedUserListFiltersDto } from 'src/dtos/deletedUserListFilters.dto';
 
 @Injectable()
 export class UserService {
@@ -260,5 +261,48 @@ export class UserService {
         ORDER BY lastWeek.date ASC;
       `,
     );
+  }
+
+  findAllDeleted(
+    page: number,
+    take: number,
+    filters: DeletedUserListFiltersDto,
+  ): Promise<[User[], number]> {
+    return this.userRepository
+      .createQueryBuilder('user')
+      .take(take)
+      .skip((page - 1) * take)
+      .withDeleted()
+      .orderBy('user.deletedAt', 'DESC')
+      .where('user.deletedAt IS NOT NULL')
+      .andWhere(
+        new Brackets((query) =>
+          query
+            .where('to_tsvector(user.firstName) @@ plainto_tsquery(:q)')
+            .orWhere('to_tsvector(user.lastName) @@ plainto_tsquery(:q)')
+            .orWhere('to_tsvector(user.phone) @@ plainto_tsquery(:q)')
+            .orWhere("user.firstName ILIKE '%' || :q || '%'")
+            .orWhere("user.lastName ILIKE '%' || :q || '%'")
+            .orWhere("user.phone ILIKE '%' || :q || '%'"),
+        ),
+      )
+      .andWhere('user.role = ANY(:roles)')
+      .andWhere(
+        'CASE WHEN (:fromDate)::BIGINT > 0 THEN COALESCE(EXTRACT(EPOCH FROM date(user.createdAt)) * 1000, 0)::BIGINT >= (:fromDate)::BIGINT ELSE TRUE END',
+      )
+      .andWhere(
+        'CASE WHEN (:toDate)::BIGINT > 0 THEN COALESCE(EXTRACT(EPOCH FROM date(user.createdAt)) * 1000, 0)::BIGINT <= (:toDate)::BIGINT ELSE TRUE END',
+      )
+      .andWhere(
+        'CASE WHEN (:deletedDate)::BIGINT > 0 THEN COALESCE(EXTRACT(EPOCH FROM date(user.deletedAt)) * 1000, 0)::BIGINT <= (:deletedDate)::BIGINT ELSE TRUE END',
+      )
+      .setParameters({
+        q: filters.q,
+        roles: filters.roles,
+        fromDate: filters.fromDate,
+        toDate: filters.toDate,
+        deletedDate: filters.deletedDate,
+      })
+      .getManyAndCount();
   }
 }
