@@ -38,6 +38,8 @@ export class ResetCacheInterceptor implements NestInterceptor {
 
           let findedCachedKeys: Promise<void>[] = [];
 
+          console.log(cacheKeys);
+
           for (const key of cacheKeys)
             requiredResetCachedKeyLoop: for (const resetCachedKey of requiredResetCachedKey)
               if (key.startsWith(`${userId}.${resetCachedKey}`)) {
@@ -46,6 +48,7 @@ export class ResetCacheInterceptor implements NestInterceptor {
               }
 
           await Promise.all(findedCachedKeys);
+          console.log(await this.cacheService.store.keys());
           findedCachedKeys = [];
         }
 

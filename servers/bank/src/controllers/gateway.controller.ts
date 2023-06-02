@@ -23,7 +23,7 @@ import {
   ApiParam,
   ApiQuery,
 } from '@nestjs/swagger';
-import { CurrentUser, Roles, SameUser } from 'src/decorators';
+import { CacheKey, CurrentUser, Roles, SameUser } from 'src/decorators';
 import {
   BillDto,
   CreateBillDto,
@@ -48,12 +48,13 @@ import {
   SameUserGuard,
 } from 'src/guards';
 import { BillService, UserService } from 'src/services';
-import { UserRoles } from 'src/types';
+import { CacheKeys, UserRoles } from 'src/types';
 import { ParseBillListFiltersPipe } from 'src/pipes';
 import {
   BillListSerializeInterceptor,
   BillObjectSerializeInterceptor,
   BillQuantitiesObjectSerializeInterceptor,
+  CacheInterceptor,
   CreatedBillObjectSerializeInterceptor,
   DeletedBillObjectSerializeInterceptor,
   LastWeekArraySerializeInterceptor,
@@ -121,7 +122,8 @@ export class GatewayController {
 
   @Get('bill/total-amount')
   @HttpCode(HttpStatus.OK)
-  @UseInterceptors(TotalAmountObjectSerializeInterceptor)
+  @CacheKey(CacheKeys.TOTAL_AMOUNT)
+  @UseInterceptors(CacheInterceptor, TotalAmountObjectSerializeInterceptor)
   @ApiBearerAuth()
   @ApiResponse({ status: HttpStatus.OK, type: TotalAmountDto })
   @ApiResponse({ status: HttpStatus.UNAUTHORIZED, type: ErrorDto })
@@ -132,9 +134,10 @@ export class GatewayController {
 
   @Get('bill/quantities')
   @Roles(UserRoles.OWNER, UserRoles.ADMIN)
+  @CacheKey(CacheKeys.QUANTITIES)
   @UseGuards(RolesGuard)
   @HttpCode(HttpStatus.OK)
-  @UseInterceptors(BillQuantitiesObjectSerializeInterceptor)
+  @UseInterceptors(CacheInterceptor, BillQuantitiesObjectSerializeInterceptor)
   @ApiBearerAuth()
   @ApiResponse({ status: HttpStatus.OK, type: BillQuantitiesDto })
   @ApiResponse({ status: HttpStatus.UNAUTHORIZED, type: ErrorDto })
@@ -187,8 +190,9 @@ export class GatewayController {
   }
 
   @Get('bill/all')
+  @CacheKey(CacheKeys.BILLS)
   @HttpCode(HttpStatus.OK)
-  @UseInterceptors(BillListSerializeInterceptor)
+  @UseInterceptors(CacheInterceptor, BillListSerializeInterceptor)
   @ApiQuery({ name: 'page', type: 'number' })
   @ApiQuery({ name: 'take', type: 'number' })
   @ApiQuery({ name: 'filters', type: BillListFiltersDto })
@@ -206,8 +210,9 @@ export class GatewayController {
   }
 
   @Get('bill/:id')
+  @CacheKey(CacheKeys.BILL)
   @HttpCode(HttpStatus.OK)
-  @UseInterceptors(BillObjectSerializeInterceptor)
+  @UseInterceptors(CacheInterceptor, BillObjectSerializeInterceptor)
   @ApiParam({ name: 'id', type: 'string' })
   @ApiBearerAuth()
   @ApiResponse({ status: HttpStatus.OK, type: BillDto })
@@ -219,10 +224,11 @@ export class GatewayController {
   }
 
   @Get('user/:id')
+  @CacheKey(CacheKeys.USER)
   @HttpCode(HttpStatus.OK)
   @SameUser(UserRoles.USER)
   @UseGuards(SameUserGuard)
-  @UseInterceptors(UserWithBillInfoObjectSerializeInterceptor)
+  @UseInterceptors(CacheInterceptor, UserWithBillInfoObjectSerializeInterceptor)
   @ApiParam({ name: 'id', type: 'number' })
   @ApiBearerAuth()
   @ApiResponse({ status: HttpStatus.OK, type: UserWithBillInfoDto })
