@@ -34,7 +34,7 @@ export class CacheInterceptor implements NestInterceptor {
       const currentUser = getCurrentUser(context);
 
       const originalUrl = request.originalUrl;
-      const userId = currentUser.id;
+      const userId = currentUser.userServiceId;
 
       const cacheKey = `${userId}.${requiredCacheKey}@${originalUrl}`;
       const cachedData = await this.cacheService.get<ListDto>(cacheKey);

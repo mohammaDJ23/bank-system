@@ -23,7 +23,13 @@ import {
   ApiParam,
   ApiQuery,
 } from '@nestjs/swagger';
-import { CacheKey, CurrentUser, Roles, SameUser } from 'src/decorators';
+import {
+  CacheKey,
+  CurrentUser,
+  ResetCachedKeys,
+  Roles,
+  SameUser,
+} from 'src/decorators';
 import {
   BillDto,
   CreateBillDto,
@@ -58,6 +64,7 @@ import {
   CreatedBillObjectSerializeInterceptor,
   DeletedBillObjectSerializeInterceptor,
   LastWeekArraySerializeInterceptor,
+  ResetCacheInterceptor,
   TotalAmountObjectSerializeInterceptor,
   TotalAmountWithoutDatesObjectSerializeInterceptor,
   UpdatedBillObjectSerializeInterceptor,
@@ -74,8 +81,14 @@ export class GatewayController {
   ) {}
 
   @Post('bill/create')
+  @ResetCachedKeys(
+    CacheKeys.USER,
+    CacheKeys.BILLS,
+    CacheKeys.QUANTITIES,
+    CacheKeys.TOTAL_AMOUNT,
+  )
   @HttpCode(HttpStatus.CREATED)
-  @UseInterceptors(CreatedBillObjectSerializeInterceptor)
+  @UseInterceptors(ResetCacheInterceptor, CreatedBillObjectSerializeInterceptor)
   @ApiBody({ type: CreateBillDto })
   @ApiBearerAuth()
   @ApiResponse({ status: HttpStatus.CREATED, type: CreatedBillDto })
@@ -89,8 +102,14 @@ export class GatewayController {
   }
 
   @Put('bill/update')
+  @ResetCachedKeys(
+    CacheKeys.USER,
+    CacheKeys.BILLS,
+    CacheKeys.QUANTITIES,
+    CacheKeys.TOTAL_AMOUNT,
+  )
   @HttpCode(HttpStatus.OK)
-  @UseInterceptors(UpdatedBillObjectSerializeInterceptor)
+  @UseInterceptors(ResetCacheInterceptor, UpdatedBillObjectSerializeInterceptor)
   @ApiBody({ type: UpdateBillDto })
   @ApiBearerAuth()
   @ApiResponse({ status: HttpStatus.OK, type: UpdatedBillDto })
@@ -105,6 +124,12 @@ export class GatewayController {
   }
 
   @Delete('bill/delete')
+  @ResetCachedKeys(
+    CacheKeys.USER,
+    CacheKeys.BILLS,
+    CacheKeys.QUANTITIES,
+    CacheKeys.TOTAL_AMOUNT,
+  )
   @HttpCode(HttpStatus.OK)
   @UseInterceptors(DeletedBillObjectSerializeInterceptor)
   @ApiQuery({ name: 'id', type: 'string' })
