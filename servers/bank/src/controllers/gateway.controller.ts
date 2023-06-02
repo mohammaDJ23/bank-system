@@ -23,7 +23,7 @@ import {
   ApiParam,
   ApiQuery,
 } from '@nestjs/swagger';
-import { CurrentUser, Roles, SameUser } from '../decorators';
+import { CurrentUser, Roles, SameUser } from 'src/decorators';
 import {
   BillDto,
   CreateBillDto,
@@ -39,14 +39,14 @@ import {
   DeletedBillDto,
   BillQuantitiesDto,
   BillListFiltersDto,
-} from '../dtos';
-import { Bill, User } from '../entities';
+} from 'src/dtos';
+import { Bill, User } from 'src/entities';
 import {
   DifferentOwnerGuard,
   JwtGuard,
   RolesGuard,
   SameUserGuard,
-} from '../guards';
+} from 'src/guards';
 import { BillService, UserService } from 'src/services';
 import { UserRoles } from 'src/types';
 import { ParseBillListFiltersPipe } from 'src/pipes';
