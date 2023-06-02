@@ -58,6 +58,7 @@ import {
   UserQuantitiesObjectSerializeInterceptor,
   TokenizeInterceptor,
 } from 'src/interceptors';
+import { DeletedUserListFiltersDto } from 'src/dtos/deletedUserListFilters.dto';
 
 @UseGuards(JwtGuard)
 @Controller('/api/v1/user')
@@ -133,6 +134,7 @@ export class GatewayController {
     CacheKeys.USER,
     CacheKeys.QUANTITIES,
     CacheKeys.DELETED_QUANTITIES,
+    CacheKeys.DELETED_USERS,
   )
   @UseGuards(SameUserGuard, DifferentOwnerGuard)
   @UseInterceptors(ResetCacheInterceptor, UserObjectSerializeInterceptor)
@@ -165,6 +167,28 @@ export class GatewayController {
     @Query('filters', ParseUserListFiltersPipe) filters: UserListFiltersDto,
   ): Promise<[User[], number]> {
     return this.userService.findAll(page, take, filters);
+  }
+
+  @Get('all/deleted')
+  @HttpCode(HttpStatus.OK)
+  @Roles(UserRoles.OWNER)
+  @CacheKey(CacheKeys.DELETED_USERS)
+  @UseGuards(RolesGuard)
+  @UseInterceptors(CacheInterceptor, UserListSerializeInterceptor)
+  @ApiQuery({ name: 'page', type: 'number' })
+  @ApiQuery({ name: 'take', type: 'number' })
+  @ApiParam({ name: 'filters', type: DeletedUserListFiltersDto })
+  @ApiBearerAuth()
+  @ApiResponse({ status: HttpStatus.OK, type: UserDto, isArray: true })
+  @ApiResponse({ status: HttpStatus.UNAUTHORIZED, type: ErrorDto })
+  @ApiResponse({ status: HttpStatus.INTERNAL_SERVER_ERROR, type: ErrorDto })
+  findAllDeleted(
+    @Query('page', ParseIntPipe) page: number,
+    @Query('take', ParseIntPipe) take: number,
+    @Query('filters', ParseUserListFiltersPipe)
+    filters: DeletedUserListFiltersDto,
+  ): Promise<[User[], number]> {
+    return this.userService.findAllDeleted(page, take, filters);
   }
 
   @Get('quantities')

@@ -65,6 +65,7 @@ export type ListObj = [any[], number];
 export enum CacheKeys {
   USERS = 'USERS',
   USER = 'USER',
+  DELETED_USERS = 'DELETED_USERS',
   QUANTITIES = 'QUANTITIES',
   DELETED_QUANTITIES = 'DELETED_QUANTITIES',
 }
