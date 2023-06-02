@@ -53,3 +53,5 @@ export enum UserRoles {
   ADMIN = 'admin',
   USER = 'user',
 }
+
+export type ListObj = [any[], number];
