@@ -9,7 +9,7 @@ import {
   LastWeekDto,
   PeriodAmountDto,
   TotalAmountDto,
-  TotalAmountWithoutDates,
+  TotalAmountWithoutDatesDto,
   UpdateBillDto,
   CreateBillDto,
   BillQuantitiesDto,
@@ -141,7 +141,7 @@ export class BillService {
   async periodAmount(
     body: PeriodAmountDto,
     user: User,
-  ): Promise<TotalAmountWithoutDates> {
+  ): Promise<TotalAmountWithoutDatesDto> {
     return this.billRepository
       .createQueryBuilder('bill')
       .leftJoinAndSelect('bill.user', 'user')

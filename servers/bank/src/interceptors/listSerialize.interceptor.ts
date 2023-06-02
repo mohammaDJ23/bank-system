@@ -1,6 +1,7 @@
 import { CallHandler, ExecutionContext, NestInterceptor } from '@nestjs/common';
 import { plainToClass } from 'class-transformer';
 import { map, Observable } from 'rxjs';
+import { BillDto } from 'src/dtos';
 import { ClassConstructor, ListObj } from 'src/types';
 
 export class ListSerializeInterceptor implements NestInterceptor {
@@ -23,5 +24,11 @@ export class ListSerializeInterceptor implements NestInterceptor {
     return plainToClass(this.dto, data, {
       excludeExtraneousValues: true,
     });
+  }
+}
+
+export class BillListSerializeInterceptor extends ListSerializeInterceptor {
+  constructor() {
+    super(BillDto);
   }
 }

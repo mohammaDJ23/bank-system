@@ -13,6 +13,7 @@ import {
   Header,
   StreamableFile,
   Query,
+  UseInterceptors,
 } from '@nestjs/common';
 import {
   ApiBody,
@@ -22,23 +23,15 @@ import {
   ApiParam,
   ApiQuery,
 } from '@nestjs/swagger';
-import {
-  CurrentUser,
-  ObjectSerializer,
-  ListSerializer,
-  ArraySerializer,
-  Roles,
-  SameUser,
-} from '../decorators';
+import { CurrentUser, Roles, SameUser } from '../decorators';
 import {
   BillDto,
   CreateBillDto,
   UpdateBillDto,
   TotalAmountDto,
-  TotalAmountWithoutDates,
+  TotalAmountWithoutDatesDto,
   PeriodAmountDto,
   LastWeekDto,
-  ListDto,
   ErrorDto,
   UserWithBillInfoDto,
   CreatedBillDto,
@@ -57,6 +50,18 @@ import {
 import { BillService, UserService } from 'src/services';
 import { UserRoles } from 'src/types';
 import { ParseBillListFiltersPipe } from 'src/pipes';
+import {
+  BillListSerializeInterceptor,
+  BillObjectSerializeInterceptor,
+  BillQuantitiesObjectSerializeInterceptor,
+  CreatedBillObjectSerializeInterceptor,
+  DeletedBillObjectSerializeInterceptor,
+  LastWeekArraySerializeInterceptor,
+  TotalAmountObjectSerializeInterceptor,
+  TotalAmountWithoutDatesObjectSerializeInterceptor,
+  UpdatedBillObjectSerializeInterceptor,
+  UserWithBillInfoObjectSerializeInterceptor,
+} from 'src/interceptors';
 
 @UseGuards(JwtGuard)
 @Controller('/api/v1/bank')
@@ -69,7 +74,7 @@ export class GatewayController {
 
   @Post('bill/create')
   @HttpCode(HttpStatus.CREATED)
-  @ObjectSerializer(CreatedBillDto)
+  @UseInterceptors(CreatedBillObjectSerializeInterceptor)
   @ApiBody({ type: CreateBillDto })
   @ApiBearerAuth()
   @ApiResponse({ status: HttpStatus.CREATED, type: CreatedBillDto })
@@ -84,7 +89,7 @@ export class GatewayController {
 
   @Put('bill/update')
   @HttpCode(HttpStatus.OK)
-  @ObjectSerializer(UpdatedBillDto)
+  @UseInterceptors(UpdatedBillObjectSerializeInterceptor)
   @ApiBody({ type: UpdateBillDto })
   @ApiBearerAuth()
   @ApiResponse({ status: HttpStatus.OK, type: UpdatedBillDto })
@@ -100,7 +105,7 @@ export class GatewayController {
 
   @Delete('bill/delete')
   @HttpCode(HttpStatus.OK)
-  @ObjectSerializer(DeletedBillDto)
+  @UseInterceptors(DeletedBillObjectSerializeInterceptor)
   @ApiQuery({ name: 'id', type: 'string' })
   @ApiBearerAuth()
   @ApiResponse({ status: HttpStatus.OK, type: DeletedBillDto })
@@ -116,7 +121,7 @@ export class GatewayController {
 
   @Get('bill/total-amount')
   @HttpCode(HttpStatus.OK)
-  @ObjectSerializer(TotalAmountDto)
+  @UseInterceptors(TotalAmountObjectSerializeInterceptor)
   @ApiBearerAuth()
   @ApiResponse({ status: HttpStatus.OK, type: TotalAmountDto })
   @ApiResponse({ status: HttpStatus.UNAUTHORIZED, type: ErrorDto })
@@ -129,7 +134,7 @@ export class GatewayController {
   @Roles(UserRoles.OWNER, UserRoles.ADMIN)
   @UseGuards(RolesGuard)
   @HttpCode(HttpStatus.OK)
-  @ObjectSerializer(BillQuantitiesDto)
+  @UseInterceptors(BillQuantitiesObjectSerializeInterceptor)
   @ApiBearerAuth()
   @ApiResponse({ status: HttpStatus.OK, type: BillQuantitiesDto })
   @ApiResponse({ status: HttpStatus.UNAUTHORIZED, type: ErrorDto })
@@ -140,22 +145,22 @@ export class GatewayController {
 
   @Post('bill/period-amount')
   @HttpCode(HttpStatus.OK)
-  @ObjectSerializer(TotalAmountWithoutDates)
+  @UseInterceptors(TotalAmountWithoutDatesObjectSerializeInterceptor)
   @ApiBody({ type: PeriodAmountDto })
   @ApiBearerAuth()
-  @ApiResponse({ status: HttpStatus.OK, type: TotalAmountWithoutDates })
+  @ApiResponse({ status: HttpStatus.OK, type: TotalAmountWithoutDatesDto })
   @ApiResponse({ status: HttpStatus.UNAUTHORIZED, type: ErrorDto })
   @ApiResponse({ status: HttpStatus.INTERNAL_SERVER_ERROR, type: ErrorDto })
   PeriodAmount(
     @Body() body: PeriodAmountDto,
     @CurrentUser() user: User,
-  ): Promise<TotalAmountWithoutDates> {
+  ): Promise<TotalAmountWithoutDatesDto> {
     return this.billService.periodAmount(body, user);
   }
 
   @Get('bill/last-week')
   @HttpCode(HttpStatus.OK)
-  @ArraySerializer(LastWeekDto)
+  @UseInterceptors(LastWeekArraySerializeInterceptor)
   @ApiBearerAuth()
   @ApiResponse({ status: HttpStatus.OK, type: LastWeekDto, isArray: true })
   @ApiResponse({ status: HttpStatus.UNAUTHORIZED, type: ErrorDto })
@@ -183,7 +188,7 @@ export class GatewayController {
 
   @Get('bill/all')
   @HttpCode(HttpStatus.OK)
-  @ListSerializer(BillDto)
+  @UseInterceptors(BillListSerializeInterceptor)
   @ApiQuery({ name: 'page', type: 'number' })
   @ApiQuery({ name: 'take', type: 'number' })
   @ApiQuery({ name: 'filters', type: BillListFiltersDto })
@@ -202,7 +207,7 @@ export class GatewayController {
 
   @Get('bill/:id')
   @HttpCode(HttpStatus.OK)
-  @ObjectSerializer(BillDto)
+  @UseInterceptors(BillObjectSerializeInterceptor)
   @ApiParam({ name: 'id', type: 'string' })
   @ApiBearerAuth()
   @ApiResponse({ status: HttpStatus.OK, type: BillDto })
@@ -217,7 +222,7 @@ export class GatewayController {
   @HttpCode(HttpStatus.OK)
   @SameUser(UserRoles.USER)
   @UseGuards(SameUserGuard)
-  @ObjectSerializer(UserWithBillInfoDto)
+  @UseInterceptors(UserWithBillInfoObjectSerializeInterceptor)
   @ApiParam({ name: 'id', type: 'number' })
   @ApiBearerAuth()
   @ApiResponse({ status: HttpStatus.OK, type: UserWithBillInfoDto })
