@@ -30,7 +30,7 @@ import {
   Roles,
   SameUser,
   CacheKey,
-  ResetCachedKey,
+  ResetCachedKeys,
 } from 'src/decorators';
 import {
   ApiBody,
@@ -68,7 +68,7 @@ export class GatewayController {
   @Post('create')
   @HttpCode(HttpStatus.CREATED)
   @Roles(UserRoles.OWNER)
-  @ResetCachedKey(CacheKeys.USERS, CacheKeys.QUANTITIES)
+  @ResetCachedKeys(CacheKeys.USERS, CacheKeys.QUANTITIES)
   @UseGuards(RolesGuard)
   @UseInterceptors(ResetCacheInterceptor, UserObjectSerializeInterceptor)
   @ApiBody({ type: CreateUserDto })
@@ -88,7 +88,7 @@ export class GatewayController {
   @HttpCode(HttpStatus.OK)
   @Roles(UserRoles.ADMIN, UserRoles.USER)
   @SameUser(UserRoles.ADMIN, UserRoles.USER)
-  @ResetCachedKey(CacheKeys.USERS, CacheKeys.USER)
+  @ResetCachedKeys(CacheKeys.USERS, CacheKeys.USER)
   @UseGuards(RolesGuard, SameUserGuard)
   @UseInterceptors(ResetCacheInterceptor, TokenizeInterceptor)
   @ApiBody({ type: UpdateUserByUserDto })
@@ -108,7 +108,7 @@ export class GatewayController {
   @Put('owner/update')
   @HttpCode(HttpStatus.OK)
   @Roles(UserRoles.OWNER)
-  @ResetCachedKey(CacheKeys.USERS, CacheKeys.USER, CacheKeys.QUANTITIES)
+  @ResetCachedKeys(CacheKeys.USERS, CacheKeys.USER, CacheKeys.QUANTITIES)
   @UseGuards(RolesGuard, DifferentOwnerGuard)
   @UseInterceptors(ResetCacheInterceptor, TokenizeInterceptor)
   @ApiBody({ type: UpdateUserByOwnerDto })
@@ -128,7 +128,7 @@ export class GatewayController {
   @Delete('delete')
   @HttpCode(HttpStatus.OK)
   @SameUser(UserRoles.ADMIN, UserRoles.USER)
-  @ResetCachedKey(
+  @ResetCachedKeys(
     CacheKeys.USERS,
     CacheKeys.USER,
     CacheKeys.QUANTITIES,
