@@ -19,10 +19,10 @@ import { redisStore } from 'cache-manager-redis-yet';
     CacheModule.registerAsync({
       useFactory: async () => ({
         isGlobal: true,
-        store: await redisStore({ ttl: 86400000 }),
+        store: await redisStore({ ttl: +process.env.REDIS_TTL }),
         host: process.env.REDIS_HOST,
         port: process.env.REDIS_PORT,
-        ttl: 86400000,
+        ttl: +process.env.REDIS_TTL,
       }),
     }),
     ClientsModule.register([
