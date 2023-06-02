@@ -128,7 +128,12 @@ export class GatewayController {
   @Delete('delete')
   @HttpCode(HttpStatus.OK)
   @SameUser(UserRoles.ADMIN, UserRoles.USER)
-  @ResetCachedKey(CacheKeys.USERS, CacheKeys.USER, CacheKeys.QUANTITIES)
+  @ResetCachedKey(
+    CacheKeys.USERS,
+    CacheKeys.USER,
+    CacheKeys.QUANTITIES,
+    CacheKeys.DELETED_QUANTITIES,
+  )
   @UseGuards(SameUserGuard, DifferentOwnerGuard)
   @UseInterceptors(ResetCacheInterceptor, UserObjectSerializeInterceptor)
   @ApiQuery({ name: 'id', type: 'number' })
@@ -180,8 +185,9 @@ export class GatewayController {
   @Get('deleted-quantities')
   @Roles(UserRoles.OWNER, UserRoles.ADMIN)
   @UseGuards(RolesGuard)
+  @CacheKey(CacheKeys.DELETED_QUANTITIES)
   @HttpCode(HttpStatus.OK)
-  @UseInterceptors(UserQuantitiesObjectSerializeInterceptor)
+  @UseInterceptors(CacheInterceptor, UserQuantitiesObjectSerializeInterceptor)
   @ApiBearerAuth()
   @ApiResponse({ status: HttpStatus.OK, type: UserQuantitiesDto })
   @ApiResponse({ status: HttpStatus.UNAUTHORIZED, type: ErrorDto })
