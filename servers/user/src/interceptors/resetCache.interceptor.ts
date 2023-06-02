@@ -36,12 +36,17 @@ export class ResetCacheInterceptor implements NestInterceptor {
 
           const cacheKeys = await this.cacheService.store.keys();
 
+          let findedCachedKeys: Promise<void>[] = [];
+
           for (const key of cacheKeys)
             requiredResetCachedKeyLoop: for (const resetCachedKey of requiredResetCachedKey)
               if (key.startsWith(`${userId}.${resetCachedKey}`)) {
-                await this.cacheService.del(key);
+                findedCachedKeys.push(this.cacheService.del(key));
                 break requiredResetCachedKeyLoop;
               }
+
+          await Promise.all(findedCachedKeys);
+          findedCachedKeys = [];
         }
 
         return data;
