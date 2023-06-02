@@ -9,7 +9,7 @@ import {
 import { Reflector } from '@nestjs/core';
 import { Cache } from 'cache-manager';
 import { map } from 'rxjs';
-import { getCurrentUser, getRequest } from 'src/libs';
+import { getCurrentUser } from 'src/libs';
 import { CacheKeys } from 'src/types';
 
 @Injectable()
@@ -25,22 +25,23 @@ export class ResetCacheInterceptor implements NestInterceptor {
   ): Promise<any> {
     return handler.handle().pipe(
       map(async (data: any) => {
-        const requiredResetCachedKey =
-          this.reflector.getAllAndOverride<CacheKeys>('reset-cached-key', [
-            context.getHandler(),
-            context.getClass(),
-          ]);
+        const requiredResetCachedKey = this.reflector.getAllAndOverride<
+          CacheKeys[]
+        >('reset-cached-key', [context.getHandler(), context.getClass()]);
 
-        if (requiredResetCachedKey) {
+        if (requiredResetCachedKey.length) {
           const currentUser = getCurrentUser(context);
 
           const userId = currentUser.id;
 
           const cacheKeys = await this.cacheService.store.keys();
-          const targetKey = `${userId}.${requiredResetCachedKey}`;
 
           for (const key of cacheKeys)
-            if (key.startsWith(targetKey)) await this.cacheService.del(key);
+            requiredResetCachedKeyLoop: for (const resetCachedKey of requiredResetCachedKey)
+              if (key.startsWith(`${userId}.${resetCachedKey}`)) {
+                await this.cacheService.del(key);
+                break requiredResetCachedKeyLoop;
+              }
         }
 
         return data;
