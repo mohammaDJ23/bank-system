@@ -41,7 +41,11 @@ export class ResetCacheMicroserviceInterceptor implements NestInterceptor {
 
           for (const key of cacheKeys)
             requiredResetCachedKeyLoop: for (const resetCachedKey of requiredResetCachedKey)
-              if (key.startsWith(`${userId}.${resetCachedKey}`)) {
+              if (
+                key.startsWith(
+                  `${userId}.${resetCachedKey}.${process.env.PORT}`,
+                )
+              ) {
                 findedCachedKeys.push(this.cacheService.del(key));
                 break requiredResetCachedKeyLoop;
               }
