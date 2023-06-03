@@ -1,10 +1,10 @@
 import { FC, useCallback, useEffect } from 'react';
 import { List as MuiList, Box, TextField, Button, Autocomplete } from '@mui/material';
 import { UserObj, UserListFilters, isoDate, getTime, UserRoles, UserList } from '../../lib';
-import Pagination from '../Pagination';
+import Pagination from '../shared/Pagination';
 import { useForm, usePaginationList, useRequest } from '../../hooks';
 import { UsersApi, UsersApiConstructorType } from '../../apis';
-import Filter from '../Filter';
+import Filter from '../shared/Filter';
 import EmptyList from './EmptyList';
 import { ModalNames } from '../../store';
 import UserSkeleton from '../shared/UserSkeleton';

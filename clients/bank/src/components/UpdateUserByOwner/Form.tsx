@@ -1,6 +1,6 @@
 import { FC, useCallback } from 'react';
 import { AccessTokenObj, getDynamicPath, getUserRoles, Pathes, reInitializeToken, UpdateUserByOwner } from '../../lib';
-import Modal from '../Modal';
+import Modal from '../shared/Modal';
 import { ModalNames } from '../../store';
 import { useAction, useAuth, useForm, useRequest } from '../../hooks';
 import { Box, TextField, Button, Select, FormControl, MenuItem, InputLabel, FormHelperText } from '@mui/material';

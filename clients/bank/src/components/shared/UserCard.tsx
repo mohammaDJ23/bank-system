@@ -4,8 +4,8 @@ import { FC, PropsWithChildren } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth, usePaginationList } from '../../hooks';
 import { getDynamicPath, getUserRoleColor, Pathes, UserObj } from '../../lib';
-import Card from '../Card';
-import CountBadge from '../CountBadge';
+import Card from './Card';
+import CountBadge from './CountBadge';
 
 interface UserCardImportion extends PropsWithChildren {
   user: UserObj;

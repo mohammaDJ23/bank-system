@@ -1,7 +1,7 @@
 import { getDynamicPath, getTime, isoDate, Pathes, UpdateBill } from '../../lib';
 import { FC, useCallback } from 'react';
 import { Box, TextField, Button } from '@mui/material';
-import Modal from '../Modal';
+import Modal from '../shared/Modal';
 import { useAction, useForm, useRequest } from '../../hooks';
 import { ModalNames } from '../../store';
 import { UpdateBillApi } from '../../apis';

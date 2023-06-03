@@ -6,13 +6,13 @@ import { ModalNames } from '../../store';
 import { useAction, useSelector } from '../../hooks';
 
 interface FiltersWrapperAttr {
-  isActive: boolean;
+  isactive: 'true' | 'false';
 }
 
-const FiltersWrapper = styled(Box)<FiltersWrapperAttr>(({ theme, isActive }) => ({
+const FiltersWrapper = styled(Box)<FiltersWrapperAttr>(({ theme, isactive }) => ({
   position: 'fixed',
   bottom: '20px',
-  right: isActive ? '20px' : '-500px',
+  right: isactive === 'true' ? '20px' : '-500px',
   zIndex: '2',
   transition: 'bottom 0.3s, right 0.3s',
   width: 'calc(100% - 40px)',
@@ -78,7 +78,7 @@ const Filter: FC<FilterImporation> = ({ children, name }) => {
   }, []);
 
   return (
-    <FiltersWrapper isActive={isFilterOpened}>
+    <FiltersWrapper isactive={isFilterOpened ? 'true' : 'false'}>
       <FiltersContent>
         <Box display="flex" alignItems="center" justifyContent="end" onClick={() => hideModal(name)}>
           <Close />

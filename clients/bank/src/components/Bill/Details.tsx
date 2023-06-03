@@ -1,7 +1,7 @@
 import { Box, Typography, Menu, MenuItem, IconButton, Button } from '@mui/material';
 import { MoreVert } from '@mui/icons-material';
 import moment from 'moment';
-import Modal from '../Modal';
+import Modal from '../shared/Modal';
 import { useNavigate } from 'react-router-dom';
 import { FC, useCallback, useState } from 'react';
 import { useAction, useRequest, useSelector } from '../../hooks';

@@ -27,7 +27,7 @@ import {
   UserQuantities,
 } from '../../store';
 import Skeleton from '../shared/Skeleton';
-import Card from '../Card';
+import Card from '../shared/Card';
 import {
   Chart,
   ArgumentAxis,
