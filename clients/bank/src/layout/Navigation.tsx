@@ -15,7 +15,7 @@ import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import SupervisorAccountIcon from '@mui/icons-material/SupervisorAccount';
 import GroupRemoveIcon from '@mui/icons-material/GroupRemove';
-import GroupAddIcon from '@mui/icons-material/GroupAdd';
+import PersonAddAlt1Icon from '@mui/icons-material/PersonAddAlt1';
 import AddCardIcon from '@mui/icons-material/AddCard';
 import CreditCardIcon from '@mui/icons-material/CreditCard';
 import CloseIcon from '@mui/icons-material/Close';
@@ -136,7 +136,7 @@ const Navigation: FC<NavigationImportation> = ({ children, menuOptions, title })
       },
       {
         title: 'Create user',
-        icon: <GroupAddIcon />,
+        icon: <PersonAddAlt1Icon />,
         path: Pathes.CREATE_USER,
         redirectPath: Pathes.CREATE_USER,
         roles: [UserRoles.OWNER],
