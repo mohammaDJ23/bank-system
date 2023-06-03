@@ -14,6 +14,7 @@ import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import SupervisorAccountIcon from '@mui/icons-material/SupervisorAccount';
+import GroupRemoveIcon from '@mui/icons-material/GroupRemove';
 import GroupAddIcon from '@mui/icons-material/GroupAdd';
 import AddCardIcon from '@mui/icons-material/AddCard';
 import CreditCardIcon from '@mui/icons-material/CreditCard';
@@ -152,6 +153,13 @@ const Navigation: FC<NavigationImportation> = ({ children, menuOptions, title })
         path: Pathes.USERS,
         redirectPath: Pathes.USERS,
         roles: [UserRoles.OWNER, UserRoles.ADMIN],
+      },
+      {
+        title: 'Deleted users',
+        icon: <GroupRemoveIcon />,
+        path: Pathes.DELETED_USERS,
+        redirectPath: Pathes.DELETED_USERS,
+        roles: [UserRoles.OWNER],
       },
       {
         title: 'Bills',

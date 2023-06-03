@@ -144,8 +144,11 @@ export class GatewayController {
   @ApiResponse({ status: HttpStatus.UNAUTHORIZED, type: ErrorDto })
   @ApiResponse({ status: HttpStatus.NOT_FOUND, type: ErrorDto })
   @ApiResponse({ status: HttpStatus.INTERNAL_SERVER_ERROR, type: ErrorDto })
-  delete(@Query('id', ParseIntPipe) id: number): Promise<User> {
-    return this.userService.delete(id);
+  delete(
+    @Query('id', ParseIntPipe) id: number,
+    @CurrentUser() user: User,
+  ): Promise<User> {
+    return this.userService.delete(id, user);
   }
 
   @Get('all')

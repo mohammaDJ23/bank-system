@@ -9,9 +9,8 @@ import {
 import { Reflector } from '@nestjs/core';
 import { Cache } from 'cache-manager';
 import { map } from 'rxjs';
-import { UserDto } from 'src/dtos';
 import { getRequest } from 'src/libs';
-import { CacheKeys } from 'src/types';
+import { CacheKeys, DeletedUserObj, UpdatedUserObj } from 'src/types';
 
 @Injectable()
 export class ResetCacheMicroserviceInterceptor implements NestInterceptor {
@@ -31,9 +30,9 @@ export class ResetCacheMicroserviceInterceptor implements NestInterceptor {
         >('reset-cached-keys', [context.getHandler(), context.getClass()]);
 
         if (requiredResetCachedKey.length) {
-          const user = getRequest<UserDto>(context);
+          const payload = getRequest<UpdatedUserObj | DeletedUserObj>(context);
 
-          const userId = user.id;
+          const userId = payload.currentUser.id;
 
           const cacheKeys = await this.cacheService.store.keys();
 
