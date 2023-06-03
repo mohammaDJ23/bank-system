@@ -1,5 +1,5 @@
 import { Box } from '@mui/material';
-import CustomSkeleton from '../Skeleton';
+import CustomSkeleton from '../shared/Skeleton';
 import { FC } from 'react';
 
 const Skeleton: FC = () => {

@@ -6,9 +6,9 @@ import { useForm, usePaginationList, useRequest } from '../../hooks';
 import { DeletedUsersApi, DeletedUsersApiConstructorType, UsersApiConstructorType } from '../../apis';
 import Filter from '../Filter';
 import EmptyList from './EmptyList';
-import Skeleton from './Skeleton';
 import { ModalNames } from '../../store';
 import UserCard from '../shared/UserCard';
+import UserSkeleton from '../shared/UserSkeleton';
 
 const List: FC = () => {
   const { request, isInitialApiProcessing, isApiProcessing } = useRequest();
@@ -62,7 +62,7 @@ const List: FC = () => {
   return (
     <>
       {isInitialDeletedUsersApiProcessing || isDeletedUsersApiProcessing ? (
-        <Skeleton take={userListInfo.take} />
+        <UserSkeleton take={userListInfo.take} />
       ) : deletedUserListInstance.isListEmpty() ? (
         <EmptyList />
       ) : (

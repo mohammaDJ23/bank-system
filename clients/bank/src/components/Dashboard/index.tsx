@@ -26,7 +26,7 @@ import {
   TotalAmount,
   UserQuantities,
 } from '../../store';
-import Skeleton from '../Skeleton';
+import Skeleton from '../shared/Skeleton';
 import Card from '../Card';
 import {
   Chart,

@@ -1,6 +1,6 @@
 import { Box, List, ListItem } from '@mui/material';
 import { FC } from 'react';
-import CustomSkeleton from '../Skeleton';
+import CustomSkeleton from '../shared/Skeleton';
 
 interface SkeletonImportation {
   take: number;
