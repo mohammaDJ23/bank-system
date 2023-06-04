@@ -13,7 +13,7 @@ import { getCurrentUser } from 'src/libs';
 import { CacheKeys } from 'src/types';
 
 @Injectable()
-export class ResetCacheInterceptor implements NestInterceptor {
+export class ResetUniqueCacheInterceptor implements NestInterceptor {
   constructor(
     private readonly reflector: Reflector,
     @Inject(CACHE_MANAGER) private readonly cacheService: Cache,
@@ -25,32 +25,31 @@ export class ResetCacheInterceptor implements NestInterceptor {
   ): Promise<any> {
     return handler.handle().pipe(
       map(async (data: any) => {
-        const requiredResetCachedKey = this.reflector.getAllAndOverride<
+        const requiredResetUniqueCachedKeys = this.reflector.getAllAndOverride<
           CacheKeys[] | undefined
-        >('reset-cached-key', [context.getHandler(), context.getClass()]);
+        >('unique-reset-cached-keys', [
+          context.getHandler(),
+          context.getClass(),
+        ]);
 
-        if (requiredResetCachedKey) {
+        if (requiredResetUniqueCachedKeys) {
           const currentUser = getCurrentUser(context);
-
           const userId = currentUser.id;
 
           const cacheKeys = await this.cacheService.store.keys();
-
-          let findedCachedKeys: Promise<void>[] = [];
-
+          let cachedKeys: Promise<void>[] = [];
           for (const key of cacheKeys)
-            requiredResetCachedKeyLoop: for (const resetCachedKey of requiredResetCachedKey)
+            requiredResetUniqueCachedKeysLoop: for (const resetUniqueCachedKey of requiredResetUniqueCachedKeys)
               if (
                 key.startsWith(
-                  `${userId}.${resetCachedKey}.${process.env.PORT}`,
+                  `${userId}.${resetUniqueCachedKey}.${process.env.PORT}`,
                 )
               ) {
-                findedCachedKeys.push(this.cacheService.del(key));
-                break requiredResetCachedKeyLoop;
+                cachedKeys.push(this.cacheService.del(key));
+                break requiredResetUniqueCachedKeysLoop;
               }
-
-          await Promise.all(findedCachedKeys);
-          findedCachedKeys = [];
+          if (cachedKeys.length) await Promise.all(cachedKeys);
+          cachedKeys = [];
         }
 
         return data;

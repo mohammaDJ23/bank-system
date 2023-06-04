@@ -10,11 +10,11 @@ import { Reflector } from '@nestjs/core';
 import { Cache } from 'cache-manager';
 import { map, of } from 'rxjs';
 import { ListDto } from 'src/dtos';
-import { getCurrentUser, getRequest } from 'src/libs';
-import { CacheKeys, ListObj } from 'src/types';
+import { getRequest } from 'src/libs';
+import { CacheKeys } from 'src/types';
 
 @Injectable()
-export class CacheInterceptor implements NestInterceptor {
+export class GlobalCacheInterceptor implements NestInterceptor {
   constructor(
     private readonly reflector: Reflector,
     @Inject(CACHE_MANAGER) private readonly cacheService: Cache,
@@ -24,26 +24,22 @@ export class CacheInterceptor implements NestInterceptor {
     context: ExecutionContext,
     handler: CallHandler,
   ): Promise<any> {
-    const requiredCacheKey = this.reflector.getAllAndOverride<CacheKeys[]>(
-      'cache-key',
-      [context.getHandler(), context.getClass()],
-    );
+    const requiredGlobalCacheKey = this.reflector.getAllAndOverride<
+      CacheKeys | undefined
+    >('global-cache-key', [context.getHandler(), context.getClass()]);
 
-    if (requiredCacheKey) {
+    if (requiredGlobalCacheKey) {
       const request = getRequest(context);
-      const currentUser = getCurrentUser(context);
-
       const originalUrl = request.originalUrl;
-      const userId = currentUser.id;
 
-      const cacheKey = `${userId}.${requiredCacheKey}.${process.env.PORT}@${originalUrl}`;
+      const cacheKey = `${requiredGlobalCacheKey}.${process.env.PORT}@${originalUrl}`;
       const cachedData = await this.cacheService.get<ListDto>(cacheKey);
 
       if (cachedData) {
         return of(cachedData);
       } else {
         return handler.handle().pipe(
-          map(async (data: ListObj) => {
+          map(async (data: any) => {
             await this.cacheService.set(cacheKey, data);
             return data;
           }),
