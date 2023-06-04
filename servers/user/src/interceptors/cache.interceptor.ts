@@ -24,7 +24,7 @@ export class CacheInterceptor implements NestInterceptor {
     context: ExecutionContext,
     handler: CallHandler,
   ): Promise<any> {
-    const requiredCacheKey = this.reflector.getAllAndOverride<CacheKeys>(
+    const requiredCacheKey = this.reflector.getAllAndOverride<CacheKeys[]>(
       'cache-key',
       [context.getHandler(), context.getClass()],
     );

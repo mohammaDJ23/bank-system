@@ -26,10 +26,10 @@ export class ResetCacheInterceptor implements NestInterceptor {
     return handler.handle().pipe(
       map(async (data: any) => {
         const requiredResetCachedKey = this.reflector.getAllAndOverride<
-          CacheKeys[]
+          CacheKeys[] | undefined
         >('reset-cached-key', [context.getHandler(), context.getClass()]);
 
-        if (requiredResetCachedKey.length) {
+        if (requiredResetCachedKey) {
           const currentUser = getCurrentUser(context);
 
           const userId = currentUser.id;
