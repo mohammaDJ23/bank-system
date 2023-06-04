@@ -14,7 +14,7 @@ import { getRequest } from 'src/libs';
 import { CacheKeys } from 'src/types';
 
 @Injectable()
-export class GlobalCacheInterceptor implements NestInterceptor {
+export class CacheInterceptor implements NestInterceptor {
   constructor(
     private readonly reflector: Reflector,
     @Inject(CACHE_MANAGER) private readonly cacheService: Cache,
@@ -24,15 +24,15 @@ export class GlobalCacheInterceptor implements NestInterceptor {
     context: ExecutionContext,
     handler: CallHandler,
   ): Promise<any> {
-    const requiredGlobalCacheKey = this.reflector.getAllAndOverride<
+    const requiredCacheKey = this.reflector.getAllAndOverride<
       CacheKeys | undefined
-    >('global-cache-key', [context.getHandler(), context.getClass()]);
+    >('cache-key', [context.getHandler(), context.getClass()]);
 
-    if (requiredGlobalCacheKey) {
+    if (requiredCacheKey) {
       const request = getRequest(context);
       const originalUrl = request.originalUrl;
 
-      const cacheKey = `${requiredGlobalCacheKey}.${process.env.PORT}@${originalUrl}`;
+      const cacheKey = `${requiredCacheKey}.${process.env.PORT}@${originalUrl}`;
       const cachedData = await this.cacheService.get<ListDto>(cacheKey);
 
       if (cachedData) {
