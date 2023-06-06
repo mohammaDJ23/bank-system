@@ -89,7 +89,7 @@ export class GatewayController {
   @HttpCode(HttpStatus.OK)
   @Roles(UserRoles.ADMIN, UserRoles.USER)
   @SameUser(UserRoles.ADMIN, UserRoles.USER)
-  @ResetCachedKeys(CacheKeys.USERS, CacheKeys.QUANTITIES, CacheKeys.USER)
+  @ResetCachedKeys(CacheKeys.USERS, CacheKeys.USER)
   @UseGuards(RolesGuard, SameUserGuard)
   @UseInterceptors(ResetCacheInterceptor, TokenizeInterceptor)
   @ApiBody({ type: UpdateUserByUserDto })

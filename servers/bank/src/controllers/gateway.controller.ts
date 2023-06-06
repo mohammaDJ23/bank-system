@@ -110,7 +110,7 @@ export class GatewayController {
     CacheKeys.BILL,
     CacheKeys.USER,
   )
-  @UseInterceptors(UpdatedBillObjectSerializeInterceptor)
+  @UseInterceptors(ResetCacheInterceptor, UpdatedBillObjectSerializeInterceptor)
   @ApiBody({ type: UpdateBillDto })
   @ApiBearerAuth()
   @ApiResponse({ status: HttpStatus.OK, type: UpdatedBillDto })
@@ -133,7 +133,7 @@ export class GatewayController {
     CacheKeys.BILL,
     CacheKeys.USER,
   )
-  @UseInterceptors(DeletedBillObjectSerializeInterceptor)
+  @UseInterceptors(ResetCacheInterceptor, DeletedBillObjectSerializeInterceptor)
   @ApiQuery({ name: 'id', type: 'string' })
   @ApiBearerAuth()
   @ApiResponse({ status: HttpStatus.OK, type: DeletedBillDto })
