@@ -26,7 +26,7 @@ const UserCard: FC<UserCardImportion> = ({ user, index, listInfo }) => {
         my: '20px',
         position: 'relative',
         overflow: 'visible',
-        backgroundColor: isUserExist && user.id === userInfo.id && listInfo.list.length >= 2 ? '#F8F8F8' : '',
+        backgroundColor: isUserExist && user.id === userInfo.id && listInfo.total >= 2 ? '#F8F8F8' : '',
       }}
       onClick={() => navigate(getDynamicPath(Pathes.USER, { id: user.id.toString() }))}
     >
