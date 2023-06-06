@@ -24,8 +24,15 @@ import {
   LastWeekDto,
   AccessTokenDto,
   UserListFiltersDto,
+  DeletedUserListFiltersDto,
 } from 'src/dtos';
-import { CurrentUser, Roles, SameUser } from 'src/decorators';
+import {
+  CacheKey,
+  CurrentUser,
+  ResetCachedKeys,
+  Roles,
+  SameUser,
+} from 'src/decorators';
 import {
   ApiBody,
   ApiResponse,
@@ -41,7 +48,7 @@ import {
   SameUserGuard,
 } from 'src/guards';
 import { User } from 'src/entities';
-import { UserRoles } from 'src/types';
+import { CacheKeys, UserRoles } from 'src/types';
 import { ParseUserListFiltersPipe } from 'src/pipes';
 import {
   LastWeekArraySerializeInterceptor,
@@ -49,8 +56,9 @@ import {
   UserObjectSerializeInterceptor,
   UserQuantitiesObjectSerializeInterceptor,
   TokenizeInterceptor,
+  CacheInterceptor,
+  ResetCacheInterceptor,
 } from 'src/interceptors';
-import { DeletedUserListFiltersDto } from 'src/dtos/deletedUserListFilters.dto';
 
 @UseGuards(JwtGuard)
 @Controller('/api/v1/user')
@@ -61,8 +69,9 @@ export class GatewayController {
   @Post('create')
   @HttpCode(HttpStatus.CREATED)
   @Roles(UserRoles.OWNER)
+  @ResetCachedKeys(CacheKeys.USERS, CacheKeys.QUANTITIES)
   @UseGuards(RolesGuard)
-  @UseInterceptors(UserObjectSerializeInterceptor)
+  @UseInterceptors(ResetCacheInterceptor, UserObjectSerializeInterceptor)
   @ApiBody({ type: CreateUserDto })
   @ApiBearerAuth()
   @ApiResponse({ status: HttpStatus.CREATED, type: UserDto })
@@ -80,8 +89,9 @@ export class GatewayController {
   @HttpCode(HttpStatus.OK)
   @Roles(UserRoles.ADMIN, UserRoles.USER)
   @SameUser(UserRoles.ADMIN, UserRoles.USER)
+  @ResetCachedKeys(CacheKeys.USERS, CacheKeys.QUANTITIES, CacheKeys.USER)
   @UseGuards(RolesGuard, SameUserGuard)
-  @UseInterceptors(TokenizeInterceptor)
+  @UseInterceptors(ResetCacheInterceptor, TokenizeInterceptor)
   @ApiBody({ type: UpdateUserByUserDto })
   @ApiBearerAuth()
   @ApiResponse({ status: HttpStatus.OK, type: AccessTokenDto })
@@ -99,8 +109,9 @@ export class GatewayController {
   @Put('owner/update')
   @HttpCode(HttpStatus.OK)
   @Roles(UserRoles.OWNER)
+  @ResetCachedKeys(CacheKeys.USERS, CacheKeys.QUANTITIES, CacheKeys.USER)
   @UseGuards(RolesGuard, DifferentOwnerGuard)
-  @UseInterceptors(TokenizeInterceptor)
+  @UseInterceptors(ResetCacheInterceptor, TokenizeInterceptor)
   @ApiBody({ type: UpdateUserByOwnerDto })
   @ApiBearerAuth()
   @ApiResponse({ status: HttpStatus.OK, type: AccessTokenDto })
@@ -118,8 +129,15 @@ export class GatewayController {
   @Delete('delete')
   @HttpCode(HttpStatus.OK)
   @SameUser(UserRoles.ADMIN, UserRoles.USER)
+  @ResetCachedKeys(
+    CacheKeys.USERS,
+    CacheKeys.DELETED_USERS,
+    CacheKeys.QUANTITIES,
+    CacheKeys.DELETED_QUANTITIES,
+    CacheKeys.USER,
+  )
   @UseGuards(SameUserGuard, DifferentOwnerGuard)
-  @UseInterceptors(UserObjectSerializeInterceptor)
+  @UseInterceptors(ResetCacheInterceptor, UserObjectSerializeInterceptor)
   @ApiQuery({ name: 'id', type: 'number' })
   @ApiBearerAuth()
   @ApiResponse({ status: HttpStatus.OK, type: UserDto })
@@ -136,8 +154,9 @@ export class GatewayController {
   @Get('all')
   @HttpCode(HttpStatus.OK)
   @Roles(UserRoles.OWNER, UserRoles.ADMIN)
+  @CacheKey(CacheKeys.USERS)
   @UseGuards(RolesGuard)
-  @UseInterceptors(UserListSerializeInterceptor)
+  @UseInterceptors(CacheInterceptor, UserListSerializeInterceptor)
   @ApiQuery({ name: 'page', type: 'number' })
   @ApiQuery({ name: 'take', type: 'number' })
   @ApiParam({ name: 'filters', type: UserListFiltersDto })
@@ -156,8 +175,9 @@ export class GatewayController {
   @Get('all/deleted')
   @HttpCode(HttpStatus.OK)
   @Roles(UserRoles.OWNER)
+  @CacheKey(CacheKeys.DELETED_USERS)
   @UseGuards(RolesGuard)
-  @UseInterceptors(UserListSerializeInterceptor)
+  @UseInterceptors(CacheInterceptor, UserListSerializeInterceptor)
   @ApiQuery({ name: 'page', type: 'number' })
   @ApiQuery({ name: 'take', type: 'number' })
   @ApiParam({ name: 'filters', type: DeletedUserListFiltersDto })
@@ -175,10 +195,11 @@ export class GatewayController {
   }
 
   @Get('quantities')
-  @Roles(UserRoles.OWNER, UserRoles.ADMIN)
-  @UseGuards(RolesGuard)
   @HttpCode(HttpStatus.OK)
-  @UseInterceptors(UserQuantitiesObjectSerializeInterceptor)
+  @Roles(UserRoles.OWNER, UserRoles.ADMIN)
+  @CacheKey(CacheKeys.QUANTITIES)
+  @UseGuards(RolesGuard)
+  @UseInterceptors(CacheInterceptor, UserQuantitiesObjectSerializeInterceptor)
   @ApiBearerAuth()
   @ApiResponse({ status: HttpStatus.OK, type: UserQuantitiesDto })
   @ApiResponse({ status: HttpStatus.UNAUTHORIZED, type: ErrorDto })
@@ -189,10 +210,11 @@ export class GatewayController {
   }
 
   @Get('deleted-quantities')
-  @Roles(UserRoles.OWNER, UserRoles.ADMIN)
-  @UseGuards(RolesGuard)
   @HttpCode(HttpStatus.OK)
-  @UseInterceptors(UserQuantitiesObjectSerializeInterceptor)
+  @Roles(UserRoles.OWNER, UserRoles.ADMIN)
+  @CacheKey(CacheKeys.DELETED_QUANTITIES)
+  @UseGuards(RolesGuard)
+  @UseInterceptors(CacheInterceptor, UserQuantitiesObjectSerializeInterceptor)
   @ApiBearerAuth()
   @ApiResponse({ status: HttpStatus.OK, type: UserQuantitiesDto })
   @ApiResponse({ status: HttpStatus.UNAUTHORIZED, type: ErrorDto })
@@ -203,9 +225,9 @@ export class GatewayController {
   }
 
   @Get('last-week')
+  @HttpCode(HttpStatus.OK)
   @Roles(UserRoles.OWNER, UserRoles.ADMIN)
   @UseGuards(RolesGuard)
-  @HttpCode(HttpStatus.OK)
   @UseInterceptors(LastWeekArraySerializeInterceptor)
   @ApiBearerAuth()
   @ApiResponse({ status: HttpStatus.OK, type: LastWeekDto })
@@ -219,8 +241,9 @@ export class GatewayController {
   @Get(':id')
   @HttpCode(HttpStatus.OK)
   @SameUser(UserRoles.ADMIN, UserRoles.USER)
+  @CacheKey(CacheKeys.USER)
   @UseGuards(SameUserGuard, DifferentOwnerGuard)
-  @UseInterceptors(UserObjectSerializeInterceptor)
+  @UseInterceptors(CacheInterceptor, UserObjectSerializeInterceptor)
   @ApiParam({ name: 'id', type: 'number' })
   @ApiBearerAuth()
   @ApiResponse({ status: HttpStatus.OK, type: UserDto })
