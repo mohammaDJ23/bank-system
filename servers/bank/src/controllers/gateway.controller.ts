@@ -149,7 +149,7 @@ export class GatewayController {
 
   @Get('bill/total-amount')
   @HttpCode(HttpStatus.OK)
-  @CacheKey(CacheKeys.TOTAL_AMOUNT)
+  @CacheKey(CacheKeys.TOTAL_AMOUNT, { isUnique: true })
   @UseInterceptors(CacheInterceptor, TotalAmountObjectSerializeInterceptor)
   @ApiBearerAuth()
   @ApiResponse({ status: HttpStatus.OK, type: TotalAmountDto })
@@ -218,7 +218,7 @@ export class GatewayController {
 
   @Get('bill/all')
   @HttpCode(HttpStatus.OK)
-  @CacheKey(CacheKeys.BILLS)
+  @CacheKey(CacheKeys.BILLS, { isUnique: true })
   @UseInterceptors(CacheInterceptor, BillListSerializeInterceptor)
   @ApiQuery({ name: 'page', type: 'number' })
   @ApiQuery({ name: 'take', type: 'number' })
@@ -238,7 +238,7 @@ export class GatewayController {
 
   @Get('bill/:id')
   @HttpCode(HttpStatus.OK)
-  @CacheKey(CacheKeys.BILL)
+  @CacheKey(CacheKeys.BILL, { isUnique: true })
   @UseInterceptors(CacheInterceptor, BillObjectSerializeInterceptor)
   @ApiParam({ name: 'id', type: 'string' })
   @ApiBearerAuth()
@@ -253,7 +253,7 @@ export class GatewayController {
   @Get('user/:id')
   @HttpCode(HttpStatus.OK)
   @SameUser(UserRoles.USER)
-  @CacheKey(CacheKeys.USER)
+  @CacheKey(CacheKeys.USER, { isUnique: true })
   @UseGuards(SameUserGuard)
   @UseInterceptors(CacheInterceptor, UserWithBillInfoObjectSerializeInterceptor)
   @ApiParam({ name: 'id', type: 'number' })

@@ -241,7 +241,7 @@ export class GatewayController {
   @Get(':id')
   @HttpCode(HttpStatus.OK)
   @SameUser(UserRoles.ADMIN, UserRoles.USER)
-  @CacheKey(CacheKeys.USER)
+  @CacheKey(CacheKeys.USER, { isUnique: true })
   @UseGuards(SameUserGuard, DifferentOwnerGuard)
   @UseInterceptors(CacheInterceptor, UserObjectSerializeInterceptor)
   @ApiParam({ name: 'id', type: 'number' })

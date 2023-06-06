@@ -9,7 +9,6 @@ import {
 import { Reflector } from '@nestjs/core';
 import { Cache } from 'cache-manager';
 import { map } from 'rxjs';
-import { getCurrentUser } from 'src/libs';
 import { CacheKeys } from 'src/types';
 
 @Injectable()
@@ -34,11 +33,11 @@ export class ResetCacheInterceptor implements NestInterceptor {
           let findedCachedKeys: Promise<void>[] = [];
           for (const key of cachedKeys)
             requiredResetCachedKeysLoop: for (const resetCachedKey of requiredResetCachedKeys)
-              if (key.startsWith(`${resetCachedKey}.${process.env.PORT}`)) {
+              if (key.includes(`${resetCachedKey}.${process.env.PORT}`)) {
                 findedCachedKeys.push(this.cacheService.del(key));
                 break requiredResetCachedKeysLoop;
               }
-          if (findedCachedKeys.length) await Promise.all(cachedKeys);
+          if (findedCachedKeys.length) await Promise.all(findedCachedKeys);
           findedCachedKeys = [];
         }
 

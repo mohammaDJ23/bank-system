@@ -78,3 +78,12 @@ export interface DeletedUserObj {
   deletedUser: User;
   currentUser: User;
 }
+
+export interface CacheKeyOptions {
+  isUnique?: boolean;
+}
+
+export interface CacheKeyMetadata {
+  key: CacheKeys;
+  options: CacheKeyOptions;
+}
