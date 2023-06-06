@@ -23,7 +23,13 @@ import {
   ApiParam,
   ApiQuery,
 } from '@nestjs/swagger';
-import { CurrentUser, Roles, SameUser } from 'src/decorators';
+import {
+  CacheKey,
+  CurrentUser,
+  ResetCachedKeys,
+  Roles,
+  SameUser,
+} from 'src/decorators';
 import {
   BillDto,
   CreateBillDto,
@@ -48,15 +54,17 @@ import {
   SameUserGuard,
 } from 'src/guards';
 import { BillService, UserService } from 'src/services';
-import { UserRoles } from 'src/types';
+import { CacheKeys, UserRoles } from 'src/types';
 import { ParseBillListFiltersPipe } from 'src/pipes';
 import {
   BillListSerializeInterceptor,
   BillObjectSerializeInterceptor,
   BillQuantitiesObjectSerializeInterceptor,
+  CacheInterceptor,
   CreatedBillObjectSerializeInterceptor,
   DeletedBillObjectSerializeInterceptor,
   LastWeekArraySerializeInterceptor,
+  ResetCacheInterceptor,
   TotalAmountObjectSerializeInterceptor,
   TotalAmountWithoutDatesObjectSerializeInterceptor,
   UpdatedBillObjectSerializeInterceptor,
@@ -74,7 +82,13 @@ export class GatewayController {
 
   @Post('bill/create')
   @HttpCode(HttpStatus.CREATED)
-  @UseInterceptors(CreatedBillObjectSerializeInterceptor)
+  @ResetCachedKeys(
+    CacheKeys.TOTAL_AMOUNT,
+    CacheKeys.QUANTITIES,
+    CacheKeys.BILLS,
+    CacheKeys.USER,
+  )
+  @UseInterceptors(ResetCacheInterceptor, CreatedBillObjectSerializeInterceptor)
   @ApiBody({ type: CreateBillDto })
   @ApiBearerAuth()
   @ApiResponse({ status: HttpStatus.CREATED, type: CreatedBillDto })
@@ -89,6 +103,13 @@ export class GatewayController {
 
   @Put('bill/update')
   @HttpCode(HttpStatus.OK)
+  @ResetCachedKeys(
+    CacheKeys.TOTAL_AMOUNT,
+    CacheKeys.QUANTITIES,
+    CacheKeys.BILLS,
+    CacheKeys.BILL,
+    CacheKeys.USER,
+  )
   @UseInterceptors(UpdatedBillObjectSerializeInterceptor)
   @ApiBody({ type: UpdateBillDto })
   @ApiBearerAuth()
@@ -105,6 +126,13 @@ export class GatewayController {
 
   @Delete('bill/delete')
   @HttpCode(HttpStatus.OK)
+  @ResetCachedKeys(
+    CacheKeys.TOTAL_AMOUNT,
+    CacheKeys.QUANTITIES,
+    CacheKeys.BILLS,
+    CacheKeys.BILL,
+    CacheKeys.USER,
+  )
   @UseInterceptors(DeletedBillObjectSerializeInterceptor)
   @ApiQuery({ name: 'id', type: 'string' })
   @ApiBearerAuth()
@@ -121,7 +149,8 @@ export class GatewayController {
 
   @Get('bill/total-amount')
   @HttpCode(HttpStatus.OK)
-  @UseInterceptors(TotalAmountObjectSerializeInterceptor)
+  @CacheKey(CacheKeys.TOTAL_AMOUNT)
+  @UseInterceptors(CacheInterceptor, TotalAmountObjectSerializeInterceptor)
   @ApiBearerAuth()
   @ApiResponse({ status: HttpStatus.OK, type: TotalAmountDto })
   @ApiResponse({ status: HttpStatus.UNAUTHORIZED, type: ErrorDto })
@@ -131,10 +160,11 @@ export class GatewayController {
   }
 
   @Get('bill/quantities')
-  @Roles(UserRoles.OWNER, UserRoles.ADMIN)
-  @UseGuards(RolesGuard)
   @HttpCode(HttpStatus.OK)
-  @UseInterceptors(BillQuantitiesObjectSerializeInterceptor)
+  @Roles(UserRoles.OWNER, UserRoles.ADMIN)
+  @CacheKey(CacheKeys.QUANTITIES)
+  @UseGuards(RolesGuard)
+  @UseInterceptors(CacheInterceptor, BillQuantitiesObjectSerializeInterceptor)
   @ApiBearerAuth()
   @ApiResponse({ status: HttpStatus.OK, type: BillQuantitiesDto })
   @ApiResponse({ status: HttpStatus.UNAUTHORIZED, type: ErrorDto })
@@ -188,7 +218,8 @@ export class GatewayController {
 
   @Get('bill/all')
   @HttpCode(HttpStatus.OK)
-  @UseInterceptors(BillListSerializeInterceptor)
+  @CacheKey(CacheKeys.BILLS)
+  @UseInterceptors(CacheInterceptor, BillListSerializeInterceptor)
   @ApiQuery({ name: 'page', type: 'number' })
   @ApiQuery({ name: 'take', type: 'number' })
   @ApiQuery({ name: 'filters', type: BillListFiltersDto })
@@ -207,7 +238,8 @@ export class GatewayController {
 
   @Get('bill/:id')
   @HttpCode(HttpStatus.OK)
-  @UseInterceptors(BillObjectSerializeInterceptor)
+  @CacheKey(CacheKeys.BILL)
+  @UseInterceptors(CacheInterceptor, BillObjectSerializeInterceptor)
   @ApiParam({ name: 'id', type: 'string' })
   @ApiBearerAuth()
   @ApiResponse({ status: HttpStatus.OK, type: BillDto })
@@ -221,8 +253,9 @@ export class GatewayController {
   @Get('user/:id')
   @HttpCode(HttpStatus.OK)
   @SameUser(UserRoles.USER)
+  @CacheKey(CacheKeys.USER)
   @UseGuards(SameUserGuard)
-  @UseInterceptors(UserWithBillInfoObjectSerializeInterceptor)
+  @UseInterceptors(CacheInterceptor, UserWithBillInfoObjectSerializeInterceptor)
   @ApiParam({ name: 'id', type: 'number' })
   @ApiBearerAuth()
   @ApiResponse({ status: HttpStatus.OK, type: UserWithBillInfoDto })
