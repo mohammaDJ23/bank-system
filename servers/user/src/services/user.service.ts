@@ -29,26 +29,49 @@ export class UserService {
     private readonly rabbitmqService: RabbitmqService,
   ) {}
 
-  async create(body: CreateUserDto, user: User): Promise<User> {
-    let findedUser = await this.findByEmailWithDeleted(body.email);
+  async create(payload: CreateUserDto, user: User): Promise<User> {
+    let findedUser = await this.findByEmailWithDeleted(payload.email);
 
     if (findedUser) throw new ConflictException('The user already exist.');
 
-    body.password = await hash(body.password, 10);
-    let newUser = this.userRepository.create(body);
+    payload.password = await hash(payload.password, 10);
+    let newUser = this.userRepository.create(payload);
     newUser.parent = user;
     newUser = await this.userRepository.save(newUser);
-    await this.clientProxy.emit('created_user', newUser).toPromise();
+    await this.clientProxy
+      .emit('created_user', { currentUser: user, createdUser: newUser })
+      .toPromise();
     return newUser;
   }
 
-  updateByUser(body: UpdateUserByUserDto, currentUser: User): Promise<User> {
-    return this.update(body, currentUser);
+  updateByUser(payload: UpdateUserByUserDto, currentUser: User): Promise<User> {
+    return this.updateSameUser(payload, currentUser);
   }
 
-  updateByOwner(body: UpdateUserByOwnerDto, currentUser: User): Promise<User> {
-    if (body.id === currentUser.id) return this.update(body, currentUser);
-    return this.update(body);
+  updateByOwner(
+    payload: UpdateUserByOwnerDto,
+    currentUser: User,
+  ): Promise<User> {
+    if (payload.id === currentUser.id)
+      return this.updateSameUser(payload, currentUser);
+    return this.findByIdAndUpdate(payload, currentUser);
+  }
+
+  async updateSameUser(
+    payload: UpdatedUserPartialObj,
+    user: User,
+  ): Promise<User> {
+    return this.update(payload, user, user);
+  }
+
+  async findByIdAndUpdate(
+    payload: UpdatedUserPartialObj,
+    currentUser: User,
+  ): Promise<User> {
+    const user = await this.findById(payload.id);
+    if (!user) throw new NotFoundException('Could not found the user.');
+
+    return this.update(payload, user, currentUser);
   }
 
   async updatePartialForMicroservices(
@@ -56,7 +79,11 @@ export class UserService {
     context: RmqContext,
   ): Promise<User> {
     try {
-      const udpatedUser = await this.update(payload);
+      const user = await this.findById(payload.id);
+
+      if (!user) throw new NotFoundException('Could not found the user.');
+
+      const udpatedUser = await this.updateSameUser(payload, user);
       this.rabbitmqService.applyAcknowledgment(context);
       return udpatedUser;
     } catch (error) {
@@ -64,34 +91,37 @@ export class UserService {
     }
   }
 
-  async update(updatedUser: UpdatedUserPartialObj, user?: User) {
-    if (!user) {
-      user = await this.findById(updatedUser.id);
-      if (!user) throw new NotFoundException('Could not found the user.');
-    }
-
-    if (updatedUser.email) {
+  async update(
+    payload: UpdatedUserPartialObj,
+    user: User,
+    currentUser: User,
+  ): Promise<User> {
+    if (payload.email) {
       let findedUser = await this.userRepository
         .createQueryBuilder('user')
         .withDeleted()
         .where('user.id != :userId')
         .andWhere('user.email = :userEmail')
-        .setParameters({ userId: updatedUser.id, userEmail: updatedUser.email })
+        .setParameters({ userId: payload.id, userEmail: payload.email })
         .getOne();
       if (findedUser) throw new ConflictException('The user already exist.');
     }
 
     user.updatedAt = new Date();
-    user = this.userRepository.create(Object.assign(user, updatedUser));
+    user = this.userRepository.create(Object.assign(user, payload));
     user = await this.userRepository.save(user);
-    await this.clientProxy.emit('updated_user', user).toPromise();
+    await this.clientProxy
+      .emit('updated_user', { currentUser, updatedUser: user })
+      .toPromise();
     return user;
   }
 
-  async delete(id: number): Promise<User> {
+  async delete(id: number, currentUser: User): Promise<User> {
     const user = await this.userRepository.findOneOrFail({ where: { id } });
     await this.userRepository.softRemove(user);
-    await this.clientProxy.emit('deleted_user', user).toPromise();
+    await this.clientProxy
+      .emit('deleted_user', { currentUser, deletedUser: user })
+      .toPromise();
     return user;
   }
 
@@ -294,7 +324,7 @@ export class UserService {
         'CASE WHEN (:toDate)::BIGINT > 0 THEN COALESCE(EXTRACT(EPOCH FROM date(user.createdAt)) * 1000, 0)::BIGINT <= (:toDate)::BIGINT ELSE TRUE END',
       )
       .andWhere(
-        'CASE WHEN (:deletedDate)::BIGINT > 0 THEN COALESCE(EXTRACT(EPOCH FROM date(user.deletedAt)) * 1000, 0)::BIGINT <= (:deletedDate)::BIGINT ELSE TRUE END',
+        'CASE WHEN (:deletedDate)::BIGINT > 0 THEN COALESCE(EXTRACT(EPOCH FROM date(user.deletedAt)) * 1000, 0)::BIGINT = (:deletedDate)::BIGINT ELSE TRUE END',
       )
       .setParameters({
         q: filters.q,

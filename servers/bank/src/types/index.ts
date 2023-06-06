@@ -63,3 +63,27 @@ export enum CacheKeys {
   QUANTITIES = 'QUANTITIES',
   TOTAL_AMOUNT = 'TOTAL_AMOUNT',
 }
+
+export interface CreatedUserObj {
+  createdUser: User;
+  currentUser: User;
+}
+
+export interface UpdatedUserObj {
+  updatedUser: User;
+  currentUser: User;
+}
+
+export interface DeletedUserObj {
+  deletedUser: User;
+  currentUser: User;
+}
+
+export interface CacheKeyOptions {
+  isUnique?: boolean;
+}
+
+export interface CacheKeyMetadata {
+  key: CacheKeys;
+  options: CacheKeyOptions;
+}

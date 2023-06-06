@@ -1,12 +1,12 @@
 import { FC } from 'react';
 import { Box, List, ListItem } from '@mui/material';
-import CustomSkeleton from '../Skeleton';
+import CustomSkeleton from './Skeleton';
 
-interface SkeletonImportation {
+interface UserSkeletonImportation {
   take: number;
 }
 
-const Skeleton: FC<SkeletonImportation> = ({ take }) => {
+const UserSkeleton: FC<UserSkeletonImportation> = ({ take }) => {
   return (
     <List>
       {Array(take)
@@ -29,13 +29,7 @@ const Skeleton: FC<SkeletonImportation> = ({ take }) => {
             <Box maxWidth="150px" width="100%" height="12px">
               <CustomSkeleton width="100%" height="100%" />
             </Box>
-            <Box
-              width="100%"
-              display="flex"
-              alignItems="center"
-              justifyContent="space-between"
-              gap="10px"
-            >
+            <Box width="100%" display="flex" alignItems="center" justifyContent="space-between" gap="10px">
               <Box maxWidth="40px" width="100%" height="10px">
                 <CustomSkeleton width="100%" height="100%" />
               </Box>
@@ -49,4 +43,4 @@ const Skeleton: FC<SkeletonImportation> = ({ take }) => {
   );
 };
 
-export default Skeleton;
+export default UserSkeleton;

@@ -13,6 +13,7 @@ const UpdateUserByOwner = lazy(() => import('../../pages/UpdateUserByOwner'));
 const UpdateUserByUser = lazy(() => import('../../pages/UpdateUser'));
 const User = lazy(() => import('../../pages/User'));
 const Users = lazy(() => import('../../pages/Users'));
+const DeletedUsers = lazy(() => import('../../pages/DeletedUsers'));
 const Dashboard = lazy(() => import('../../pages/Dashboard'));
 
 export enum Pathes {
@@ -21,6 +22,7 @@ export enum Pathes {
   DASHBOARD = '/bank/dashboard',
   BILLS = '/bank/bills',
   USERS = '/bank/users',
+  DELETED_USERS = '/bank/users/deleted',
   CREATE_BILL = '/bank/create-bill',
   CREATE_USER = '/bank/create-user',
   UPDATE_USER_BY_OWNER = '/bank/owner/update-user/:id',
@@ -34,6 +36,7 @@ export const routes = [
   { title: 'Dashboard', path: Pathes.DASHBOARD, element: <Dashboard />, needAuth: true },
   { title: 'Bills', path: Pathes.BILLS, element: <Bills />, needAuth: true },
   { title: 'Users', path: Pathes.USERS, element: <Users />, needAuth: true },
+  { title: 'Deleted users', path: Pathes.DELETED_USERS, element: <DeletedUsers />, needAuth: true },
   { title: 'Create bill', path: Pathes.CREATE_BILL, element: <CreateBill />, needAuth: true },
   { title: 'Create user', path: Pathes.CREATE_USER, element: <CreateUser />, needAuth: true },
   { title: 'Update user by owner', path: Pathes.UPDATE_USER_BY_OWNER, element: <UpdateUserByOwner />, needAuth: true },

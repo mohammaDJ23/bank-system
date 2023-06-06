@@ -10,3 +10,4 @@ export * from './userQuantities.dto';
 export * from './user.dto';
 export * from './accessToken.dto';
 export * from './userListFilters.dto';
+export * from './deletedUserListFilters.dto';

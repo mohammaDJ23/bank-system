@@ -10,6 +10,7 @@ export enum ModalNames {
   CONFIRMATION = 'CONFIRMATION',
   USER_FILTERS = 'USER_FILTERS',
   BILL_FILTERS = 'BILL_FILTERS',
+  DELETED_USER_FILTERS = 'DELETED_USER_FILTERS',
 }
 
 export interface ModalState {

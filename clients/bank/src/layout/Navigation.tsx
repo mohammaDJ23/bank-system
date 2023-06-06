@@ -14,7 +14,8 @@ import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import SupervisorAccountIcon from '@mui/icons-material/SupervisorAccount';
-import GroupAddIcon from '@mui/icons-material/GroupAdd';
+import GroupRemoveIcon from '@mui/icons-material/GroupRemove';
+import PersonAddAlt1Icon from '@mui/icons-material/PersonAddAlt1';
 import AddCardIcon from '@mui/icons-material/AddCard';
 import CreditCardIcon from '@mui/icons-material/CreditCard';
 import CloseIcon from '@mui/icons-material/Close';
@@ -135,7 +136,7 @@ const Navigation: FC<NavigationImportation> = ({ children, menuOptions, title })
       },
       {
         title: 'Create user',
-        icon: <GroupAddIcon />,
+        icon: <PersonAddAlt1Icon />,
         path: Pathes.CREATE_USER,
         redirectPath: Pathes.CREATE_USER,
         roles: [UserRoles.OWNER],
@@ -152,6 +153,13 @@ const Navigation: FC<NavigationImportation> = ({ children, menuOptions, title })
         path: Pathes.USERS,
         redirectPath: Pathes.USERS,
         roles: [UserRoles.OWNER, UserRoles.ADMIN],
+      },
+      {
+        title: 'Deleted users',
+        icon: <GroupRemoveIcon />,
+        path: Pathes.DELETED_USERS,
+        redirectPath: Pathes.DELETED_USERS,
+        roles: [UserRoles.OWNER],
       },
       {
         title: 'Bills',

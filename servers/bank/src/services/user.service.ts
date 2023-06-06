@@ -2,6 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { RmqContext, RpcException } from '@nestjs/microservices';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UserWithBillInfoDto } from 'src/dtos';
+import { CreatedUserObj, DeletedUserObj, UpdatedUserObj } from 'src/types';
 import { Repository } from 'typeorm';
 import { User } from '../entities';
 import { RabbitmqService } from './rabbitmq.service';
@@ -20,16 +21,18 @@ export class UserService {
       .getOne();
   }
 
-  async create(payload: User, context: RmqContext): Promise<void> {
+  async create(payload: CreatedUserObj, context: RmqContext): Promise<void> {
     try {
-      payload = Object.assign<User, Partial<User>>(payload, {
-        userServiceId: payload.id,
+      let createdUser = payload.createdUser;
+
+      createdUser = Object.assign<User, Partial<User>>(createdUser, {
+        userServiceId: createdUser.id,
       });
       await this.userRepository
         .createQueryBuilder()
         .insert()
         .into(User)
-        .values(payload)
+        .values(createdUser)
         .execute();
       this.rabbitmqService.applyAcknowledgment(context);
     } catch (error) {
@@ -37,8 +40,10 @@ export class UserService {
     }
   }
 
-  async update(payload: User, context: RmqContext): Promise<void> {
+  async update(payload: UpdatedUserObj, context: RmqContext): Promise<void> {
     try {
+      const udpatedUser = payload.updatedUser;
+
       await this.userRepository.query(
         `
           UPDATE public.user
@@ -54,14 +59,14 @@ export class UserService {
           WHERE public.user.user_service_id = $7;
         `,
         [
-          payload.email,
-          payload.firstName,
-          payload.lastName,
-          payload.password,
-          payload.phone,
-          payload.role,
-          payload.id,
-          payload.updatedAt,
+          udpatedUser.email,
+          udpatedUser.firstName,
+          udpatedUser.lastName,
+          udpatedUser.password,
+          udpatedUser.phone,
+          udpatedUser.role,
+          udpatedUser.id,
+          udpatedUser.updatedAt,
         ],
       );
       this.rabbitmqService.applyAcknowledgment(context);
@@ -70,10 +75,12 @@ export class UserService {
     }
   }
 
-  async delete(payload: User, context: RmqContext): Promise<void> {
+  async delete(payload: DeletedUserObj, context: RmqContext): Promise<void> {
     try {
+      const deletedUser = payload.deletedUser;
+
       const user = await this.userRepository.findOneOrFail({
-        where: { userServiceId: payload.id },
+        where: { userServiceId: deletedUser.id },
         relations: ['bills'],
       });
       await this.userRepository.softRemove(user);

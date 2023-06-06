@@ -9,8 +9,6 @@ import {
 import { Reflector } from '@nestjs/core';
 import { Cache } from 'cache-manager';
 import { map } from 'rxjs';
-import { UserDto } from 'src/dtos';
-import { getRequest } from 'src/libs';
 import { CacheKeys } from 'src/types';
 
 @Injectable()
@@ -26,31 +24,20 @@ export class ResetCacheMicroserviceInterceptor implements NestInterceptor {
   ): Promise<any> {
     return handler.handle().pipe(
       map(async (data: any) => {
-        const requiredResetCachedKey = this.reflector.getAllAndOverride<
-          CacheKeys[]
+        const requiredResetCachedKeys = this.reflector.getAllAndOverride<
+          CacheKeys[] | undefined
         >('reset-cached-keys', [context.getHandler(), context.getClass()]);
 
-        if (requiredResetCachedKey.length) {
-          const user = getRequest<UserDto>(context);
-
-          const userId = user.id;
-
-          const cacheKeys = await this.cacheService.store.keys();
-
+        if (requiredResetCachedKeys) {
+          const cachedKeys = await this.cacheService.store.keys();
           let findedCachedKeys: Promise<void>[] = [];
-
-          for (const key of cacheKeys)
-            requiredResetCachedKeyLoop: for (const resetCachedKey of requiredResetCachedKey)
-              if (
-                key.startsWith(
-                  `${userId}.${resetCachedKey}.${process.env.PORT}`,
-                )
-              ) {
+          for (const key of cachedKeys)
+            requiredResetCachedKeysLoop: for (const resetCachedKey of requiredResetCachedKeys)
+              if (key.startsWith(`${resetCachedKey}.${process.env.PORT}`)) {
                 findedCachedKeys.push(this.cacheService.del(key));
-                break requiredResetCachedKeyLoop;
+                break requiredResetCachedKeysLoop;
               }
-
-          await Promise.all(findedCachedKeys);
+          if (findedCachedKeys.length) await Promise.all(cachedKeys);
           findedCachedKeys = [];
         }
 

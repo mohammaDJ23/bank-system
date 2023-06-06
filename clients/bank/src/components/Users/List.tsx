@@ -1,49 +1,23 @@
 import { FC, useCallback, useEffect } from 'react';
-import {
-  List as MuiList,
-  ListItem,
-  ListItemText,
-  ListItemButton,
-  Box,
-  Card,
-  TextField,
-  Button,
-  Autocomplete,
-} from '@mui/material';
-import moment from 'moment';
-import { useNavigate } from 'react-router-dom';
-import {
-  Pathes,
-  UserObj,
-  getUserRoleColor,
-  UserListFilters,
-  isoDate,
-  getTime,
-  UserRoles,
-  UserList,
-  getDynamicPath,
-} from '../../lib';
-import CountBadge from '../CountBadge';
-import Pagination from '../Pagination';
-import { useAuth, useForm, usePaginationList, useRequest } from '../../hooks';
+import { List as MuiList, Box, TextField, Button, Autocomplete } from '@mui/material';
+import { UserObj, UserListFilters, isoDate, getTime, UserRoles, UserList } from '../../lib';
+import Pagination from '../shared/Pagination';
+import { useForm, usePaginationList, useRequest } from '../../hooks';
 import { UsersApi, UsersApiConstructorType } from '../../apis';
-import Filter from '../Filter';
+import Filter from '../shared/Filter';
 import EmptyList from './EmptyList';
-import Skeleton from './Skeleton';
 import { ModalNames } from '../../store';
+import UserSkeleton from '../shared/UserSkeleton';
+import UserCard from '../shared/UserCard';
 
 const List: FC = () => {
-  const navigate = useNavigate();
   const { request, isInitialApiProcessing, isApiProcessing } = useRequest();
-  const { getTokenInfo } = useAuth();
   const userListInstance = usePaginationList(UserList);
   const userListFiltersFormInstance = useForm(UserListFilters);
   const userListFiltersForm = userListFiltersFormInstance.getForm();
   const userListInfo = userListInstance.getFullInfo();
   const isInitialUsersApiProcessing = isInitialApiProcessing(UsersApi);
   const isUsersApiProcessing = isApiProcessing(UsersApi);
-  const userInfo = getTokenInfo();
-  const isUserExist = !!userInfo;
 
   const getUsersList = useCallback(
     (options: Partial<UsersApiConstructorType> = {}) => {
@@ -88,85 +62,14 @@ const List: FC = () => {
   return (
     <>
       {isInitialUsersApiProcessing || isUsersApiProcessing ? (
-        <Skeleton take={userListInfo.take} />
+        <UserSkeleton take={userListInfo.take} />
       ) : userListInstance.isListEmpty() ? (
         <EmptyList />
       ) : (
         <>
           <MuiList>
             {userListInfo.list.map((user, index) => (
-              <Card
-                key={index}
-                variant="outlined"
-                sx={{
-                  my: '20px',
-                  position: 'relative',
-                  overflow: 'visible',
-                  backgroundColor:
-                    isUserExist && user.id === userInfo.id && userListInfo.list.length >= 2 ? '#F8F8F8' : '',
-                }}
-                onClick={() => navigate(getDynamicPath(Pathes.USER, { id: user.id.toString() }))}
-              >
-                <ListItemButton>
-                  <ListItem disablePadding sx={{ my: '10px' }}>
-                    <Box display="flex" flexDirection="column" alignItems="start" width="100%" gap="10px">
-                      <Box component="div">
-                        <ListItemText
-                          primaryTypographyProps={{ fontSize: '14px', mb: '10px' }}
-                          secondaryTypographyProps={{ fontSize: '12px' }}
-                          sx={{ margin: '0' }}
-                          primary={`${user.firstName} ${user.lastName}`}
-                          secondary={user.phone}
-                        />
-                      </Box>
-                      <Box
-                        component="div"
-                        display="flex"
-                        alignItems="center"
-                        justifyContent="space-between"
-                        gap="10px"
-                        width="100%"
-                        flexWrap="wrap"
-                      >
-                        <Box
-                          component="div"
-                          display="flex"
-                          alignItems="center"
-                          justifyContent="space-between"
-                          gap="10px"
-                          flexWrap="wrap"
-                        >
-                          <ListItemText
-                            sx={{
-                              flex: 'unset',
-                              width: '8px',
-                              height: '8px',
-                              backgroundColor: getUserRoleColor(user.role),
-                              borderRadius: '50%',
-                            }}
-                            secondary={<Box component="span"></Box>}
-                          />
-                          <ListItemText
-                            sx={{ flex: 'unset' }}
-                            secondaryTypographyProps={{ fontSize: '10px' }}
-                            secondary={user.role}
-                          />
-                        </Box>
-                        <ListItemText
-                          sx={{ flex: 'unset' }}
-                          secondaryTypographyProps={{ fontSize: '10px' }}
-                          secondary={
-                            new Date(user.updatedAt) > new Date(user.createdAt)
-                              ? `${moment(user.updatedAt).format('lll')} was updated`
-                              : `${moment(user.createdAt).format('lll')}`
-                          }
-                        />
-                      </Box>
-                    </Box>
-                    <CountBadge take={userListInfo.take} page={userListInfo.page} index={index} />
-                  </ListItem>
-                </ListItemButton>
-              </Card>
+              <UserCard key={index} index={index} user={user} listInfo={userListInfo} />
             ))}
           </MuiList>
           <Pagination page={userListInfo.page} count={userListInfo.count} onPageChange={changePage} />

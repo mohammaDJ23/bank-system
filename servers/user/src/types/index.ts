@@ -69,3 +69,12 @@ export enum CacheKeys {
   QUANTITIES = 'QUANTITIES',
   DELETED_QUANTITIES = 'DELETED_QUANTITIES',
 }
+
+export interface CacheKeyOptions {
+  isUnique?: boolean;
+}
+
+export interface CacheKeyMetadata {
+  key: CacheKeys;
+  options: CacheKeyOptions;
+}

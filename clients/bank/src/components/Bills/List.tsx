@@ -1,19 +1,16 @@
 import { FC, useCallback, useEffect } from 'react';
-import { Box, Card, List as MuiList, ListItem, ListItemButton, ListItemText, TextField, Button } from '@mui/material';
-import { useNavigate } from 'react-router-dom';
-import moment from 'moment';
-import CountBadge from '../CountBadge';
-import Pagination from '../Pagination';
-import { BillList, BillListFilters, BillObj, getDynamicPath, getTime, isoDate, Pathes } from '../../lib';
+import { Box, List as MuiList, TextField, Button } from '@mui/material';
+import Pagination from '../shared/Pagination';
+import { BillList, BillListFilters, BillObj, getTime, isoDate } from '../../lib';
 import { useForm, usePaginationList, useRequest } from '../../hooks';
 import { BillsApi, BillsApiConstructorType } from '../../apis';
-import Skeleton from './Skeleton';
+import BIllSkeleton from '../shared/BillSkeleton';
 import EmptyList from './EmptyList';
-import Filter from '../Filter';
+import Filter from '../shared/Filter';
 import { ModalNames } from '../../store';
+import BillCard from '../shared/BiilCard';
 
 const List: FC = () => {
-  const navigate = useNavigate();
   const { request, isInitialApiProcessing, isApiProcessing } = useRequest();
   const billListInstance = usePaginationList(BillList);
   const billListFiltersFormInstance = useForm(BillListFilters);
@@ -65,48 +62,14 @@ const List: FC = () => {
   return (
     <>
       {isInitialBillsApiProcessing || isBillsApiProcessing ? (
-        <Skeleton take={billListInfo.take} />
+        <BIllSkeleton take={billListInfo.take} />
       ) : billListInstance.isListEmpty() ? (
         <EmptyList />
       ) : (
         <>
           <MuiList>
             {billListInfo.list.map((bill, index) => (
-              <Card
-                key={index}
-                variant="outlined"
-                sx={{ my: '20px', position: 'relative', overflow: 'visible' }}
-                onClick={() => navigate(getDynamicPath(Pathes.BILL, { id: bill.id }))}
-              >
-                <ListItemButton>
-                  <ListItem disablePadding sx={{ my: '10px' }}>
-                    <Box display="flex" flexDirection="column" alignItems="start" width="100%" gap="10px">
-                      <Box component="div">
-                        <ListItemText
-                          primaryTypographyProps={{ fontSize: '14px', mb: '10px' }}
-                          secondaryTypographyProps={{ fontSize: '12px' }}
-                          sx={{ margin: '0' }}
-                          primary={`${bill.receiver} received ${bill.amount} at ${moment(bill.date).format('ll')}`}
-                          secondary={bill.description}
-                        />
-                      </Box>
-
-                      <Box component="div" alignSelf="end">
-                        <ListItemText
-                          secondaryTypographyProps={{ fontSize: '10px' }}
-                          secondary={
-                            new Date(bill.updatedAt) > new Date(bill.createdAt)
-                              ? `updated at ${moment(bill.updatedAt).fromNow()}`
-                              : `${moment(bill.createdAt).fromNow()}`
-                          }
-                        />
-                      </Box>
-                    </Box>
-
-                    <CountBadge index={index} page={billListInfo.page} take={billListInfo.take} />
-                  </ListItem>
-                </ListItemButton>
-              </Card>
+              <BillCard key={index} index={index} bill={bill} listInfo={billListInfo} />
             ))}
           </MuiList>
 

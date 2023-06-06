@@ -81,13 +81,13 @@ export class GatewayController {
   ) {}
 
   @Post('bill/create')
-  @ResetCachedKeys(
-    CacheKeys.USER,
-    CacheKeys.BILLS,
-    CacheKeys.QUANTITIES,
-    CacheKeys.TOTAL_AMOUNT,
-  )
   @HttpCode(HttpStatus.CREATED)
+  @ResetCachedKeys(
+    CacheKeys.TOTAL_AMOUNT,
+    CacheKeys.QUANTITIES,
+    CacheKeys.BILLS,
+    CacheKeys.USER,
+  )
   @UseInterceptors(ResetCacheInterceptor, CreatedBillObjectSerializeInterceptor)
   @ApiBody({ type: CreateBillDto })
   @ApiBearerAuth()
@@ -102,13 +102,14 @@ export class GatewayController {
   }
 
   @Put('bill/update')
-  @ResetCachedKeys(
-    CacheKeys.USER,
-    CacheKeys.BILLS,
-    CacheKeys.QUANTITIES,
-    CacheKeys.TOTAL_AMOUNT,
-  )
   @HttpCode(HttpStatus.OK)
+  @ResetCachedKeys(
+    CacheKeys.TOTAL_AMOUNT,
+    CacheKeys.QUANTITIES,
+    CacheKeys.BILLS,
+    CacheKeys.BILL,
+    CacheKeys.USER,
+  )
   @UseInterceptors(ResetCacheInterceptor, UpdatedBillObjectSerializeInterceptor)
   @ApiBody({ type: UpdateBillDto })
   @ApiBearerAuth()
@@ -124,14 +125,15 @@ export class GatewayController {
   }
 
   @Delete('bill/delete')
-  @ResetCachedKeys(
-    CacheKeys.USER,
-    CacheKeys.BILLS,
-    CacheKeys.QUANTITIES,
-    CacheKeys.TOTAL_AMOUNT,
-  )
   @HttpCode(HttpStatus.OK)
-  @UseInterceptors(DeletedBillObjectSerializeInterceptor)
+  @ResetCachedKeys(
+    CacheKeys.TOTAL_AMOUNT,
+    CacheKeys.QUANTITIES,
+    CacheKeys.BILLS,
+    CacheKeys.BILL,
+    CacheKeys.USER,
+  )
+  @UseInterceptors(ResetCacheInterceptor, DeletedBillObjectSerializeInterceptor)
   @ApiQuery({ name: 'id', type: 'string' })
   @ApiBearerAuth()
   @ApiResponse({ status: HttpStatus.OK, type: DeletedBillDto })
@@ -147,7 +149,7 @@ export class GatewayController {
 
   @Get('bill/total-amount')
   @HttpCode(HttpStatus.OK)
-  @CacheKey(CacheKeys.TOTAL_AMOUNT)
+  @CacheKey(CacheKeys.TOTAL_AMOUNT, { isUnique: true })
   @UseInterceptors(CacheInterceptor, TotalAmountObjectSerializeInterceptor)
   @ApiBearerAuth()
   @ApiResponse({ status: HttpStatus.OK, type: TotalAmountDto })
@@ -158,10 +160,10 @@ export class GatewayController {
   }
 
   @Get('bill/quantities')
+  @HttpCode(HttpStatus.OK)
   @Roles(UserRoles.OWNER, UserRoles.ADMIN)
   @CacheKey(CacheKeys.QUANTITIES)
   @UseGuards(RolesGuard)
-  @HttpCode(HttpStatus.OK)
   @UseInterceptors(CacheInterceptor, BillQuantitiesObjectSerializeInterceptor)
   @ApiBearerAuth()
   @ApiResponse({ status: HttpStatus.OK, type: BillQuantitiesDto })
@@ -215,8 +217,8 @@ export class GatewayController {
   }
 
   @Get('bill/all')
-  @CacheKey(CacheKeys.BILLS)
   @HttpCode(HttpStatus.OK)
+  @CacheKey(CacheKeys.BILLS, { isUnique: true })
   @UseInterceptors(CacheInterceptor, BillListSerializeInterceptor)
   @ApiQuery({ name: 'page', type: 'number' })
   @ApiQuery({ name: 'take', type: 'number' })
@@ -235,8 +237,8 @@ export class GatewayController {
   }
 
   @Get('bill/:id')
-  @CacheKey(CacheKeys.BILL)
   @HttpCode(HttpStatus.OK)
+  @CacheKey(CacheKeys.BILL, { isUnique: true })
   @UseInterceptors(CacheInterceptor, BillObjectSerializeInterceptor)
   @ApiParam({ name: 'id', type: 'string' })
   @ApiBearerAuth()
@@ -249,9 +251,9 @@ export class GatewayController {
   }
 
   @Get('user/:id')
-  @CacheKey(CacheKeys.USER)
   @HttpCode(HttpStatus.OK)
   @SameUser(UserRoles.USER)
+  @CacheKey(CacheKeys.USER, { isUnique: true })
   @UseGuards(SameUserGuard)
   @UseInterceptors(CacheInterceptor, UserWithBillInfoObjectSerializeInterceptor)
   @ApiParam({ name: 'id', type: 'number' })

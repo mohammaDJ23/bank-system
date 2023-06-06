@@ -8,6 +8,7 @@ export interface BillObj {
   date: number;
   createdAt: Date;
   updatedAt: Date;
+  deletedAt: Date | null;
   userId: number;
 }
 
