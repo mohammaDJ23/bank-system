@@ -273,4 +273,29 @@ export class GatewayController {
   ): Promise<DeletedUserDto> {
     return this.userService.findDeletedOne(id);
   }
+
+  @Post(':id/restore')
+  @HttpCode(HttpStatus.OK)
+  @Roles(UserRoles.OWNER)
+  @ResetCachedKeys(
+    CacheKeys.USERS,
+    CacheKeys.DELETED_USERS,
+    CacheKeys.QUANTITIES,
+    CacheKeys.DELETED_QUANTITIES,
+    CacheKeys.DELETED_USER,
+  )
+  @UseGuards(RolesGuard)
+  @UseInterceptors(ResetCacheInterceptor, UserObjectSerializeInterceptor)
+  @ApiParam({ name: 'id', type: 'number' })
+  @ApiBearerAuth()
+  @ApiResponse({ status: HttpStatus.OK, type: UserDto })
+  @ApiResponse({ status: HttpStatus.UNAUTHORIZED, type: ErrorDto })
+  @ApiResponse({ status: HttpStatus.NOT_FOUND, type: ErrorDto })
+  @ApiResponse({ status: HttpStatus.INTERNAL_SERVER_ERROR, type: ErrorDto })
+  restoreOne(
+    @Param('id', ParseIntPipe) id: number,
+    @CurrentUser() user: User,
+  ): Promise<User> {
+    return this.userService.restoreOne(id, user);
+  }
 }

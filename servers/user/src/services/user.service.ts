@@ -373,4 +373,26 @@ export class UserService {
     if (!response) throw new NotFoundException('Could not found the user.');
     return response;
   }
+
+  async restoreOne(id: number, user: User): Promise<User> {
+    const updatedResult = await this.userRepository
+      .createQueryBuilder('public.user')
+      .restore()
+      .where('public.user.id = :userId')
+      .andWhere('public.user.deleted_at IS NOT NULL')
+      .setParameters({ userId: id })
+      .returning('*')
+      .getCamelcasedRawOne();
+
+    const [restoredUser] = updatedResult.raw;
+
+    await this.clientProxy
+      .emit('restored_user', {
+        currentUser: user,
+        restoredUser,
+      })
+      .toPromise();
+
+    return restoredUser;
+  }
 }
