@@ -12,6 +12,7 @@ import {
   UserQuantitiesDto,
   LastWeekDto,
   UpdateUserByOwnerDto,
+  DeletedUserDto,
 } from '../dtos';
 import { User } from '../entities';
 import { hash } from 'bcrypt';
@@ -334,5 +335,42 @@ export class UserService {
         deletedDate: filters.deletedDate,
       })
       .getManyAndCount();
+  }
+
+  async findDeletedOne(id: number): Promise<DeletedUserDto> {
+    const [response]: DeletedUserDto[] = await this.userRepository.query(
+      `
+        SELECT
+          user1.id AS id,
+          user1.first_name AS "firstName",
+          user1.last_name AS "lastName",
+          user1.email AS email,
+          user1.phone AS phone,
+          user1.role AS role,
+          user1.created_by AS "createdBy",
+          user1.created_at AS "createdAt",
+          user1.updated_at AS "updatedAt",
+          user1.deleted_at AS "deletedAt",
+          json_build_object(
+            'id', user2.id,
+            'firstName', user2.first_name,
+            'lastName', user2.last_name,
+            'email', user2.email,
+            'phone', user2.phone,
+            'role', user2.role,
+            'createdBy', user2.created_by,
+            'createdAt', user2.created_at,
+            'updatedAt', user2.updated_at,
+            'deletedAt', user2.deleted_at
+          ) AS parent
+        FROM public.user AS user1
+        LEFT JOIN public.user AS user2 ON user2.id = user1.created_by
+        WHERE user1.id = $1 AND user1.deleted_at IS NOT NULL;
+      `,
+      [id],
+    );
+
+    if (!response) throw new NotFoundException('Could not found the user.');
+    return response;
   }
 }

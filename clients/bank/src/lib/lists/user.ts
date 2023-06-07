@@ -27,6 +27,10 @@ export interface UserWithBillInfoObj extends UserObj {
   };
 }
 
+export interface DeletedUserObj extends UserObj {
+  parent: UserObj;
+}
+
 export class UserList implements ListInstance {
   constructor(
     public list: ListObj<UserObj> = {},

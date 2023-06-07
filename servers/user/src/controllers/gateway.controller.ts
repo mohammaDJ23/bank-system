@@ -25,6 +25,7 @@ import {
   AccessTokenDto,
   UserListFiltersDto,
   DeletedUserListFiltersDto,
+  DeletedUserDto,
 } from 'src/dtos';
 import {
   CacheKey,
@@ -58,6 +59,7 @@ import {
   TokenizeInterceptor,
   CacheInterceptor,
   ResetCacheInterceptor,
+  DeletedUserObjectSerializeInterceptor,
 } from 'src/interceptors';
 
 @UseGuards(JwtGuard)
@@ -252,5 +254,23 @@ export class GatewayController {
   @ApiResponse({ status: HttpStatus.INTERNAL_SERVER_ERROR, type: ErrorDto })
   findOne(@Param('id', ParseIntPipe) id: number): Promise<User> {
     return this.userService.findOne(id);
+  }
+
+  @Get(':id/deleted')
+  @HttpCode(HttpStatus.OK)
+  @Roles(UserRoles.OWNER)
+  @CacheKey(CacheKeys.DELETED_USER)
+  @UseGuards(RolesGuard)
+  @UseInterceptors(CacheInterceptor, DeletedUserObjectSerializeInterceptor)
+  @ApiParam({ name: 'id', type: 'number' })
+  @ApiBearerAuth()
+  @ApiResponse({ status: HttpStatus.OK, type: DeletedUserDto })
+  @ApiResponse({ status: HttpStatus.UNAUTHORIZED, type: ErrorDto })
+  @ApiResponse({ status: HttpStatus.NOT_FOUND, type: ErrorDto })
+  @ApiResponse({ status: HttpStatus.INTERNAL_SERVER_ERROR, type: ErrorDto })
+  async findDeletedOne(
+    @Param('id', ParseIntPipe) id: number,
+  ): Promise<DeletedUserDto> {
+    return this.userService.findDeletedOne(id);
   }
 }

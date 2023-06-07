@@ -1,4 +1,4 @@
-import { BillObj, UserObj, UserWithBillInfoObj } from '../../lib';
+import { BillObj, DeletedUserObj, UserObj, UserWithBillInfoObj } from '../../lib';
 import { RootActions, SetSpecificDetailsAction } from '../actions';
 import { ClearState } from './clearState';
 
@@ -87,7 +87,7 @@ export interface SpecificDetailsState {
   userQuantities: UserQuantities | null;
   deletedUserQuantities: DeletedUserQuantities | null;
   billQuantities: BillQuantities | null;
-  deletedUser: UserWithBillInfoObj | null;
+  deletedUser: DeletedUserObj | null;
 }
 
 const initialState: SpecificDetailsState = {

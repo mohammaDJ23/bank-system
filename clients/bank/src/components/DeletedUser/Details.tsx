@@ -2,14 +2,14 @@ import { Box, Typography, Button } from '@mui/material';
 import moment from 'moment';
 import Modal from '../shared/Modal';
 import { FC, useCallback } from 'react';
-import { useAction, useAuth, useRequest, useSelector } from '../../hooks';
+import { useAction, useRequest, useSelector } from '../../hooks';
 import { RestoreUserApi } from '../../apis';
-import { Pathes, UserWithBillInfoObj } from '../../lib';
+import { DeletedUserObj, Pathes } from '../../lib';
 import { ModalNames } from '../../store';
 import { useNavigate } from 'react-router-dom';
 
 interface DetailsImporation {
-  user: UserWithBillInfoObj;
+  user: DeletedUserObj;
 }
 
 const Details: FC<DetailsImporation> = ({ user }) => {
@@ -17,8 +17,6 @@ const Details: FC<DetailsImporation> = ({ user }) => {
   const { hideModal, showModal } = useAction();
   const { modals } = useSelector();
   const { isApiProcessing, request } = useRequest();
-  const { isOwner } = useAuth();
-  const isCurrentUserOwner = isOwner(user.role);
   const isRestoreUserApiProcessing = isApiProcessing(RestoreUserApi);
 
   const showRestoreUserModal = useCallback(() => {
@@ -55,17 +53,6 @@ const Details: FC<DetailsImporation> = ({ user }) => {
         <Typography fontSize="12px" color="">
           created by: {user.parent.firstName} {user.parent.lastName} ({user.parent.role}){' '}
           {user.parent.deletedAt && `was deleted at ${moment(user.parent.deletedAt).format('LLLL')}`}
-        </Typography>
-        {isCurrentUserOwner && (
-          <Typography fontSize="12px" color="">
-            total created users: {user.users.quantities}
-          </Typography>
-        )}
-        <Typography fontSize="12px" color="">
-          total bill quantities: {user.bill.counts}
-        </Typography>
-        <Typography fontSize="12px" color="">
-          total bill amounts: {user.bill.amounts}
         </Typography>
         <Typography fontSize="12px" color="">
           created at: {moment(user.createdAt).format('LLLL')}
