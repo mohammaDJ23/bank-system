@@ -11,6 +11,7 @@ export enum ModalNames {
   USER_FILTERS = 'USER_FILTERS',
   BILL_FILTERS = 'BILL_FILTERS',
   DELETED_USER_FILTERS = 'DELETED_USER_FILTERS',
+  RESTORE_USER = 'RESTORE_USER',
 }
 
 export interface ModalState {

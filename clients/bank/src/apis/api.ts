@@ -196,6 +196,30 @@ export class UserApi extends RootApi {
   }
 }
 
+export class DeletedUserApi extends RootApi {
+  constructor(id: number) {
+    super(
+      {
+        url: `/api/v1/user/${id}/deleted`,
+        method: 'get',
+      },
+      { baseURL: process.env.USER_SERVICE }
+    );
+  }
+}
+
+export class RestoreUserApi extends RootApi {
+  constructor(id: number) {
+    super(
+      {
+        url: `/api/v1/user/${id}/restore`,
+        method: 'post',
+      },
+      { baseURL: process.env.USER_SERVICE }
+    );
+  }
+}
+
 export class BillApi extends RootApi {
   constructor(id: string) {
     super(

@@ -28,7 +28,10 @@ const UserCard: FC<UserCardImportion> = ({ user, index, listInfo }) => {
         overflow: 'visible',
         backgroundColor: isUserExist && user.id === userInfo.id && listInfo.total >= 2 ? '#F8F8F8' : '',
       }}
-      onClick={() => navigate(getDynamicPath(Pathes.USER, { id: user.id.toString() }))}
+      onClick={() => {
+        const path = user.deletedAt ? Pathes.DELETED_USER : Pathes.USER;
+        navigate(getDynamicPath(path, { id: user.id.toString() }));
+      }}
     >
       <ListItemButton>
         <ListItem disablePadding sx={{ my: '10px' }}>

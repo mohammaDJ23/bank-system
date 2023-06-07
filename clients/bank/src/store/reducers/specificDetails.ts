@@ -87,6 +87,7 @@ export interface SpecificDetailsState {
   userQuantities: UserQuantities | null;
   deletedUserQuantities: DeletedUserQuantities | null;
   billQuantities: BillQuantities | null;
+  deletedUser: UserWithBillInfoObj | null;
 }
 
 const initialState: SpecificDetailsState = {
@@ -101,6 +102,7 @@ const initialState: SpecificDetailsState = {
   userQuantities: null,
   deletedUserQuantities: null,
   billQuantities: null,
+  deletedUser: null,
 };
 
 function setSpecificDetails(state: SpecificDetailsState, action: SetSpecificDetailsAction): SpecificDetailsState {
@@ -124,6 +126,7 @@ function cleanState(state: SpecificDetailsState): SpecificDetailsState {
     userQuantities: null,
     deletedUserQuantities: null,
     billQuantities: null,
+    deletedUser: null,
   };
 }
 
