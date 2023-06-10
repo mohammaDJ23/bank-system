@@ -15,13 +15,14 @@ import {
   BillQuantitiesDto,
   BillListFiltersDto,
 } from 'src/dtos';
-import { Brackets, Repository } from 'typeorm';
+import { Brackets, EntityManager, Repository } from 'typeorm';
 import { Bill, User } from '../entities';
 import { createReadStream, existsSync, unlink, rmdir, readdir, rm } from 'fs';
 import { mkdir } from 'fs/promises';
 import { join } from 'path';
 import { Workbook } from 'exceljs';
 import { UserService } from './user.service';
+import { RestoredUserObj } from 'src/types';
 
 @Injectable()
 export class BillService {
@@ -266,5 +267,18 @@ export class BillService {
           }
         }
       });
+  }
+
+  async restoreBills(
+    payload: RestoredUserObj,
+    entityManager: EntityManager,
+  ): Promise<void> {
+    await entityManager
+      .createQueryBuilder(Bill, 'bill')
+      .restore()
+      .where('bill.user_id = :userId')
+      .andWhere('bill.deleted_at IS NOT NULL')
+      .setParameters({ userId: payload.restoredUser.id })
+      .execute();
   }
 }

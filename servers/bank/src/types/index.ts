@@ -1,9 +1,11 @@
 import { Request as Req } from 'express';
 import { User } from 'src/entities';
 
-export interface Request extends Req {
-  currentUser: User;
+export interface CurrentUserObj {
+  curretUser: User;
 }
+
+export interface Request extends Req, CurrentUserObj {}
 
 export type Exception =
   | {
@@ -64,19 +66,20 @@ export enum CacheKeys {
   TOTAL_AMOUNT = 'TOTAL_AMOUNT',
 }
 
-export interface CreatedUserObj {
+export interface CreatedUserObj extends CurrentUserObj {
   createdUser: User;
-  currentUser: User;
 }
 
-export interface UpdatedUserObj {
+export interface UpdatedUserObj extends CurrentUserObj {
   updatedUser: User;
-  currentUser: User;
 }
 
-export interface DeletedUserObj {
+export interface DeletedUserObj extends CurrentUserObj {
   deletedUser: User;
-  currentUser: User;
+}
+
+export interface RestoredUserObj extends CurrentUserObj {
+  restoredUser: User;
 }
 
 export interface CacheKeyOptions {

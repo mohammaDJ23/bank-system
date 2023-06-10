@@ -2,8 +2,13 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { RmqContext, RpcException } from '@nestjs/microservices';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UserWithBillInfoDto } from 'src/dtos';
-import { CreatedUserObj, DeletedUserObj, UpdatedUserObj } from 'src/types';
-import { Repository } from 'typeorm';
+import {
+  CreatedUserObj,
+  DeletedUserObj,
+  RestoredUserObj,
+  UpdatedUserObj,
+} from 'src/types';
+import { EntityManager, Repository } from 'typeorm';
 import { User } from '../entities';
 import { RabbitmqService } from './rabbitmq.service';
 
@@ -141,5 +146,18 @@ export class UserService {
 
     if (!response) throw new NotFoundException('Could not found the user.');
     return response;
+  }
+
+  async restoreUser(
+    payload: RestoredUserObj,
+    entityManager: EntityManager,
+  ): Promise<void> {
+    await entityManager
+      .createQueryBuilder(User, 'public.user')
+      .restore()
+      .where('public.user.user_service_id = :userId')
+      .andWhere('public.user.deleted_at IS NOT NULL')
+      .setParameters({ userId: payload.restoredUser.id })
+      .execute();
   }
 }
