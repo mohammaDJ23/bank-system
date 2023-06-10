@@ -85,6 +85,7 @@ export class MessagePatternController {
         this.rabbitmqService.applyAcknowledgment(context);
       } catch (err) {
         await queryRunner.rollbackTransaction();
+        throw err;
       } finally {
         await queryRunner.release();
       }
