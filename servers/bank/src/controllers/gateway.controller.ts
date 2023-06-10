@@ -45,6 +45,7 @@ import {
   DeletedBillDto,
   BillQuantitiesDto,
   BillListFiltersDto,
+  DeletedBillListFiltersDto,
 } from 'src/dtos';
 import { Bill, User } from 'src/entities';
 import {
@@ -132,6 +133,7 @@ export class GatewayController {
     CacheKeys.BILLS,
     CacheKeys.BILL,
     CacheKeys.USER,
+    CacheKeys.DElETED_BILLS,
   )
   @UseInterceptors(ResetCacheInterceptor, DeletedBillObjectSerializeInterceptor)
   @ApiQuery({ name: 'id', type: 'string' })
@@ -234,6 +236,27 @@ export class GatewayController {
     @CurrentUser() user: User,
   ): Promise<[Bill[], number]> {
     return this.billService.findAll(page, take, filters, user);
+  }
+
+  @Get('bill/all/deleted')
+  @HttpCode(HttpStatus.OK)
+  @CacheKey(CacheKeys.DElETED_BILLS, { isUnique: true })
+  @UseInterceptors(CacheInterceptor, BillListSerializeInterceptor)
+  @ApiQuery({ name: 'page', type: 'number' })
+  @ApiQuery({ name: 'take', type: 'number' })
+  @ApiQuery({ name: 'filters', type: DeletedBillListFiltersDto })
+  @ApiBearerAuth()
+  @ApiResponse({ status: HttpStatus.OK, type: BillDto, isArray: true })
+  @ApiResponse({ status: HttpStatus.UNAUTHORIZED, type: ErrorDto })
+  @ApiResponse({ status: HttpStatus.INTERNAL_SERVER_ERROR, type: ErrorDto })
+  findAllDeleted(
+    @Query('page', ParseIntPipe) page: number,
+    @Query('take', ParseIntPipe) take: number,
+    @Query('filters', ParseBillListFiltersPipe)
+    filters: DeletedBillListFiltersDto,
+    @CurrentUser() user: User,
+  ): Promise<[Bill[], number]> {
+    return this.billService.findAllDeleted(page, take, filters, user);
   }
 
   @Get('bill/:id')

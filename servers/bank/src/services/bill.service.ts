@@ -14,6 +14,7 @@ import {
   CreateBillDto,
   BillQuantitiesDto,
   BillListFiltersDto,
+  DeletedBillListFiltersDto,
 } from 'src/dtos';
 import { Brackets, EntityManager, Repository } from 'typeorm';
 import { Bill, User } from '../entities';
@@ -116,6 +117,50 @@ export class BillService {
         q: filters.q,
         fromDate: filters.fromDate,
         toDate: filters.toDate,
+      })
+      .getManyAndCount();
+  }
+
+  async findAllDeleted(
+    page: number,
+    take: number,
+    filters: DeletedBillListFiltersDto,
+    user: User,
+  ): Promise<[Bill[], number]> {
+    return this.billRepository
+      .createQueryBuilder('bill')
+      .where('bill.user_id = :userId')
+      .withDeleted()
+      .andWhere('bill.deletedAt IS NOT NULL')
+      .andWhere(
+        new Brackets((query) =>
+          query
+            .where('to_tsvector(bill.receiver) @@ plainto_tsquery(:q)')
+            .orWhere('to_tsvector(bill.description) @@ plainto_tsquery(:q)')
+            .orWhere('to_tsvector(bill.amount) @@ plainto_tsquery(:q)')
+            .orWhere("bill.receiver ILIKE '%' || :q || '%'")
+            .orWhere("bill.description ILIKE '%' || :q || '%'")
+            .orWhere("bill.amount ILIKE '%' || :q || '%'"),
+        ),
+      )
+      .andWhere(
+        'CASE WHEN (:fromDate)::BIGINT > 0 THEN COALESCE(EXTRACT(EPOCH FROM date(bill.date)) * 1000, 0)::BIGINT >= (:fromDate)::BIGINT ELSE TRUE END',
+      )
+      .andWhere(
+        'CASE WHEN (:toDate)::BIGINT > 0 THEN COALESCE(EXTRACT(EPOCH FROM date(bill.date)) * 1000, 0)::BIGINT <= (:toDate)::BIGINT ELSE TRUE END',
+      )
+      .andWhere(
+        'CASE WHEN (:deletedDate)::BIGINT > 0 THEN COALESCE(EXTRACT(EPOCH FROM date(bill.deletedAt)) * 1000, 0)::BIGINT = (:deletedDate)::BIGINT ELSE TRUE END',
+      )
+      .orderBy('bill.deletedAt', 'DESC')
+      .take(take)
+      .skip((page - 1) * take)
+      .setParameters({
+        userId: user.userServiceId,
+        q: filters.q,
+        fromDate: filters.fromDate,
+        toDate: filters.toDate,
+        deletedDate: filters.deletedDate,
       })
       .getManyAndCount();
   }
