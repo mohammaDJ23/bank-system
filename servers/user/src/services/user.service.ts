@@ -375,16 +375,14 @@ export class UserService {
   }
 
   async restoreOne(id: number, user: User): Promise<User> {
-    const updatedResult = await this.userRepository
+    const restoredUser = await this.userRepository
       .createQueryBuilder('public.user')
       .restore()
       .where('public.user.id = :userId')
       .andWhere('public.user.deleted_at IS NOT NULL')
       .setParameters({ userId: id })
       .returning('*')
-      .getCamelcasedRawOne();
-
-    const [restoredUser] = updatedResult.raw;
+      .exe<User>({ camelcase: true });
 
     await this.clientProxy
       .emit('restored_user', {

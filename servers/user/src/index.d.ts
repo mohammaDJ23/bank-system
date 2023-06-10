@@ -1,9 +1,14 @@
 import { UpdateResult } from 'typeorm';
 
+interface ExeOptions {
+  camelcase: boolean;
+}
+
 declare module 'typeorm/query-builder/SoftDeleteQueryBuilder' {
   interface SoftDeleteQueryBuilder<Entity> {
-    getCamelcasedRawOne(
+    exe<E extends Entity = Entity>(
       this: SoftDeleteQueryBuilder<Entity>,
-    ): Promise<UpdateResult>;
+      options?: ExeOptions,
+    ): Promise<E>;
   }
 }

@@ -1,24 +1,24 @@
-import { UpdateResult } from 'typeorm';
+import { BadRequestException } from '@nestjs/common';
+import { ExeOptions } from 'src';
 import { SoftDeleteQueryBuilder } from 'typeorm/query-builder/SoftDeleteQueryBuilder';
-import { camelCase } from 'typeorm/util/StringUtils';
+import { camelcaseKeys } from './camelcase';
 
-SoftDeleteQueryBuilder.prototype.getCamelcasedRawOne = async function <Entity>(
+SoftDeleteQueryBuilder.prototype.exe = async function <Entity>(
   this: SoftDeleteQueryBuilder<Entity>,
-): Promise<UpdateResult> {
+  options?: ExeOptions,
+): Promise<Entity> {
   const updatedResult = await this.execute();
+  let [rawResult] = updatedResult.raw;
 
-  if (Array.isArray(updatedResult.raw)) {
-    updatedResult.raw.forEach((item: Record<string, any>) => {
-      if (typeof item === 'object' && Object.keys(item).length)
-        for (let key in item)
-          if (camelCase(key) !== key) {
-            item[camelCase(key)] = item[key];
-            delete item[key];
-          }
-    });
+  if (typeof rawResult === 'undefined' || rawResult === null || !rawResult) {
+    throw new BadRequestException('No affects applied.');
   }
 
-  updatedResult.raw[0] = updatedResult.raw[0] || {};
+  if (options.camelcase) {
+    if (typeof rawResult === 'object') {
+      return camelcaseKeys(rawResult);
+    }
+  }
 
-  return updatedResult;
+  return rawResult;
 };
