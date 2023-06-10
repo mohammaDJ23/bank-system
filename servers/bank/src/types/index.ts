@@ -64,7 +64,8 @@ export enum CacheKeys {
   BILL = 'BILL',
   QUANTITIES = 'QUANTITIES',
   TOTAL_AMOUNT = 'TOTAL_AMOUNT',
-  DElETED_BILLS = 'DELETED_BILLS',
+  DELETED_BILLS = 'DELETED_BILLS',
+  DELETED_BILL = 'DELETED_BILL',
 }
 
 export interface CreatedUserObj extends CurrentUserObj {

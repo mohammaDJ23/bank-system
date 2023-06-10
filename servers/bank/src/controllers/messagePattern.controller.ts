@@ -68,7 +68,7 @@ export class MessagePatternController {
     CacheKeys.BILLS,
     CacheKeys.BILL,
     CacheKeys.USER,
-    CacheKeys.DElETED_BILLS,
+    CacheKeys.DELETED_BILLS,
   )
   @UseInterceptors(ResetCacheMicroserviceInterceptor)
   async restore(

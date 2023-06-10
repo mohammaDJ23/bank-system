@@ -133,7 +133,7 @@ export class GatewayController {
     CacheKeys.BILLS,
     CacheKeys.BILL,
     CacheKeys.USER,
-    CacheKeys.DElETED_BILLS,
+    CacheKeys.DELETED_BILLS,
   )
   @UseInterceptors(ResetCacheInterceptor, DeletedBillObjectSerializeInterceptor)
   @ApiQuery({ name: 'id', type: 'string' })
@@ -240,7 +240,7 @@ export class GatewayController {
 
   @Get('bill/all/deleted')
   @HttpCode(HttpStatus.OK)
-  @CacheKey(CacheKeys.DElETED_BILLS, { isUnique: true })
+  @CacheKey(CacheKeys.DELETED_BILLS, { isUnique: true })
   @UseInterceptors(CacheInterceptor, BillListSerializeInterceptor)
   @ApiQuery({ name: 'page', type: 'number' })
   @ApiQuery({ name: 'take', type: 'number' })
@@ -271,6 +271,23 @@ export class GatewayController {
   @ApiResponse({ status: HttpStatus.INTERNAL_SERVER_ERROR, type: ErrorDto })
   findById(@Param('id') id: string, @CurrentUser() user: User): Promise<Bill> {
     return this.billService.findById(id, user);
+  }
+
+  @Get('bill/:id/deleted')
+  @HttpCode(HttpStatus.OK)
+  @CacheKey(CacheKeys.DELETED_BILL, { isUnique: true })
+  @UseInterceptors(CacheInterceptor, BillObjectSerializeInterceptor)
+  @ApiParam({ name: 'id', type: 'number' })
+  @ApiBearerAuth()
+  @ApiResponse({ status: HttpStatus.OK, type: BillDto })
+  @ApiResponse({ status: HttpStatus.UNAUTHORIZED, type: ErrorDto })
+  @ApiResponse({ status: HttpStatus.NOT_FOUND, type: ErrorDto })
+  @ApiResponse({ status: HttpStatus.INTERNAL_SERVER_ERROR, type: ErrorDto })
+  findDeletedOne(
+    @Param('id', ParseIntPipe) id: number,
+    @CurrentUser() user: User,
+  ): Promise<Bill> {
+    return this.billService.findDeletedOne(id, user);
   }
 
   @Get('user/:id')

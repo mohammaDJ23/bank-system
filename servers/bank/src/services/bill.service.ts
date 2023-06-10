@@ -326,4 +326,15 @@ export class BillService {
       .setParameters({ userId: payload.restoredUser.id })
       .execute();
   }
+
+  findDeletedOne(id: number, user: User): Promise<Bill> {
+    return this.billRepository
+      .createQueryBuilder('bill')
+      .withDeleted()
+      .where('bill.deletedAt IS NOT NULL')
+      .andWhere('bill.id = :billId')
+      .andWhere('bill.user_id = :userId')
+      .setParameters({ billId: id, userId: user.userServiceId })
+      .getOne();
+  }
 }
