@@ -290,6 +290,30 @@ export class GatewayController {
     return this.billService.findDeletedOne(id, user);
   }
 
+  @Post('bill/:id/restore')
+  @HttpCode(HttpStatus.OK)
+  @ResetCachedKeys(
+    CacheKeys.TOTAL_AMOUNT,
+    CacheKeys.QUANTITIES,
+    CacheKeys.BILLS,
+    CacheKeys.USER,
+    CacheKeys.DELETED_BILL,
+    CacheKeys.DELETED_BILLS,
+  )
+  @UseInterceptors(ResetCacheInterceptor, BillObjectSerializeInterceptor)
+  @ApiParam({ name: 'id', type: 'number' })
+  @ApiBearerAuth()
+  @ApiResponse({ status: HttpStatus.OK, type: BillDto })
+  @ApiResponse({ status: HttpStatus.UNAUTHORIZED, type: ErrorDto })
+  @ApiResponse({ status: HttpStatus.NOT_FOUND, type: ErrorDto })
+  @ApiResponse({ status: HttpStatus.INTERNAL_SERVER_ERROR, type: ErrorDto })
+  restoreOne(
+    @Param('id', ParseIntPipe) id: number,
+    @CurrentUser() user: User,
+  ): Promise<Bill> {
+    return this.billService.restoreOne(id, user);
+  }
+
   @Get('user/:id')
   @HttpCode(HttpStatus.OK)
   @SameUser(UserRoles.USER)

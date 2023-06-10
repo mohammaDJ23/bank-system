@@ -327,6 +327,19 @@ export class BillService {
       .execute();
   }
 
+  async restoreOne(id: number, user: User): Promise<Bill> {
+    const updatedResult = await this.billRepository
+      .createQueryBuilder('bill')
+      .restore()
+      .where('bill.user_id = :userId')
+      .andWhere('bill.id = :billId')
+      .setParameters({ billId: id, userId: user.userServiceId })
+      .returning('*')
+      .execute();
+    const [restoredBill] = updatedResult.raw;
+    return restoredBill;
+  }
+
   findDeletedOne(id: number, user: User): Promise<Bill> {
     return this.billRepository
       .createQueryBuilder('bill')
