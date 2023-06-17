@@ -35,14 +35,13 @@ export class BillService {
   async createBill(body: CreateBillDto, user: User): Promise<Bill> {
     const createdBill = this.billRepository.create(body);
     createdBill.user = user;
-    const insertResult = await this.billRepository
+    return this.billRepository
       .createQueryBuilder()
       .insert()
       .into(Bill)
       .values(createdBill)
       .returning('*')
-      .execute();
-    return insertResult.raw[0];
+      .exe({ camelcase: true });
   }
 
   async updateBill(body: UpdateBillDto, user: User): Promise<Bill> {
