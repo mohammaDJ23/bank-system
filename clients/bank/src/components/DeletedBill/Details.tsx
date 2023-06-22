@@ -1,41 +1,38 @@
-import { Box, Typography, Menu, MenuItem, IconButton, Button } from '@mui/material';
-import { MoreVert } from '@mui/icons-material';
+import { Box, Typography, Button } from '@mui/material';
 import moment from 'moment';
 import Modal from '../shared/Modal';
 import { useNavigate } from 'react-router-dom';
-import { FC, useCallback, useState } from 'react';
+import { FC, useCallback } from 'react';
 import { useAction, useRequest, useSelector } from '../../hooks';
-import { BillObj, getDynamicPath, Pathes } from '../../lib';
+import { BillObj, Pathes } from '../../lib';
 import { ModalNames } from '../../store';
-import { DeleteBillApi } from '../../apis';
+import { RestoreBillApi } from '../../apis';
 
 interface DetailsImporation {
   bill: BillObj;
 }
 
 const Details: FC<DetailsImporation> = ({ bill }) => {
-  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-  const open = Boolean(anchorEl);
   const navigate = useNavigate();
   const { showModal, hideModal } = useAction();
   const { modals } = useSelector();
   const { isApiProcessing, request } = useRequest();
 
-  // const isRestoreBillApiProcessing = isApiProcessing(RestoreBillApi);
+  const isRestoreBillApiProcessing = isApiProcessing(RestoreBillApi);
 
-  // const showRestoreBillModal = useCallback(() => {
-  //   showModal(ModalNames.RESTORE_BILL);
-  // }, []);
+  const showRestoreBillModal = useCallback(() => {
+    showModal(ModalNames.RESTORE_BILL);
+  }, []);
 
-  // const hideRestoreBillModal = useCallback(() => {
-  //   hideModal(ModalNames.RESTORE_BILL);
-  // }, []);
+  const hideRestoreBillModal = useCallback(() => {
+    hideModal(ModalNames.RESTORE_BILL);
+  }, []);
 
-  // const restoreBill = useCallback(() => {
-  //   request(new RestoreBillApi(bill.id)).then(response => {
-  //     navigate(Pathes.BILLS);
-  //   });
-  // }, [bill]);
+  const restoreBill = useCallback(() => {
+    request(new RestoreBillApi(bill.id)).then(response => {
+      navigate(Pathes.BILLS);
+    });
+  }, [bill]);
 
   return (
     <>
@@ -62,8 +59,8 @@ const Details: FC<DetailsImporation> = ({ bill }) => {
         </Typography>
         <Box mt="30px">
           <Button
-            disabled={false}
-            onClick={() => {}}
+            disabled={isRestoreBillApiProcessing}
+            onClick={showRestoreBillModal}
             variant="contained"
             color="success"
             size="small"
@@ -73,14 +70,14 @@ const Details: FC<DetailsImporation> = ({ bill }) => {
           </Button>
         </Box>
       </Box>
-      {/* <Modal
+      <Modal
         title="Restoring the bill"
         body="Are you sure to restore the bill?"
         isLoading={isRestoreBillApiProcessing}
         isActive={modals[ModalNames.RESTORE_BILL]}
         onCancel={hideRestoreBillModal}
         onConfirm={restoreBill}
-      /> */}
+      />
     </>
   );
 };
