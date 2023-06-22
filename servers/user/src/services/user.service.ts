@@ -69,9 +69,7 @@ export class UserService {
     payload: UpdatedUserPartialObj,
     currentUser: User,
   ): Promise<User> {
-    const user = await this.findById(payload.id);
-    if (!user) throw new NotFoundException('Could not found the user.');
-
+    const user = await this.findByIdOrFail(payload.id);
     return this.update(payload, user, currentUser);
   }
 
@@ -80,13 +78,10 @@ export class UserService {
     context: RmqContext,
   ): Promise<User> {
     try {
-      const user = await this.findById(payload.id);
-
-      if (!user) throw new NotFoundException('Could not found the user.');
-
-      const udpatedUser = await this.updateSameUser(payload, user);
+      const user = await this.findByIdOrFail(payload.id);
+      const updatedUser = await this.updateSameUser(payload, user);
       this.rabbitmqService.applyAcknowledgment(context);
-      return udpatedUser;
+      return updatedUser;
     } catch (error) {
       throw new RpcException(error);
     }
@@ -118,7 +113,7 @@ export class UserService {
   }
 
   async delete(id: number, currentUser: User): Promise<User> {
-    const user = await this.userRepository.findOneOrFail({ where: { id } });
+    const user = await this.findByIdOrFail(id);
     await this.userRepository.softRemove(user);
     await this.clientProxy
       .emit('deleted_user', { currentUser, deletedUser: user })
@@ -127,9 +122,7 @@ export class UserService {
   }
 
   async findOne(id: number): Promise<User> {
-    const findedUser = await this.findById(id);
-    if (!findedUser) throw new NotFoundException('Could not found the user.');
-    return findedUser;
+    return this.findByIdOrFail(id);
   }
 
   findById(id: number): Promise<User> {
@@ -139,12 +132,20 @@ export class UserService {
       .getOne();
   }
 
+  findByIdOrFail(id: number): Promise<User> {
+    return this.userRepository
+      .createQueryBuilder('user')
+      .where('user.id = :id')
+      .setParameters({ id })
+      .getOneOrFail();
+  }
+
   async findByIdForMicroservices(
     id: number,
     context: RmqContext,
   ): Promise<User> {
     try {
-      const user = await this.findById(id);
+      const user = await this.findByIdOrFail(id);
       this.rabbitmqService.applyAcknowledgment(context);
       return user;
     } catch (error) {
@@ -382,7 +383,7 @@ export class UserService {
       .andWhere('public.user.deleted_at IS NOT NULL')
       .setParameters({ userId: id })
       .returning('*')
-      .exe<User>({ camelcase: true });
+      .exe();
 
     await this.clientProxy
       .emit('restored_user', {
