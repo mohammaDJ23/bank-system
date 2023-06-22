@@ -1,12 +1,14 @@
 import { BadRequestException } from '@nestjs/common';
 import { ExeOptions } from 'src';
-import { InsertQueryBuilder } from 'typeorm/query-builder/InsertQueryBuilder';
+import { QueryBuilder } from 'typeorm';
+import {
+  DeleteQueryBuilder,
+  UpdateQueryBuilder,
+  InsertQueryBuilder,
+} from 'typeorm';
 import { camelcaseKeys } from './camelcase';
 
-InsertQueryBuilder.prototype.exe = async function <Entity>(
-  this: InsertQueryBuilder<Entity>,
-  options?: ExeOptions,
-): Promise<Entity> {
+async function exe<Entity>(this: QueryBuilder<Entity>, options?: ExeOptions) {
   const updatedResult = await this.execute();
   let [rawResult] = updatedResult.raw;
 
@@ -20,4 +22,8 @@ InsertQueryBuilder.prototype.exe = async function <Entity>(
   }
 
   return rawResult;
-};
+}
+
+InsertQueryBuilder.prototype.exe = exe;
+UpdateQueryBuilder.prototype.exe = exe;
+DeleteQueryBuilder.prototype.exe = exe;

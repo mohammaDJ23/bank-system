@@ -45,7 +45,7 @@ export class BillService {
   }
 
   async updateBill(body: UpdateBillDto, user: User): Promise<Bill> {
-    const updateResult = await this.billRepository
+    return this.billRepository
       .createQueryBuilder('bill')
       .update(Bill)
       .set(body)
@@ -53,8 +53,7 @@ export class BillService {
       .andWhere('bill.id = :billId')
       .setParameters({ userId: user.userServiceId, billId: body.id })
       .returning('*')
-      .execute();
-    return updateResult.raw[0];
+      .exe({ camelcase: true });
   }
 
   async deleteBill(id: string, user: User): Promise<Bill> {
