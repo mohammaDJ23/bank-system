@@ -258,6 +258,18 @@ export class BillApi extends RootApi {
   }
 }
 
+export class DeletedBillApi extends RootApi {
+  constructor(id: string) {
+    super(
+      {
+        url: `/api/v1/bank/bill/${id}/deleted`,
+        method: 'get',
+      },
+      { baseURL: process.env.BANK_SERVICE }
+    );
+  }
+}
+
 export class DeleteBillApi extends RootApi {
   constructor(id: string) {
     super(
