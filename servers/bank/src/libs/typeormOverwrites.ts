@@ -1,9 +1,10 @@
-import { BadRequestException } from '@nestjs/common';
+import { BadRequestException, NotFoundException } from '@nestjs/common';
 import { ExeOptions } from 'src';
 import {
   DeleteQueryBuilder,
   UpdateQueryBuilder,
   InsertQueryBuilder,
+  SelectQueryBuilder,
   QueryBuilder,
 } from 'typeorm';
 import { SoftDeleteQueryBuilder } from 'typeorm/query-builder/SoftDeleteQueryBuilder';
@@ -30,7 +31,20 @@ async function exe<Entity>(
   return rawResult;
 }
 
+SelectQueryBuilder.prototype.getOneOrFail = async function <Entity>(
+  this: SelectQueryBuilder<Entity>,
+) {
+  const entity = await this.getOne();
+  if (!entity) {
+    throw new NotFoundException('Could not be found the entity');
+  }
+  return entity;
+};
+
 InsertQueryBuilder.prototype.exe = exe;
+
 UpdateQueryBuilder.prototype.exe = exe;
+
 DeleteQueryBuilder.prototype.exe = exe;
+
 SoftDeleteQueryBuilder.prototype.exe = exe;
