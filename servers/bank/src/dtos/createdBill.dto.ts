@@ -22,19 +22,19 @@ export class CreatedBillDto {
   @ApiProperty()
   date: Date;
 
-  @Expose({ name: 'created_at' })
+  @Expose()
   @ApiProperty()
   createdAt: Date;
 
-  @Expose({ name: 'updated_at' })
+  @Expose()
   @ApiProperty()
   updatedAt: Date;
 
-  @Expose({ name: 'deleted_at' })
+  @Expose()
   @ApiProperty()
   deletedAt: Date;
 
-  @Expose({ name: 'user_id' })
+  @Expose()
   @ApiProperty()
   userId: number;
 }

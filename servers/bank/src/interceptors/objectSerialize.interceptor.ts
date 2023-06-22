@@ -34,6 +34,12 @@ export class ObjectSerializeInterceptor implements NestInterceptor {
   }
 }
 
+export class CreatedBillObjectSerializeInterceptor extends ObjectSerializeInterceptor {
+  constructor() {
+    super(CreatedBillDto);
+  }
+}
+
 export class UpdatedBillObjectSerializeInterceptor extends ObjectSerializeInterceptor {
   constructor() {
     super(UpdatedBillDto);

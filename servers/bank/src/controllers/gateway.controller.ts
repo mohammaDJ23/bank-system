@@ -45,6 +45,7 @@ import {
   BillQuantitiesDto,
   BillListFiltersDto,
   DeletedBillListFiltersDto,
+  CreatedBillDto,
 } from 'src/dtos';
 import { Bill, User } from 'src/entities';
 import {
@@ -61,6 +62,7 @@ import {
   BillObjectSerializeInterceptor,
   BillQuantitiesObjectSerializeInterceptor,
   CacheInterceptor,
+  CreatedBillObjectSerializeInterceptor,
   DeletedBillObjectSerializeInterceptor,
   LastWeekArraySerializeInterceptor,
   ResetCacheInterceptor,
@@ -87,10 +89,10 @@ export class GatewayController {
     CacheKeys.BILLS,
     CacheKeys.USER,
   )
-  @UseInterceptors(ResetCacheInterceptor, BillObjectSerializeInterceptor)
+  @UseInterceptors(ResetCacheInterceptor, CreatedBillObjectSerializeInterceptor)
   @ApiBody({ type: CreateBillDto })
   @ApiBearerAuth()
-  @ApiResponse({ status: HttpStatus.CREATED, type: BillDto })
+  @ApiResponse({ status: HttpStatus.CREATED, type: CreatedBillDto })
   @ApiResponse({ status: HttpStatus.UNAUTHORIZED, type: ErrorDto })
   @ApiResponse({ status: HttpStatus.INTERNAL_SERVER_ERROR, type: ErrorDto })
   createBill(
