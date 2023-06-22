@@ -9,7 +9,12 @@ import {
 import { SoftDeleteQueryBuilder } from 'typeorm/query-builder/SoftDeleteQueryBuilder';
 import { camelcaseKeys } from './camelcase';
 
-async function exe<Entity>(this: QueryBuilder<Entity>, options?: ExeOptions) {
+async function exe<Entity>(
+  this: QueryBuilder<Entity>,
+  options: ExeOptions = {},
+) {
+  options.camelcase = options.camelcase ?? true;
+
   const updatedResult = await this.execute();
   let [rawResult] = updatedResult.raw;
 

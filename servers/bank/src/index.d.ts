@@ -12,7 +12,7 @@ interface CustomQueryBuilder<Entity> {
 }
 
 interface ExeOptions {
-  camelcase: boolean;
+  camelcase?: boolean;
 }
 
 declare module 'typeorm/query-builder/SoftDeleteQueryBuilder' {
