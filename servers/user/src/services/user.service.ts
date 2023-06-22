@@ -174,6 +174,7 @@ export class UserService {
   ): Promise<User> {
     try {
       const user = await this.findByEmail(email);
+      if (!user) throw new NotFoundException('Could not found the user');
       this.rabbitmqService.applyAcknowledgment(context);
       return user;
     } catch (error) {
