@@ -64,6 +64,7 @@ import {
   BillQuantitiesObjectSerializeInterceptor,
   CacheInterceptor,
   CreatedBillObjectSerializeInterceptor,
+  DeletedBillListSerializeInterceptor,
   DeletedBillObjectSerializeInterceptor,
   LastWeekArraySerializeInterceptor,
   ResetCacheInterceptor,
@@ -243,7 +244,7 @@ export class GatewayController {
   @Get('bill/all/deleted')
   @HttpCode(HttpStatus.OK)
   @CacheKey(CacheKeys.DELETED_BILLS, { isUnique: true })
-  @UseInterceptors(CacheInterceptor, BillListSerializeInterceptor)
+  @UseInterceptors(CacheInterceptor, DeletedBillListSerializeInterceptor)
   @ApiQuery({ name: 'page', type: 'number' })
   @ApiQuery({ name: 'take', type: 'number' })
   @ApiQuery({ name: 'filters', type: DeletedBillListFiltersDto })

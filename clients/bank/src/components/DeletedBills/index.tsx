@@ -19,7 +19,7 @@ const DeletedBillListContent: FC = () => {
 
   return (
     <Navigation
-      title={`Bills ${!isInitialDeletedBillListApiProcessing ? `(${billsTotal})` : ''}`}
+      title={`Deleted bills ${!isInitialDeletedBillListApiProcessing ? `(${billsTotal})` : ''}`}
       menuOptions={menuOptions}
     >
       <ListContainer>

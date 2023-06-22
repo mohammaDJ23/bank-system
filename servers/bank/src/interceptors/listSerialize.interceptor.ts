@@ -1,7 +1,7 @@
 import { CallHandler, ExecutionContext, NestInterceptor } from '@nestjs/common';
 import { plainToClass } from 'class-transformer';
 import { map, Observable } from 'rxjs';
-import { BillDto } from 'src/dtos';
+import { BillDto, DeletedBillDto } from 'src/dtos';
 import { ClassConstructor, ListObj } from 'src/types';
 
 export class ListSerializeInterceptor implements NestInterceptor {
@@ -30,5 +30,11 @@ export class ListSerializeInterceptor implements NestInterceptor {
 export class BillListSerializeInterceptor extends ListSerializeInterceptor {
   constructor() {
     super(BillDto);
+  }
+}
+
+export class DeletedBillListSerializeInterceptor extends ListSerializeInterceptor {
+  constructor() {
+    super(DeletedBillDto);
   }
 }
