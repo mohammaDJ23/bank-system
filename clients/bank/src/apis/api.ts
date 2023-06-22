@@ -9,6 +9,7 @@ import {
   UserListFilters,
   BillListFilters,
   DeletedUserListFilters,
+  DeletedBillListFilters,
 } from '../lib';
 import { PeriodAmountFilter } from '../store';
 import { RootApiObj } from './resetApi';
@@ -183,6 +184,31 @@ export class BillsApi<T = any> extends RootApi {
 }
 
 export type BillsApiConstructorType = ConstructorParameters<typeof BillsApi>[0] & Pick<RootApi, 'isInitialApi'>;
+
+export class DeletedBillListApi<T = any> extends RootApi {
+  constructor(data: ListParams<T> & DeletedBillListFilters) {
+    super(
+      {
+        url: '/api/v1/bank/bill/all/deleted',
+        method: 'get',
+        params: {
+          page: data.page,
+          take: data.take,
+          filters: {
+            q: data.q,
+            fromDate: data.fromDate,
+            toDate: data.toDate,
+            deletedDate: data.deletedDate,
+          },
+        },
+      },
+      { baseURL: process.env.BANK_SERVICE }
+    );
+  }
+}
+
+export type DeletedBillListApiConstructorType = ConstructorParameters<typeof DeletedBillListApi>[0] &
+  Pick<RootApi, 'isInitialApi'>;
 
 export class UserApi extends RootApi {
   constructor(id: number) {
