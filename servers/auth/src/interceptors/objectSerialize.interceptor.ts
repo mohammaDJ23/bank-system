@@ -25,13 +25,13 @@ export class ObjectSerializeInterceptor implements NestInterceptor {
   }
 }
 
-export class TokenObjectSerializeInterceptor extends ObjectSerializeInterceptor {
+export class TokenSerializeInterceptor extends ObjectSerializeInterceptor {
   constructor() {
     super(TokenDto);
   }
 }
 
-export class MessageObjectSerializeInterceptor extends ObjectSerializeInterceptor {
+export class MessageSerializeInterceptor extends ObjectSerializeInterceptor {
   constructor() {
     super(MessageDto);
   }
