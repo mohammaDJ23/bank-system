@@ -23,7 +23,7 @@ export class UserService {
     return this.userRepository
       .createQueryBuilder('user')
       .where('user.user_service_id = :id', { id })
-      .getOne();
+      .getOneOrFail();
   }
 
   async create(payload: CreatedUserObj, context: RmqContext): Promise<void> {
