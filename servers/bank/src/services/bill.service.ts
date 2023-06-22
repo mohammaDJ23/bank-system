@@ -41,7 +41,7 @@ export class BillService {
       .into(Bill)
       .values(createdBill)
       .returning('*')
-      .exe({ camelcase: true });
+      .exe();
   }
 
   async updateBill(body: UpdateBillDto, user: User): Promise<Bill> {
@@ -53,7 +53,7 @@ export class BillService {
       .andWhere('bill.id = :billId')
       .setParameters({ userId: user.userServiceId, billId: body.id })
       .returning('*')
-      .exe({ camelcase: true });
+      .exe();
   }
 
   async deleteBill(id: string, user: User): Promise<Bill> {
@@ -64,7 +64,7 @@ export class BillService {
       .andWhere('bill.id = :billId')
       .setParameters({ userId: user.userServiceId, billId: id })
       .returning('*')
-      .exe({ camelcase: true });
+      .exe();
   }
 
   async findById(billId: string, user: User): Promise<Bill> {
