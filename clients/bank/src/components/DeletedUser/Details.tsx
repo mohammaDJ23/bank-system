@@ -57,11 +57,6 @@ const Details: FC<DetailsImporation> = ({ user }) => {
         <Typography fontSize="12px" color="">
           created at: {moment(user.createdAt).format('LLLL')}
         </Typography>
-        {new Date(user.updatedAt) > new Date(user.createdAt) && (
-          <Typography fontSize="12px" color="">
-            last update: {moment(user.updatedAt).format('LLLL')}
-          </Typography>
-        )}
         <Typography fontSize="12px" color="">
           was deleted at: {moment(user.deletedAt).format('LLLL')}
         </Typography>

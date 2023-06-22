@@ -17,6 +17,7 @@ const DeletedUsers = lazy(() => import('../../pages/DeletedUsers'));
 const Dashboard = lazy(() => import('../../pages/Dashboard'));
 const DeletedUser = lazy(() => import('../../pages/DeletedUser'));
 const DeletedBills = lazy(() => import('../../pages/DeletedBills'));
+const DeletedBill = lazy(() => import('../../pages/DeletedBill'));
 
 export enum Pathes {
   BANK = '/bank/*',
@@ -34,6 +35,7 @@ export enum Pathes {
   USER = '/bank/users/:id',
   BILL = '/bank/bills/:id',
   DELETED_USER = '/bank/users/:id/deleted',
+  DELETED_BILL = '/bank/bills/:id/deleted',
 }
 
 export const routes = [
@@ -48,8 +50,9 @@ export const routes = [
   { title: 'Update user', path: Pathes.UPDATE_USER, element: <UpdateUserByUser />, needAuth: true },
   { title: 'Update bill', path: Pathes.UPDATE_BILL, element: <UpdateBill />, needAuth: true },
   { title: 'User', path: Pathes.USER, element: <User />, needAuth: true },
-  { title: 'Deleted User', path: Pathes.DELETED_USER, element: <DeletedUser />, needAuth: true },
   { title: 'Bill', path: Pathes.BILL, element: <Bill />, needAuth: true },
+  { title: 'Deleted User', path: Pathes.DELETED_USER, element: <DeletedUser />, needAuth: true },
+  { title: 'Deleted Bill', path: Pathes.DELETED_BILL, element: <DeletedBill />, needAuth: true },
 ];
 
 export function getDynamicPath(path: Pathes, options: GetDynamicPathOptions): string {

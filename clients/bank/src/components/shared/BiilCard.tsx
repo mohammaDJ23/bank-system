@@ -22,7 +22,10 @@ const BillCard: FC<BillCardImportation> = ({ bill, index, listInfo }) => {
       key={index}
       variant="outlined"
       sx={{ my: '20px', position: 'relative', overflow: 'visible' }}
-      onClick={() => navigate(getDynamicPath(Pathes.BILL, { id: bill.id }))}
+      onClick={() => {
+        const path = bill.deletedAt ? Pathes.DELETED_BILL : Pathes.BILL;
+        navigate(getDynamicPath(path, { id: bill.id }));
+      }}
     >
       <ListItemButton>
         <ListItem disablePadding sx={{ my: '10px' }}>
