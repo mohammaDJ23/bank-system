@@ -57,15 +57,14 @@ export class BillService {
   }
 
   async deleteBill(id: string, user: User): Promise<Bill> {
-    const deleteResult = await this.billRepository
+    return this.billRepository
       .createQueryBuilder('bill')
       .softDelete()
       .where('bill.user_id = :userId')
       .andWhere('bill.id = :billId')
       .setParameters({ userId: user.userServiceId, billId: id })
       .returning('*')
-      .execute();
-    return deleteResult.raw[0];
+      .exe({ camelcase: true });
   }
 
   async findById(billId: string, user: User): Promise<Bill> {

@@ -1,11 +1,12 @@
 import { BadRequestException } from '@nestjs/common';
 import { ExeOptions } from 'src';
-import { QueryBuilder } from 'typeorm';
 import {
   DeleteQueryBuilder,
   UpdateQueryBuilder,
   InsertQueryBuilder,
+  QueryBuilder,
 } from 'typeorm';
+import { SoftDeleteQueryBuilder } from 'typeorm/query-builder/SoftDeleteQueryBuilder';
 import { camelcaseKeys } from './camelcase';
 
 async function exe<Entity>(this: QueryBuilder<Entity>, options?: ExeOptions) {
@@ -27,3 +28,4 @@ async function exe<Entity>(this: QueryBuilder<Entity>, options?: ExeOptions) {
 InsertQueryBuilder.prototype.exe = exe;
 UpdateQueryBuilder.prototype.exe = exe;
 DeleteQueryBuilder.prototype.exe = exe;
+SoftDeleteQueryBuilder.prototype.exe = exe;
