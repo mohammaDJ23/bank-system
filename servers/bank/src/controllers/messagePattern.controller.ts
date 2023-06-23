@@ -8,7 +8,6 @@ import {
 } from '@nestjs/microservices';
 import { BillService, RabbitmqService, UserService } from 'src/services';
 import {
-  CacheKeys,
   CreatedUserObj,
   DeletedUserObj,
   RestoredUserObj,
