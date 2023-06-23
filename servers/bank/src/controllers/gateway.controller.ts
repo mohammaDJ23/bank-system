@@ -66,7 +66,7 @@ import {
   CreatedBillSerializerInterceptor,
   DeletedBillsSerializerInterceptor,
   DeletedBillSerializerInterceptor,
-  LastWeekSerializerInterceptor,
+  LastWeekBillsSerializerInterceptor,
   ResetCacheInterceptor,
   RestoredBillSerializerInterceptor,
   TotalAmountSerializerInterceptor,
@@ -195,7 +195,7 @@ export class GatewayController {
 
   @Get('bill/last-week')
   @HttpCode(HttpStatus.OK)
-  @UseInterceptors(LastWeekSerializerInterceptor)
+  @UseInterceptors(LastWeekBillsSerializerInterceptor)
   @ApiBearerAuth()
   @ApiResponse({ status: HttpStatus.OK, type: LastWeekDto, isArray: true })
   @ApiResponse({ status: HttpStatus.UNAUTHORIZED, type: ErrorDto })

@@ -22,7 +22,7 @@ export class ArraySerializerInterceptor implements NestInterceptor {
   }
 }
 
-export class LastWeekSerializerInterceptor extends ArraySerializerInterceptor {
+export class LastWeekBillsSerializerInterceptor extends ArraySerializerInterceptor {
   constructor() {
     super(LastWeekDto);
   }
