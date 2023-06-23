@@ -1,4 +1,4 @@
-import { Controller, UseInterceptors } from '@nestjs/common';
+import { Controller } from '@nestjs/common';
 import {
   Ctx,
   EventPattern,
@@ -7,7 +7,6 @@ import {
   RpcException,
 } from '@nestjs/microservices';
 import { BillService, RabbitmqService, UserService } from 'src/services';
-import { ResetCachedKeys } from 'src/decorators';
 import {
   CacheKeys,
   CreatedUserObj,
@@ -15,7 +14,6 @@ import {
   RestoredUserObj,
   UpdatedUserObj,
 } from 'src/types';
-import { ResetCacheMicroserviceInterceptor } from 'src/interceptors';
 import { DataSource } from 'typeorm';
 
 @Controller('/message-patterns/v1/bank')
@@ -36,8 +34,6 @@ export class MessagePatternController {
   }
 
   @EventPattern('updated_user')
-  @ResetCachedKeys(CacheKeys.USER)
-  @UseInterceptors(ResetCacheMicroserviceInterceptor)
   updateUser(
     @Payload() payload: UpdatedUserObj,
     @Ctx() context: RmqContext,
@@ -46,14 +42,6 @@ export class MessagePatternController {
   }
 
   @EventPattern('deleted_user')
-  @ResetCachedKeys(
-    CacheKeys.TOTAL_AMOUNT,
-    CacheKeys.QUANTITIES,
-    CacheKeys.BILLS,
-    CacheKeys.BILL,
-    CacheKeys.USER,
-  )
-  @UseInterceptors(ResetCacheMicroserviceInterceptor)
   deleteUser(
     @Payload() payload: DeletedUserObj,
     @Ctx() context: RmqContext,
@@ -62,15 +50,6 @@ export class MessagePatternController {
   }
 
   @EventPattern('restored_user')
-  @ResetCachedKeys(
-    CacheKeys.TOTAL_AMOUNT,
-    CacheKeys.QUANTITIES,
-    CacheKeys.BILLS,
-    CacheKeys.BILL,
-    CacheKeys.USER,
-    CacheKeys.DELETED_BILLS,
-  )
-  @UseInterceptors(ResetCacheMicroserviceInterceptor)
   async restore(
     @Payload() payload: RestoredUserObj,
     @Ctx() context: RmqContext,
