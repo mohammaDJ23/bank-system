@@ -4,7 +4,7 @@ import { map, Observable } from 'rxjs';
 import { MessageDto, TokenDto } from 'src/dtos';
 import { ClassConstructor } from 'src/types';
 
-export class ObjectSerializeInterceptor implements NestInterceptor {
+export class ObjectSerializerInterceptor implements NestInterceptor {
   constructor(private dto: ClassConstructor) {}
 
   intercept(
@@ -25,13 +25,13 @@ export class ObjectSerializeInterceptor implements NestInterceptor {
   }
 }
 
-export class TokenSerializeInterceptor extends ObjectSerializeInterceptor {
+export class TokenSerializerInterceptor extends ObjectSerializerInterceptor {
   constructor() {
     super(TokenDto);
   }
 }
 
-export class MessageSerializeInterceptor extends ObjectSerializeInterceptor {
+export class MessageSerializerInterceptor extends ObjectSerializerInterceptor {
   constructor() {
     super(MessageDto);
   }
