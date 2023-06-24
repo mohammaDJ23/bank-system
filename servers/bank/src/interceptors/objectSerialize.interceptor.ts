@@ -6,6 +6,7 @@ import {
   BillQuantitiesDto,
   CreatedBillDto,
   DeletedBillDto,
+  RestoredBillDto,
   TotalAmountDto,
   TotalAmountWithoutDatesDto,
   UpdatedBillDto,
@@ -13,7 +14,7 @@ import {
 } from 'src/dtos';
 import { ClassConstructor } from 'src/types';
 
-export class ObjectSerializeInterceptor implements NestInterceptor {
+export class ObjectSerializerInterceptor implements NestInterceptor {
   constructor(private dto: ClassConstructor) {}
 
   intercept(
@@ -34,50 +35,56 @@ export class ObjectSerializeInterceptor implements NestInterceptor {
   }
 }
 
-export class CreatedBillObjectSerializeInterceptor extends ObjectSerializeInterceptor {
+export class CreatedBillSerializerInterceptor extends ObjectSerializerInterceptor {
   constructor() {
     super(CreatedBillDto);
   }
 }
 
-export class UpdatedBillObjectSerializeInterceptor extends ObjectSerializeInterceptor {
+export class UpdatedBillSerializerInterceptor extends ObjectSerializerInterceptor {
   constructor() {
     super(UpdatedBillDto);
   }
 }
 
-export class DeletedBillObjectSerializeInterceptor extends ObjectSerializeInterceptor {
+export class DeletedBillSerializerInterceptor extends ObjectSerializerInterceptor {
   constructor() {
     super(DeletedBillDto);
   }
 }
 
-export class TotalAmountObjectSerializeInterceptor extends ObjectSerializeInterceptor {
+export class TotalAmountSerializerInterceptor extends ObjectSerializerInterceptor {
   constructor() {
     super(TotalAmountDto);
   }
 }
 
-export class BillQuantitiesObjectSerializeInterceptor extends ObjectSerializeInterceptor {
+export class BillQuantitiesSerializerInterceptor extends ObjectSerializerInterceptor {
   constructor() {
     super(BillQuantitiesDto);
   }
 }
 
-export class TotalAmountWithoutDatesObjectSerializeInterceptor extends ObjectSerializeInterceptor {
+export class TotalAmountWithoutDatesSerializerInterceptor extends ObjectSerializerInterceptor {
   constructor() {
     super(TotalAmountWithoutDatesDto);
   }
 }
 
-export class BillObjectSerializeInterceptor extends ObjectSerializeInterceptor {
+export class BillSerializerInterceptor extends ObjectSerializerInterceptor {
   constructor() {
     super(BillDto);
   }
 }
 
-export class UserWithBillInfoObjectSerializeInterceptor extends ObjectSerializeInterceptor {
+export class UserWithBillInfoSerializerInterceptor extends ObjectSerializerInterceptor {
   constructor() {
     super(UserWithBillInfoDto);
+  }
+}
+
+export class RestoredBillSerializerInterceptor extends ObjectSerializerInterceptor {
+  constructor() {
+    super(RestoredBillDto);
   }
 }

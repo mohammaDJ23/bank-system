@@ -4,6 +4,7 @@ import { AppModule } from './modules';
 import { RabbitMqQueue } from './types';
 import { swagger } from './libs';
 import { AuthAdapter } from './adapters';
+import './libs/typeormOverwrites';
 
 require('dotenv').config();
 

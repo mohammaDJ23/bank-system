@@ -14,14 +14,16 @@ import {
   CreateBillDto,
   BillQuantitiesDto,
   BillListFiltersDto,
+  DeletedBillListFiltersDto,
 } from 'src/dtos';
-import { Brackets, Repository } from 'typeorm';
+import { Brackets, EntityManager, Repository } from 'typeorm';
 import { Bill, User } from '../entities';
 import { createReadStream, existsSync, unlink, rmdir, readdir, rm } from 'fs';
 import { mkdir } from 'fs/promises';
 import { join } from 'path';
 import { Workbook } from 'exceljs';
 import { UserService } from './user.service';
+import { RestoredUserObj } from 'src/types';
 
 @Injectable()
 export class BillService {
@@ -33,18 +35,17 @@ export class BillService {
   async createBill(body: CreateBillDto, user: User): Promise<Bill> {
     const createdBill = this.billRepository.create(body);
     createdBill.user = user;
-    const insertResult = await this.billRepository
+    return this.billRepository
       .createQueryBuilder()
       .insert()
       .into(Bill)
       .values(createdBill)
       .returning('*')
-      .execute();
-    return insertResult.raw[0];
+      .exe();
   }
 
   async updateBill(body: UpdateBillDto, user: User): Promise<Bill> {
-    const updateResult = await this.billRepository
+    return this.billRepository
       .createQueryBuilder('bill')
       .update(Bill)
       .set(body)
@@ -52,32 +53,28 @@ export class BillService {
       .andWhere('bill.id = :billId')
       .setParameters({ userId: user.userServiceId, billId: body.id })
       .returning('*')
-      .execute();
-    return updateResult.raw[0];
+      .exe();
   }
 
   async deleteBill(id: string, user: User): Promise<Bill> {
-    const deleteResult = await this.billRepository
+    return this.billRepository
       .createQueryBuilder('bill')
       .softDelete()
       .where('bill.user_id = :userId')
       .andWhere('bill.id = :billId')
       .setParameters({ userId: user.userServiceId, billId: id })
       .returning('*')
-      .execute();
-    return deleteResult.raw[0];
+      .exe();
   }
 
   async findById(billId: string, user: User): Promise<Bill> {
-    const bill = await this.billRepository
+    return this.billRepository
       .createQueryBuilder('bill')
       .leftJoinAndSelect('bill.user', 'user')
       .where('user.user_service_id = :userId')
       .andWhere('bill.id = :billId')
       .setParameters({ billId, userId: user.userServiceId })
-      .getOne();
-    if (!bill) throw new NotFoundException('Could not found the bill.');
-    return bill;
+      .getOneOrFail();
   }
 
   async findAll(
@@ -115,6 +112,50 @@ export class BillService {
         q: filters.q,
         fromDate: filters.fromDate,
         toDate: filters.toDate,
+      })
+      .getManyAndCount();
+  }
+
+  async findAllDeleted(
+    page: number,
+    take: number,
+    filters: DeletedBillListFiltersDto,
+    user: User,
+  ): Promise<[Bill[], number]> {
+    return this.billRepository
+      .createQueryBuilder('bill')
+      .where('bill.user_id = :userId')
+      .withDeleted()
+      .andWhere('bill.deletedAt IS NOT NULL')
+      .andWhere(
+        new Brackets((query) =>
+          query
+            .where('to_tsvector(bill.receiver) @@ plainto_tsquery(:q)')
+            .orWhere('to_tsvector(bill.description) @@ plainto_tsquery(:q)')
+            .orWhere('to_tsvector(bill.amount) @@ plainto_tsquery(:q)')
+            .orWhere("bill.receiver ILIKE '%' || :q || '%'")
+            .orWhere("bill.description ILIKE '%' || :q || '%'")
+            .orWhere("bill.amount ILIKE '%' || :q || '%'"),
+        ),
+      )
+      .andWhere(
+        'CASE WHEN (:fromDate)::BIGINT > 0 THEN COALESCE(EXTRACT(EPOCH FROM date(bill.date)) * 1000, 0)::BIGINT >= (:fromDate)::BIGINT ELSE TRUE END',
+      )
+      .andWhere(
+        'CASE WHEN (:toDate)::BIGINT > 0 THEN COALESCE(EXTRACT(EPOCH FROM date(bill.date)) * 1000, 0)::BIGINT <= (:toDate)::BIGINT ELSE TRUE END',
+      )
+      .andWhere(
+        'CASE WHEN (:deletedDate)::BIGINT > 0 THEN COALESCE(EXTRACT(EPOCH FROM date(bill.deletedAt)) * 1000, 0)::BIGINT = (:deletedDate)::BIGINT ELSE TRUE END',
+      )
+      .orderBy('bill.deletedAt', 'DESC')
+      .take(take)
+      .skip((page - 1) * take)
+      .setParameters({
+        userId: user.userServiceId,
+        q: filters.q,
+        fromDate: filters.fromDate,
+        toDate: filters.toDate,
+        deletedDate: filters.deletedDate,
       })
       .getManyAndCount();
   }
@@ -266,5 +307,40 @@ export class BillService {
           }
         }
       });
+  }
+
+  async restoreBills(
+    payload: RestoredUserObj,
+    entityManager: EntityManager,
+  ): Promise<void> {
+    await entityManager
+      .createQueryBuilder(Bill, 'bill')
+      .restore()
+      .where('bill.user_id = :userId')
+      .andWhere('bill.deleted_at IS NOT NULL')
+      .setParameters({ userId: payload.restoredUser.id })
+      .execute();
+  }
+
+  async restoreOne(id: number, user: User): Promise<Bill> {
+    return this.billRepository
+      .createQueryBuilder('bill')
+      .restore()
+      .where('bill.user_id = :userId')
+      .andWhere('bill.id = :billId')
+      .setParameters({ billId: id, userId: user.userServiceId })
+      .returning('*')
+      .exe();
+  }
+
+  findDeletedOne(id: number, user: User): Promise<Bill> {
+    return this.billRepository
+      .createQueryBuilder('bill')
+      .withDeleted()
+      .where('bill.deletedAt IS NOT NULL')
+      .andWhere('bill.id = :billId')
+      .andWhere('bill.user_id = :userId')
+      .setParameters({ billId: id, userId: user.userServiceId })
+      .getOneOrFail();
   }
 }

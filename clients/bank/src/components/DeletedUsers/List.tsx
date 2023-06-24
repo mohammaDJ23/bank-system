@@ -8,7 +8,7 @@ import Filter from '../shared/Filter';
 import EmptyList from './EmptyList';
 import { ModalNames } from '../../store';
 import UserCard from '../shared/UserCard';
-import UserSkeleton from '../shared/UserSkeleton';
+import UserSkeleton from '../shared/UsersSkeleton';
 
 const List: FC = () => {
   const { request, isInitialApiProcessing, isApiProcessing } = useRequest();

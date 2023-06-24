@@ -20,6 +20,7 @@ import AddCardIcon from '@mui/icons-material/AddCard';
 import CreditCardIcon from '@mui/icons-material/CreditCard';
 import CloseIcon from '@mui/icons-material/Close';
 import LogoutIcon from '@mui/icons-material/Logout';
+import LayersClearIcon from '@mui/icons-material/LayersClear';
 import { styled } from '@mui/material/styles';
 import { LocalStorage, Pathes, routes, UserRoles } from '../lib';
 import { useAuth } from '../hooks';
@@ -166,6 +167,12 @@ const Navigation: FC<NavigationImportation> = ({ children, menuOptions, title })
         icon: <CreditCardIcon />,
         path: Pathes.BILLS,
         redirectPath: Pathes.BILLS,
+      },
+      {
+        title: 'Deleted bills',
+        icon: <LayersClearIcon />,
+        path: Pathes.DELETED_bILLS,
+        redirectPath: Pathes.DELETED_bILLS,
       },
       {
         title: 'Logout',

@@ -4,7 +4,7 @@ import Pagination from '../shared/Pagination';
 import { BillList, BillListFilters, BillObj, getTime, isoDate } from '../../lib';
 import { useForm, usePaginationList, useRequest } from '../../hooks';
 import { BillsApi, BillsApiConstructorType } from '../../apis';
-import BIllSkeleton from '../shared/BillSkeleton';
+import BillsSkeleton from '../shared/BillsSkeleton';
 import EmptyList from './EmptyList';
 import Filter from '../shared/Filter';
 import { ModalNames } from '../../store';
@@ -62,7 +62,7 @@ const List: FC = () => {
   return (
     <>
       {isInitialBillsApiProcessing || isBillsApiProcessing ? (
-        <BIllSkeleton take={billListInfo.take} />
+        <BillsSkeleton take={billListInfo.take} />
       ) : billListInstance.isListEmpty() ? (
         <EmptyList />
       ) : (
