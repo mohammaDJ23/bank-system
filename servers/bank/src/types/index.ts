@@ -86,6 +86,7 @@ export interface RestoredUserObj extends CurrentUserObj {
 
 export interface CacheKeyOptions {
   isUnique?: boolean;
+  isGlobal?: boolean;
 }
 
 export interface CacheKeyMetadata {
