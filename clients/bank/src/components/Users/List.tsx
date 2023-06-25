@@ -7,7 +7,7 @@ import { UsersApi, UsersApiConstructorType } from '../../apis';
 import Filter from '../shared/Filter';
 import EmptyList from './EmptyList';
 import { ModalNames } from '../../store';
-import UserSkeleton from '../shared/UserSkeleton';
+import UserSkeleton from '../shared/UsersSkeleton';
 import UserCard from '../shared/UserCard';
 
 const List: FC = () => {

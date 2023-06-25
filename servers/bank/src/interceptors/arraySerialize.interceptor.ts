@@ -4,7 +4,7 @@ import { map, Observable } from 'rxjs';
 import { LastWeekDto } from 'src/dtos';
 import { ClassConstructor } from 'src/types';
 
-export class ArraySerializeInterceptor implements NestInterceptor {
+export class ArraySerializerInterceptor implements NestInterceptor {
   constructor(private dto: ClassConstructor) {}
 
   intercept(context: ExecutionContext, handler: CallHandler): Observable<any> {
@@ -22,7 +22,7 @@ export class ArraySerializeInterceptor implements NestInterceptor {
   }
 }
 
-export class LastWeekArraySerializeInterceptor extends ArraySerializeInterceptor {
+export class LastWeekBillsSerializerInterceptor extends ArraySerializerInterceptor {
   constructor() {
     super(LastWeekDto);
   }

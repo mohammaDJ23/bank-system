@@ -23,13 +23,7 @@ import {
   ApiParam,
   ApiQuery,
 } from '@nestjs/swagger';
-import {
-  CacheKey,
-  CurrentUser,
-  ResetCachedKeys,
-  Roles,
-  SameUser,
-} from 'src/decorators';
+import { CurrentUser, Roles, SameUser } from 'src/decorators';
 import {
   BillDto,
   CreateBillDto,
@@ -40,11 +34,13 @@ import {
   LastWeekDto,
   ErrorDto,
   UserWithBillInfoDto,
-  CreatedBillDto,
   UpdatedBillDto,
   DeletedBillDto,
   BillQuantitiesDto,
   BillListFiltersDto,
+  DeletedBillListFiltersDto,
+  CreatedBillDto,
+  RestoredBillDto,
 } from 'src/dtos';
 import { Bill, User } from 'src/entities';
 import {
@@ -54,21 +50,21 @@ import {
   SameUserGuard,
 } from 'src/guards';
 import { BillService, UserService } from 'src/services';
-import { CacheKeys, UserRoles } from 'src/types';
+import { UserRoles } from 'src/types';
 import { ParseBillListFiltersPipe } from 'src/pipes';
 import {
-  BillListSerializeInterceptor,
-  BillObjectSerializeInterceptor,
-  BillQuantitiesObjectSerializeInterceptor,
-  CacheInterceptor,
-  CreatedBillObjectSerializeInterceptor,
-  DeletedBillObjectSerializeInterceptor,
-  LastWeekArraySerializeInterceptor,
-  ResetCacheInterceptor,
-  TotalAmountObjectSerializeInterceptor,
-  TotalAmountWithoutDatesObjectSerializeInterceptor,
-  UpdatedBillObjectSerializeInterceptor,
-  UserWithBillInfoObjectSerializeInterceptor,
+  BillsSerializerInterceptor,
+  BillSerializerInterceptor,
+  BillQuantitiesSerializerInterceptor,
+  CreatedBillSerializerInterceptor,
+  DeletedBillsSerializerInterceptor,
+  DeletedBillSerializerInterceptor,
+  LastWeekBillsSerializerInterceptor,
+  RestoredBillSerializerInterceptor,
+  TotalAmountSerializerInterceptor,
+  TotalAmountWithoutDatesSerializerInterceptor,
+  UpdatedBillSerializerInterceptor,
+  UserWithBillInfoSerializerInterceptor,
 } from 'src/interceptors';
 
 @UseGuards(JwtGuard)
@@ -82,13 +78,7 @@ export class GatewayController {
 
   @Post('bill/create')
   @HttpCode(HttpStatus.CREATED)
-  @ResetCachedKeys(
-    CacheKeys.TOTAL_AMOUNT,
-    CacheKeys.QUANTITIES,
-    CacheKeys.BILLS,
-    CacheKeys.USER,
-  )
-  @UseInterceptors(ResetCacheInterceptor, CreatedBillObjectSerializeInterceptor)
+  @UseInterceptors(CreatedBillSerializerInterceptor)
   @ApiBody({ type: CreateBillDto })
   @ApiBearerAuth()
   @ApiResponse({ status: HttpStatus.CREATED, type: CreatedBillDto })
@@ -103,14 +93,7 @@ export class GatewayController {
 
   @Put('bill/update')
   @HttpCode(HttpStatus.OK)
-  @ResetCachedKeys(
-    CacheKeys.TOTAL_AMOUNT,
-    CacheKeys.QUANTITIES,
-    CacheKeys.BILLS,
-    CacheKeys.BILL,
-    CacheKeys.USER,
-  )
-  @UseInterceptors(ResetCacheInterceptor, UpdatedBillObjectSerializeInterceptor)
+  @UseInterceptors(UpdatedBillSerializerInterceptor)
   @ApiBody({ type: UpdateBillDto })
   @ApiBearerAuth()
   @ApiResponse({ status: HttpStatus.OK, type: UpdatedBillDto })
@@ -126,14 +109,7 @@ export class GatewayController {
 
   @Delete('bill/delete')
   @HttpCode(HttpStatus.OK)
-  @ResetCachedKeys(
-    CacheKeys.TOTAL_AMOUNT,
-    CacheKeys.QUANTITIES,
-    CacheKeys.BILLS,
-    CacheKeys.BILL,
-    CacheKeys.USER,
-  )
-  @UseInterceptors(ResetCacheInterceptor, DeletedBillObjectSerializeInterceptor)
+  @UseInterceptors(DeletedBillSerializerInterceptor)
   @ApiQuery({ name: 'id', type: 'string' })
   @ApiBearerAuth()
   @ApiResponse({ status: HttpStatus.OK, type: DeletedBillDto })
@@ -149,8 +125,7 @@ export class GatewayController {
 
   @Get('bill/total-amount')
   @HttpCode(HttpStatus.OK)
-  @CacheKey(CacheKeys.TOTAL_AMOUNT, { isUnique: true })
-  @UseInterceptors(CacheInterceptor, TotalAmountObjectSerializeInterceptor)
+  @UseInterceptors(TotalAmountSerializerInterceptor)
   @ApiBearerAuth()
   @ApiResponse({ status: HttpStatus.OK, type: TotalAmountDto })
   @ApiResponse({ status: HttpStatus.UNAUTHORIZED, type: ErrorDto })
@@ -162,9 +137,8 @@ export class GatewayController {
   @Get('bill/quantities')
   @HttpCode(HttpStatus.OK)
   @Roles(UserRoles.OWNER, UserRoles.ADMIN)
-  @CacheKey(CacheKeys.QUANTITIES)
   @UseGuards(RolesGuard)
-  @UseInterceptors(CacheInterceptor, BillQuantitiesObjectSerializeInterceptor)
+  @UseInterceptors(BillQuantitiesSerializerInterceptor)
   @ApiBearerAuth()
   @ApiResponse({ status: HttpStatus.OK, type: BillQuantitiesDto })
   @ApiResponse({ status: HttpStatus.UNAUTHORIZED, type: ErrorDto })
@@ -175,7 +149,7 @@ export class GatewayController {
 
   @Post('bill/period-amount')
   @HttpCode(HttpStatus.OK)
-  @UseInterceptors(TotalAmountWithoutDatesObjectSerializeInterceptor)
+  @UseInterceptors(TotalAmountWithoutDatesSerializerInterceptor)
   @ApiBody({ type: PeriodAmountDto })
   @ApiBearerAuth()
   @ApiResponse({ status: HttpStatus.OK, type: TotalAmountWithoutDatesDto })
@@ -190,7 +164,7 @@ export class GatewayController {
 
   @Get('bill/last-week')
   @HttpCode(HttpStatus.OK)
-  @UseInterceptors(LastWeekArraySerializeInterceptor)
+  @UseInterceptors(LastWeekBillsSerializerInterceptor)
   @ApiBearerAuth()
   @ApiResponse({ status: HttpStatus.OK, type: LastWeekDto, isArray: true })
   @ApiResponse({ status: HttpStatus.UNAUTHORIZED, type: ErrorDto })
@@ -218,8 +192,7 @@ export class GatewayController {
 
   @Get('bill/all')
   @HttpCode(HttpStatus.OK)
-  @CacheKey(CacheKeys.BILLS, { isUnique: true })
-  @UseInterceptors(CacheInterceptor, BillListSerializeInterceptor)
+  @UseInterceptors(BillsSerializerInterceptor)
   @ApiQuery({ name: 'page', type: 'number' })
   @ApiQuery({ name: 'take', type: 'number' })
   @ApiQuery({ name: 'filters', type: BillListFiltersDto })
@@ -236,10 +209,29 @@ export class GatewayController {
     return this.billService.findAll(page, take, filters, user);
   }
 
+  @Get('bill/all/deleted')
+  @HttpCode(HttpStatus.OK)
+  @UseInterceptors(DeletedBillsSerializerInterceptor)
+  @ApiQuery({ name: 'page', type: 'number' })
+  @ApiQuery({ name: 'take', type: 'number' })
+  @ApiQuery({ name: 'filters', type: DeletedBillListFiltersDto })
+  @ApiBearerAuth()
+  @ApiResponse({ status: HttpStatus.OK, type: BillDto, isArray: true })
+  @ApiResponse({ status: HttpStatus.UNAUTHORIZED, type: ErrorDto })
+  @ApiResponse({ status: HttpStatus.INTERNAL_SERVER_ERROR, type: ErrorDto })
+  findAllDeleted(
+    @Query('page', ParseIntPipe) page: number,
+    @Query('take', ParseIntPipe) take: number,
+    @Query('filters', ParseBillListFiltersPipe)
+    filters: DeletedBillListFiltersDto,
+    @CurrentUser() user: User,
+  ): Promise<[Bill[], number]> {
+    return this.billService.findAllDeleted(page, take, filters, user);
+  }
+
   @Get('bill/:id')
   @HttpCode(HttpStatus.OK)
-  @CacheKey(CacheKeys.BILL, { isUnique: true })
-  @UseInterceptors(CacheInterceptor, BillObjectSerializeInterceptor)
+  @UseInterceptors(BillSerializerInterceptor)
   @ApiParam({ name: 'id', type: 'string' })
   @ApiBearerAuth()
   @ApiResponse({ status: HttpStatus.OK, type: BillDto })
@@ -250,12 +242,43 @@ export class GatewayController {
     return this.billService.findById(id, user);
   }
 
+  @Get('bill/:id/deleted')
+  @HttpCode(HttpStatus.OK)
+  @UseInterceptors(DeletedBillSerializerInterceptor)
+  @ApiParam({ name: 'id', type: 'number' })
+  @ApiBearerAuth()
+  @ApiResponse({ status: HttpStatus.OK, type: DeletedBillDto })
+  @ApiResponse({ status: HttpStatus.UNAUTHORIZED, type: ErrorDto })
+  @ApiResponse({ status: HttpStatus.NOT_FOUND, type: ErrorDto })
+  @ApiResponse({ status: HttpStatus.INTERNAL_SERVER_ERROR, type: ErrorDto })
+  findDeletedOne(
+    @Param('id', ParseIntPipe) id: number,
+    @CurrentUser() user: User,
+  ): Promise<Bill> {
+    return this.billService.findDeletedOne(id, user);
+  }
+
+  @Post('bill/:id/restore')
+  @HttpCode(HttpStatus.OK)
+  @UseInterceptors(RestoredBillSerializerInterceptor)
+  @ApiParam({ name: 'id', type: 'number' })
+  @ApiBearerAuth()
+  @ApiResponse({ status: HttpStatus.OK, type: RestoredBillDto })
+  @ApiResponse({ status: HttpStatus.UNAUTHORIZED, type: ErrorDto })
+  @ApiResponse({ status: HttpStatus.NOT_FOUND, type: ErrorDto })
+  @ApiResponse({ status: HttpStatus.INTERNAL_SERVER_ERROR, type: ErrorDto })
+  restoreOne(
+    @Param('id', ParseIntPipe) id: number,
+    @CurrentUser() user: User,
+  ): Promise<Bill> {
+    return this.billService.restoreOne(id, user);
+  }
+
   @Get('user/:id')
   @HttpCode(HttpStatus.OK)
   @SameUser(UserRoles.USER)
-  @CacheKey(CacheKeys.USER, { isUnique: true })
   @UseGuards(SameUserGuard)
-  @UseInterceptors(CacheInterceptor, UserWithBillInfoObjectSerializeInterceptor)
+  @UseInterceptors(UserWithBillInfoSerializerInterceptor)
   @ApiParam({ name: 'id', type: 'number' })
   @ApiBearerAuth()
   @ApiResponse({ status: HttpStatus.OK, type: UserWithBillInfoDto })

@@ -1,4 +1,4 @@
-import { BillObj, UserObj, UserWithBillInfoObj } from '../../lib';
+import { BillObj, DeletedUserObj, UserObj, UserWithBillInfoObj } from '../../lib';
 import { RootActions, SetSpecificDetailsAction } from '../actions';
 import { ClearState } from './clearState';
 
@@ -87,6 +87,8 @@ export interface SpecificDetailsState {
   userQuantities: UserQuantities | null;
   deletedUserQuantities: DeletedUserQuantities | null;
   billQuantities: BillQuantities | null;
+  deletedUser: DeletedUserObj | null;
+  deletedBill: BillObj | null;
 }
 
 const initialState: SpecificDetailsState = {
@@ -101,6 +103,8 @@ const initialState: SpecificDetailsState = {
   userQuantities: null,
   deletedUserQuantities: null,
   billQuantities: null,
+  deletedUser: null,
+  deletedBill: null,
 };
 
 function setSpecificDetails(state: SpecificDetailsState, action: SetSpecificDetailsAction): SpecificDetailsState {
@@ -124,6 +128,8 @@ function cleanState(state: SpecificDetailsState): SpecificDetailsState {
     userQuantities: null,
     deletedUserQuantities: null,
     billQuantities: null,
+    deletedUser: null,
+    deletedBill: null,
   };
 }
 

@@ -19,8 +19,8 @@ import { CurrentUser } from 'src/decorators';
 import { ResetPasswordService, AuthService } from 'src/services';
 import { User } from 'src/entities';
 import {
-  MessageObjectSerializeInterceptor,
-  TokenObjectSerializeInterceptor,
+  MessageSerializerInterceptor,
+  TokenSerializerInterceptor,
 } from 'src/interceptors';
 
 @Controller('/api/v1/auth')
@@ -33,7 +33,7 @@ export class GatewayController {
 
   @Post('login')
   @HttpCode(HttpStatus.OK)
-  @UseInterceptors(TokenObjectSerializeInterceptor)
+  @UseInterceptors(TokenSerializerInterceptor)
   @ApiBody({ type: LoginDto })
   @ApiResponse({ status: HttpStatus.OK, type: TokenDto })
   @ApiResponse({ status: HttpStatus.NOT_FOUND, type: ErrorDto })
@@ -48,7 +48,7 @@ export class GatewayController {
 
   @Post('forgot-password')
   @HttpCode(HttpStatus.OK)
-  @UseInterceptors(MessageObjectSerializeInterceptor)
+  @UseInterceptors(MessageSerializerInterceptor)
   @ApiBody({ type: ForgotPasswordDto })
   @ApiResponse({ status: HttpStatus.OK, type: MessageDto })
   @ApiResponse({ status: HttpStatus.NOT_FOUND, type: ErrorDto })
@@ -63,7 +63,7 @@ export class GatewayController {
 
   @Post('reset-password')
   @HttpCode(HttpStatus.OK)
-  @UseInterceptors(MessageObjectSerializeInterceptor)
+  @UseInterceptors(MessageSerializerInterceptor)
   @ApiBody({ type: ResetPasswordDto })
   @ApiResponse({ status: HttpStatus.OK, type: MessageDto })
   @ApiResponse({ status: HttpStatus.NOT_FOUND, type: ErrorDto })

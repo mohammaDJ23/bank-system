@@ -4,7 +4,7 @@ import { map, Observable } from 'rxjs';
 import { UserDto } from 'src/dtos';
 import { ClassConstructor, ListObj } from 'src/types';
 
-export class ListSerializeInterceptor implements NestInterceptor {
+export class ListSerializerInterceptor implements NestInterceptor {
   constructor(private dto: ClassConstructor) {}
 
   intercept(context: ExecutionContext, handler: CallHandler): Observable<any> {
@@ -24,7 +24,7 @@ export class ListSerializeInterceptor implements NestInterceptor {
   }
 }
 
-export class UserListSerializeInterceptor extends ListSerializeInterceptor {
+export class UsersSerializerInterceptor extends ListSerializerInterceptor {
   constructor() {
     super(UserDto);
   }

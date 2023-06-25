@@ -9,6 +9,7 @@ import {
   UserListFilters,
   BillListFilters,
   DeletedUserListFilters,
+  DeletedBillListFilters,
 } from '../lib';
 import { PeriodAmountFilter } from '../store';
 import { RootApiObj } from './resetApi';
@@ -184,12 +185,61 @@ export class BillsApi<T = any> extends RootApi {
 
 export type BillsApiConstructorType = ConstructorParameters<typeof BillsApi>[0] & Pick<RootApi, 'isInitialApi'>;
 
+export class DeletedBillListApi<T = any> extends RootApi {
+  constructor(data: ListParams<T> & DeletedBillListFilters) {
+    super(
+      {
+        url: '/api/v1/bank/bill/all/deleted',
+        method: 'get',
+        params: {
+          page: data.page,
+          take: data.take,
+          filters: {
+            q: data.q,
+            fromDate: data.fromDate,
+            toDate: data.toDate,
+            deletedDate: data.deletedDate,
+          },
+        },
+      },
+      { baseURL: process.env.BANK_SERVICE }
+    );
+  }
+}
+
+export type DeletedBillListApiConstructorType = ConstructorParameters<typeof DeletedBillListApi>[0] &
+  Pick<RootApi, 'isInitialApi'>;
+
 export class UserApi extends RootApi {
   constructor(id: number) {
     super(
       {
         url: `/api/v1/user/${id}`,
         method: 'get',
+      },
+      { baseURL: process.env.USER_SERVICE }
+    );
+  }
+}
+
+export class DeletedUserApi extends RootApi {
+  constructor(id: number) {
+    super(
+      {
+        url: `/api/v1/user/${id}/deleted`,
+        method: 'get',
+      },
+      { baseURL: process.env.USER_SERVICE }
+    );
+  }
+}
+
+export class RestoreUserApi extends RootApi {
+  constructor(id: number) {
+    super(
+      {
+        url: `/api/v1/user/${id}/restore`,
+        method: 'post',
       },
       { baseURL: process.env.USER_SERVICE }
     );
@@ -208,6 +258,18 @@ export class BillApi extends RootApi {
   }
 }
 
+export class DeletedBillApi extends RootApi {
+  constructor(id: string) {
+    super(
+      {
+        url: `/api/v1/bank/bill/${id}/deleted`,
+        method: 'get',
+      },
+      { baseURL: process.env.BANK_SERVICE }
+    );
+  }
+}
+
 export class DeleteBillApi extends RootApi {
   constructor(id: string) {
     super(
@@ -217,6 +279,18 @@ export class DeleteBillApi extends RootApi {
         params: {
           id,
         },
+      },
+      { baseURL: process.env.BANK_SERVICE }
+    );
+  }
+}
+
+export class RestoreBillApi extends RootApi {
+  constructor(id: string) {
+    super(
+      {
+        url: `/api/v1/bank/bill/${id}/restore`,
+        method: 'post',
       },
       { baseURL: process.env.BANK_SERVICE }
     );

@@ -12,6 +12,7 @@ import {
   UserQuantitiesDto,
   LastWeekDto,
   UpdateUserByOwnerDto,
+  DeletedUserDto,
 } from '../dtos';
 import { User } from '../entities';
 import { hash } from 'bcrypt';
@@ -68,9 +69,7 @@ export class UserService {
     payload: UpdatedUserPartialObj,
     currentUser: User,
   ): Promise<User> {
-    const user = await this.findById(payload.id);
-    if (!user) throw new NotFoundException('Could not found the user.');
-
+    const user = await this.findByIdOrFail(payload.id);
     return this.update(payload, user, currentUser);
   }
 
@@ -79,13 +78,10 @@ export class UserService {
     context: RmqContext,
   ): Promise<User> {
     try {
-      const user = await this.findById(payload.id);
-
-      if (!user) throw new NotFoundException('Could not found the user.');
-
-      const udpatedUser = await this.updateSameUser(payload, user);
+      const user = await this.findByIdOrFail(payload.id);
+      const updatedUser = await this.updateSameUser(payload, user);
       this.rabbitmqService.applyAcknowledgment(context);
-      return udpatedUser;
+      return updatedUser;
     } catch (error) {
       throw new RpcException(error);
     }
@@ -117,7 +113,7 @@ export class UserService {
   }
 
   async delete(id: number, currentUser: User): Promise<User> {
-    const user = await this.userRepository.findOneOrFail({ where: { id } });
+    const user = await this.findByIdOrFail(id);
     await this.userRepository.softRemove(user);
     await this.clientProxy
       .emit('deleted_user', { currentUser, deletedUser: user })
@@ -126,9 +122,7 @@ export class UserService {
   }
 
   async findOne(id: number): Promise<User> {
-    const findedUser = await this.findById(id);
-    if (!findedUser) throw new NotFoundException('Could not found the user.');
-    return findedUser;
+    return this.findByIdOrFail(id);
   }
 
   findById(id: number): Promise<User> {
@@ -138,12 +132,20 @@ export class UserService {
       .getOne();
   }
 
+  findByIdOrFail(id: number): Promise<User> {
+    return this.userRepository
+      .createQueryBuilder('user')
+      .where('user.id = :id')
+      .setParameters({ id })
+      .getOneOrFail();
+  }
+
   async findByIdForMicroservices(
     id: number,
     context: RmqContext,
   ): Promise<User> {
     try {
-      const user = await this.findById(id);
+      const user = await this.findByIdOrFail(id);
       this.rabbitmqService.applyAcknowledgment(context);
       return user;
     } catch (error) {
@@ -172,6 +174,7 @@ export class UserService {
   ): Promise<User> {
     try {
       const user = await this.findByEmail(email);
+      if (!user) throw new NotFoundException('Could not found the user');
       this.rabbitmqService.applyAcknowledgment(context);
       return user;
     } catch (error) {
@@ -334,5 +337,62 @@ export class UserService {
         deletedDate: filters.deletedDate,
       })
       .getManyAndCount();
+  }
+
+  async findDeletedOne(id: number): Promise<DeletedUserDto> {
+    const [response]: DeletedUserDto[] = await this.userRepository.query(
+      `
+        SELECT
+          user1.id AS id,
+          user1.first_name AS "firstName",
+          user1.last_name AS "lastName",
+          user1.email AS email,
+          user1.phone AS phone,
+          user1.role AS role,
+          user1.created_by AS "createdBy",
+          user1.created_at AS "createdAt",
+          user1.updated_at AS "updatedAt",
+          user1.deleted_at AS "deletedAt",
+          json_build_object(
+            'id', user2.id,
+            'firstName', user2.first_name,
+            'lastName', user2.last_name,
+            'email', user2.email,
+            'phone', user2.phone,
+            'role', user2.role,
+            'createdBy', user2.created_by,
+            'createdAt', user2.created_at,
+            'updatedAt', user2.updated_at,
+            'deletedAt', user2.deleted_at
+          ) AS parent
+        FROM public.user AS user1
+        LEFT JOIN public.user AS user2 ON user2.id = user1.created_by
+        WHERE user1.id = $1 AND user1.deleted_at IS NOT NULL;
+      `,
+      [id],
+    );
+
+    if (!response) throw new NotFoundException('Could not found the user.');
+    return response;
+  }
+
+  async restoreOne(id: number, user: User): Promise<User> {
+    const restoredUser = await this.userRepository
+      .createQueryBuilder('public.user')
+      .restore()
+      .where('public.user.id = :userId')
+      .andWhere('public.user.deleted_at IS NOT NULL')
+      .setParameters({ userId: id })
+      .returning('*')
+      .exe();
+
+    await this.clientProxy
+      .emit('restored_user', {
+        currentUser: user,
+        restoredUser,
+      })
+      .toPromise();
+
+    return restoredUser;
   }
 }

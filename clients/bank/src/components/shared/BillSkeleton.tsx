@@ -1,40 +1,31 @@
-import { Box, List, ListItem } from '@mui/material';
-import { FC } from 'react';
+import { Box } from '@mui/material';
 import CustomSkeleton from './Skeleton';
+import { FC } from 'react';
 
-interface SkeletonImportation {
-  take: number;
-}
-
-const Skeleton: FC<SkeletonImportation> = ({ take }) => {
+const Skeleton: FC = () => {
   return (
-    <List>
-      {Array(take)
-        .fill(null)
-        .map((_, i) => (
-          <ListItem
-            key={i}
-            sx={{
-              display: 'flex',
-              flexDirection: 'column',
-              gap: '10px',
-              my: '25px',
-              alignItems: 'start',
-              px: '0',
-            }}
-          >
-            <Box maxWidth="600px" width="100%" height="14px">
-              <CustomSkeleton width="100%" height="100%" />
-            </Box>
-            <Box maxWidth="350px" width="100%" height="12px">
-              <CustomSkeleton width="100%" height="100%" />
-            </Box>
-            <Box alignSelf="end" maxWidth="150px" width="100%" height="10px">
-              <CustomSkeleton width="100%" height="100%" />
-            </Box>
-          </ListItem>
-        ))}
-    </List>
+    <Box width="100%" display="flex" alignItems="start" gap="12px" flexDirection="column">
+      <Box width="100%" display="flex" alignItems="center" justifyContent="space-between" gap="15px" mb="15px">
+        <Box maxWidth="400px" width="100%" height="14px">
+          <CustomSkeleton width="100%" height="100%" />
+        </Box>
+        <Box maxWidth="40px" width="100%" height="14px">
+          <CustomSkeleton width="100%" height="100%" />
+        </Box>
+      </Box>
+      <Box maxWidth="150px" width="100%" height="12px">
+        <CustomSkeleton width="100%" height="100%" />
+      </Box>
+      <Box maxWidth="300px" width="100%" height="12px">
+        <CustomSkeleton width="100%" height="100%" />
+      </Box>
+      <Box maxWidth="130px" width="100%" height="12px">
+        <CustomSkeleton width="100%" height="100%" />
+      </Box>
+      <Box maxWidth="140px" width="100%" height="12px">
+        <CustomSkeleton width="100%" height="100%" />
+      </Box>
+    </Box>
   );
 };
 
