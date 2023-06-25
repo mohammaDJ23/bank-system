@@ -86,26 +86,27 @@ export abstract class BaseCache implements NestInterceptor {
     return this.isGlobalCacheKey(cacheKey) || this.isUniqueCachekey(cacheKey);
   }
 
-  makeUniqueCacheKey(key: string): string {
+  makeUniqueCacheKey(): string {
     const request = this.getRequest();
     const originalUrl = request.originalUrl;
     const currentUser = getCurrentUser(this._context);
     const userId = currentUser.id;
+    const key = this.getKey();
     return `${userId}.${key}.${process.env.PORT}@${originalUrl}`;
   }
 
-  makeGlobalCacheKey(key: string): string {
+  makeGlobalCacheKey(): string {
     const request = this.getRequest();
     const originalUrl = request.originalUrl;
+    const key = this.getKey();
     return `${key}.${process.env.PORT}@${originalUrl}`;
   }
 
   getCacheKey(): string {
-    const key = this.getKey();
     if (this.isUnique()) {
-      return this.makeUniqueCacheKey(key);
+      return this.makeUniqueCacheKey();
     } else if (this.isGlobal()) {
-      return this.makeGlobalCacheKey(key);
+      return this.makeGlobalCacheKey();
     } else {
       throw new InternalServerErrorException('Invalid options for a cache key');
     }
