@@ -83,3 +83,10 @@ export interface DeletedUserObj extends CurrentUserObj {
 export interface RestoredUserObj extends CurrentUserObj {
   restoredUser: User;
 }
+
+export enum ResetCacheTypes {
+  USER_ID = 'reset-cache-key-by-user-id',
+  CACHE_KEY = 'reset-cache-key-by-cache-key',
+  CACHE_KEY_AND_USER_ID = 'reset-cache-key-by-cache-key-and-user-id',
+  DYNAMIC_ID = 'reset-cache-key-by-dynamic-id',
+}

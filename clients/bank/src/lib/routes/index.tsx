@@ -46,12 +46,7 @@ export const routes = [
   { title: 'Deleted users', path: Pathes.DELETED_USERS, element: <DeletedUsers />, needAuth: true },
   { title: 'Create bill', path: Pathes.CREATE_BILL, element: <CreateBill />, needAuth: true },
   { title: 'Create user', path: Pathes.CREATE_USER, element: <CreateUser />, needAuth: true },
-  {
-    title: 'Update user by owner',
-    path: Pathes.UPDATE_USER_BY_OWNER,
-    element: <UpdateUserByOwner />,
-    needAuth: true,
-  },
+  { title: 'Update user by owner', path: Pathes.UPDATE_USER_BY_OWNER, element: <UpdateUserByOwner />, needAuth: true },
   { title: 'Update user', path: Pathes.UPDATE_USER, element: <UpdateUserByUser />, needAuth: true },
   { title: 'Update bill', path: Pathes.UPDATE_BILL, element: <UpdateBill />, needAuth: true },
   { title: 'User', path: Pathes.USER, element: <User />, needAuth: true },
