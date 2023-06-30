@@ -4,19 +4,20 @@ import {
   CACHE_MANAGER,
   Inject,
   Injectable,
+  NestInterceptor,
 } from '@nestjs/common';
 import { Cache } from 'cache-manager';
 import { map, of } from 'rxjs';
 import { BaseCacheService } from 'src/services';
 
 @Injectable()
-export class CacheInterceptor {
+export class CacheInterceptor implements NestInterceptor {
   constructor(
     @Inject(CACHE_MANAGER) private readonly cacheService: Cache,
     private readonly baseCacheService: BaseCacheService,
   ) {}
 
-  async interceptor(
+  async intercept(
     context: ExecutionContext,
     handler: CallHandler,
   ): Promise<any> {

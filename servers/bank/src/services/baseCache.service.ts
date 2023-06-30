@@ -52,8 +52,8 @@ export class BaseCacheService {
     const request = getRequest(context);
     const currentUser = getCurrentUser(context);
     const originalUrl = request.originalUrl;
-    const userId = currentUser.id;
+    const userServiceId = currentUser.userServiceId;
     const cacheKey = this.getCacheKey(context);
-    return `${userId}.${cacheKey}.${process.env.PORT}@${originalUrl}`;
+    return `${userServiceId}.${cacheKey}.${process.env.PORT}@${originalUrl}`;
   }
 }

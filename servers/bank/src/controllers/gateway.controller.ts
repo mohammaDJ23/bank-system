@@ -23,7 +23,7 @@ import {
   ApiParam,
   ApiQuery,
 } from '@nestjs/swagger';
-import { CurrentUser, Roles, SameUser } from 'src/decorators';
+import { CacheKey, CurrentUser, Roles, SameUser } from 'src/decorators';
 import {
   BillDto,
   CreateBillDto,
@@ -50,7 +50,7 @@ import {
   SameUserGuard,
 } from 'src/guards';
 import { BillService, UserService } from 'src/services';
-import { UserRoles } from 'src/types';
+import { CacheKeys, UserRoles } from 'src/types';
 import { ParseBillListFiltersPipe } from 'src/pipes';
 import {
   BillsSerializerInterceptor,
@@ -65,6 +65,7 @@ import {
   TotalAmountWithoutDatesSerializerInterceptor,
   UpdatedBillSerializerInterceptor,
   UserWithBillInfoSerializerInterceptor,
+  CacheInterceptor,
 } from 'src/interceptors';
 
 @UseGuards(JwtGuard)
@@ -277,8 +278,9 @@ export class GatewayController {
   @Get('user/:id')
   @HttpCode(HttpStatus.OK)
   @SameUser(UserRoles.USER)
+  @CacheKey(CacheKeys.USER)
   @UseGuards(SameUserGuard)
-  @UseInterceptors(UserWithBillInfoSerializerInterceptor)
+  @UseInterceptors(CacheInterceptor, UserWithBillInfoSerializerInterceptor)
   @ApiParam({ name: 'id', type: 'number' })
   @ApiBearerAuth()
   @ApiResponse({ status: HttpStatus.OK, type: UserWithBillInfoDto })
