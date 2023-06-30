@@ -1,6 +1,6 @@
 import { SetMetadata } from '@nestjs/common';
-import { CacheKeys } from 'src/types';
+import { CacheKeyOptions, CacheKeyTypes, CacheKeys } from 'src/types';
 
-export const CacheKey = (key: CacheKeys) => {
-  return SetMetadata<string, CacheKeys>('cache-key', key);
+export const CacheKey = (type: CacheKeyTypes, key: CacheKeys) => {
+  return SetMetadata<string, CacheKeyOptions>('cache-key', { type, key });
 };

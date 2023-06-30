@@ -50,7 +50,7 @@ import {
   SameUserGuard,
 } from 'src/guards';
 import { BillService, UserService } from 'src/services';
-import { CacheKeys, UserRoles } from 'src/types';
+import { CacheKeyTypes, CacheKeys, UserRoles } from 'src/types';
 import { ParseBillListFiltersPipe } from 'src/pipes';
 import {
   BillsSerializerInterceptor,
@@ -126,7 +126,7 @@ export class GatewayController {
 
   @Get('bill/total-amount')
   @HttpCode(HttpStatus.OK)
-  @CacheKey(CacheKeys.TOTAL_AMOUNT)
+  @CacheKey(CacheKeyTypes.PRIVATE, CacheKeys.TOTAL_AMOUNT)
   @UseInterceptors(CacheInterceptor, TotalAmountSerializerInterceptor)
   @ApiBearerAuth()
   @ApiResponse({ status: HttpStatus.OK, type: TotalAmountDto })
@@ -139,7 +139,7 @@ export class GatewayController {
   @Get('bill/quantities')
   @HttpCode(HttpStatus.OK)
   @Roles(UserRoles.OWNER, UserRoles.ADMIN)
-  @CacheKey(CacheKeys.QUANTITIES)
+  @CacheKey(CacheKeyTypes.PUBLIC, CacheKeys.QUANTITIES)
   @UseGuards(RolesGuard)
   @UseInterceptors(CacheInterceptor, BillQuantitiesSerializerInterceptor)
   @ApiBearerAuth()
@@ -195,7 +195,7 @@ export class GatewayController {
 
   @Get('bill/all')
   @HttpCode(HttpStatus.OK)
-  @CacheKey(CacheKeys.BILLS)
+  @CacheKey(CacheKeyTypes.PRIVATE, CacheKeys.BILLS)
   @UseInterceptors(CacheInterceptor, BillsSerializerInterceptor)
   @ApiQuery({ name: 'page', type: 'number' })
   @ApiQuery({ name: 'take', type: 'number' })
@@ -215,7 +215,7 @@ export class GatewayController {
 
   @Get('bill/all/deleted')
   @HttpCode(HttpStatus.OK)
-  @CacheKey(CacheKeys.DELETED_BILLS)
+  @CacheKey(CacheKeyTypes.PRIVATE, CacheKeys.DELETED_BILLS)
   @UseInterceptors(CacheInterceptor, DeletedBillsSerializerInterceptor)
   @ApiQuery({ name: 'page', type: 'number' })
   @ApiQuery({ name: 'take', type: 'number' })
@@ -236,7 +236,7 @@ export class GatewayController {
 
   @Get('bill/:id')
   @HttpCode(HttpStatus.OK)
-  @CacheKey(CacheKeys.BILL)
+  @CacheKey(CacheKeyTypes.PRIVATE, CacheKeys.BILL)
   @UseInterceptors(CacheInterceptor, BillSerializerInterceptor)
   @ApiParam({ name: 'id', type: 'string' })
   @ApiBearerAuth()
@@ -250,7 +250,7 @@ export class GatewayController {
 
   @Get('bill/:id/deleted')
   @HttpCode(HttpStatus.OK)
-  @CacheKey(CacheKeys.DELETED_BILL)
+  @CacheKey(CacheKeyTypes.PRIVATE, CacheKeys.DELETED_BILL)
   @UseInterceptors(CacheInterceptor, DeletedBillSerializerInterceptor)
   @ApiParam({ name: 'id', type: 'number' })
   @ApiBearerAuth()
@@ -284,7 +284,7 @@ export class GatewayController {
   @Get('user/:id')
   @HttpCode(HttpStatus.OK)
   @SameUser(UserRoles.USER)
-  @CacheKey(CacheKeys.USER)
+  @CacheKey(CacheKeyTypes.PUBLIC, CacheKeys.USER)
   @UseGuards(SameUserGuard)
   @UseInterceptors(CacheInterceptor, UserWithBillInfoSerializerInterceptor)
   @ApiParam({ name: 'id', type: 'number' })

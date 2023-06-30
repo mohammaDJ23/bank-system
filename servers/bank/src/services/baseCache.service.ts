@@ -5,7 +5,7 @@ import {
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { getCurrentUser, getRequest } from 'src/libs';
-import { CacheKeys } from 'src/types';
+import { CacheKeyOptions, CacheKeyTypes, CacheKeys } from 'src/types';
 
 @Injectable()
 export class BaseCacheService {
@@ -21,14 +21,17 @@ export class BaseCacheService {
     ]);
   }
 
-  getCacheKey(context: ExecutionContext): string {
-    const requiredCacheKey = this.getOverrides<string>(context, 'cache-key');
-    if (!requiredCacheKey) {
+  getCacheKeyOptions(context: ExecutionContext): CacheKeyOptions {
+    const requiredCacheKeyOptions = this.getOverrides<CacheKeyOptions>(
+      context,
+      'cache-key',
+    );
+    if (!requiredCacheKeyOptions) {
       throw new InternalServerErrorException(
         'No key is provided as a cache key',
       );
     }
-    return requiredCacheKey;
+    return requiredCacheKeyOptions;
   }
 
   getResetCacheKeys(context: ExecutionContext): CacheKeys[] {
@@ -44,8 +47,22 @@ export class BaseCacheService {
     return requiredResetCachedKeys;
   }
 
-  isCacheKeyValid(cacheKey: string): boolean {
+  getCacheKey(context: ExecutionContext): CacheKeys {
+    const options = this.getCacheKeyOptions(context);
+    return options.key;
+  }
+
+  getCacheKeyType(context: ExecutionContext): CacheKeyTypes {
+    const options = this.getCacheKeyOptions(context);
+    return options.type;
+  }
+
+  isPrivateCacheKey(cacheKey: string): boolean {
     return /^\d+\.+[a-zA-Z._-]+\.+\d+$/.test(cacheKey);
+  }
+
+  isPublicCacheKey(cacheKey: string): boolean {
+    return /^[a-zA-Z._-]+\.+\d+$/.test(cacheKey);
   }
 
   getCacheKeySign(context: ExecutionContext): string {
@@ -54,6 +71,16 @@ export class BaseCacheService {
     const originalUrl = request.originalUrl;
     const userServiceId = currentUser.userServiceId;
     const cacheKey = this.getCacheKey(context);
-    return `${userServiceId}.${cacheKey}.${process.env.PORT}@${originalUrl}`;
+    const cacheKeyType = this.getCacheKeyType(context);
+    switch (cacheKeyType) {
+      case CacheKeyTypes.PRIVATE:
+        return `${userServiceId}.${cacheKey}.${process.env.PORT}@${originalUrl}`;
+      case CacheKeyTypes.PUBLIC:
+        return `${cacheKey}.${process.env.PORT}@${originalUrl}`;
+      default:
+        throw new InternalServerErrorException(
+          'The type of the cache is invalid',
+        );
+    }
   }
 }
