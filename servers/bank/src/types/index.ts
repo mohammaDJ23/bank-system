@@ -83,13 +83,3 @@ export interface DeletedUserObj extends CurrentUserObj {
 export interface RestoredUserObj extends CurrentUserObj {
   restoredUser: User;
 }
-
-export interface CacheKeyOptions {
-  isUnique?: boolean;
-  isGlobal?: boolean;
-}
-
-export interface CacheKeyMetadata {
-  key: CacheKeys;
-  options: CacheKeyOptions;
-}
