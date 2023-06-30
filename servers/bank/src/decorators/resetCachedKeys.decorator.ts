@@ -2,4 +2,4 @@ import { SetMetadata } from '@nestjs/common';
 import { CacheKeys } from 'src/types';
 
 export const ResetCachedKeys = (...keys: CacheKeys[]) =>
-  SetMetadata('reset-cached-keys', keys);
+  SetMetadata('reset-cache-keys', keys);

@@ -14,7 +14,12 @@ import {
   MessagePatternController,
 } from '../controllers';
 import { JwtStrategy, CustomNamingStrategy } from '../strategies';
-import { BillService, UserService, RabbitmqService } from 'src/services';
+import {
+  BillService,
+  UserService,
+  RabbitmqService,
+  BaseCacheService,
+} from 'src/services';
 import { CacheModule } from '@nestjs/cache-manager';
 import { redisStore } from 'cache-manager-redis-yet';
 
@@ -61,6 +66,7 @@ import { redisStore } from 'cache-manager-redis-yet';
     CronJobsController,
   ],
   providers: [
+    BaseCacheService,
     UserService,
     BillService,
     JwtStrategy,
