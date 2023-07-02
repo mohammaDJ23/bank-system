@@ -68,6 +68,16 @@ export enum CacheKeys {
   DELETED_BILL = 'DELETED_BILL',
 }
 
+export enum CacheKeyTypes {
+  PUBLIC = 'PUBLIC',
+  PRIVATE = 'PRIVATE',
+}
+
+export interface CacheKeyRoles {
+  name: CacheKeys;
+  type: CacheKeyTypes;
+}
+
 export interface CreatedUserObj extends CurrentUserObj {
   createdUser: User;
 }
@@ -82,14 +92,4 @@ export interface DeletedUserObj extends CurrentUserObj {
 
 export interface RestoredUserObj extends CurrentUserObj {
   restoredUser: User;
-}
-
-export enum CacheKeyTypes {
-  PUBLIC = 'PUBLIC',
-  PRIVATE = 'PRIVATE',
-}
-
-export interface CacheKeyOptions {
-  type: CacheKeyTypes;
-  key: CacheKeys;
 }

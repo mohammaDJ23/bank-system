@@ -1,105 +1,66 @@
-import {
-  ExecutionContext,
-  Injectable,
-  InternalServerErrorException,
-} from '@nestjs/common';
+import { ExecutionContext, Injectable, InternalServerErrorException } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { getCurrentUser, getRequest } from 'src/libs';
-import { CacheKeyOptions, CacheKeyTypes, CacheKeys } from 'src/types';
+import { CacheKeyRoles, CacheKeyTypes, CacheKeys } from 'src/types';
 
 @Injectable()
 export class BaseCacheService {
   constructor(private readonly reflector: Reflector) {}
 
-  getOverrides<T, K = T | undefined>(
-    context: ExecutionContext,
-    metaDataKey: string,
-  ): K {
-    return this.reflector.getAllAndOverride<K, string>(metaDataKey, [
-      context.getHandler(),
-      context.getClass(),
-    ]);
+  getOverrides<T, K = T | undefined>(context: ExecutionContext, metaDataKey: string): K {
+    return this.reflector.getAllAndOverride<K, string>(metaDataKey, [context.getHandler(), context.getClass()]);
   }
 
-  getCacheKeyOptions(context: ExecutionContext): CacheKeyOptions {
-    const requiredCacheKeyOptions = this.getOverrides<CacheKeyOptions>(
-      context,
-      'cache-key',
-    );
-    if (!requiredCacheKeyOptions) {
-      throw new InternalServerErrorException(
-        'No key is provided as a cache key',
-      );
+  getCacheKeyRoles(context: ExecutionContext): CacheKeyRoles {
+    const requiredCacheKeyRoles = this.getOverrides<CacheKeyRoles>(context, 'cache-key');
+    if (!requiredCacheKeyRoles) {
+      throw new InternalServerErrorException('No key is provided as a cache key');
     }
-    return requiredCacheKeyOptions;
+    return requiredCacheKeyRoles;
   }
 
-  getResetCacheKeys(context: ExecutionContext): CacheKeys[] {
-    const requiredResetCachedKeys = this.getOverrides<CacheKeys[]>(
-      context,
-      'reset-cache-keys',
-    );
-    if (!requiredResetCachedKeys) {
-      throw new InternalServerErrorException(
-        'No keys are provided as the reset cache keys',
-      );
+  getResetCacheKeysRoles(context: ExecutionContext): CacheKeyRoles[] {
+    const requiredResetCachedKeysRoles = this.getOverrides<CacheKeyRoles[]>(context, 'reset-cache-keys');
+    if (!requiredResetCachedKeysRoles) {
+      throw new InternalServerErrorException('No keys are provided as the reset cache keys');
     }
-    return requiredResetCachedKeys;
+    return requiredResetCachedKeysRoles;
   }
 
   getCacheKey(context: ExecutionContext): CacheKeys {
-    const options = this.getCacheKeyOptions(context);
-    return options.key;
+    const options = this.getCacheKeyRoles(context);
+    return options.name;
   }
 
   getCacheKeyType(context: ExecutionContext): CacheKeyTypes {
-    const options = this.getCacheKeyOptions(context);
+    const options = this.getCacheKeyRoles(context);
     return options.type;
   }
 
-  isPrivateCacheKey(cacheKey: string): boolean {
-    return /^\d+\.+[a-zA-Z._-]+\.+\d+$/.test(cacheKey);
+  isCacheKeyPublic(type: CacheKeyTypes): boolean {
+    return type === CacheKeyTypes.PUBLIC;
   }
 
-  isPublicCacheKey(cacheKey: string): boolean {
-    return /^[a-zA-Z._-]+\.+\d+$/.test(cacheKey);
+  isCacheKeyPrivate(type: CacheKeyTypes): boolean {
+    return type === CacheKeyTypes.PRIVATE;
   }
 
-  getCacheKeySignType(cacheKey: string): CacheKeyTypes {
-    if (this.isPrivateCacheKey(cacheKey)) return CacheKeyTypes.PRIVATE;
-    else if (this.isPublicCacheKey(cacheKey)) return CacheKeyTypes.PUBLIC;
-    else
-      throw new InternalServerErrorException(
-        'The type of the cache is invalid',
-      );
+  isSignValid(sign: string): boolean {
+    // [cache key].[user id].[port]
+    return /^[a-zA-Z._-]+\.+\d+\.+\d+$/.test(sign);
   }
 
-  getPrivateCacheKeySign(context: ExecutionContext, cacheKey: CacheKeys) {
-    const request = getRequest(context);
+  getSign(context: ExecutionContext, cacheKey: CacheKeys) {
     const currentUser = getCurrentUser(context);
-    const originalUrl = request.originalUrl;
     const userServiceId = currentUser.userServiceId;
-    return `${userServiceId}.${cacheKey}.${process.env.PORT}@${originalUrl}`;
+    return `${cacheKey}.${userServiceId}.${process.env.PORT}`;
   }
 
-  getPublicCacheKeySign(context: ExecutionContext, cacheKey: CacheKeys) {
+  getCacheSign(context: ExecutionContext): string {
+    const cacheKey = this.getCacheKey(context);
+    const sign = this.getSign(context, cacheKey);
     const request = getRequest(context);
     const originalUrl = request.originalUrl;
-    return `${cacheKey}.${process.env.PORT}@${originalUrl}`;
-  }
-
-  getCacheKeySign(context: ExecutionContext): string {
-    const cacheKey = this.getCacheKey(context);
-    const cacheKeyType = this.getCacheKeyType(context);
-    switch (cacheKeyType) {
-      case CacheKeyTypes.PRIVATE:
-        return this.getPrivateCacheKeySign(context, cacheKey);
-      case CacheKeyTypes.PUBLIC:
-        return this.getPublicCacheKeySign(context, cacheKey);
-      default:
-        throw new InternalServerErrorException(
-          'The type of the cache is invalid',
-        );
-    }
+    return `${sign}@${originalUrl}`;
   }
 }
