@@ -1,4 +1,12 @@
-import { CallHandler, ExecutionContext, NestInterceptor, CACHE_MANAGER, Inject, Injectable } from '@nestjs/common';
+import {
+  CallHandler,
+  ExecutionContext,
+  NestInterceptor,
+  CACHE_MANAGER,
+  Inject,
+  Injectable,
+  InternalServerErrorException,
+} from '@nestjs/common';
 import { Cache } from 'cache-manager';
 import { Observable, map } from 'rxjs';
 import { getCurrentUser } from 'src/libs';
@@ -19,23 +27,27 @@ export class ResetCacheInterceptor implements NestInterceptor {
         const curretUser = getCurrentUser(context);
         const currentUserId = curretUser.userServiceId;
 
-        const findedCachedSigns: Promise<void>[] = [];
         for (const cachedSign of cachedSigns) {
           const [sign] = cachedSign.split('@');
           const [cacheKey, userId] = sign.split('.');
           secondLoop: for (const resetCacheKeyRoles of resetCacheKeysRoles) {
             if (cacheKey === resetCacheKeyRoles.name) {
               if (
-                (this.baseCacheService.isCacheKeyPrivate(resetCacheKeyRoles.type) && +userId === currentUserId) ||
+                (this.baseCacheService.isCacheKeyPrivate(resetCacheKeyRoles.type) &&
+                  +userId === currentUserId) ||
                 this.baseCacheService.isCacheKeyPublic(resetCacheKeyRoles.type)
               ) {
-                findedCachedSigns.push(this.cacheService.del(cachedSign));
+                try {
+                  this.cacheService.del(cachedSign);
+                } catch (error) {
+                  throw new InternalServerErrorException('Could not clear the cache');
+                }
               }
               break secondLoop;
             }
           }
         }
-
+        console.log(await this.cacheService.store.keys());
         return data;
       }),
     );
