@@ -27,7 +27,7 @@ export class CacheInterceptor implements NestInterceptor {
     }
 
     if (cachedData[cacheKey][originalUrl]) {
-      return cachedData[cacheKey][originalUrl];
+      return of(cachedData[cacheKey][originalUrl]);
     } else {
       return handler.handle().pipe(
         map(async (data: any) => {

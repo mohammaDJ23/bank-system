@@ -17,6 +17,15 @@ export class ResetCacheInterceptor implements NestInterceptor {
   intercept(context: ExecutionContext, next: CallHandler<any>): Observable<any> | Promise<Observable<any>> {
     return next.handle().pipe(
       map(async (data: any) => {
+        const currentUser = getCurrentUser(context);
+        const userServiceId = currentUser.userServiceId;
+        const cacheKey = `${userServiceId}.${process.env.PORT}`;
+        const cachedData = await this.cacheService.get(cacheKey);
+
+        if (cachedData) {
+          await this.cacheService.del(cacheKey);
+        }
+
         return data;
       }),
     );
