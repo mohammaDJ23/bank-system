@@ -8,7 +8,7 @@ import {
 } from '@nestjs/common';
 import { Cache } from 'cache-manager';
 import { map, of } from 'rxjs';
-import { getCurrentUser, getRequest } from 'src/libs';
+import { getCacheKey, getRequest } from 'src/libs';
 
 @Injectable()
 export class CacheInterceptor implements NestInterceptor {
@@ -16,10 +16,8 @@ export class CacheInterceptor implements NestInterceptor {
 
   async intercept(context: ExecutionContext, handler: CallHandler): Promise<any> {
     const request = getRequest(context);
-    const currentUser = getCurrentUser(context);
-    const userServiceId = currentUser.userServiceId;
+    const cacheKey = getCacheKey(context);
     const originalUrl = request.originalUrl;
-    const cacheKey = `${userServiceId}.${process.env.PORT}`;
     let cachedData = await this.cacheService.get(cacheKey);
 
     if (!cachedData) {

@@ -6,4 +6,4 @@ export * from './params';
 export * from './query';
 export * from './typeormOverwrites';
 export * from './camelcase';
-export * from './cacheKeys';
+export * from './cacheKey';

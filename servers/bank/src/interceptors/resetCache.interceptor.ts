@@ -8,7 +8,7 @@ import {
 } from '@nestjs/common';
 import { Cache } from 'cache-manager';
 import { Observable, map } from 'rxjs';
-import { getCurrentUser } from 'src/libs';
+import { getCacheKey } from 'src/libs';
 
 @Injectable()
 export class ResetCacheInterceptor implements NestInterceptor {
@@ -17,9 +17,7 @@ export class ResetCacheInterceptor implements NestInterceptor {
   intercept(context: ExecutionContext, next: CallHandler<any>): Observable<any> | Promise<Observable<any>> {
     return next.handle().pipe(
       map(async (data: any) => {
-        const currentUser = getCurrentUser(context);
-        const userServiceId = currentUser.userServiceId;
-        const cacheKey = `${userServiceId}.${process.env.PORT}`;
+        const cacheKey = getCacheKey(context);
         const cachedData = await this.cacheService.get(cacheKey);
 
         if (cachedData) {
