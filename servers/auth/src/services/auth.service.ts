@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { HttpStatus } from '@nestjs/common/enums';
 import { JwtService } from '@nestjs/jwt';
-import { compare } from 'bcrypt';
+import { compare } from 'bcryptjs';
 import { Response } from 'express';
 import { User } from 'src/entities';
 import { OauthUser, UserSignInfoObj } from 'src/types';

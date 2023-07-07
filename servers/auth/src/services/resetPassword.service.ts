@@ -6,7 +6,7 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { MailerService } from '@nestjs-modules/mailer';
 import { Repository } from 'typeorm';
-import { hash } from 'bcrypt';
+import { hash } from 'bcryptjs';
 import { randomBytes } from 'crypto';
 import { UserService } from './user.service';
 import { MessageDto, ForgotPasswordDto, ResetPasswordDto } from 'src/dtos';
