@@ -2,7 +2,7 @@ import { Request as Req } from 'express';
 import { User } from 'src/entities';
 
 export interface CurrentUserObj {
-  curretUser: User;
+  currentUser: User;
 }
 
 export interface Request extends Req, CurrentUserObj {}

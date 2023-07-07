@@ -1,18 +1,8 @@
-import { Controller } from '@nestjs/common';
-import {
-  Ctx,
-  EventPattern,
-  Payload,
-  RmqContext,
-  RpcException,
-} from '@nestjs/microservices';
+import { Controller, UseInterceptors } from '@nestjs/common';
+import { Ctx, EventPattern, Payload, RmqContext, RpcException } from '@nestjs/microservices';
+import { ResetCacheMicroserviceInterceptor } from 'src/interceptors';
 import { BillService, RabbitmqService, UserService } from 'src/services';
-import {
-  CreatedUserObj,
-  DeletedUserObj,
-  RestoredUserObj,
-  UpdatedUserObj,
-} from 'src/types';
+import { CreatedUserObj, DeletedUserObj, RestoredUserObj, UpdatedUserObj } from 'src/types';
 import { DataSource } from 'typeorm';
 
 @Controller('/message-patterns/v1/bank')
@@ -25,34 +15,25 @@ export class MessagePatternController {
   ) {}
 
   @EventPattern('created_user')
-  createUser(
-    @Payload() payload: CreatedUserObj,
-    @Ctx() context: RmqContext,
-  ): void {
+  createUser(@Payload() payload: CreatedUserObj, @Ctx() context: RmqContext): void {
     this.userService.create(payload, context);
   }
 
   @EventPattern('updated_user')
-  updateUser(
-    @Payload() payload: UpdatedUserObj,
-    @Ctx() context: RmqContext,
-  ): void {
+  @UseInterceptors(ResetCacheMicroserviceInterceptor)
+  updateUser(@Payload() payload: UpdatedUserObj, @Ctx() context: RmqContext): void {
     this.userService.update(payload, context);
   }
 
   @EventPattern('deleted_user')
-  deleteUser(
-    @Payload() payload: DeletedUserObj,
-    @Ctx() context: RmqContext,
-  ): void {
+  @UseInterceptors(ResetCacheMicroserviceInterceptor)
+  deleteUser(@Payload() payload: DeletedUserObj, @Ctx() context: RmqContext): void {
     this.userService.delete(payload, context);
   }
 
   @EventPattern('restored_user')
-  async restore(
-    @Payload() payload: RestoredUserObj,
-    @Ctx() context: RmqContext,
-  ): Promise<void> {
+  @UseInterceptors(ResetCacheMicroserviceInterceptor)
+  async restore(@Payload() payload: RestoredUserObj, @Ctx() context: RmqContext): Promise<void> {
     try {
       const queryRunner = this.dataSource.createQueryRunner();
       await queryRunner.connect();
