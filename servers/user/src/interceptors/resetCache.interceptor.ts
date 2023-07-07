@@ -6,39 +6,25 @@ import {
   Inject,
   Injectable,
 } from '@nestjs/common';
-import { Reflector } from '@nestjs/core';
 import { Cache } from 'cache-manager';
-import { map } from 'rxjs';
-import { CacheKeys } from 'src/types';
+import { Observable, map } from 'rxjs';
+import { getCacheKey } from 'src/libs';
 
 @Injectable()
 export class ResetCacheInterceptor implements NestInterceptor {
-  constructor(
-    private readonly reflector: Reflector,
-    @Inject(CACHE_MANAGER) private readonly cacheService: Cache,
-  ) {}
+  constructor(@Inject(CACHE_MANAGER) private readonly cacheService: Cache) {}
 
-  async intercept(
+  intercept(
     context: ExecutionContext,
-    handler: CallHandler,
-  ): Promise<any> {
-    return handler.handle().pipe(
+    next: CallHandler<any>,
+  ): Observable<any> | Promise<Observable<any>> {
+    return next.handle().pipe(
       map(async (data: any) => {
-        const requiredResetCachedKeys = this.reflector.getAllAndOverride<
-          CacheKeys[] | undefined
-        >('reset-cached-keys', [context.getHandler(), context.getClass()]);
+        const cacheKey = getCacheKey(context);
+        const cachedData = await this.cacheService.get(cacheKey);
 
-        if (requiredResetCachedKeys) {
-          const cachedKeys = await this.cacheService.store.keys();
-          let findedCachedKeys: Promise<void>[] = [];
-          for (const key of cachedKeys)
-            requiredResetCachedKeysLoop: for (const resetCachedKey of requiredResetCachedKeys)
-              if (key.includes(`${resetCachedKey}.${process.env.PORT}`)) {
-                findedCachedKeys.push(this.cacheService.del(key));
-                break requiredResetCachedKeysLoop;
-              }
-          if (findedCachedKeys.length) await Promise.all(findedCachedKeys);
-          findedCachedKeys = [];
+        if (cachedData) {
+          await this.cacheService.del(cacheKey);
         }
 
         return data;
