@@ -31,7 +31,9 @@
     "docker:rm:user": "docker rm user",
     "docker:rm:bank": "docker rm bank",
     "docker:rm:containers": "concurrently \"npm run docker:rm:auth\" \"npm run docker:rm:user\" \"npm run docker:rm:bank\"",
-    "docker:compose:up": "docker compose --env-file .env up"
+    "docker:compose:up": "docker-compose up",
+    "docker:compose:stop": "docker-compose stop",
+    "docker:compose:rm": "docker-compose rm"
   },
   "author": "mohammad nowresideh",
   "license": "ISC",
