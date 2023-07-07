@@ -382,7 +382,8 @@ export class UserService {
       .restore()
       .where('public.user.id = :userId')
       .andWhere('public.user.deleted_at IS NOT NULL')
-      .setParameters({ userId: id })
+      .andWhere('public.user.created_by = :currentUserId')
+      .setParameters({ userId: id, currentUserId: user.id })
       .returning('*')
       .exe();
 
