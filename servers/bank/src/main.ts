@@ -22,11 +22,7 @@ async function bootstrap() {
   });
 
   app.enableCors({
-    origin: [
-      process.env.CLIENT_CONTAINER_URL,
-      process.env.CLIENT_AUTH_URL,
-      process.env.CLIENT_BANK_URL,
-    ],
+    origin: [process.env.CLIENT_CONTAINER_URL, process.env.CLIENT_AUTH_URL, process.env.CLIENT_BANK_URL],
   });
   swagger(app);
   await app.startAllMicroservices();

@@ -29,8 +29,10 @@ export class CacheInterceptor implements NestInterceptor {
     } else {
       return handler.handle().pipe(
         map(async (data: any) => {
-          cachedData[cacheKey][originalUrl] = data;
-          await this.cacheService.set(cacheKey, cachedData);
+          if (request.route.isPrivate) {
+            cachedData[cacheKey][originalUrl] = data;
+            await this.cacheService.set(cacheKey, cachedData);
+          }
           return data;
         }),
       );
