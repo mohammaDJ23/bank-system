@@ -15,7 +15,7 @@ import {
   DeletedUserDto,
 } from '../dtos';
 import { User } from '../entities';
-import { hash } from 'bcrypt';
+import { hash } from 'bcryptjs';
 import { ClientProxy, RmqContext, RpcException } from '@nestjs/microservices';
 import { RabbitMqServices, UserRoles, UpdatedUserPartialObj } from '../types';
 import { RabbitmqService } from './rabbitmq.service';
