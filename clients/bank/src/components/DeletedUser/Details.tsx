@@ -2,7 +2,7 @@ import { Box, Typography, Button } from '@mui/material';
 import moment from 'moment';
 import Modal from '../shared/Modal';
 import { FC, useCallback } from 'react';
-import { useAction, useRequest, useSelector } from '../../hooks';
+import { useAction, useAuth, useRequest, useSelector } from '../../hooks';
 import { RestoreUserApi } from '../../apis';
 import { DeletedUserObj, Pathes } from '../../lib';
 import { ModalNames } from '../../store';
@@ -17,7 +17,10 @@ const Details: FC<DetailsImporation> = ({ user }) => {
   const { hideModal, showModal } = useAction();
   const { modals } = useSelector();
   const { isApiProcessing, request } = useRequest();
+  const { getTokenInfo } = useAuth();
   const isRestoreUserApiProcessing = isApiProcessing(RestoreUserApi);
+  const tokenInfo = getTokenInfo();
+  const isRestoringAllowed = user.createdBy === tokenInfo?.id;
 
   const showRestoreUserModal = useCallback(() => {
     showModal(ModalNames.RESTORE_USER);
@@ -28,7 +31,7 @@ const Details: FC<DetailsImporation> = ({ user }) => {
   }, []);
 
   const restoreUser = useCallback(() => {
-    request(new RestoreUserApi(user.id)).then(response => {
+    request(new RestoreUserApi(user.id)).then((response) => {
       navigate(Pathes.USERS);
     });
   }, [user]);
@@ -60,18 +63,20 @@ const Details: FC<DetailsImporation> = ({ user }) => {
         <Typography fontSize="12px" color="">
           was deleted at: {moment(user.deletedAt).format('LLLL')}
         </Typography>
-        <Box mt="30px">
-          <Button
-            disabled={isRestoreUserApiProcessing}
-            onClick={showRestoreUserModal}
-            variant="contained"
-            color="success"
-            size="small"
-            sx={{ textTransform: 'capitalize' }}
-          >
-            Restore the user
-          </Button>
-        </Box>
+        {isRestoringAllowed && (
+          <Box mt="30px">
+            <Button
+              disabled={isRestoreUserApiProcessing}
+              onClick={showRestoreUserModal}
+              variant="contained"
+              color="success"
+              size="small"
+              sx={{ textTransform: 'capitalize' }}
+            >
+              Restore the user
+            </Button>
+          </Box>
+        )}
       </Box>
 
       <Modal

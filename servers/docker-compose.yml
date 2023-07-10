@@ -20,6 +20,7 @@ services:
     depends_on:
       - postgres
       - rabbitmq
+      - redis
 
   user:
     build: ./user
@@ -30,10 +31,13 @@ services:
     depends_on:
       - postgres
       - rabbitmq
+      - redis
 
   postgres:
     image: postgres
     container_name: postgres
+    env_file:
+      - .env
     environment:
       - 'POSTGRES_PASSWORD=${POSTGRES_PASSWORD}'
     restart: always
@@ -47,3 +51,10 @@ services:
     ports:
       - 5672:5672
       - 15672:15672
+
+  redis:
+    image: redis:latest
+    container_name: redis
+    restart: always
+    ports:
+      - 6379:6379

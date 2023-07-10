@@ -1,6 +1,8 @@
 import { createParamDecorator, ExecutionContext } from '@nestjs/common';
-import { getCurrentUser } from 'src/libs';
+import { getCurrentUser, getRequest } from 'src/libs';
 
-export const CurrentUser = createParamDecorator(
-  (data: string, context: ExecutionContext) => getCurrentUser(context),
-);
+export const CurrentUser = createParamDecorator((data: string, context: ExecutionContext) => {
+  const request = getRequest(context);
+  request.route.isPrivate = true;
+  return getCurrentUser(context);
+});

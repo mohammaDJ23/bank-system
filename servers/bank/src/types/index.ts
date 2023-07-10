@@ -2,7 +2,7 @@ import { Request as Req } from 'express';
 import { User } from 'src/entities';
 
 export interface CurrentUserObj {
-  curretUser: User;
+  currentUser: User;
 }
 
 export interface Request extends Req, CurrentUserObj {}
@@ -66,6 +66,16 @@ export enum CacheKeys {
   TOTAL_AMOUNT = 'TOTAL_AMOUNT',
   DELETED_BILLS = 'DELETED_BILLS',
   DELETED_BILL = 'DELETED_BILL',
+}
+
+export enum CacheKeyTypes {
+  PUBLIC = 'PUBLIC',
+  PRIVATE = 'PRIVATE',
+}
+
+export interface CacheKeyRoles {
+  name: CacheKeys;
+  type: CacheKeyTypes;
 }
 
 export interface CreatedUserObj extends CurrentUserObj {

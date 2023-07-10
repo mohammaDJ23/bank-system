@@ -8,27 +8,31 @@ import {
 } from '@nestjs/common';
 import { Cache } from 'cache-manager';
 import { map, of } from 'rxjs';
-import { BaseCacheService } from 'src/services';
+import { getCacheKey, getRequest } from 'src/libs';
 
 @Injectable()
 export class CacheInterceptor implements NestInterceptor {
-  constructor(
-    @Inject(CACHE_MANAGER) private readonly cacheService: Cache,
-    private readonly baseCacheService: BaseCacheService,
-  ) {}
+  constructor(@Inject(CACHE_MANAGER) private readonly cacheService: Cache) {}
 
-  async intercept(
-    context: ExecutionContext,
-    handler: CallHandler,
-  ): Promise<any> {
-    const cacheKeySign = this.baseCacheService.getCacheKeySign(context);
-    const cachedData = await this.cacheService.get(cacheKeySign);
-    if (cachedData) {
-      return of(cachedData);
+  async intercept(context: ExecutionContext, handler: CallHandler): Promise<any> {
+    const request = getRequest(context);
+    const cacheKey = getCacheKey(context);
+    const originalUrl = request.originalUrl;
+    let cachedData = await this.cacheService.get(cacheKey);
+
+    if (!cachedData) {
+      cachedData = { [cacheKey]: {} };
+    }
+
+    if (cachedData[cacheKey][originalUrl]) {
+      return of(cachedData[cacheKey][originalUrl]);
     } else {
       return handler.handle().pipe(
         map(async (data: any) => {
-          await this.cacheService.set(cacheKeySign, data);
+          if (request.route.isPrivate) {
+            cachedData[cacheKey][originalUrl] = data;
+            await this.cacheService.set(cacheKey, cachedData);
+          }
           return data;
         }),
       );

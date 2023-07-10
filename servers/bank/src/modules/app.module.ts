@@ -8,18 +8,9 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ScheduleModule } from '@nestjs/schedule';
 import { Bill, User } from '../entities';
 import { AllExceptionFilter } from '../filters';
-import {
-  CronJobsController,
-  GatewayController,
-  MessagePatternController,
-} from '../controllers';
+import { CronJobsController, GatewayController, MessagePatternController } from '../controllers';
 import { JwtStrategy, CustomNamingStrategy } from '../strategies';
-import {
-  BillService,
-  UserService,
-  RabbitmqService,
-  BaseCacheService,
-} from 'src/services';
+import { BillService, UserService, RabbitmqService } from 'src/services';
 import { CacheModule } from '@nestjs/cache-manager';
 import { redisStore } from 'cache-manager-redis-yet';
 
@@ -28,7 +19,10 @@ import { redisStore } from 'cache-manager-redis-yet';
     CacheModule.registerAsync({
       useFactory: async () => ({
         isGlobal: true,
-        store: await redisStore({ ttl: +process.env.REDIS_TTL }),
+        store: await redisStore({
+          ttl: +process.env.REDIS_TTL,
+          url: `redis://${process.env.REDIS_HOST}:${process.env.REDIS_PORT}`,
+        }),
         host: process.env.REDIS_HOST,
         port: process.env.REDIS_PORT,
         ttl: +process.env.REDIS_TTL,
@@ -60,13 +54,8 @@ import { redisStore } from 'cache-manager-redis-yet';
       signOptions: { expiresIn: process.env.JWT_EXPIRATION },
     }),
   ],
-  controllers: [
-    GatewayController,
-    MessagePatternController,
-    CronJobsController,
-  ],
+  controllers: [GatewayController, MessagePatternController, CronJobsController],
   providers: [
-    BaseCacheService,
     UserService,
     BillService,
     JwtStrategy,
