@@ -1,9 +1,11 @@
 version: '3.8'
 
 services:
-  auth:
-    build: ./auth
-    container_name: auth
+  auth-staging:
+    build:
+      context: ./auth
+      dockerfile: Dockerfile.staging
+    container_name: auth-staging
     restart: always
     ports:
       - 3001:3001
@@ -11,9 +13,11 @@ services:
       - postgres
       - rabbitmq
 
-  bank:
-    build: ./bank
-    container_name: bank
+  bank-staging:
+    build:
+      context: ./bank
+      dockerfile: Dockerfile.staging
+    container_name: bank-staging
     restart: always
     ports:
       - 3003:3003
@@ -22,9 +26,11 @@ services:
       - rabbitmq
       - redis
 
-  user:
-    build: ./user
-    container_name: user
+  user-staging:
+    build:
+      context: ./user
+      dockerfile: Dockerfile.staging
+    container_name: user-staging
     restart: always
     ports:
       - 3002:3002
