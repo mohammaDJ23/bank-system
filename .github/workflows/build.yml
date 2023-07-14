@@ -60,8 +60,8 @@ jobs:
         working-directory: ./clients/bank
     steps:
       - uses: actions/checkout@v3
-      - run: npm install
-      - run: npm run build
+      - run: npm install -f
+      - run: npm run webpack:build:prod
 
   container-client:
     runs-on: ubuntu-latest
@@ -71,4 +71,4 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - run: npm install
-      - run: npm run build
+      - run: npm run webpack:build:prod
