@@ -1,0 +1,74 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - integration
+    pathes:
+      - 'servers/auth/**'
+      - 'servers/user/**'
+      - 'servers/bank/**'
+      - 'clients/auth/**'
+      - 'clients/bank/**'
+      - 'clients/container/**'
+
+jobs:
+  auth-server:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./servers/auth
+    steps:
+      - uses: actions/checkout@v3
+      - run: npm install
+      - run: npm run build
+
+  user-server:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./servers/user
+    steps:
+      - uses: actions/checkout@v3
+      - run: npm install
+      - run: npm run build
+
+  bank-server:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./servers/bank
+    steps:
+      - uses: actions/checkout@v3
+      - run: npm install
+      - run: npm run build
+
+  auth-client:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./clients/auth
+    steps:
+      - uses: actions/checkout@v3
+      - run: npm install
+      - run: npm run build
+
+  bank-client:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./clients/bank
+    steps:
+      - uses: actions/checkout@v3
+      - run: npm install
+      - run: npm run build
+
+  container-client:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./clients/container
+    steps:
+      - uses: actions/checkout@v3
+      - run: npm install
+      - run: npm run build
