@@ -5,28 +5,19 @@ on:
     branches:
       - staging
 
-  workflow_call:
-    secrets:
-      DOCKER_USERNAME:
-        type: string
-        required: true
-      DOCKER_PASSWORD:
-        type: string
-        required: true
-
 jobs:
-  build-and-push-image:
+  build-push-action:
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
         include:
           - dockerfile: ../servers/auth/Dockerfile.staging
-            image: ${{ secrets.DOCKER_USERNAME }}/auth-staging:latest
+            image: mohammadnowresideh1997/auth-staging:latest
           - dockerfile: ../servers/bank/Dockerfile.staging
-            image: ${{ secrets.DOCKER_USERNAME }}/bank-staging:latest
+            image: mohammadnowresideh1997/bank-staging:latest
           - dockerfile: ../servers/user/Dockerfile.staging
-            image: ${{ secrets.DOCKER_USERNAME }}/user-staging:latest
+            image: mohammadnowresideh1997/user-staging:latest
     permissions:
       contents: read
       packages: write
