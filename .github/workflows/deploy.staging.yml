@@ -12,11 +12,11 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - dockerfile: ../../servers/auth/Dockerfile.staging
+          - dockerfile: ./servers/auth/Dockerfile.staging
             image: mohammadnowresideh1997/auth-staging
-          - dockerfile: ../../servers/bank/Dockerfile.staging
+          - dockerfile: ./servers/bank/Dockerfile.staging
             image: mohammadnowresideh1997/bank-staging
-          - dockerfile: ../../servers/user/Dockerfile.staging
+          - dockerfile: ./servers/user/Dockerfile.staging
             image: mohammadnowresideh1997/user-staging
     permissions:
       contents: read
