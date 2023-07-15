@@ -12,11 +12,11 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - dockerfile: ./servers/auth/Dockerfile.staging
+          - dockerfile: ../../servers/auth/Dockerfile.staging
             image: mohammadnowresideh1997/auth-staging
-          - dockerfile: ./servers/bank/Dockerfile.staging
+          - dockerfile: ../../servers/bank/Dockerfile.staging
             image: mohammadnowresideh1997/bank-staging
-          - dockerfile: ./servers/user/Dockerfile.staging
+          - dockerfile: ../../servers/user/Dockerfile.staging
             image: mohammadnowresideh1997/user-staging
     permissions:
       contents: read
@@ -41,7 +41,7 @@ jobs:
       - name: Build and push Docker image
         uses: docker/build-push-action@ad44023a93711e3deb337508980b4b5e9bcdc5dc
         with:
-          context: ../../
+          context: .
           file: ${{ matrix.dockerfile }}
           push: true
           tags: ${{ steps.meta.outputs.tags }}
