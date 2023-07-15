@@ -1,6 +1,6 @@
 FROM node:18.10.0-alpine
 
-WORKDIR /usr/src/auth
+WORKDIR /usr/src/staging/auth
 
 COPY package.json package.json
 COPY package-lock.json package-lock.json
