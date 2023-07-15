@@ -8,6 +8,9 @@ on:
 jobs:
   build-and-push-image:
     runs-on: ubuntu-latest
+    secrets:
+      DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+      DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
     strategy:
       fail-fast: false
       matrix:
