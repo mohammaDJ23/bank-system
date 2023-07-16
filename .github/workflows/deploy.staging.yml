@@ -5,13 +5,9 @@ on:
     branches:
       - staging
 
-  workflow_run:
-    workflows: ['CI']
-    types:
-      - completed
-
 jobs:
   build-push-action:
+    need: CI
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
