@@ -66,4 +66,4 @@ jobs:
           username: ${{ secrets.SSH_USERNAME }}
           password: ${{ secrets.SSH_PASSWORD }}
           script: |
-            cd usr/src/bank-system
+            cd ../../usr/src/bank-system
