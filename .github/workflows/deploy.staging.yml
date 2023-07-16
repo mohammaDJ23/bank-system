@@ -1,13 +1,15 @@
 name: Publish Docker image
 
 on:
-  push:
-    branches:
-      - staging
+  workflow_run:
+    workflows: ['CI']
+    branches: [staging]
+    types:
+      - completed
 
 jobs:
   build-push-action:
-    need: CI
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
