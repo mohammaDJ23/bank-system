@@ -67,3 +67,6 @@ jobs:
           password: ${{ secrets.SSH_PASSWORD }}
           script: |
             cd bank-system
+            git pull
+            cd servers
+            npm run docker:compose:staging:up
