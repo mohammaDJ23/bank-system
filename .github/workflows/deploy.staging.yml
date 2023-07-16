@@ -7,20 +7,19 @@ on:
 
 jobs:
   build-push-action:
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
         include:
           - dockerfile: ./servers/auth/Dockerfile.staging
-            image: mohammadnowresideh1997/auth-staging
+            image: mohammadnowresideh1997/auth-server-staging:latest
             context: ./servers/auth
           - dockerfile: ./servers/bank/Dockerfile.staging
-            image: mohammadnowresideh1997/bank-staging
+            image: mohammadnowresideh1997/bank-server-staging:latest
             context: ./servers/bank
           - dockerfile: ./servers/user/Dockerfile.staging
-            image: mohammadnowresideh1997/user-staging
+            image: mohammadnowresideh1997/user-server-staging:latest
             context: ./servers/user
     permissions:
       contents: read
