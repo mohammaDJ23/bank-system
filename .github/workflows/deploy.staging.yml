@@ -5,6 +5,11 @@ on:
     branches:
       - staging
 
+  workflow_run:
+    workflows: ['CI']
+    types:
+      - completed
+
 jobs:
   build-push-action:
     runs-on: ubuntu-latest
