@@ -12,10 +12,10 @@
     "webpack:bank:dev": "npm run webpack:start:dev --prefix bank",
     "webpack:container:dev": "npm run webpack:start:dev --prefix container",
     "webpack:start:dev": "concurrently \"npm run webpack:auth:dev\" \"npm run webpack:bank:dev\" \"npm run webpack:container:dev\"",
-    "webpack:auth:build": "npm run webpack:build:prod --prefix auth",
-    "webpack:bank:build": "npm run webpack:build:prod --prefix bank",
-    "webpack:container:build": "npm run webpack:build:prod --prefix container",
-    "webpack:build:repos": "concurrently \"npm run webpack:auth:build\" \"npm run webpack:bank:build\" \"npm run webpack:container:build\""
+    "webpack:auth:build:prod": "npm run webpack:build:prod --prefix auth",
+    "webpack:bank:build:prod": "npm run webpack:build:prod --prefix bank",
+    "webpack:container:build:prod": "npm run webpack:build:prod --prefix container",
+    "webpack:build:repos:prod": "concurrently \"npm run webpack:auth:build:prod\" \"npm run webpack:bank:build:prod\" \"npm run webpack:container:build:prod\""
   },
   "author": "mohammad nowresideh",
   "license": "ISC",
