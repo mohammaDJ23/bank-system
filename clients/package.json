@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "auth:install": "npm install --prefix auth",
-    "bank:install": "npm install --prefix bank",
+    "bank:install": "npm install -f --prefix bank",
     "container:install": "npm install --prefix container",
     "install:repos": "concurrently \"npm run auth:install\" \"npm run bank:install\" \"npm run container:install\"",
     "webpack:auth:dev": "npm run webpack:start:dev --prefix auth",
