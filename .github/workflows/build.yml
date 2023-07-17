@@ -6,7 +6,26 @@ on:
       - integration
 
 jobs:
-  build:
+  build-clients:
+    name: Build the client projects
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./clients
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Installing the node_modules packages of the root
+        run: npm install
+
+      - name: Installing the node_modules packages of the clients
+        run: npm run install:repos
+
+      - name: Running the build process
+        run: npm run webpack:build:repos
+
+  build-servers:
     name: Build the server projects
     runs-on: ubuntu-latest
     defaults:
