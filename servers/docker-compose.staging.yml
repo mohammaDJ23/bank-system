@@ -5,6 +5,8 @@ services:
     build:
       context: ./auth
       dockerfile: Dockerfile.staging
+    env_file:
+      - /root/config/auth.env.txt
     container_name: auth-staging
     restart: always
     ports:
@@ -17,6 +19,8 @@ services:
     build:
       context: ./bank
       dockerfile: Dockerfile.staging
+    env_file:
+      - /root/config/bank.env.txt
     container_name: bank-staging
     restart: always
     ports:
@@ -30,6 +34,8 @@ services:
     build:
       context: ./user
       dockerfile: Dockerfile.staging
+    env_file:
+      - /root/config/user.env.txt
     container_name: user-staging
     restart: always
     ports:
@@ -42,8 +48,10 @@ services:
   postgres:
     image: postgres
     container_name: postgres
+    env_file:
+      - /root/config/server-root.env.txt
     environment:
-      - 'POSTGRES_PASSWORD=${DATABASE_PASSWORD}'
+      - 'POSTGRES_PASSWORD=${POSTGRES_PASSWORD}'
     restart: always
     ports:
       - 5432:5432
