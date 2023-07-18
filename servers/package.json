@@ -63,7 +63,7 @@
     "docker:rm:user:prod": "docker rm user-prod",
     "docker:rm:bank:prod": "docker rm bank-prod",
     "docker:rm:prod": "concurrently \"npm run docker:rm:auth:prod\" \"npm run docker:rm:user:prod\" \"npm run docker:rm:bank:prod\"",
-    "docker:compose:staging:up": "docker-compose --env-file /root/config/env.txt -f docker-compose.staging.yml up",
+    "docker:compose:staging:up": "docker-compose -f docker-compose.staging.yml up",
     "docker:compose:prod:up": "docker-compose -f docker-compose.prod.yml up",
     "docker:compose:staging:stop": "docker-compose -f docker-compose.staging.yml stop",
     "docker:compose:prod:stop": "docker-compose -f docker-compose.prod.yml stop",
