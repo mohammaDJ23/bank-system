@@ -42,10 +42,8 @@ services:
   postgres:
     image: postgres
     container_name: postgres
-    env_file:
-      - .env
     environment:
-      - 'POSTGRES_PASSWORD=${POSTGRES_PASSWORD}'
+      - 'POSTGRES_PASSWORD=${DATABASE_PASSWORD}'
     restart: always
     ports:
       - 5432:5432
