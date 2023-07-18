@@ -1,74 +1,45 @@
-name: CI
+name: Build
 
 on:
   push:
     branches:
       - integration
-    pathes:
-      - 'servers/auth/**'
-      - 'servers/user/**'
-      - 'servers/bank/**'
-      - 'clients/auth/**'
-      - 'clients/bank/**'
-      - 'clients/container/**'
 
 jobs:
-  auth-server:
+  build-clients:
+    name: Build the client projects
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: ./servers/auth
+        working-directory: ./clients
     steps:
-      - uses: actions/checkout@v3
-      - run: npm install
-      - run: npm run build
+      - name: Checkout repository
+        uses: actions/checkout@v3
 
-  user-server:
-    runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: ./servers/user
-    steps:
-      - uses: actions/checkout@v3
-      - run: npm install
-      - run: npm run build
+      - name: Installing the node_modules packages of the root
+        run: npm install
 
-  bank-server:
-    runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: ./servers/bank
-    steps:
-      - uses: actions/checkout@v3
-      - run: npm install
-      - run: npm run build
+      - name: Installing the node_modules packages of the clients
+        run: npm run install:repos
 
-  auth-client:
-    runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: ./clients/auth
-    steps:
-      - uses: actions/checkout@v3
-      - run: npm install
-      - run: npm run build
+      - name: Running the build process
+        run: npm run webpack:build:repos:prod
 
-  bank-client:
+  build-servers:
+    name: Build the server projects
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: ./clients/bank
+        working-directory: ./servers
     steps:
-      - uses: actions/checkout@v3
-      - run: npm install -f
-      - run: npm run webpack:build:prod
+      - name: Checkout repository
+        uses: actions/checkout@v3
 
-  container-client:
-    runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: ./clients/container
-    steps:
-      - uses: actions/checkout@v3
-      - run: npm install
-      - run: npm run webpack:build:prod
+      - name: Installing the node_modules packages of the root
+        run: npm install
+
+      - name: Installing the node_modules packages of the servers
+        run: npm run install:repos
+
+      - name: Running the build process
+        run: npm run build:repos
