@@ -56,7 +56,7 @@ services:
     ports:
       - 5432:5432
     volumes:
-      - /root/postgres-backup:/var/lib/postgresql/data
+      - /root/postgres-backup:/var/lib/postgresql/14/main
 
   rabbitmq:
     image: rabbitmq:3.8-management-alpine
