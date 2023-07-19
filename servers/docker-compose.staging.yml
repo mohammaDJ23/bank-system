@@ -51,7 +51,7 @@ services:
     env_file:
       - /root/config/env.txt
     environment:
-      - 'POSTGRES_PASSWORD=${POSTGRES_PASSWORD}'
+      - 'POSTGRES_PASSWORD=fsiFJOIDW23493854'
     restart: always
     ports:
       - 5432:5432
