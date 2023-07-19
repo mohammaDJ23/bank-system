@@ -5,14 +5,6 @@ import { RabbitMqQueue } from './types';
 import { swagger } from './libs';
 import { NestExpressApplication } from '@nestjs/platform-express';
 
-console.log(
-  process.env.DATABASE_HOST,
-  process.env.DATABASE_PORT,
-  process.env.DATABASE_NAME,
-  process.env.DATABASE_USERNAME,
-  process.env.DATABASE_PASSWORD,
-);
-
 require('dotenv').config();
 
 async function bootstrap() {
