@@ -70,8 +70,7 @@
     "docker:compose:staging:rm": "docker-compose -f docker-compose.staging.yml rm",
     "docker:compose:prod:rm": "docker-compose -f docker-compose.prod.yml rm",
     "docker:compose:staging:down": "docker-compose -f docker-compose.staging.yml down",
-    "docker:compose:prod:down": "docker-compose -f docker-compose.prod.yml down",
-    "dummy:command": ""
+    "docker:compose:prod:down": "docker-compose -f docker-compose.prod.yml down"
   },
   "author": "mohammad nowresideh",
   "license": "ISC",
