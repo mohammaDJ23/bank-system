@@ -14,7 +14,6 @@ services:
     depends_on:
       - postgres
       - rabbitmq
-
   bank-staging:
     build:
       context: ./bank
@@ -29,7 +28,6 @@ services:
       - postgres
       - rabbitmq
       - redis
-
   user-staging:
     build:
       context: ./user
@@ -44,7 +42,6 @@ services:
       - postgres
       - rabbitmq
       - redis
-
   postgres:
     image: postgres
     container_name: postgres
@@ -57,7 +54,6 @@ services:
       - 5432:5432
     volumes:
       - /root/postgres-backup:/var/lib/postgresql/data
-
   rabbitmq:
     image: rabbitmq:3.8-management-alpine
     container_name: rabbitmq
@@ -65,7 +61,6 @@ services:
     ports:
       - 5672:5672
       - 15672:15672
-
   redis:
     image: redis:latest
     container_name: redis
