@@ -5,8 +5,6 @@ import { RabbitMqQueue } from './types';
 import { swagger } from './libs';
 import { NestExpressApplication } from '@nestjs/platform-express';
 
-// dummy changes
-
 require('dotenv').config();
 
 async function bootstrap() {
