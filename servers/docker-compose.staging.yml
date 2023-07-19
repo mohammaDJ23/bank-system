@@ -49,7 +49,7 @@ services:
     image: postgres
     container_name: postgres
     env_file:
-      - /root/config/server-root.env.txt
+      - /root/config/env.txt
     environment:
       - 'POSTGRES_PASSWORD=${POSTGRES_PASSWORD}'
     restart: always
