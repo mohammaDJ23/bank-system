@@ -6,6 +6,8 @@ import { swagger } from './libs';
 import { AuthAdapter } from './adapters';
 import './libs/typeormOverwrites';
 
+// dummy changes
+
 require('dotenv').config();
 
 async function bootstrap() {
