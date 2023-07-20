@@ -66,7 +66,7 @@
     "docker:compose:auth:staging:up": "npm run docker:compose:staging:up --prefix auth",
     "docker:compose:bank:staging:up": "npm run docker:compose:staging:up --prefix bank",
     "docker:compose:user:staging:up": "npm run docker:compose:staging:up --prefix user",
-    "docker:compose:staging:up": "concurrently \"npm run docker:compose:auth:staging:up\" \"npm run docker:compose:bank:staging:up\" \"npm run docker:compose:user:staging:up\"",
+    "docker:compose:staging:up": "npm run docker:compose:auth:staging:up",
     "docker:compose:prod:up": "docker-compose -f docker-compose.prod.yml up",
     "docker:compose:staging:stop": "docker-compose -f docker-compose.staging.yml stop",
     "docker:compose:prod:stop": "docker-compose -f docker-compose.prod.yml stop",
