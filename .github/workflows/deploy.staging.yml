@@ -69,4 +69,5 @@ jobs:
             cd bank-system
             git pull
             cd servers
+            npm install
             npm run docker:compose:staging:up
