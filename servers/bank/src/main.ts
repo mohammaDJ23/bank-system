@@ -6,8 +6,6 @@ import { RabbitMqQueue } from './types';
 
 require('dotenv').config();
 
-console.log(process.env.DATABASE_PASSWORD);
-
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
