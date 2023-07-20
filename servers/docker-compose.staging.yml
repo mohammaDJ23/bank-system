@@ -12,7 +12,7 @@ services:
     ports:
       - 3001:3001
     networks:
-      - app-network
+      - services_app-network
 
   bank-staging:
     build:
@@ -25,7 +25,7 @@ services:
     ports:
       - 3003:3003
     networks:
-      - app-network
+      - services_app-network
 
   user-staging:
     build:
@@ -38,8 +38,8 @@ services:
     ports:
       - 3002:3002
     networks:
-      - app-network
+      - services_app-network
 
 networks:
-  app-network:
+  services_app-network:
     external: true
