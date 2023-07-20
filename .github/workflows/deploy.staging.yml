@@ -52,7 +52,6 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
 
   deploying-ssh:
-    timeout-minutes: 30
     needs: build-push-action
     name: Running the deployment on the vps server
     runs-on: ubuntu-latest
@@ -68,7 +67,7 @@ jobs:
           password: ${{ secrets.SSH_PASSWORD }}
           script: |
             cd bank-system
-            git pull
+            git pull origin staging
             cd servers
             npm install
             npm run docker:compose:staging:up
