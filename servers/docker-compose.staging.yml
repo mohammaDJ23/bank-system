@@ -11,6 +11,8 @@ services:
     restart: always
     ports:
       - 3001:3001
+    networks:
+      - app-network
 
   bank-staging:
     build:
@@ -22,6 +24,8 @@ services:
     restart: always
     ports:
       - 3003:3003
+    networks:
+      - app-network
 
   user-staging:
     build:
@@ -33,3 +37,9 @@ services:
     restart: always
     ports:
       - 3002:3002
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    external: true
