@@ -50,13 +50,9 @@ services:
     container_name: postgres
     env_file:
       - /root/config/env.txt
-    environment:
-      - 'POSTGRES_PASSWORD=${POSTGRES_PASSWORD}'
     restart: always
     ports:
       - 5432:5432
-    volumes:
-      - /root/postgres-backup:/var/lib/postgresql/data
 
   rabbitmq:
     image: rabbitmq:3.8-management-alpine
