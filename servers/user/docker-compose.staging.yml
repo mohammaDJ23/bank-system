@@ -1,0 +1,19 @@
+version: '3.8'
+
+services:
+  user-staging:
+    build:
+      context: .
+      dockerfile: Dockerfile.staging
+    env_file:
+      - /root/config/user.env.txt
+    container_name: user-staging
+    restart: always
+    ports:
+      - 3002:3002
+    networks:
+      - services_app-network
+
+networks:
+  services_app-network:
+    external: true
