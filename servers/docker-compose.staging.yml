@@ -11,9 +11,6 @@ services:
     restart: always
     ports:
       - 3001:3001
-    depends_on:
-      - postgres
-      - rabbitmq
 
   bank-staging:
     build:
@@ -25,10 +22,6 @@ services:
     restart: always
     ports:
       - 3003:3003
-    depends_on:
-      - postgres
-      - rabbitmq
-      - redis
 
   user-staging:
     build:
@@ -40,33 +33,3 @@ services:
     restart: always
     ports:
       - 3002:3002
-    depends_on:
-      - postgres
-      - rabbitmq
-      - redis
-
-  postgres:
-    image: postgres
-    container_name: postgres
-    env_file:
-      - /root/config/env.txt
-    restart: always
-    ports:
-      - 5432:5432
-    volumes:
-      - /root/postgres-backup:/var/lib/postgresql/data
-
-  rabbitmq:
-    image: rabbitmq:3.8-management-alpine
-    container_name: rabbitmq
-    restart: always
-    ports:
-      - 5672:5672
-      - 15672:15672
-
-  redis:
-    image: redis:latest
-    container_name: redis
-    restart: always
-    ports:
-      - 6379:6379
