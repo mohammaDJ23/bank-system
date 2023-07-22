@@ -1,13 +1,13 @@
 version: '3.8'
 
 services:
-  auth-staging:
+  auth:
     build:
       context: .
       dockerfile: Dockerfile.staging
     env_file:
       - /root/config/auth.env.txt
-    container_name: auth-staging
+    container_name: auth
     restart: always
     ports:
       - 3001:3001

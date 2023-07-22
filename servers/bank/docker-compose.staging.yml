@@ -1,13 +1,13 @@
 version: '3.8'
 
 services:
-  bank-staging:
+  bank:
     build:
       context: .
       dockerfile: Dockerfile.staging
     env_file:
       - /root/config/bank.env.txt
-    container_name: bank-staging
+    container_name: bank
     restart: always
     ports:
       - 3003:3003

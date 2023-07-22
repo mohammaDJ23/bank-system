@@ -1,13 +1,13 @@
 version: '3.8'
 
 services:
-  user-prod:
+  user:
     build:
       context: .
       dockerfile: Dockerfile.prod
     env_file:
       - /root/config/user.env.txt
-    container_name: user-prod
+    container_name: user
     restart: always
     ports:
       - 3002:3002
