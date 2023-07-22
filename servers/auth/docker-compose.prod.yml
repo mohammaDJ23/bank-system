@@ -1,0 +1,19 @@
+version: '3.8'
+
+services:
+  auth-prod:
+    build:
+      context: .
+      dockerfile: Dockerfile.prod
+    env_file:
+      - /root/config/auth.env.txt
+    container_name: auth-prod
+    restart: always
+    ports:
+      - 3001:3001
+    networks:
+      - services_app-network
+
+networks:
+  services_app-network:
+    external: true
