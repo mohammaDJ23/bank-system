@@ -1,16 +1,16 @@
 version: '3.8'
 
 services:
-  auth:
+  bank:
     build:
       context: .
-      dockerfile: Dockerfile.staging
+      dockerfile: Dockerfile.prod
     env_file:
-      - /root/config/auth.env.txt
-    container_name: auth
+      - /root/config/bank.env.txt
+    container_name: bank
     restart: always
     ports:
-      - 3001:3001
+      - 3003:3003
     networks:
       - services_app-network
 

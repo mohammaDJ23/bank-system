@@ -4,7 +4,7 @@ services:
   auth:
     build:
       context: .
-      dockerfile: Dockerfile.staging
+      dockerfile: Dockerfile.prod
     env_file:
       - /root/config/auth.env.txt
     container_name: auth

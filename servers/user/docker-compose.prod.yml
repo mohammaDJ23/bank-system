@@ -1,16 +1,16 @@
 version: '3.8'
 
 services:
-  auth:
+  user:
     build:
       context: .
-      dockerfile: Dockerfile.staging
+      dockerfile: Dockerfile.prod
     env_file:
-      - /root/config/auth.env.txt
-    container_name: auth
+      - /root/config/user.env.txt
+    container_name: user
     restart: always
     ports:
-      - 3001:3001
+      - 3002:3002
     networks:
       - services_app-network
 
