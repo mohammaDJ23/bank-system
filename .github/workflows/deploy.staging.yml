@@ -67,6 +67,9 @@ jobs:
           password: ${{ secrets.SSH_PASSWORD }}
           command_timeout: 60m
           script: |
+            cd services
+            docker-compose -f docker-compose.yaml up -d
+            cd
             cd bank-system
             git pull origin staging
             cd servers
