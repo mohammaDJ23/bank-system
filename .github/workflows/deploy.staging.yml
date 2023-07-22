@@ -68,5 +68,6 @@ jobs:
           script: |
             cd bank-system
             git pull origin staging
-            cd servers/auth
+            cd servers
+            npm install
             npm run docker:compose:staging:up
