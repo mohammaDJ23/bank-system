@@ -74,11 +74,4 @@ module.exports = {
       shared: packageJson.dependencies,
     }),
   ],
-  output: {
-    publicPath: 'http://localhost:3006/',
-    filename: '[name].bundle.js',
-    path: path.resolve(__dirname, '../dist'),
-    clean: true,
-  },
-  devServer: { port: 3006, historyApiFallback: true },
 };
