@@ -14,4 +14,11 @@ module.exports = merge(commonConfig, {
       'process.env': JSON.stringify(dotenv.parsed),
     }),
   ],
+  output: {
+    publicPath: 'http://localhost:3005/',
+    filename: '[name].bundle.js',
+    path: path.resolve(__dirname, '../dist'),
+    clean: true,
+  },
+  devServer: { port: 3005, historyApiFallback: true },
 });
