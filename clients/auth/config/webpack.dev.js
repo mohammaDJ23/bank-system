@@ -14,4 +14,5 @@ module.exports = merge(commonConfig, {
       'process.env': JSON.stringify(dotenv.parsed),
     }),
   ],
+  devServer: { port: 3005, historyApiFallback: true },
 });
