@@ -13,10 +13,4 @@ module.exports = merge(commonConfig, {
       'process.env': JSON.stringify(dotenv.parsed),
     }),
   ],
-  output: {
-    publicPath: '/',
-    filename: '[name].bundle.js',
-    path: path.resolve(__dirname, '../dist'),
-    clean: true,
-  },
 });

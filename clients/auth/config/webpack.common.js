@@ -83,4 +83,10 @@ module.exports = {
       shared: packageJson.dependencies,
     }),
   ],
+  output: {
+    publicPath: 'http://localhost:3005/',
+    filename: '[name].bundle.js',
+    path: path.resolve(__dirname, '../dist'),
+    clean: true,
+  },
 };
