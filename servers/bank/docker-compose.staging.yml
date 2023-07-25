@@ -1,5 +1,4 @@
 version: '3.8'
-name: s.bank
 services:
   s-bank:
     build:
