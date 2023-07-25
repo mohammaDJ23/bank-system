@@ -14,14 +14,20 @@ jobs:
       matrix:
         include:
           - dockerfile: ./servers/auth/Dockerfile.staging
-            image: mohammadnowresideh1997/auth-server-staging
+            image: mohammadnowresideh1997/s-auth-staging
             context: ./servers/auth
+
           - dockerfile: ./servers/bank/Dockerfile.staging
-            image: mohammadnowresideh1997/bank-server-staging
+            image: mohammadnowresideh1997/s-bank-staging
             context: ./servers/bank
+
           - dockerfile: ./servers/user/Dockerfile.staging
-            image: mohammadnowresideh1997/user-server-staging
+            image: mohammadnowresideh1997/s-user-staging
             context: ./servers/user
+
+          - dockerfile: ./clients/auth/Dockerfile.staging
+            image: mohammadnowresideh1997/c-auth-staging
+            context: ./clients/auth
     permissions:
       contents: read
       packages: write
