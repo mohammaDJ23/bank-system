@@ -23,7 +23,7 @@ jobs:
         run: npm run install:repos
 
       - name: Running the build process
-        run: npm run webpack:build:repos:prod
+        run: npm run webpack:build:repos
 
   build-servers:
     name: Build the server projects

@@ -45,7 +45,8 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "webpack:start:dev": "webpack serve --config config/webpack.dev.js",
-    "webpack:build:prod": "webpack --config config/webpack.prod.js"
+    "webpack:build": "webpack --config config/webpack.prod.js",
+    "start:prod": "serve -p 3006 -s dist"
   },
   "eslintConfig": {
     "extends": [

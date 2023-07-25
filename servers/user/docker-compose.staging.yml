@@ -1,13 +1,14 @@
 version: '3.8'
-
+name: s-user
 services:
-  user:
+  s-user:
     build:
       context: .
       dockerfile: Dockerfile.staging
+    image: s-user
     env_file:
-      - /root/config/user.env.txt
-    container_name: user
+      - /root/config/s-user.env.txt
+    container_name: s-user
     restart: always
     ports:
       - 3002:3002

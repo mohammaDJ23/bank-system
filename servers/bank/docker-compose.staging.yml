@@ -1,13 +1,14 @@
 version: '3.8'
-
+name: s-bank
 services:
-  bank:
+  s-bank:
     build:
       context: .
       dockerfile: Dockerfile.staging
+    image: s-bank
     env_file:
-      - /root/config/bank.env.txt
-    container_name: bank
+      - /root/config/s-bank.env.txt
+    container_name: s-bank
     restart: always
     ports:
       - 3003:3003
