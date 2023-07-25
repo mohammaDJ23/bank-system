@@ -75,3 +75,5 @@ jobs:
             cd servers
             npm install
             npm run docker:compose:staging:up
+            cd ../clients
+            npm run docker:compose:staging:up
