@@ -6,7 +6,8 @@
     "build": "vite build",
     "preview": "vite preview",
     "webpack:start:dev": "webpack serve --config config/webpack.dev.js",
-    "webpack:build:prod": "webpack --config config/webpack.prod.js"
+    "webpack:build": "webpack --config config/webpack.prod.js",
+    "start:prod": "serve -p 3005 -s dist"
   },
   "dependencies": {
     "@kyvg/vue3-notification": "^2.9.0",
@@ -23,6 +24,7 @@
     "postcss-preset-env": "^7.8.3",
     "react-jwt": "^1.1.7",
     "reflect-metadata": "^0.1.13",
+    "sass": "^1.64.1",
     "secure-web-storage": "^1.0.2",
     "terser-webpack-plugin": "^5.3.6",
     "unplugin-element-plus": "^0.4.1",
@@ -48,7 +50,6 @@
     "file-loader": "^6.2.0",
     "html-webpack-plugin": "^5.5.0",
     "less-loader": "^11.1.0",
-    "node-sass": "^7.0.3",
     "postcss": "^8.4.21",
     "postcss-loader": "^7.0.2",
     "sass-loader": "^10.3.1",

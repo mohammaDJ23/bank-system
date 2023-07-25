@@ -1,13 +1,13 @@
 version: '3.8'
-
 services:
-  auth-staging:
+  s-auth:
     build:
       context: .
       dockerfile: Dockerfile.staging
+    image: s-auth
     env_file:
-      - /root/config/auth.env.txt
-    container_name: auth-staging
+      - /root/config/s-auth.env.txt
+    container_name: s-auth
     restart: always
     ports:
       - 3001:3001

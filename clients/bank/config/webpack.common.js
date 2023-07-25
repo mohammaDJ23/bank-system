@@ -80,5 +80,4 @@ module.exports = {
     path: path.resolve(__dirname, '../dist'),
     clean: true,
   },
-  devServer: { port: 3006, historyApiFallback: true },
 };
