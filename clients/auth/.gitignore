@@ -10,6 +10,7 @@ lerna-debug.log*
 .env.development
 .env.production
 .env.micro
+.env.staging
 
 node_modules
 .DS_Store

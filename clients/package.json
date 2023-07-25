@@ -19,7 +19,11 @@
     "start:auth:prod": "npm run start:prod --prefix auth",
     "start:bank:prod": "npm run start:prod --prefix bank",
     "start:container:prod": "npm run start:prod --prefix container",
-    "start:prod": "concurrently \"npm run start:auth:prod\" \"npm run start:bank:prod\" \"npm run start:container:prod\""
+    "start:prod": "concurrently \"npm run start:auth:prod\" \"npm run start:bank:prod\" \"npm run start:container:prod\"",
+    "docker:compose:auth:staging:up": "npm run docker:compose:staging:up --prefix auth",
+    "docker:compose:bank:staging:up": "npm run docker:compose:staging:up --prefix bank",
+    "docker:compose:container:staging:up": "npm run docker:compose:staging:up --prefix container",
+    "docker:compose:staging:up": "concurrently \"npm run docker:compose:auth:staging:up\""
   },
   "author": "mohammad nowresideh",
   "license": "ISC",
