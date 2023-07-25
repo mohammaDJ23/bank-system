@@ -6,7 +6,8 @@
     "build": "vite build",
     "preview": "vite preview",
     "webpack:start:dev": "webpack serve --config config/webpack.dev.js",
-    "webpack:build:prod": "webpack --config config/webpack.prod.js"
+    "webpack:build:prod": "webpack --config config/webpack.prod.js",
+    "start:prod": "serve -p 3005 -s dist"
   },
   "dependencies": {
     "@kyvg/vue3-notification": "^2.9.0",
