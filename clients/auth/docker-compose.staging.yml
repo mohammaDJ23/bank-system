@@ -4,7 +4,6 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.staging
-      network: host
     image: c-auth
     env_file:
       - /root/config/c-auth.env.txt
@@ -12,9 +11,3 @@ services:
     restart: always
     ports:
       - 3005:3005
-    networks:
-      - services_app-network
-
-networks:
-  services_app-network:
-    external: true
