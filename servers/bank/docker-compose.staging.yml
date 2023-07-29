@@ -8,7 +8,6 @@ services:
     env_file:
       - /root/config/s-bank.env.txt
     container_name: s-bank
-    restart: always
     ports:
       - 3003:3003
     networks:
