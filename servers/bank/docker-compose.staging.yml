@@ -10,9 +10,3 @@ services:
     container_name: s-bank
     ports:
       - 3003:3003
-    networks:
-      - services_app-network
-
-networks:
-  services_app-network:
-    external: true
