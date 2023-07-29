@@ -8,6 +8,5 @@ services:
     env_file:
       - /root/config/c-auth.env.txt
     container_name: c-auth
-    restart: always
     ports:
       - 3005:3005
