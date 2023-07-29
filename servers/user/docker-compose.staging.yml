@@ -10,9 +10,3 @@ services:
     container_name: s-user
     ports:
       - 3002:3002
-    networks:
-      - services_app-network
-
-networks:
-  services_app-network:
-    external: true
