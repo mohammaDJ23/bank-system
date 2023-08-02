@@ -49,7 +49,7 @@ function app(el) {
   };
 }
 
-if (isDevelopment) {
+if (!isDevelopment) {
   const el = document.querySelector('#_auth-service');
   if (el) app(el).mount();
 }
