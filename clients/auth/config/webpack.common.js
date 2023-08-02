@@ -84,7 +84,7 @@ module.exports = {
     }),
   ],
   output: {
-    publicPath: 'http://localhost:3005/',
+    publicPath: process.env.PUBLIC_PATH,
     filename: '[name].bundle.js',
     path: path.resolve(__dirname, '../dist'),
     clean: true,
