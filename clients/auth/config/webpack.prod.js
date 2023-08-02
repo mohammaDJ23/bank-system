@@ -2,7 +2,7 @@ const { merge } = require('webpack-merge');
 const path = require('path');
 const webpack = require('webpack');
 const dotenv = require('dotenv').config({
-  path: path.resolve(__dirname, '../../../../config/c-auth.env.txt'),
+  path: path.resolve(__dirname, '../../../../root/config/c-auth.env.txt'),
 });
 const commonConfig = require('./webpack.common');
 
