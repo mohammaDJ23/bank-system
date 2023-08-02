@@ -13,7 +13,7 @@
     "start:dev": "env-cmd -f .env.development nest start --watch",
     "start:debug": "nest start --debug --watch",
     "start:prod": "node dist/main",
-    "docker:compose:staging:up": "docker-compose -f docker-compose.staging.yml -p s-user up -d",
+    "docker:compose:staging:up": "docker-compose -f docker-compose.staging.yml -p s-user up --build -d",
     "docker:compose:prod:up": "docker-compose -f docker-compose.prod.yml up -d",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
     "test": "jest",
