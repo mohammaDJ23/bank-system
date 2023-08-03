@@ -23,7 +23,7 @@
     "docker:compose:auth:staging:up": "npm run docker:compose:staging:up --prefix auth",
     "docker:compose:bank:staging:up": "npm run docker:compose:staging:up --prefix bank",
     "docker:compose:container:staging:up": "npm run docker:compose:staging:up --prefix container",
-    "docker:compose:staging:up": "concurrently \"npm run docker:compose:auth:staging:up\""
+    "docker:compose:staging:up": "concurrently \"npm run docker:compose:auth:staging:up\" \"npm run docker:compose:bank:staging:up\" \"npm run docker:compose:container:staging:up\""
   },
   "author": "mohammad nowresideh",
   "license": "ISC",

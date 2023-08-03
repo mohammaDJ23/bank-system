@@ -1,18 +1,19 @@
 version: '3.8'
 services:
-  c-auth:
+  c-container:
     build:
       context: .
       dockerfile: Dockerfile.staging
       args:
         NODE_ENV: ${NODE_ENV}
         PUBLIC_PATH: ${PUBLIC_PATH}
-        AUTH_SERVICE: ${AUTH_SERVICE}
+        USER_SERVICE: ${USER_SERVICE}
+        BANK_SERVICE: ${BANK_SERVICE}
         CACHE_SECRET_KEY: ${CACHE_SECRET_KEY}
         CONTAINER_APP: ${CONTAINER_APP}
         AUTH_APP: ${AUTH_APP}
         BANK_APP: ${BANK_APP}
-    image: c-auth
-    container_name: c-auth
+    image: c-container
+    container_name: c-container
     ports:
-      - 3005:3005
+      - 3004:3004

@@ -35,6 +35,7 @@
     "redux-thunk": "^2.4.2",
     "reflect-metadata": "^0.1.13",
     "sass": "^1.56.1",
+    "serve": "^14.2.0",
     "typescript": "^4.9.3",
     "web-vitals": "^2.1.4",
     "webpack-dev-server": "^4.11.1"
@@ -46,7 +47,8 @@
     "eject": "react-scripts eject",
     "webpack:start:dev": "webpack serve --config config/webpack.dev.js",
     "webpack:build": "webpack --config config/webpack.prod.js",
-    "start:prod": "serve -p 3006 -s dist"
+    "start:prod": "serve -p 3006 -s dist",
+    "docker:compose:staging:up": "docker-compose -f docker-compose.staging.yml -p c-bank down && docker rmi -f c-bank && docker-compose -f docker-compose.staging.yml -p c-bank --env-file /root/config/c-bank.env.txt up --build -d"
   },
   "eslintConfig": {
     "extends": [

@@ -25,6 +25,7 @@
     "react-router-dom": "^6.4.3",
     "react-scripts": "5.0.1",
     "react-spinners": "^0.13.8",
+    "serve": "^14.2.0",
     "socket.io-client": "^4.6.1",
     "typescript": "^4.8.4",
     "web-vitals": "^2.1.4"
@@ -36,7 +37,8 @@
     "eject": "react-scripts eject",
     "webpack:start:dev": "webpack serve --config config/webpack.dev.js",
     "webpack:build": "webpack --config config/webpack.prod.js",
-    "start:prod": "serve -p 3004 -s dist"
+    "start:prod": "serve -p 3004 -s dist",
+    "docker:compose:staging:up": "docker-compose -f docker-compose.staging.yml -p c-container down && docker rmi -f c-container && docker-compose -f docker-compose.staging.yml -p c-container --env-file /root/config/c-container.env.txt up --build -d"
   },
   "eslintConfig": {
     "extends": [
