@@ -46,7 +46,8 @@
     "eject": "react-scripts eject",
     "webpack:start:dev": "webpack serve --config config/webpack.dev.js",
     "webpack:build": "webpack --config config/webpack.prod.js",
-    "start:prod": "serve -p 3006 -s dist"
+    "start:prod": "serve -p 3006 -s dist",
+    "docker:compose:staging:up": "docker-compose -f docker-compose.staging.yml -p c-bank down && docker rmi -f c-bank && docker-compose -f docker-compose.staging.yml -p c-bank --env-file /root/config/c-bank.env.txt up --build -d"
   },
   "eslintConfig": {
     "extends": [
