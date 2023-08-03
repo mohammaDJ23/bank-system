@@ -8,7 +8,7 @@
     "webpack:start:dev": "webpack serve --config config/webpack.dev.js",
     "webpack:build": "webpack --config config/webpack.prod.js",
     "start:prod": "serve -p 3005 -s dist",
-    "docker:compose:staging:up": "docker-compose -f docker-compose.staging.yml -p c-auth down && docker rmi -f c-auth && docker-compose -f docker-compose.staging.yml -p c-auth up --build -d"
+    "docker:compose:staging:up": "docker-compose -f docker-compose.staging.yml -p c-auth down && docker rmi -f c-auth && docker-compose -f docker-compose.staging.yml -p c-auth --env-file /root/config/c-auth.env.txt up --build -d"
   },
   "dependencies": {
     "@kyvg/vue3-notification": "^2.9.0",
