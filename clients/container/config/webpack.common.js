@@ -5,6 +5,11 @@ const packageJson = require('../package.json');
 
 module.exports = {
   entry: './src/index.ts',
+  performance: {
+    hints: false,
+    maxEntrypointSize: 512000,
+    maxAssetSize: 512000,
+  },
   module: {
     rules: [
       {
