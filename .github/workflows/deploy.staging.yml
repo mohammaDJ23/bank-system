@@ -28,6 +28,14 @@ jobs:
           - dockerfile: ./clients/auth/Dockerfile.staging
             image: mohammadnowresideh1997/c-auth-staging
             context: ./clients/auth
+
+          - dockerfile: ./clients/bank/Dockerfile.staging
+            image: mohammadnowresideh1997/c-bank-staging
+            context: ./clients/bank
+
+          - dockerfile: ./clients/container/Dockerfile.staging
+            image: mohammadnowresideh1997/c-container-staging
+            context: ./clients/container
     permissions:
       contents: read
       packages: write
