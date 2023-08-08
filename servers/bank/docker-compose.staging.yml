@@ -1,10 +1,7 @@
 version: '3.8'
 services:
   s-bank:
-    build:
-      context: .
-      dockerfile: Dockerfile.staging
-    image: s-bank
+    image: mohammadnowresideh1997/s-bank
     env_file:
       - /root/config/s-bank.env.txt
     container_name: s-bank

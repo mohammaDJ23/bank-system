@@ -1,10 +1,7 @@
 version: '3.8'
 services:
   s-auth:
-    build:
-      context: .
-      dockerfile: Dockerfile.staging
-    image: s-auth
+    image: mohammadnowresideh1997/s-auth
     env_file:
       - /root/config/s-auth.env.txt
     container_name: s-auth

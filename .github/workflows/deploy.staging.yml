@@ -14,20 +14,28 @@ jobs:
       matrix:
         include:
           - dockerfile: ./servers/auth/Dockerfile.staging
-            image: mohammadnowresideh1997/s-auth-staging
+            image: mohammadnowresideh1997/s-auth
             context: ./servers/auth
 
           - dockerfile: ./servers/bank/Dockerfile.staging
-            image: mohammadnowresideh1997/s-bank-staging
+            image: mohammadnowresideh1997/s-bank
             context: ./servers/bank
 
           - dockerfile: ./servers/user/Dockerfile.staging
-            image: mohammadnowresideh1997/s-user-staging
+            image: mohammadnowresideh1997/s-user
             context: ./servers/user
 
-          - dockerfile: ./clients/auth/Dockerfile.staging
-            image: mohammadnowresideh1997/c-auth-staging
-            context: ./clients/auth
+          # - dockerfile: ./clients/auth/Dockerfile.staging
+          #   image: mohammadnowresideh1997/c-auth
+          #   context: ./clients/auth
+
+          # - dockerfile: ./clients/bank/Dockerfile.staging
+          #   image: mohammadnowresideh1997/c-bank
+          #   context: ./clients/bank
+
+          # - dockerfile: ./clients/container/Dockerfile.staging
+          #   image: mohammadnowresideh1997/c-container
+          #   context: ./clients/container
     permissions:
       contents: read
       packages: write
@@ -54,8 +62,6 @@ jobs:
           context: ${{ matrix.context }}
           file: ${{ matrix.dockerfile }}
           push: true
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
 
   deploying-ssh:
     needs: build-push-action
@@ -73,11 +79,5 @@ jobs:
           password: ${{ secrets.SSH_PASSWORD }}
           command_timeout: 60m
           script: |
-            cd bank-system
-            git pull origin staging
-            cd servers
-            npm install
-            npm run docker:compose:staging:up
-            cd ../clients
-            npm install
+            cd app
             npm run docker:compose:staging:up
