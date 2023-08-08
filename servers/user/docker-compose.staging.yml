@@ -1,10 +1,7 @@
 version: '3.8'
 services:
   s-user:
-    build:
-      context: .
-      dockerfile: Dockerfile.staging
-    image: s-user
+    image: mohammadnowresideh1997/s-user
     env_file:
       - /root/config/s-user.env.txt
     container_name: s-user

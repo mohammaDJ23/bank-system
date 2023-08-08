@@ -15,15 +15,7 @@
     "webpack:auth:build": "npm run webpack:build --prefix auth",
     "webpack:bank:build": "npm run webpack:build --prefix bank",
     "webpack:container:build": "npm run webpack:build --prefix container",
-    "webpack:build:repos": "concurrently \"npm run webpack:auth:build\" \"npm run webpack:bank:build\" \"npm run webpack:container:build\"",
-    "start:auth:prod": "npm run start:prod --prefix auth",
-    "start:bank:prod": "npm run start:prod --prefix bank",
-    "start:container:prod": "npm run start:prod --prefix container",
-    "start:prod": "concurrently \"npm run start:auth:prod\" \"npm run start:bank:prod\" \"npm run start:container:prod\"",
-    "docker:compose:auth:staging:up": "npm run docker:compose:staging:up --prefix auth",
-    "docker:compose:bank:staging:up": "npm run docker:compose:staging:up --prefix bank",
-    "docker:compose:container:staging:up": "npm run docker:compose:staging:up --prefix container",
-    "docker:compose:staging:up": "concurrently \"npm run docker:compose:auth:staging:up\" \"npm run docker:compose:bank:staging:up\" \"npm run docker:compose:container:staging:up\""
+    "webpack:build:repos": "concurrently \"npm run webpack:auth:build\" \"npm run webpack:bank:build\" \"npm run webpack:container:build\""
   },
   "author": "mohammad nowresideh",
   "license": "ISC",
