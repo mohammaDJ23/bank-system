@@ -14,27 +14,27 @@ jobs:
       matrix:
         include:
           - dockerfile: ./servers/auth/Dockerfile.staging
-            image: mohammadnowresideh1997/s-auth-staging
+            image: mohammadnowresideh1997/s-auth
             context: ./servers/auth
 
           - dockerfile: ./servers/bank/Dockerfile.staging
-            image: mohammadnowresideh1997/s-bank-staging
+            image: mohammadnowresideh1997/s-bank
             context: ./servers/bank
 
           - dockerfile: ./servers/user/Dockerfile.staging
-            image: mohammadnowresideh1997/s-user-staging
+            image: mohammadnowresideh1997/s-user
             context: ./servers/user
 
           - dockerfile: ./clients/auth/Dockerfile.staging
-            image: mohammadnowresideh1997/c-auth-staging
+            image: mohammadnowresideh1997/c-auth
             context: ./clients/auth
 
           - dockerfile: ./clients/bank/Dockerfile.staging
-            image: mohammadnowresideh1997/c-bank-staging
+            image: mohammadnowresideh1997/c-bank
             context: ./clients/bank
 
           - dockerfile: ./clients/container/Dockerfile.staging
-            image: mohammadnowresideh1997/c-container-staging
+            image: mohammadnowresideh1997/c-container
             context: ./clients/container
     permissions:
       contents: read
@@ -83,9 +83,3 @@ jobs:
           script: |
             cd bank-system
             git pull origin staging
-            cd servers
-            npm install
-            npm run docker:compose:staging:up
-            cd ../clients
-            npm install
-            npm run docker:compose:staging:up
