@@ -78,7 +78,7 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-          build-args: ${{ secrets[matrix.build_args] }}
+          secrets: ${{ secrets[matrix.build_args] }}
 
   deploying-ssh:
     needs: build-push-action
