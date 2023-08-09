@@ -33,13 +33,13 @@ jobs:
             dockerfile: ./clients/auth/Dockerfile.staging
             image: mohammadnowresideh1997/c-auth
             context: ./clients/auth
-            build_args: |
-              PUBLIC_PATH: C_AUTH_PUBLIC_PATH
-              AUTH_SERVICE: AUTH_SERVICE
-              CACHE_SECRET_KEY: C_AUTH_CACHE_SECRET_KEY
-              CONTAINER_APP: CONTAINER_APP
-              AUTH_APP: AUTH_APP
-              BANK_APP: BANK_APP
+            # build_args: |
+            #   PUBLIC_PATH: C_AUTH_PUBLIC_PATH
+            #   AUTH_SERVICE: AUTH_SERVICE
+            #   CACHE_SECRET_KEY: C_AUTH_CACHE_SECRET_KEY
+            #   CONTAINER_APP: CONTAINER_APP
+            #   AUTH_APP: AUTH_APP
+            #   BANK_APP: BANK_APP
 
           # - dockerfile: ./clients/bank/Dockerfile.staging
           #   image: mohammadnowresideh1997/c-bank
@@ -78,7 +78,8 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-          secrets: ${{ secrets[matrix.build_args] }}
+          # secrets: ${{ secrets[matrix.build_args] }}
+          build-args: PUBLIC_PATH=${{ secrets.C_AUTH_PUBLIC_PATH }}
 
   deploying-ssh:
     needs: build-push-action
