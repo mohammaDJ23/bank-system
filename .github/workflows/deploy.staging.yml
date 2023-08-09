@@ -28,7 +28,7 @@ jobs:
           - dockerfile: ./clients/auth/Dockerfile.staging
             image: mohammadnowresideh1997/c-auth
             context: ./clients/auth
-            build-args: |
+            build_args: |
               PUBLIC_PATH=${{ secrets.C_AUTH_PUBLIC_PATH }}
               AUTH_SERVICE=${{ secrets.AUTH_SERVICE }}
               CACHE_SECRET_KEY=${{ secrets.C_AUTH_CACHE_SECRET_KEY }}
@@ -73,7 +73,7 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-          build-args: ${{ matrix.secret }}
+          build-args: ${{ matrix.build_args }}
 
   deploying-ssh:
     needs: build-push-action
