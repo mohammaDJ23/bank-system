@@ -12,20 +12,25 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
+        org: [s-auth, s-bank, s-user, c-auth]
         include:
-          - dockerfile: ./servers/auth/Dockerfile.staging
+          - org: s-auth
+            dockerfile: ./servers/auth/Dockerfile.staging
             image: mohammadnowresideh1997/s-auth
             context: ./servers/auth
 
-          - dockerfile: ./servers/bank/Dockerfile.staging
+          - org: s-bank
+            dockerfile: ./servers/bank/Dockerfile.staging
             image: mohammadnowresideh1997/s-bank
             context: ./servers/bank
 
-          - dockerfile: ./servers/user/Dockerfile.staging
+          - org: s-user
+            dockerfile: ./servers/user/Dockerfile.staging
             image: mohammadnowresideh1997/s-user
             context: ./servers/user
 
-          - dockerfile: ./clients/auth/Dockerfile.staging
+          - org: c-auth
+            dockerfile: ./clients/auth/Dockerfile.staging
             image: mohammadnowresideh1997/c-auth
             context: ./clients/auth
             build_args: |
@@ -73,7 +78,7 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-          build-args: ${{ matrix.build_args }}
+          build-args: ${{ secrets[matrix.build_args] }}
 
   deploying-ssh:
     needs: build-push-action
