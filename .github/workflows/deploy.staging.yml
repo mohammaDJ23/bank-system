@@ -32,10 +32,12 @@ jobs:
             dockerfile: ./clients/auth/Dockerfile.staging
             image: mohammadnowresideh1997/c-auth
             context: ./clients/auth
+            PUBLIC_PATH: C_AUTH_PUBLIC_PATH
 
-          # - dockerfile: ./clients/bank/Dockerfile.staging
-          #   image: mohammadnowresideh1997/c-bank
-          #   context: ./clients/bank
+          - dockerfile: ./clients/bank/Dockerfile.staging
+            image: mohammadnowresideh1997/c-bank
+            context: ./clients/bank
+            PUBLIC_PATH: C_BANK_PUBLIC_PATH
 
           # - dockerfile: ./clients/container/Dockerfile.staging
           #   image: mohammadnowresideh1997/c-container
@@ -69,8 +71,10 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
           build-args: |
             CACHE_SECRET_KEY=${{ secrets.CACHE_SECRET_KEY }}
-            PUBLIC_PATH=${{ secrets.C_AUTH_PUBLIC_PATH }}
+            PUBLIC_PATH=${{ secrets[matrix.PUBLIC_PATH] }}
             AUTH_SERVICE=${{ secrets.AUTH_SERVICE }}
+            BANK_SERVICE=${{ secrets.BANK_SERVICE }}
+            USER_SERVICE=${{ secrets.USER_SERVICE }}
             CONTAINER_APP=${{ secrets.CONTAINER_APP }}
             AUTH_APP=${{ secrets.AUTH_APP }}
             BANK_APP=${{ secrets.BANK_APP }}
