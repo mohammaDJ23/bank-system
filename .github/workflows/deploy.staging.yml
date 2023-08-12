@@ -68,12 +68,12 @@ jobs:
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           build-args: |
-            CACHE_SECRET_KEY: ${{ secrets.CACHE_SECRET_KEY }}
-            PUBLIC_PATH: ${{ secrets.C_AUTH_PUBLIC_PATH }}
-            AUTH_SERVICE: ${{ secrets.AUTH_SERVICE }}
-            CONTAINER_APP: ${{ secrets.CONTAINER_APP }}
-            AUTH_APP: ${{ secrets.AUTH_APP }}
-            BANK_APP: ${{ secrets.BANK_APP }}
+            CACHE_SECRET_KEY=${{ secrets.CACHE_SECRET_KEY }}
+            PUBLIC_PATH=${{ secrets.C_AUTH_PUBLIC_PATH }}
+            AUTH_SERVICE=${{ secrets.AUTH_SERVICE }}
+            CONTAINER_APP=${{ secrets.CONTAINER_APP }}
+            AUTH_APP=${{ secrets.AUTH_APP }}
+            BANK_APP=${{ secrets.BANK_APP }}
 
   deploying-ssh:
     needs: build-push-action
