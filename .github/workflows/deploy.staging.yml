@@ -33,12 +33,12 @@ jobs:
             image: mohammadnowresideh1997/c-auth
             context: ./clients/auth
             build-args: |
-              CACHE_SECRET_KEY: ${{ vars.CACHE_SECRET_KEY }}
-              PUBLIC_PATH: ${{ vars.C_AUTH_PUBLIC_PATH }}
-              AUTH_SERVICE: ${{ vars.AUTH_SERVICE }}
-              CONTAINER_APP: ${{ vars.CONTAINER_APP }}
-              AUTH_APP: ${{ vars.AUTH_APP }}
-              BANK_APP: ${{ vars.BANK_APP }}
+              CACHE_SECRET_KEY: "${{ vars.CACHE_SECRET_KEY }}"
+              PUBLIC_PATH: "${{ vars.C_AUTH_PUBLIC_PATH }}"
+              AUTH_SERVICE: "${{ vars.AUTH_SERVICE }}"
+              CONTAINER_APP: "${{ vars.CONTAINER_APP }}"
+              AUTH_APP: "${{ vars.AUTH_APP }}"
+              BANK_APP: "${{ vars.BANK_APP }}"
 
           # - dockerfile: ./clients/bank/Dockerfile.staging
           #   image: mohammadnowresideh1997/c-bank
