@@ -10,7 +10,6 @@ jobs:
     name: Building the images
     runs-on: ubuntu-latest
     strategy:
-      fail-fast: false
       matrix:
         org: [s-auth, s-bank, s-user, c-auth]
         include:
@@ -33,13 +32,13 @@ jobs:
             dockerfile: ./clients/auth/Dockerfile.staging
             image: mohammadnowresideh1997/c-auth
             context: ./clients/auth
-            build_args: |
-              CACHE_SECRET_KEY: $CACHE_SECRET_KEY
-              PUBLIC_PATH: $C_AUTH_PUBLIC_PATH
-              AUTH_SERVICE: $AUTH_SERVICE
-              CONTAINER_APP: $CONTAINER_APP
-              AUTH_APP: $AUTH_APP
-              BANK_APP: $BANK_APP
+            build-args: |
+              CACHE_SECRET_KEY: ${{ vars.CACHE_SECRET_KEY }}
+              PUBLIC_PATH: ${{ vars.C_AUTH_PUBLIC_PATH }}
+              AUTH_SERVICE: ${{ vars.AUTH_SERVICE }}
+              CONTAINER_APP: ${{ vars.CONTAINER_APP }}
+              AUTH_APP: ${{ vars.AUTH_APP }}
+              BANK_APP: ${{ vars.BANK_APP }}
 
           # - dockerfile: ./clients/bank/Dockerfile.staging
           #   image: mohammadnowresideh1997/c-bank
@@ -48,9 +47,6 @@ jobs:
           # - dockerfile: ./clients/container/Dockerfile.staging
           #   image: mohammadnowresideh1997/c-container
           #   context: ./clients/container
-    permissions:
-      contents: read
-      packages: write
 
     steps:
       - name: Checkout repository
@@ -78,7 +74,7 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-          build-args: ${{ matrix.build_args }}
+          build-args: ${{ matrix.build-args }}
 
   deploying-ssh:
     needs: build-push-action
