@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        org: [s-auth, s-bank, s-user, c-auth, c-bank]
+        org: [s-auth, s-bank, s-user, c-auth, c-bank, c-container]
         include:
           - org: s-auth
             dockerfile: ./servers/auth/Dockerfile.staging
@@ -40,9 +40,11 @@ jobs:
             context: ./clients/bank
             PUBLIC_PATH: C_BANK_PUBLIC_PATH
 
-          # - dockerfile: ./clients/container/Dockerfile.staging
-          #   image: mohammadnowresideh1997/c-container
-          #   context: ./clients/container
+          - org: c-container
+            dockerfile: ./clients/container/Dockerfile.staging
+            image: mohammadnowresideh1997/c-container
+            context: ./clients/container
+            PUBLIC_PATH: C_CONTAINER_PUBLIC_PATH
 
     steps:
       - name: Checkout repository
