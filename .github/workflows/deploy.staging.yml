@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        org: [s-auth, s-bank, s-user, c-auth]
+        org: [s-auth, s-bank, s-user, c-auth, c-bank]
         include:
           - org: s-auth
             dockerfile: ./servers/auth/Dockerfile.staging
@@ -34,7 +34,8 @@ jobs:
             context: ./clients/auth
             PUBLIC_PATH: C_AUTH_PUBLIC_PATH
 
-          - dockerfile: ./clients/bank/Dockerfile.staging
+          - org: c-bank
+            dockerfile: ./clients/bank/Dockerfile.staging
             image: mohammadnowresideh1997/c-bank
             context: ./clients/bank
             PUBLIC_PATH: C_BANK_PUBLIC_PATH
