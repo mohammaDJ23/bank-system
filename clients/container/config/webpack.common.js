@@ -73,8 +73,8 @@ module.exports = {
       filename: 'remoteEntry.js',
       exposes: {},
       remotes: {
-        auth: 'auth@http://localhost:3005/remoteEntry.js',
-        bank: 'bank@http://localhost:3006/remoteEntry.js',
+        auth: `auth@${process.env.AUTH_APP}/remoteEntry.js`,
+        bank: `bank@${process.env.BANK_APP}/remoteEntry.js`,
       },
       shared: packageJson.dependencies,
     }),
